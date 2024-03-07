@@ -1,3 +1,10 @@
+"""
+The COOM parser.
+
+Traverses the abstract syntax tree of the COOM input
+in a visitor style fashion and outputs ASP facts.
+"""
+
 from typing import List, Optional
 
 from .coom.ModelParser import ModelParser
@@ -5,6 +12,12 @@ from .coom.ModelVisitor import ModelVisitor
 
 
 class ASPVisitor(ModelVisitor):
+    # pylint: disable=too-many-instance-attributes, too-many-public-methods
+    """
+    Custom visitor of the COOM Parser.
+    Generates a list of ASP facts as strings.
+    """
+
     def __init__(self):
         super().__init__()
         self.parent_enum: Optional[ModelParser.EnumerationContext] = None
@@ -33,23 +46,12 @@ class ASPVisitor(ModelVisitor):
         self.parent_enum = None
 
     def visitBehavior(self, ctx: ModelParser.BehaviorContext):
-        # TODO: Implement support for nested behavior blocks
         if ctx.name() is not None:
             self.behavior = ctx.name().getText()
         super().visitBehavior(ctx)
         self.behavior = self.root_name
 
-    def visitBehavior_block(self, ctx: ModelParser.Behavior_blockContext):
-        # TODO: Implement support for nested behavior blocks
-        super().visitBehavior_block(ctx)
-
-    def visitDefine(self, ctx: ModelParser.DefineContext):
-        # TODO: Implement define translation
-        # self.output_asp.append(ctx.getText())
-        super().visitDefine(ctx)
-
     def visitFeature(self, ctx: ModelParser.FeatureContext):
-        # TODO: Implement reference keyword and priorities
         field: ModelParser.FieldContext = ctx.field()
         feature_name = field.fieldName.getText()
 
@@ -85,11 +87,11 @@ class ASPVisitor(ModelVisitor):
         parent_name = self.parent_enum.name().getText()
         field: ModelParser.FieldContext = ctx.field()
         if field.number_def() is not None:
-            type = "num"
+            field_type = "num"
         else:
-            type = "str"
+            field_type = "str"
         field_name = field.fieldName.getText()
-        self.output_asp.append(f'attribute("{parent_name}",{field_name},"{type}").')
+        self.output_asp.append(f'attribute("{parent_name}",{field_name},"{field_type}").')
         super().visitAttribute(ctx)
 
     def visitOption(self, ctx: ModelParser.OptionContext):
@@ -141,14 +143,14 @@ class ASPVisitor(ModelVisitor):
 
     def visitCombination_row(self, ctx: ModelParser.Combination_rowContext):
         constraint_id = f'("{self.behavior}",{self.constraint_idx})'
-        type = ctx.rowType.text
+        row_type = ctx.rowType.text
         for col_idx, item in enumerate(ctx.combination_item()):
             values = item.getText()
             # Removing brackets around the values. Is this safe?
             if "," in values:
                 values = values[1:-1]
             for v in values.split(","):
-                self.output_asp.append(f'{type}({constraint_id},({col_idx},{self.row_idx}),"{v}").')
+                self.output_asp.append(f'{row_type}({constraint_id},({col_idx},{self.row_idx}),"{v}").')
         self.print_path = False
         super().visitCombination_row(ctx)
         self.print_path = True
@@ -161,12 +163,14 @@ class ASPVisitor(ModelVisitor):
         super().visitPrecondition(ctx)
 
     def visitRequire(self, ctx: ModelParser.RequireContext):
+        # pylint: disable=no-member
         constraint_id = f'("{self.behavior}",{self.constraint_idx})'
         condition = f'"{ctx.condition().getText()}"'
         self.output_asp.append(f"require({constraint_id},{condition}).")
         super().visitRequire(ctx)
 
     def visitCondition_or(self, ctx: ModelParser.Condition_orContext):
+        # pylint: disable=no-member
         cond_and: ModelParser.condition_andContext = ctx.condition_and()
         for i in range(len(cond_and) - 1):
             left = cond_and[i].getText()
@@ -176,6 +180,7 @@ class ASPVisitor(ModelVisitor):
         super().visitCondition_or(ctx)
 
     def visitCondition_and(self, ctx: ModelParser.Condition_andContext):
+        # pylint: disable=no-member
         cond_not: ModelParser.condition_notContext = ctx.condition_not()
         for i in range(len(cond_not) - 1):
             left = cond_not[i].getText()
@@ -199,10 +204,10 @@ class ASPVisitor(ModelVisitor):
         parts: ModelParser.Condition_partContext = ctx.condition_part()
 
         left = formula.getText()
-        for i in range(len(parts)):
+        for i, p in enumerate(parts):
             # Binary atom for compare
-            right = parts[i].formula().getText()
-            compare = parts[i].compare().getText()
+            right = p.formula().getText()
+            compare = p.compare().getText()
             complete = left + compare + right
             self.output_asp.append(f'binary("{self.behavior}","{complete}","{left}","{compare}","{right}").')
             left = right

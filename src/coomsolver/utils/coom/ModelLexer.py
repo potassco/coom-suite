@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 # Generated from Model.g4 by ANTLR 4.9
 import sys
 from io import StringIO

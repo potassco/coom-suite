@@ -38,4 +38,4 @@ def convert_instance(coom_file: str, output_lp_file: Optional[str] = None) -> No
 
     with open(lp_name, "w", encoding="utf8") as f:
         f.write("\n".join(instance))
-    log.info(f"ASP file saved in {lp_name}")
+    log.info("ASP file saved in %s", lp_name)
