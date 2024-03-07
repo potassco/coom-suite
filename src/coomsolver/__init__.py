@@ -1,17 +1,17 @@
 """
 The coomsolver project.
 """
+
 import logging
 from typing import Optional
-
-log = logging.getLogger("main")
 
 from antlr4 import CommonTokenStream, FileStream
 
 from .utils.coom.ModelLexer import ModelLexer
 from .utils.coom.ModelParser import ModelParser
-from .utils.coom.ModelVisitor import ModelVisitor
 from .utils.parse_coom import ASPVisitor
+
+log = logging.getLogger("main")
 
 
 def convert_instance(coom_file: str, output_lp_file: Optional[str] = None) -> None:  # nocoverage
