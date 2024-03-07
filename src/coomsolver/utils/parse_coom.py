@@ -7,8 +7,8 @@ in a visitor style fashion and outputs ASP facts.
 
 from typing import List, Optional
 
-from .coom.ModelParser import ModelParser
-from .coom.ModelVisitor import ModelVisitor
+from .coom_grammar.ModelParser import ModelParser
+from .coom_grammar.ModelVisitor import ModelVisitor
 
 
 class ASPVisitor(ModelVisitor):

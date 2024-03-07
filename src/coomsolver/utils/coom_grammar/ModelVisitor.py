@@ -1,5 +1,3 @@
-# pylint: skip-file
-
 # Generated from Model.g4 by ANTLR 4.9
 from antlr4 import *
 

@@ -7,8 +7,8 @@ from typing import Optional
 
 from antlr4 import CommonTokenStream, FileStream
 
-from .utils.coom.ModelLexer import ModelLexer
-from .utils.coom.ModelParser import ModelParser
+from .utils.coom_grammar.ModelLexer import ModelLexer
+from .utils.coom_grammar.ModelParser import ModelParser
 from .utils.parse_coom import ASPVisitor
 
 log = logging.getLogger("main")

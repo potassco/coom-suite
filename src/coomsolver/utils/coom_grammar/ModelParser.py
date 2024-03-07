@@ -1,5 +1,3 @@
-# pylint: skip-file
-
 # Generated from Model.g4 by ANTLR 4.9
 # encoding: utf-8
 import sys
