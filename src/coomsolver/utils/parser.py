@@ -16,7 +16,7 @@ if sys.version_info[1] < 8:
 else:
     from importlib import metadata  # nocoverage
 
-VERSION = metadata.version("fillname")
+VERSION = metadata.version("coomsolver")
 
 
 def get_parser() -> ArgumentParser:
@@ -24,10 +24,10 @@ def get_parser() -> ArgumentParser:
     Return the parser for command line options.
     """
     parser = ArgumentParser(
-        prog="fillname",
+        prog="coomsolver",
         description=dedent(
             """\
-            fillname
+            coomsolver
             filldescription
             """
         ),
@@ -49,10 +49,38 @@ def get_parser() -> ArgumentParser:
         "--log",
         default="warning",
         choices=[val for _, val in levels],
-        metavar=f"{{{','.join(key for key, _ in levels)}}}",
+        metavar=f'{{{",".join(key for key, _ in levels)}}}',
         help="set log level [%(default)s]",
         type=cast(Any, lambda name: get(levels, name)),
     )
 
     parser.add_argument("--version", "-v", action="version", version=f"%(prog)s {VERSION}")
+
+    subparsers = parser.add_subparsers(help="Sub commands", dest="command")
+
+    # -------------
+    #  Instance parser
+    # -------------
+    parser_convert = subparsers.add_parser("convert", help="Convert COOM instance to ASP.")
+    parser_convert.add_argument(
+        "input",
+        type=str,  # FileType('r', encoding='UTF-8'),
+        help="Input the COOM file corresponding to the instance.",
+        # metavar='',
+    )
+    parser_convert.add_argument(
+        "--output",
+        "-o",
+        type=str,
+        help="Path to output ASP file. Same directory as input by default.",
+    )
+
+    # -------------
+    # Solve parser
+    # -------------
+    subparsers.add_parser(
+        "solve",
+        help="Solves the COOM instance using clingo.",
+    )
+
     return parser

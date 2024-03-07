@@ -34,3 +34,6 @@ build
 .coverage
 _build
 _autosummary
+
+# ANTLR4
+.antlr

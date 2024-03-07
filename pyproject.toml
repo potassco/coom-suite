@@ -6,18 +6,23 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "fillname"
+name = "coomsolver"
 authors = [
-    { name = "Author Fillname", email = "author@fillname.org" }
+    { name = "Nicolas Rühling", email = "nicolas.ruehling@uni-potsdam.de" }
 ]
-description = "A template project."
+description = "Python package to parse and solve COOM configuration instances using ASP."
 requires-python = ">=3.9"
+dependencies = [
+    "antlr4-tools",
+    "antlr4-python3-runtime==4.9.3",
+    "clingo"
+]
 license = {file = "LICENSE"}
 dynamic = [ "version" ]
 readme = "README.md"
 
 [project.urls]
-Hompage = "https://fillname.org/"
+Hompage = "https://github.com/krr-up/coom-solver.git/"
 
 [project.optional-dependencies]
 format = [ "black", "isort", "autoflake" ]
@@ -25,10 +30,10 @@ lint_pylint = [ "pylint" ]
 typecheck = [ "types-setuptools", "mypy" ]
 test = [ "coverage[toml]" ]
 doc = [ "sphinx", "furo", "nbsphinx", "sphinx_copybutton", "myst-parser" ]
-dev = [ "fillname[test,typecheck,lint_pylint]" ]
+dev = [ "coomsolver[test,typecheck,lint_pylint]" ]
 
 [project.scripts]
-fillname = "fillname.__main__:main"
+coomsolver = "coomsolver.__main__:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -71,8 +76,8 @@ variable-rgx = "^[a-z][a-z0-9]*((_[a-z0-9]+)*_?)?$"
 good-names = ["_"]
 
 [tool.coverage.run]
-source = ["fillname", "tests"]
-omit = ["*/fillname/__main__.py"]
+source = ["coomsolver", "tests"]
+omit = ["*/coomsolver/__main__.py"]
 
 [tool.coverage.report]
 exclude_lines = ["assert", "nocoverage"]
