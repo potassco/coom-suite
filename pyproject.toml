@@ -9,7 +9,12 @@ authors = [
 ]
 description = "Python package to parse and solve COOM configuration instances using ASP."
 requires-python = ">=3.9"
-dependencies = ["antlr4-tools", "antlr4-python3-runtime==4.9.3", "clingo"]
+dependencies = [
+    "antlr4-tools",
+    "antlr4-python3-runtime==4.9.3",
+    "clingo",
+    "importlib_resources",
+]
 license = { file = "LICENSE" }
 dynamic = ["version"]
 readme = "README.md"

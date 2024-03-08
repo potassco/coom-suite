@@ -4,7 +4,8 @@ Utilities.
 
 import atexit
 from contextlib import ExitStack
-from importlib import resources
+
+from importlib_resources import as_file, files  # pylint: disable=import-error
 
 
 def get_file_path(package: str, file_name: str) -> str:
@@ -19,6 +20,6 @@ def get_file_path(package: str, file_name: str) -> str:
     """
     file_manager = ExitStack()
     atexit.register(file_manager.close)
-    ref = resources.files(package)
-    file = file_manager.enter_context(resources.as_file(ref / file_name))
+    ref = files(package)
+    file = file_manager.enter_context(as_file(ref / file_name))
     return str(file)
