@@ -2,6 +2,8 @@
 The coomsolver project.
 """
 
+# mypy: allow-untyped-calls
+
 import logging
 from typing import Optional
 
@@ -14,7 +16,7 @@ from .utils.parse_coom import ASPVisitor
 log = logging.getLogger("main")
 
 
-def convert_instance(coom_file: str, output_lp_file: Optional[str] = None) -> None:  # nocoverage
+def convert_instance(coom_file: str, output_lp_file: Optional[str] = None) -> None:
     """
     Converts a COOM instance into ASP
     Args:

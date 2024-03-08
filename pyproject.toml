@@ -84,3 +84,6 @@ omit = ["*/coomsolver/__main__.py", "src/coomsolver/utils/coom_grammar"]
 
 [tool.coverage.report]
 exclude_lines = ["assert", "nocoverage"]
+
+[tool.mypy]
+exclude = ['coom_grammar', '/coomsolver/__main__.py']

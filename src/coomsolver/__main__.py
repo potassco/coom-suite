@@ -11,7 +11,7 @@ from .utils.parser import get_parser
 # from clingo.application import clingo_main
 
 
-def main() -> None:
+def main():
     """
     Run the main function.
     """

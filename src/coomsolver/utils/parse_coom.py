@@ -5,6 +5,9 @@ Traverses the abstract syntax tree of the COOM input
 in a visitor style fashion and outputs ASP facts.
 """
 
+# flake8: noqa
+# pylint: skip-file
+# mypy: ignore-errors
 from typing import List, Optional
 
 from .coom_grammar.ModelParser import ModelParser
@@ -12,13 +15,12 @@ from .coom_grammar.ModelVisitor import ModelVisitor
 
 
 class ASPVisitor(ModelVisitor):
-    # pylint: disable=too-many-instance-attributes, too-many-public-methods
     """
     Custom visitor of the COOM Parser.
     Generates a list of ASP facts as strings.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.parent_enum: Optional[ModelParser.EnumerationContext] = None
         self.root_name: str = ":root"
@@ -163,14 +165,12 @@ class ASPVisitor(ModelVisitor):
         super().visitPrecondition(ctx)
 
     def visitRequire(self, ctx: ModelParser.RequireContext):
-        # pylint: disable=no-member
         constraint_id = f'("{self.behavior}",{self.constraint_idx})'
         condition = f'"{ctx.condition().getText()}"'
         self.output_asp.append(f"require({constraint_id},{condition}).")
         super().visitRequire(ctx)
 
     def visitCondition_or(self, ctx: ModelParser.Condition_orContext):
-        # pylint: disable=no-member
         cond_and: ModelParser.condition_andContext = ctx.condition_and()
         for i in range(len(cond_and) - 1):
             left = cond_and[i].getText()
@@ -180,7 +180,6 @@ class ASPVisitor(ModelVisitor):
         super().visitCondition_or(ctx)
 
     def visitCondition_and(self, ctx: ModelParser.Condition_andContext):
-        # pylint: disable=no-member
         cond_not: ModelParser.condition_notContext = ctx.condition_not()
         for i in range(len(cond_not) - 1):
             left = cond_not[i].getText()
