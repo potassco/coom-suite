@@ -78,9 +78,15 @@ def get_parser() -> ArgumentParser:
     # -------------
     # Solve parser
     # -------------
-    subparsers.add_parser(
+    parser_solve = subparsers.add_parser(
         "solve",
         help="Solves the COOM instance using clingo.",
+    )
+    parser_solve.add_argument(
+        "input",
+        type=str,  # FileType('r', encoding='UTF-8'),
+        help="Input the COOM file to solve.",
+        # metavar='',
     )
 
     return parser
