@@ -16,7 +16,7 @@ from .utils.parse_coom import ASPVisitor
 log = logging.getLogger("main")
 
 
-def convert_instance(coom_file: str, output_lp_file: Optional[str] = None) -> None:
+def convert_instance(coom_file: str, output_lp_file: Optional[str] = None) -> None:  # nocoverage
     """
     Converts a COOM instance into ASP
     Args:
