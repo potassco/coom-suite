@@ -2,10 +2,10 @@
 Utilities.
 """
 
-import atexit
-from contextlib import ExitStack
+# import atexit
+# from contextlib import ExitStack
 
-from importlib_resources import as_file, files  # pylint: disable=import-error
+from importlib_resources import as_file, files
 
 
 def get_file_path(package: str, file_name: str) -> str:
@@ -18,8 +18,10 @@ def get_file_path(package: str, file_name: str) -> str:
     Returns:
         str: The string for the path to the file
     """
-    file_manager = ExitStack()
-    atexit.register(file_manager.close)
-    ref = files(package)
-    file = file_manager.enter_context(as_file(ref / file_name))
-    return str(file)
+    # file_manager = ExitStack()
+    # atexit.register(file_manager.close)
+    # ref = files(package)
+    # file = file_manager.enter_context(as_file(ref / file_name))
+    # return str(file)
+    with as_file(files(package) / file_name) as file:
+        return str(file)
