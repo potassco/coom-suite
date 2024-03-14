@@ -8,7 +8,7 @@ from typing import Optional
 
 from antlr4 import CommonTokenStream, FileStream
 
-from .utils import get_file_path
+from .utils import get_encoding
 from .utils.coom_grammar.ModelLexer import ModelLexer
 from .utils.coom_grammar.ModelParser import ModelParser
 from .utils.logging import get_logger
@@ -16,7 +16,7 @@ from .utils.parse_coom import ASPVisitor
 
 log = get_logger("main")
 
-ENCODING = get_file_path("coomsolver.encodings", "encoding-kids.lp")
+ENCODING = get_encoding()
 
 
 def convert_instance(coom_file: str, output_lp_file: Optional[str] = None) -> None:  # nocoverage

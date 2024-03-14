@@ -5,15 +5,11 @@ Utilities.
 from importlib.resources import as_file, files
 
 
-def get_file_path(package: str, file_name: str) -> str:
-    """Gets the path for a file
-
-    Args:
-        package (str): The package, for instance "coomsolver.encodings"
-        file_name (str): The name of the file with the extension
+def get_encoding() -> str:
+    """Returns the kids bike encoding
 
     Returns:
-        str: The string for the path to the file
+        str: The path to the kids bike encoding
     """
-    with as_file(files(package) / file_name) as file:
+    with as_file(files("coomsolver") / "encodings" / "encoding-kids.lp") as file:
         return str(file)
