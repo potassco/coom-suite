@@ -6,11 +6,7 @@ instance((Feature,(Instance,0)),Type) :- feature(Context,Feature,Type,_,_), enum
 :-  { val(Instance,Option) : option(Type,Option) } != 1, enumeration(Type), instance(Instance,Type).
 
 % Derive associated attribute values (the index 0 is needed for the sake of uniformity)
-val((Attr,(Instance,0)),V)       :- attribute(Type,Attr,"str"), attr_value(Type,Option,Attr,V),
-                                    instance(Instance,Type), val(Instance,Option).
-&in{V..V} =: (Attr,(Instance,0)) :- attribute(Type,Attr,"num"), attr_value(Type,Option,Attr,V),
-                                    instance(Instance,Type), val(Instance,Option).
-
+val((Attr,(Instance,0)),V) :- attr_value(Type,Option,Attr,V), instance(Instance,Type), val(Instance,Option).
 
 % Create auxiliary instance predicate for attribute values (for following path expressions)
 instance((Attr,(Instance,0)),Attr) :- attr_value(Type,_,Attr,_), instance(Instance,Type).
@@ -46,13 +42,6 @@ binary_sat(Instance,Formula,(X1,X2)) :- binary_instances(Instance,Formula,X1,">=
 binary_sat(Instance,Formula,(X1,X2)) :- binary_instances(Instance,Formula,X1,"<", X2), V1 < V2,  val(X1,V1), val(X2,V2).
 binary_sat(Instance,Formula,(X1,X2)) :- binary_instances(Instance,Formula,X1,"<=",X2), V1 <= V2, val(X1,V1), val(X2,V2).
 
-binary_sat(Instance,Formula,(X1,X2)) :- binary_instances(Instance,Formula,X1,"=",X2),  &sum{X1} =  X2.
-binary_sat(Instance,Formula,(X1,X2)) :- binary_instances(Instance,Formula,X1,"!=",X2), &sum{X1} != X2.
-binary_sat(Instance,Formula,(X1,X2)) :- binary_instances(Instance,Formula,X1,">",X2),  &sum{X1} >  X2.
-binary_sat(Instance,Formula,(X1,X2)) :- binary_instances(Instance,Formula,X1,">=",X2), &sum{X1} >= X2.
-binary_sat(Instance,Formula,(X1,X2)) :- binary_instances(Instance,Formula,X1,"<",X2),  &sum{X1} <  X2.
-binary_sat(Instance,Formula,(X1,X2)) :- binary_instances(Instance,Formula,X1,"<=",X2), &sum{X1} <= X2.
-
 binary_unsat(Instance,Formula,(X1,X2)) :- binary_instances(Instance,Formula,X1,_,X2), not binary_sat(Instance,Formula,(X1,X2)).
 
 %%% Get values of path expressions
@@ -72,8 +61,8 @@ path_instance(Instance,Path,X)    :- not path(Path,N+1,_), path_instance(Instanc
 path_instance(Instance,Path,Path) :- binary(Context,_,_,_,Path), instance(Instance,Context), constant(Path).
 path_instance(Instance,Path,Path) :- binary(Context,_,_,_,Path), instance(Instance,Context), number(Path,_).
 
-val(Path,Path)      :- constant(Path).
-&in{N..N} =: Path   :- number(Path,N).
+val(Path,Path) :- constant(Path).
+val(Path,N)    :- number(Path,N).
 
 %%% Check combinations
 % Generate all possible values of combinations first
@@ -91,8 +80,7 @@ in_path(CI,V)             :- in_path(CI,_,V).
 
 hit_cell(Instance,Constraint,CI,(Col,Row)) :- allow(Constraint,(Col,Row),V), combinations(Constraint,Col,Path), constraint(Instance,Constraint),
                                               combinations_instances(Instance,Constraint,CI), in_path(CI,X), val(X,V).
-hit_cell(Instance,Constraint,CI,(Col,Row)) :- allow(Constraint,(Col,Row),V), combinations(Constraint,Col,Path), constraint(Instance,Constraint),
-                                              combinations_instances(Instance,Constraint,CI), in_path(CI,X), &sum{X} = V.
+
 hit_row(Instance,Constraint,CI) :- allow(Constraint,(_,Row),_), constraint(Instance,Constraint),
                                    combinations_instances(Instance,Constraint,CI),
                                    0 = #sum{ 1,Col: allow(Constraint,(Col,Row),_);
@@ -110,8 +98,6 @@ option("bool", "False").
 #show val(X,V) : val(X,V), instance(X,Type), option(Type,_).
 #show val(X,V) : val(X,V), instance(X,Attr), attr_value(_,_,Attr,_).
 
-% &show { X : instance(X,Attr), attribute(_,Attr,"num") }.
-
 #defined structure/1.
 #defined feature/5.
 #defined enumeration/1.
@@ -128,4 +114,3 @@ option("bool", "False").
 #defined path/3.
 #defined constant/1.
 #defined number/2.
-#defined imply/3.

@@ -11,5 +11,5 @@ def get_encoding() -> str:
     Returns:
         str: The path to the kids bike encoding
     """
-    with as_file(files("coomsolver") / "encodings" / "encoding-kids.lp") as file:
+    with as_file(files("coomsolver") / "encodings" / "encoding-clingo-kids.lp") as file:
         return str(file)
