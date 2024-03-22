@@ -1,0 +1,145 @@
+
+% Auxiliaries
+sinstance(I):-_all(instance(I,S)), structure(S).
+sinstance(I):-instance(I,S), structure(S), _clinguin_browsing.
+einstance(I):-_all(instance(I,E)), enumeration(E).
+einstance(I):-instance(I,E), enumeration(E), _clinguin_browsing.
+ainstance(I):-_all(instance(I,N)), not enumeration(N), not  structure(N).
+ainstance(I):-instance(I,N), not enumeration(N), not  structure(N), _clinguin_browsing.
+eorainstance(I):-einstance(I).
+eorainstance(I):-ainstance(I).
+% For debugging
+% attr(E,class,("border-1";"border";"border-dark")):- elem(E, container, _).
+
+% Window
+elem(w, window, root).
+
+% Container per structre instance
+elem(icontainer(()), container, w).
+
+    % Title
+    elem(ititle(I), container, icontainer(I)) :- sinstance(I).
+    attr(ititle(I), order, 1) :- sinstance(I).
+    % attr(ititle(I), width, 50) :- sinstance(I).
+    attr(ititle(I), class, ("d-flex";"flex-row")) :- sinstance(I).
+    
+        elem(ititle_l(I), label, ititle(I)) :- sinstance(I).
+        attr(ititle_l((F,(P,C))), label,F) :- sinstance((F,(P,C))), instance((F,(P,C)),S).
+        attr(ititle_l(I), class, ("h4")) :- sinstance(I), instance(I,S).
+
+        elem(ititle_t(I), label, ititle(I)) :- sinstance(I).
+        attr(ititle_t((F,(P,C))), label,  @format("","({0})",S)) :- sinstance((F,(P,C))), instance((F,(P,C)),S).
+        attr(ititle_t(I), class, ("m-2";"fw-lighter")) :- sinstance(I), instance(I,S).
+
+    % Enumerations 
+    elem(ienumerations(I), container, icontainer(I)) :- sinstance(I).
+    attr(ienumerations(I), order, 2) :- sinstance(I).
+    attr(ienumerations(I), heigth, 50) :- sinstance(I).
+    attr(ienumerations(I), class, ("d-flex";"flex-row")) :- sinstance(I).
+    attr(ienumerations(P), class, ("m-4")) :- sinstance(P), einstance((F,(P,C))).
+
+        % Container per enumeration instance
+        elem(eicontainer((F,(P,C))), container, ienumerations(P)) :- einstance((F,(P,C))).
+        attr(eicontainer(I), class, ("m-2";"p-2";"rounded")) :- einstance(I).
+        attr(eicontainer(I), class, ("d-flex";"flex-col")) :- einstance(I).
+        attr(eicontainer(I), class, ("bg-secondary";"bg-opacity-25")) :- einstance(I).
+        attr(eicontainer(I), background_color, "#D9D4F0") :- einstance(I).
+
+
+            % Container per enumeration for the title and one for each attribute
+            elem(eititle((F,(P,C))), container, eicontainer(P)) :- ainstance((F,(P,C))).
+            elem(eititle(I), container, eicontainer(I)) :- einstance(I).
+            attr(eititle(I), order, 1) :- einstance(I).
+            attr(eititle(I), order, 2) :- ainstance(I).
+            attr(eititle(I), class, ("d-flex";"flex-row")) :- eorainstance(I).
+            attr(eititle(I), class, ("align-self-end")) :- ainstance(I).
+            
+                elem(eititle_l(I), label, eititle(I)) :- eorainstance(I).
+                attr(eititle_l((F,(P,C))), label, F) :- eorainstance((F,(P,C))), instance((F,(P,C)),S).
+                attr(eititle_l((F,(P,C))), class, "h6") :- einstance((F,(P,C))), instance((F,(P,C)),S).
+                attr(eititle_l((F,(P,C))), class, ("fst-italic";"fw-light")) :- ainstance((F,(P,C))), instance((F,(P,C)),S).
+                attr(eititle_l((F,(P,C))), order, 1) :- eorainstance((F,(P,C))), instance((F,(P,C)),S).
+
+                elem(eititle_t(I), label, eititle(I)) :- einstance(I).
+                attr(eititle_t((F,(P,C))), label, @format("","({0})",S)) :- einstance((F,(P,C))), instance((F,(P,C)),S).
+                attr(eititle_t((F,(P,C))), class, ("fw-lighter";"small")) :- einstance((F,(P,C))), instance((F,(P,C)),S).
+                attr(eititle_t((F,(P,C))), order, 2) :- einstance((F,(P,C))), instance((F,(P,C)),S).
+                
+                
+
+
+                elem(eioption(I), container, eititle(I)) :- eorainstance(I).
+                attr(eioption(I), order, 3) :- eorainstance(I).
+                
+                    elem(eioption_dd(I), dropdown_menu, eioption(I)) :- eorainstance(I).
+                    attr(eioption_dd(I), selected, V) :- eorainstance(I), _all(val(I,V)), not _clinguin_browsing.
+                    attr(eioption_dd(I), selected, V) :- eorainstance(I), val(I,V), _clinguin_browsing.
+                    attr(eioption_dd(I), class, "disabled") :- eorainstance(I), _all(val(I,V)), not _clinguin_assume(val(I,V)).
+                    
+                        elem(eioption_ddi(I,V), dropdown_menu_item, eioption_dd(I)) :- eorainstance(I), _any(val(I,V)).
+                        attr(eioption_ddi(I,V), label, V) :- eorainstance(I), _any(val(I,V)).
+                        when(eioption_ddi(I,V), click, call, add_assumption(val(I,V))) :- eorainstance(I), _any(val(I,V)).
+
+                        elem(eioption_ddi(I,remove), dropdown_menu_item, eioption_dd(I)) :- eorainstance(I).
+                        attr(eioption_ddi(I,remove), icon, "fa-ban") :- eorainstance(I).
+                        attr(eioption_ddi(I,remove), class, "text-info") :- eorainstance(I).
+                        when(eioption_ddi(I,remove), click, call, remove_assumption_signature(val(I,any))) :- eorainstance(I).
+                
+
+
+
+    % Features 
+    elem(ifeatures(I), container, icontainer(I)) :- sinstance(I).
+    attr(ifeatures(I), order, 3) :- sinstance(I).
+    attr(ifeatures(I), class, ("d-flex";"flex-col")) :- sinstance(I).
+    % attr(ifeatures(I), background_color, white) :- sinstance(I).
+    attr(ifeatures(I), class, ("m-4")) :- sinstance(I), sinstance((F,(I,C))).
+
+        % Container per structre instance
+        elem(icontainer((F,(P,C))), container, ifeatures(P)) :- sinstance((F,(P,C))), sinstance(P).
+        attr(icontainer(I), class, ("m-2";"p-2")) :- sinstance(I).
+        % attr(icontainer(I), background_color, "#98B3EA") :- sinstance(I).
+        % attr(icontainer(I), background_color, white) :- sinstance(I).
+        attr(icontainer(I), class, ("bg-primary";"bg-opacity-10")) :- sinstance(I).
+        attr(icontainer(I), class, ("d-flex";"flex-col";"border";"border-dark";"border-2";"rounded")) :- sinstance(I).
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%
+    % Menu bar
+    %%%%%%%%%%%%%%%%%%%%%%%%
+
+    elem(menu_bar, menu_bar, w).
+    attr(menu_bar, title, "COOM solver").
+    attr(menu_bar, icon, "fa-cog").
+
+
+        elem(menu_bar_restart, button, menu_bar).
+        attr(menu_bar_restart, label, "Restart").
+        attr(menu_bar_restart, icon, "fa-arrows-rotate").
+        attr(menu_bar_restart, class, "btn-outline-danger").
+        attr(menu_bar_restart, class, "border-0").
+        when(menu_bar_restart, click, call, restart).
+
+        elem(menu_bar_clear, button, menu_bar).
+        attr(menu_bar_clear, label, "Clear").
+        attr(menu_bar_clear, icon, "fa-trash").
+        attr(menu_bar_clear, class, "btn-outline-danger").
+        attr(menu_bar_clear, class, "border-0").
+        when(menu_bar_clear, click, call, clear_assumptions).
+
+
+        elem(menu_bar_download, button, menu_bar).
+        attr(menu_bar_download, label, "Download").
+        attr(menu_bar_download, icon, "fa-download").
+        when(menu_bar_download, click, call, download).
+
+
+        elem(menu_bar_select, button, menu_bar).
+        attr(menu_bar_select, label, "Select solution").
+        attr(menu_bar_select, icon, "fa-hand-pointer").
+        when(menu_bar_select, click, call, select).
+
+        elem(menu_bar_next, button, menu_bar).
+        attr(menu_bar_next, label, "Next").
+        attr(menu_bar_next, icon, "fa-forward-step").
+        when(menu_bar_next, click, call, next_solution).
