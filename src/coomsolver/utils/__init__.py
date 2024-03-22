@@ -8,7 +8,7 @@ SOLVERS = ["clingo"]  # , "fclingo"]
 COOM_PROFILES = ["kids", "city", "travel"]
 
 
-def get_encoding(file_name) -> str:
+def get_encoding(file_name: str) -> str:  # nocoverage
     """Gets the path to a given ASP encoding in the encodings folder
 
     Input:
