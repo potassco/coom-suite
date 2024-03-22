@@ -35,7 +35,10 @@ def main():
     elif args.command == "solve":
         with NamedTemporaryFile(suffix=".lp") as temp:
             convert_instance(args.input, temp.name)
-            clingo_main(COOMApp(), [temp.name] + ["--out-ifs=\\n", "--out-atomf=%s."])
+            clingo_main(
+                COOMApp(solver=args.solver, profile=args.profile),
+                [temp.name] + ["--out-ifs=\\n", "--out-atomf=%s."],
+            )
 
 
 if __name__ == "__main__":

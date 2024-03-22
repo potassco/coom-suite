@@ -9,7 +9,7 @@ from typing import List, Sequence
 from clingo import Control
 from clingo.application import Application, ApplicationOptions  # , Flag
 
-from . import ENCODING
+from .utils import get_encoding
 
 # from .utils.logging import get_logger
 
@@ -31,14 +31,18 @@ class COOMApp(Application):
 
     _log_level: str
     _input_files: List[str]
+    _solver: str
+    _profile: str
     program_name: str = "COOM solver"
     version: str = "0.1"
 
-    def __init__(self, log_level: str = ""):
+    def __init__(self, log_level: str = "", solver: str = "", profile: str = ""):
         """
         Create application
         """
         self._input_files = []
+        self._solver = "clingo" if solver == "" else solver
+        self._profile = "travel" if profile == "" else profile
         self._log_level = "WARNING" if log_level == "" else log_level
 
     def parse_log_level(self, log_level: str) -> bool:  # nocoverage
@@ -50,15 +54,6 @@ class COOMApp(Application):
             return self._log_level in ["INFO", "WARNING", "DEBUG", "ERROR"]
 
         return True
-
-    # def parse_option(self, option):  # nocoverage
-    #     """
-    #     Parse option
-    #     """
-    #     if option is not None:
-    #         self._option = option
-
-    #     return self._option in ENCODINGS
 
     def register_options(self, options: ApplicationOptions) -> None:  # nocoverage
         """
@@ -77,18 +72,6 @@ class COOMApp(Application):
             self.parse_log_level,
             argument="<level>",
         )
-        # options.add(
-        #     group,
-        #     "option",
-        #     textwrap.dedent(
-        #         f"""\
-        #         The option used the encodings for this option must be provided in the package.
-        #                                    options = {",".join(ENCODINGS.keys())} (default: naive)
-        #         """
-        #     ),
-        #     self.parse_option,
-        #     argument="<option>",
-        # )
         # options.add_flag(
         #     group, "view", "Visualize the first solution using clinguin", self._view
         # )
@@ -136,7 +119,8 @@ class COOMApp(Application):
         """
 
         self._input_files = list(files)
-        self._input_files.extend([ENCODING])
+        encoding = get_encoding(f"{self._solver}-{self._profile}.lp")
+        self._input_files.extend([encoding])
 
         for f in self._input_files:
             control.load(f)

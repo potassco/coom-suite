@@ -1,4 +1,4 @@
-#include "encoding-fclingo-city.lp".
+#include "fclingo-city.lp".
 
 % Assign a value to a numeric feature
 &in{Min..Max} =: (Feature,(Instance,0)) :- feature(Context,Feature,"num",_,_), range(Context,Feature,Min,Max), instance(Instance,Context).

@@ -1,0 +1,126 @@
+product {
+         Usage                  usage
+         Efficiency             efficiency
+         num            0-2500  maxPrice
+         num            0-2500  price
+         bool                   internetConn
+    1..2 HDUnit                 hdunit
+         Motherboard            motherboard
+    1..2 Screen                 screen
+         OS                     os
+    1..5 Application            applications
+}
+
+enumeration Usage {
+    Internet
+    Scientific
+    Multimedia
+}
+
+enumeration Efficiency {
+    A
+    B
+    C
+}
+
+structure HDUnit {
+         num    0-1000  price
+    1..4 HDisk          hdisk
+    1..2 HDController   hdcontroller
+}
+
+enumeration HDisk {
+    attribute num capacity
+    attribute num price
+
+    MedStoreDisk = (  200, 200 )
+    MaxStoreDisk = ( 1000, 500 )
+}
+
+enumeration HDController {
+    attribute num price
+
+    MedStoreC = ( 500 )
+    MaxStoreC = ( 500 )
+}
+
+structure Motherboard {
+         num         0-350   price
+         MBType              mbtype
+         CPU                 cpu
+}
+
+enumeration MBType {
+    attribute       efficiency
+    attribute num   price
+
+    MBSilver  = ( B, 250 )
+    MBDiamond = ( A, 350 )
+}
+
+enumeration CPU {
+    attribute       clockrate
+    attribute num   price
+
+    CPUD = (   fast, 150 )
+    CPUS = ( medium, 100 )
+}
+
+enumeration Screen {
+    attribute       efficiency
+    attribute num   price
+
+    ScreenA = ( A, 200 )
+    ScreenB = ( B, 150 )
+    ScreenC = ( C, 100 )
+}
+
+enumeration OS {
+    attribute num   hdcapacity
+    attribute num   price
+
+    OSBeta  = ( 13, 500 )
+    OSAlpha = (  6, 100 )
+}
+
+structure Application {
+    num 200-200 hdcapacity
+    num  50-50  price
+}
+
+behavior {
+    imply price = sum(hdunit.price) + motherboard.price + sum(motherboard.cpu.price)
+                  + os.price + sum(screen.price) + sum(applications.price)
+
+    require price <= maxPrice
+
+    require os.hdcapacity + sum(applications.hdcapacity) <= sum(hdunit.hdisk.capacity)
+
+    condition usage = Internet
+    require internetConn = True
+
+    condition usage = Multimedia
+    require internetConn = True
+
+    combinations    (efficiency     motherboard.mbtype.efficiency   screen.efficiency)
+    allow           (A              A                               A                )
+    allow           (B              (A,B)                           (A,B)            )
+    allow           (C              (A,B,C)                         (A,B,C)          )
+
+    condition os = OSAlpha
+    require   motherboard.cpu = CPUD
+}
+
+behavior HDUnit {
+    imply price = sum(hdisk.price) + sum(hdcontroller.price)
+}
+
+behavior Motherboard {
+    imply price = mbtype.price
+
+    condition mbtype = MBSilver
+    require   cpu  != CPUD
+
+    condition mbtype = MBDiamond
+    require   cpu  != CPUS
+}
