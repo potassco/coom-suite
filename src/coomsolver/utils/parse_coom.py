@@ -60,12 +60,12 @@ class ASPVisitor(ModelVisitor):
         if field.number_def() is not None:
             type_name = "num"
 
-        elif field.string_def() is not None:
-            type_name = "text"
+        # elif field.string_def() is not None:
+        #     type_name = "text"
         elif field.type_ref is not None:
             type_name = field.type_ref.NAME()
-        else:
-            type_name = feature_name
+        # else:
+        #     type_name = feature_name
 
         cardinality: ModelParser.CardinalityContext = ctx.cardinality()
         c_min = 1
@@ -84,8 +84,8 @@ class ASPVisitor(ModelVisitor):
             self.output_asp.append(f'range("{self.structure_name}",{feature_name},{r_min},{r_max}).')
 
     def visitAttribute(self, ctx: ModelParser.AttributeContext):
-        if self.parent_enum is None:
-            raise ValueError("illegal option")
+        # if self.parent_enum is None:
+        #     raise ValueError("illegal option")
         parent_name = self.parent_enum.name().getText()
         field: ModelParser.FieldContext = ctx.field()
         if field.number_def() is not None:
@@ -97,8 +97,8 @@ class ASPVisitor(ModelVisitor):
         super().visitAttribute(ctx)
 
     def visitOption(self, ctx: ModelParser.OptionContext):
-        if self.parent_enum is None:
-            raise ValueError("illegal option")
+        # if self.parent_enum is None:
+        #     raise ValueError("illegal option")
         parent_name = self.parent_enum.name().getText()
         option_name = ctx.name().getText()
         self.output_asp.append(f'option("{parent_name}", "{option_name}").')
@@ -211,13 +211,13 @@ class ASPVisitor(ModelVisitor):
             self.output_asp.append(f'binary("{self.behavior}","{complete}","{left}","{compare}","{right}").')
             left = right
 
-            # For multiple comparisons rewrite as propositional formulas connected by &&
-            right_prop = "&&".join(
-                [f"{l.formula().getText()}{r.getText()}" for l, r in (zip(parts[i:], parts[i + 1 :]))]
-            )
-            if right_prop != "":
-                complete_prop = complete + "&&" + right_prop
-                self.output_asp.append(f'binary("{complete_prop}","{complete}","&&","{right_prop}").')
+            # # For multiple comparisons rewrite as propositional formulas connected by &&
+            # right_prop = "&&".join(
+            #     [f"{l.formula().getText()}{r.getText()}" for l, r in (zip(parts[i:], parts[i + 1 :]))]
+            # )
+            # if right_prop != "":
+            #     complete_prop = complete + "&&" + right_prop
+            #     self.output_asp.append(f'binary("{complete_prop}","{complete}","&&","{right_prop}").')
         super().visitCondition_compare(ctx)
 
     def visitFormula_add(self, ctx: ModelParser.Formula_addContext):
@@ -296,7 +296,7 @@ class ASPVisitor(ModelVisitor):
                     self.output_asp.append(f'path("{full_path}",{i},{p.getText()}).')
 
     def visitFloating(self, ctx: ModelParser.FloatingContext):
-        if ctx.FLOATING() is not None:
-            pass
+        # if ctx.FLOATING() is not None:
+        #     pass
         if ctx.INTEGER() is not None:
             self.output_asp.append(f'number("{ctx.INTEGER()}",{ctx.INTEGER()}).')

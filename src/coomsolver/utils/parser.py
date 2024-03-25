@@ -72,7 +72,7 @@ def get_parser() -> ArgumentParser:
         "--output",
         "-o",
         type=str,
-        help="Path to output ASP file. Same directory as input by default.",
+        help="Path to output directory. Same directory as input by default.",
     )
 
     # -------------

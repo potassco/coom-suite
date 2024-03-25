@@ -80,7 +80,7 @@ ignore = ["coom_grammar"]
 source = ["coomsolver", "tests"]
 omit = [
     "*/coomsolver/__main__.py",
-    "*/coomsolver/utils/parse_coom.py",
+    # "*/coomsolver/utils/parse_coom.py",
     "*/coom_grammar/*",
     "*/coomsolver/application.py",
 ]

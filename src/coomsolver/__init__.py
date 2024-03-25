@@ -2,42 +2,34 @@
 The coomsolver project.
 """
 
-# mypy: allow-untyped-calls
-
+from os.path import basename, join
 from typing import Optional
 
-from antlr4 import CommonTokenStream, FileStream
+from antlr4 import FileStream
 
-from .utils.coom_grammar.ModelLexer import ModelLexer
-from .utils.coom_grammar.ModelParser import ModelParser
+from .utils import run_antlr4_visitor
 from .utils.logging import get_logger
-from .utils.parse_coom import ASPVisitor
 
 log = get_logger("main")
 
 
-def convert_instance(coom_file: str, output_lp_file: Optional[str] = None) -> None:  # nocoverage
+def convert_instance(coom_file: str, output_dir: Optional[str] = None) -> None:  # nocoverage
     """
     Converts a COOM instance into ASP
     Args:
         coom_file (str): COOM file .coom
-        output_lp_file (str, optional): Name of the output file, by default the same name of coom_file is used
+        output_dir (str, optional): Name of the output directory, by default the same of coom_file is used
     """
 
-    if output_lp_file is None:
-        lp_name = coom_file.replace(".coom", ".lp")
+    if output_dir is None:
+        output_lp_file = coom_file.replace(".coom", ".lp")
     else:
-        lp_name = output_lp_file
+
+        output_lp_file = join(output_dir, basename(coom_file).replace(".coom", ".lp"))
 
     input_stream = FileStream(coom_file, encoding="utf-8")
-    lexer = ModelLexer(input_stream)
-    stream = CommonTokenStream(lexer)
-    parser = ModelParser(stream)
-    tree = parser.root()
-    visitor = ASPVisitor()
-    visitor.visitRoot(tree)
-    instance = visitor.output_asp
+    asp_instance = run_antlr4_visitor(input_stream)
 
-    with open(lp_name, "w", encoding="utf8") as f:
-        f.write("\n".join(instance))
-    log.info("ASP file saved in %s", lp_name)
+    with open(output_lp_file, "w", encoding="utf8") as f:
+        f.write("\n".join(asp_instance))
+    log.info("ASP file saved in %s", output_lp_file)
