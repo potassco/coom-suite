@@ -2,7 +2,7 @@
 % Auxiliaries
 sinstance(I):-_all(instance(I,S)), structure(S).
 sinstance(I):-instance(I,S), structure(S), _clinguin_browsing.
-assumed_sinstance(I):- sinstance(I), _clinguin_assume(instance(I,_)).
+assumed_sinstance(I):- sinstance(I), _clinguin_assume(instance(I,_)), not instance(I,":root").
 einstance(I):-_all(instance(I,E)), enumeration(E).
 einstance(I):-instance(I,E), enumeration(E), _clinguin_browsing.
 ainstance(I):-_all(instance(I,N)), not enumeration(N), not  structure(N).
@@ -60,6 +60,7 @@ elem(icontainer(()), container, w).
         attr(eicontainer(I), class, ("d-flex";"flex-col")) :- einstance(I).
         attr(eicontainer(I), class, ("bg-secondary";"bg-opacity-25")) :- einstance(I).
         attr(eicontainer(I), background_color, "#D9D4F0") :- einstance(I).
+        attr(eicontainer((F,(P,C))), order, N) :- einstance((F,(P,C))), #count{(F',(P,C')):einstance((F',(P,C'))), F'>F}=N.
 
 
             % Container per enumeration for the title and one for each attribute
@@ -81,8 +82,6 @@ elem(icontainer(()), container, w).
                 attr(eititle_t((F,(P,C))), class, ("fw-lighter";"small")) :- einstance((F,(P,C))), instance((F,(P,C)),S).
                 attr(eititle_t((F,(P,C))), order, 2) :- einstance((F,(P,C))), instance((F,(P,C)),S).
                 
-                
-
 
                 elem(eioption(I), container, eititle(I)) :- eorainstance(I).
                 attr(eioption(I), order, 3) :- eorainstance(I).
@@ -92,18 +91,22 @@ elem(icontainer(()), container, w).
                     attr(eioption_dd(I), selected, V) :- eorainstance(I), val(I,V), _clinguin_browsing.
                     attr(eioption_dd(I), class, ("opacity-75";"btn-outline-dark")) :- eorainstance(I), _all(val(I,V)), not _clinguin_assume(val(I,V)), _any(val(I,V')), V'!=V.
                     attr(eioption_dd(I), class, ("opacity-50")) :- eorainstance(I), _all(val(I,V)), not _clinguin_assume(val(I,V)), #false: _any(val(I,V')),V'!=V.
+                    attr(eioption_dd(I), class, ("btn-danger")) :- _clinguin_muc(val(I,V)).
                     
-                        elem(eioption_ddi(I,V), dropdown_menu_item, eioption_dd(I)) :- eorainstance(I), _any(val(I,V)).
-                        attr(eioption_ddi(I,V), label, V) :- eorainstance(I), _any(val(I,V)).
-                        when(eioption_ddi(I,V), click, call, add_assumption(val(I,V))) :- eorainstance(I), _any(val(I,V)).
+                        option((I,V),invalid):- einstance(I), option(T,V), instance(I,T), not _any(val(I,V)).
+                        option(((A,(I,0)),V),invalid):- ainstance((A,(I,0))), attr_value(T,_,A,V), instance(I,T), not _any(val((A,(I,0)),V)).
+                        option((I,V),valid):- eorainstance(I), _any(val(I,V)).
+
+                        elem(eioption_ddi(I,V), dropdown_menu_item, eioption_dd(I)) :- option((I,V),_).
+                        attr(eioption_ddi(I,V), label, V) :- option((I,V),_).
+                        when(eioption_ddi(I,V), click, call, add_assumption(val(I,V))) :- option((I,V),_).
+                        attr(eioption_ddi(I,V), class, ("text-danger")) :- option((I,V),invalid).
 
                         elem(eioption_ddi(I,remove), dropdown_menu_item, eioption_dd(I)) :- eorainstance(I).
                         attr(eioption_ddi(I,remove), icon, "fa-ban") :- eorainstance(I).
                         attr(eioption_ddi(I,remove), class, "text-info") :- eorainstance(I).
                         when(eioption_ddi(I,remove), click, call, remove_assumption_signature(val(I,any))) :- eorainstance(I).
                 
-
-
 
     % Features 
     elem(ifeatures(I), container, icontainer(I)) :- sinstance(I).
@@ -172,7 +175,7 @@ elem(icontainer(()), container, w).
         elem(menu_bar_download, button, menu_bar).
         attr(menu_bar_download, label, "Download").
         attr(menu_bar_download, icon, "fa-download").
-        when(menu_bar_download, click, call, download).
+        when(menu_bar_download, click, call, download("#show .#show instance(I,S) : instance(I,S), structure(S). #show val(X,V) : val(X,V), instance(X,Type), option(Type,_). #show val(X,V) : val(X,V), instance(X,Attr), attr_value(_,_,Attr,_).", "coom_solution.lp")).
 
 
         elem(menu_bar_select, button, menu_bar).
