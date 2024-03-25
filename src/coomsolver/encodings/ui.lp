@@ -2,12 +2,14 @@
 % Auxiliaries
 sinstance(I):-_all(instance(I,S)), structure(S).
 sinstance(I):-instance(I,S), structure(S), _clinguin_browsing.
+assumed_sinstance(I):- sinstance(I), _clinguin_assume(instance(I,_)).
 einstance(I):-_all(instance(I,E)), enumeration(E).
 einstance(I):-instance(I,E), enumeration(E), _clinguin_browsing.
 ainstance(I):-_all(instance(I,N)), not enumeration(N), not  structure(N).
 ainstance(I):-instance(I,N), not enumeration(N), not  structure(N), _clinguin_browsing.
 eorainstance(I):-einstance(I).
 eorainstance(I):-ainstance(I).
+pos_sinstance(I):-_any(instance(I,S)), structure(S).
 % For debugging
 % attr(E,class,("border-1";"border";"border-dark")):- elem(E, container, _).
 
@@ -20,16 +22,30 @@ elem(icontainer(()), container, w).
     % Title
     elem(ititle(I), container, icontainer(I)) :- sinstance(I).
     attr(ititle(I), order, 1) :- sinstance(I).
-    % attr(ititle(I), width, 50) :- sinstance(I).
     attr(ititle(I), class, ("d-flex";"flex-row")) :- sinstance(I).
     
         elem(ititle_l(I), label, ititle(I)) :- sinstance(I).
         attr(ititle_l((F,(P,C))), label,F) :- sinstance((F,(P,C))), instance((F,(P,C)),S).
         attr(ititle_l(I), class, ("h4")) :- sinstance(I), instance(I,S).
+        attr(ititle_l(I), order, 1) :- sinstance(I), instance(I,S).
 
         elem(ititle_t(I), label, ititle(I)) :- sinstance(I).
-        attr(ititle_t((F,(P,C))), label,  @format("","({0})",S)) :- sinstance((F,(P,C))), instance((F,(P,C)),S).
+        attr(ititle_t((F,(P,C))), label,  @format("({0})",S)) :- sinstance((F,(P,C))), instance((F,(P,C)),S).
         attr(ititle_t(I), class, ("m-2";"fw-lighter")) :- sinstance(I), instance(I,S).
+        attr(ititle_t(I), order, 2) :- sinstance(I), instance(I,S).
+
+        
+        elem(ititle_bc(I), container, ititle(I)) :- assumed_sinstance(I).
+        attr(ititle_bc((F,(P,C))), class,  ("ms-auto")) :- assumed_sinstance((F,(P,C))), instance((F,(P,C)),S).
+        attr(ititle_bc((F,(P,C))), order,  3) :- assumed_sinstance((F,(P,C))), instance((F,(P,C)),S).
+            elem(ititle_b(I), button, ititle_bc(I)) :- assumed_sinstance(I).
+            attr(ititle_b((F,(P,C))), icon,  "fa-xmark") :- assumed_sinstance((F,(P,C))), instance((F,(P,C)),S).
+            when(ititle_b(I), click,  call, remove_assumption(instance(I,S))) :- assumed_sinstance(I), instance(I,S).
+            % Remove options
+            when(ititle_b(I), click,  call, remove_assumption_signature(val((F,(I,C)),any))) :- assumed_sinstance(I), einstance((F,(I,C))).
+            % Remove attr
+            when(ititle_b(I), click,  call, remove_assumption_signature(val((F',((F,(I,C)),C')),any))) :- assumed_sinstance(I), einstance((F,(I,C))), ainstance((F',((F,(I,C)),C'))).
+
 
     % Enumerations 
     elem(ienumerations(I), container, icontainer(I)) :- sinstance(I).
@@ -61,7 +77,7 @@ elem(icontainer(()), container, w).
                 attr(eititle_l((F,(P,C))), order, 1) :- eorainstance((F,(P,C))), instance((F,(P,C)),S).
 
                 elem(eititle_t(I), label, eititle(I)) :- einstance(I).
-                attr(eititle_t((F,(P,C))), label, @format("","({0})",S)) :- einstance((F,(P,C))), instance((F,(P,C)),S).
+                attr(eititle_t((F,(P,C))), label, @format("({0})",S)) :- einstance((F,(P,C))), instance((F,(P,C)),S).
                 attr(eititle_t((F,(P,C))), class, ("fw-lighter";"small")) :- einstance((F,(P,C))), instance((F,(P,C)),S).
                 attr(eititle_t((F,(P,C))), order, 2) :- einstance((F,(P,C))), instance((F,(P,C)),S).
                 
@@ -74,7 +90,8 @@ elem(icontainer(()), container, w).
                     elem(eioption_dd(I), dropdown_menu, eioption(I)) :- eorainstance(I).
                     attr(eioption_dd(I), selected, V) :- eorainstance(I), _all(val(I,V)), not _clinguin_browsing.
                     attr(eioption_dd(I), selected, V) :- eorainstance(I), val(I,V), _clinguin_browsing.
-                    attr(eioption_dd(I), class, "disabled") :- eorainstance(I), _all(val(I,V)), not _clinguin_assume(val(I,V)).
+                    attr(eioption_dd(I), class, ("opacity-75";"btn-outline-dark")) :- eorainstance(I), _all(val(I,V)), not _clinguin_assume(val(I,V)), _any(val(I,V')), V'!=V.
+                    attr(eioption_dd(I), class, ("opacity-50")) :- eorainstance(I), _all(val(I,V)), not _clinguin_assume(val(I,V)), #false: _any(val(I,V')),V'!=V.
                     
                         elem(eioption_ddi(I,V), dropdown_menu_item, eioption_dd(I)) :- eorainstance(I), _any(val(I,V)).
                         attr(eioption_ddi(I,V), label, V) :- eorainstance(I), _any(val(I,V)).
@@ -90,7 +107,7 @@ elem(icontainer(()), container, w).
 
     % Features 
     elem(ifeatures(I), container, icontainer(I)) :- sinstance(I).
-    attr(ifeatures(I), order, 3) :- sinstance(I).
+    attr(ifeatures(I), order, 4) :- sinstance(I).
     attr(ifeatures(I), class, ("d-flex";"flex-col")) :- sinstance(I).
     % attr(ifeatures(I), background_color, white) :- sinstance(I).
     attr(ifeatures(I), class, ("m-4")) :- sinstance(I), sinstance((F,(I,C))).
@@ -102,6 +119,30 @@ elem(icontainer(()), container, w).
         % attr(icontainer(I), background_color, white) :- sinstance(I).
         attr(icontainer(I), class, ("bg-primary";"bg-opacity-10")) :- sinstance(I).
         attr(icontainer(I), class, ("d-flex";"flex-col";"border";"border-dark";"border-2";"rounded")) :- sinstance(I).
+
+    % Add
+    elem(iadd(I), container, icontainer(I)) :- sinstance(I).
+    attr(iadd(I), order, 3) :- sinstance(I).
+    attr(iadd(I), class, ("d-flex";"flex-row")) :- sinstance(I).
+    % attr(iadd(I), background_color, white) :- sinstance(I).
+    attr(iadd(I), class, ("m-4")) :- sinstance(I), sinstance((F,(I,C))).
+
+        % Container per structre instance
+        % elem(iposf((F,(P,C))), container, iadd(P)) :- pos_sinstance((F,(P,C))), sinstance(P), not sinstance((F,(P,C))).
+        elem(iposf((F,(P,C))), container, iadd(P)) :- pos_sinstance((F,(P,C))), sinstance(P), not sinstance((F,(P,C))), #false: pos_sinstance((F,(P,C'))), not sinstance((F,(P,C'))), C'<C.
+
+            elem(iposf_l(I), button, iposf(I)) :- elem(iposf(I),_,_).
+            attr(iposf_l((F,(P,C))), label, F) :- elem(iposf((F,(P,C))),_,_).
+            attr(iposf_l(I), icon, "fa-add") :- elem(iposf(I),_,_).
+            attr(iposf_l(I), class, ("bg-primary";"bg-opacity-50")) :- elem(iposf(I),_,_).
+            when(iposf_l(I), click, call, add_assumption(instance(I,S))) :- elem(iposf(I),_,_), _any(instance(I,S)).
+
+
+        % attr(iposf(I), class, ("m-2";"p-2")) :- sinstance(I).
+        % % attr(iposf(I), background_color, "#98B3EA") :- sinstance(I).
+        % % attr(iposf(I), background_color, white) :- sinstance(I).
+        % attr(iposf(I), class, ("bg-primary";"bg-opacity-10")) :- sinstance(I).
+        % attr(iposf(I), class, ("d-flex";"flex-col";"border";"border-dark";"border-2";"rounded")) :- sinstance(I).
 
 
     %%%%%%%%%%%%%%%%%%%%%%%%

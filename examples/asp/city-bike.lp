@@ -11,7 +11,7 @@ feature("Basket",position,"Position",1,1).
 feature("Basket",color,"Color",1,1).
 
 structure("Carrier").
-feature("Carrier",bag,"Bag",2,2).
+feature("Carrier",bag,"Bag",0,2).
 
 structure("Bag").
 feature("Bag",capacity,"Capacity",1,1).
