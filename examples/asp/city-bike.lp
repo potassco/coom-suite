@@ -12,6 +12,7 @@ feature("Basket",color,"Color",1,1).
 
 structure("Carrier").
 feature("Carrier",bag,"Bag",0,2).
+% :- not instance((basket,((),0)),"Basket").
 
 structure("Bag").
 feature("Bag",capacity,"Capacity",1,1).
@@ -59,14 +60,14 @@ option("Material", "Cotton").
 option("Material", "Leather").
 option("Material", "Polyester").
 
-behavior((":root",0)).
+{behavior((":root",0))}.
 require((":root",0),"color=basket.color").
 binary(":root","color=basket.color","color","=","basket.color").
 path("color",0,color).
 path("basket.color",0,basket).
 path("basket.color",1,color).
 
-behavior((":root",1)).
+{behavior((":root",1))}.
 condition((":root",1),"basket.position=Front").
 binary(":root","basket.position=Front","basket.position","=","Front").
 path("basket.position",0,basket).
@@ -78,7 +79,7 @@ path("frontWheel.size",0,frontWheel).
 path("frontWheel.size",1,size).
 number("29",29).
 
-behavior((":root",2)).
+{behavior((":root",2))}.
 condition((":root",2),"carrier.bag.capacity.volume=100").
 binary(":root","carrier.bag.capacity.volume=100","carrier.bag.capacity.volume","=","100").
 path("carrier.bag.capacity.volume",0,carrier).
@@ -92,7 +93,7 @@ path("rearWheel.size",0,rearWheel).
 path("rearWheel.size",1,size).
 number("28",28).
 
-behavior((":root",3)).
+{behavior((":root",3))}.
 condition((":root",3),"saddle=Vintage").
 binary(":root","saddle=Vintage","saddle","=","Vintage").
 path("saddle",0,saddle).
@@ -104,7 +105,7 @@ path("carrier.bag.material",1,bag).
 path("carrier.bag.material",2,material).
 constant("Leather").
 
-behavior((":root",4)).
+{behavior((":root",4))}.
 require((":root",4),"frontWheel.size=rearWheel.size").
 binary(":root","frontWheel.size=rearWheel.size","frontWheel.size","=","rearWheel.size").
 path("frontWheel.size",0,frontWheel).
@@ -112,7 +113,7 @@ path("frontWheel.size",1,size).
 path("rearWheel.size",0,rearWheel).
 path("rearWheel.size",1,size).
 
-behavior(("Bag",5)).
+{behavior(("Bag",5))}.
 combinations(("Bag",5),0,"material").
 combinations(("Bag",5),1,"capacity").
 path("material",0,material).

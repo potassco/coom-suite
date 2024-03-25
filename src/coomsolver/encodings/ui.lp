@@ -10,6 +10,9 @@ ainstance(I):-instance(I,N), not enumeration(N), not  structure(N), _clinguin_br
 eorainstance(I):-einstance(I).
 eorainstance(I):-ainstance(I).
 pos_sinstance(I):-_any(instance(I,S)), structure(S).
+
+cons(I,(C,N)):-_all(constraint(I,(C,N))).
+
 % For debugging
 % attr(E,class,("border-1";"border";"border-dark")):- elem(E, container, _).
 
@@ -52,7 +55,7 @@ elem(icontainer(()), container, w).
     attr(ienumerations(I), order, 2) :- sinstance(I).
     attr(ienumerations(I), heigth, 50) :- sinstance(I).
     attr(ienumerations(I), class, ("d-flex";"flex-row")) :- sinstance(I).
-    attr(ienumerations(P), class, ("m-4")) :- sinstance(P), einstance((F,(P,C))).
+    attr(ienumerations(P), class, ("m-3")) :- sinstance(P), einstance((F,(P,C))).
 
         % Container per enumeration instance
         elem(eicontainer((F,(P,C))), container, ienumerations(P)) :- einstance((F,(P,C))).
@@ -110,10 +113,10 @@ elem(icontainer(()), container, w).
 
     % Features 
     elem(ifeatures(I), container, icontainer(I)) :- sinstance(I).
-    attr(ifeatures(I), order, 4) :- sinstance(I).
+    attr(ifeatures(I), order, 5) :- sinstance(I).
     attr(ifeatures(I), class, ("d-flex";"flex-col")) :- sinstance(I).
     % attr(ifeatures(I), background_color, white) :- sinstance(I).
-    attr(ifeatures(I), class, ("m-4")) :- sinstance(I), sinstance((F,(I,C))).
+    attr(ifeatures(I), class, ("m-3")) :- sinstance(I), sinstance((F,(I,C))).
 
         % Container per structre instance
         elem(icontainer((F,(P,C))), container, ifeatures(P)) :- sinstance((F,(P,C))), sinstance(P).
@@ -125,10 +128,10 @@ elem(icontainer(()), container, w).
 
     % Add
     elem(iadd(I), container, icontainer(I)) :- sinstance(I).
-    attr(iadd(I), order, 3) :- sinstance(I).
+    attr(iadd(I), order, 4) :- sinstance(I).
     attr(iadd(I), class, ("d-flex";"flex-row")) :- sinstance(I).
     % attr(iadd(I), background_color, white) :- sinstance(I).
-    attr(iadd(I), class, ("m-4")) :- sinstance(I), sinstance((F,(I,C))).
+    attr(iadd(I), class, ("m-3")) :- sinstance(I), sinstance((F,(I,C))).
 
         % Container per structre instance
         % elem(iposf((F,(P,C))), container, iadd(P)) :- pos_sinstance((F,(P,C))), sinstance(P), not sinstance((F,(P,C))).
@@ -146,6 +149,45 @@ elem(icontainer(()), container, w).
         % % attr(iposf(I), background_color, white) :- sinstance(I).
         % attr(iposf(I), class, ("bg-primary";"bg-opacity-10")) :- sinstance(I).
         % attr(iposf(I), class, ("d-flex";"flex-col";"border";"border-dark";"border-2";"rounded")) :- sinstance(I).
+
+    % Constraints 
+    elem(icons(I), container, icontainer(I)) :- sinstance(I).
+    attr(icons(I), order, 3) :- sinstance(I).
+    attr(icons(I), heigth, 50) :- sinstance(I).
+    attr(icons(I), class, ("d-flex";"flex-row")) :- sinstance(I).
+    attr(icons(I), class, ("m-3")) :- sinstance(I), cons(I,C).
+
+
+        elem(icons(I,C), container, icons(I)) :- cons(I,C).
+        attr(icons(I,C), class, "bg-warning") :- cons(I,C).
+        attr(icons(I,C), class, ("m-2";"p-2";"rounded")) :- cons(I,C).
+        attr(icons(I,C), class, ("d-flex";"flex-col";"align-items-start")) :- cons(I,C).
+        attr(icons(I,C), class, ("bg-warning";"bg-opacity-25")) :- cons(I,C).
+        attr(icons(I,C), class, ("bg-danger";"bg-opacity-50")) :- cons(I,C), _clinguin_muc(behavior(C)).
+        
+            % Require Labels 
+            elem(icons_lr(I,C), label, icons(I,C)) :- cons(I,C).
+            attr(icons_lr(I,C), label, S) :- cons(I,C), require(C, S).
+
+            % Condition Labels 
+            elem(icons_lc(I,C), label, icons(I,C)) :- cons(I,C).
+            attr(icons_lc(I,C), label, @concat("if ",S)) :- cons(I,C), condition(C, S).
+            attr(icons_lc(I,C), class, ("fw-light";"opacity-75")) :- cons(I,C), condition(C, S).
+
+            % Table Labels 
+            elem(icons_table(I,C), container, icons(I,C)) :- cons(I,C), combinations(C,_,_).
+            attr(icons_table(I,C), class, ("d-flex";"flex-row")) :- cons(I,C), combinations(C,_,_).
+            
+                elem(icons_table_col(I,C,Col), container,icons_table(I,C)) :- cons(I,C), combinations(C,Col,_).
+                attr(icons_table_col(I,C,Col), order, Col) :- cons(I,C), combinations(C,Col,_).
+                attr(icons_table_col(I,C,Col), class, ("d-flex";"flex-col")) :- cons(I,C), combinations(C,Col,_).
+
+                    allow(C,(Col,-1),Name):-cons(I,C), combinations(C,Col,Name).
+                    elem(icons_table_cell(I,C,Col,Row), label,icons_table_col(I,C,Col)) :- cons(I,C), allow(C,(Col,Row),Name).
+                    attr(icons_table_cell(I,C,Col,Row), label,Name) :- cons(I,C), allow(C,(Col,Row),Name).
+                    attr(icons_table_cell(I,C,Col,Row), order,Row+1) :- cons(I,C), allow(C,(Col,Row),Name).
+                    attr(icons_table_cell(I,C,Col,Row), class,("border";"border-dark";"border-1")) :- cons(I,C), allow(C,(Col,Row),Name).
+                    attr(icons_table_cell(I,C,Col,Row), class,("fw-lighter")) :- cons(I,C), allow(C,(Col,Row),Name), Row>=0.
 
 
     %%%%%%%%%%%%%%%%%%%%%%%%
