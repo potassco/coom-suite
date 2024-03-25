@@ -1,13 +1,13 @@
 """
-Tests checking the parser from COOM to ASP.
+Test cases for the parser from COOM to ASP.
 """
 
-import unittest
+from unittest import TestCase
 
 from . import parse_coom
 
 
-class TestMain(unittest.TestCase):
+class TestMain(TestCase):
     """
     Test cases for COOM to ASP parser.
     """
