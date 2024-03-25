@@ -1,3 +1,6 @@
+% TODOS
+% Use new clinguin version, for @format "",and for additing choices to assumptions
+% Idividual highlights when a constraint is hovered.
 
 % Auxiliaries
 sinstance(I):-_all(instance(I,S)), structure(S).
@@ -33,7 +36,7 @@ elem(icontainer(()), container, w).
         attr(ititle_l(I), order, 1) :- sinstance(I), instance(I,S).
 
         elem(ititle_t(I), label, ititle(I)) :- sinstance(I).
-        attr(ititle_t((F,(P,C))), label,  @format("({0})",S)) :- sinstance((F,(P,C))), instance((F,(P,C)),S).
+        attr(ititle_t((F,(P,C))), label,  @format("","({0})",S)) :- sinstance((F,(P,C))), instance((F,(P,C)),S).
         attr(ititle_t(I), class, ("m-2";"fw-lighter")) :- sinstance(I), instance(I,S).
         attr(ititle_t(I), order, 2) :- sinstance(I), instance(I,S).
 
@@ -81,7 +84,7 @@ elem(icontainer(()), container, w).
                 attr(eititle_l((F,(P,C))), order, 1) :- eorainstance((F,(P,C))), instance((F,(P,C)),S).
 
                 elem(eititle_t(I), label, eititle(I)) :- einstance(I).
-                attr(eititle_t((F,(P,C))), label, @format("({0})",S)) :- einstance((F,(P,C))), instance((F,(P,C)),S).
+                attr(eititle_t((F,(P,C))), label, @format("","({0})",S)) :- einstance((F,(P,C))), instance((F,(P,C)),S).
                 attr(eititle_t((F,(P,C))), class, ("fw-lighter";"small")) :- einstance((F,(P,C))), instance((F,(P,C)),S).
                 attr(eititle_t((F,(P,C))), order, 2) :- einstance((F,(P,C))), instance((F,(P,C)),S).
                 
@@ -171,7 +174,7 @@ elem(icontainer(()), container, w).
 
             % Condition Labels 
             elem(icons_lc(I,C), label, icons(I,C)) :- cons(I,C).
-            attr(icons_lc(I,C), label, @concat("if ",S)) :- cons(I,C), condition(C, S).
+            attr(icons_lc(I,C), label, @concat("","if ",S)) :- cons(I,C), condition(C, S).
             attr(icons_lc(I,C), class, ("fw-light";"opacity-75")) :- cons(I,C), condition(C, S).
 
             % Table Labels 

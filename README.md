@@ -16,6 +16,20 @@ Run the following for basic usage information:
 coomsolver -h
 ```
 
+## Clinguin
+
+Make sure you install clinguin with 
+
+```bash
+pip install clinguin
+```
+
+Run the following command to open the UI
+
+```bash
+clinguin client-server --domain-files src/coomsolver/encodings/clingo-city.lp examples/asp/city-bike.lp --ui-files src/coomsolver/encodings/ui.lp --backend ExplanationBackend  --assumption-signature behavior,1
+```
+
 ## Name ideas
 
 - coomsuite
