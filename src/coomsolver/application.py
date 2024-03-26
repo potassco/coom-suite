@@ -9,6 +9,7 @@ from typing import List, Sequence
 from clingo import Control
 from clingo.application import Application, ApplicationOptions  # , Flag
 
+from . import COOM_PROFILES, SOLVERS
 from .utils import get_encoding
 
 # from .utils.logging import get_logger
@@ -40,6 +41,11 @@ class COOMApp(Application):
         """
         Create application
         """
+        # if solver not in SOLVERS:
+        #     raise ValueError(f"Solver must be one of {', '.join(SOLVERS)}.")
+        # if profile not in COOM_PROFILES:
+        #     raise ValueError(f"Profile must be one of {', '.join(COOM_PROFILES)}.")
+
         self._input_files = []
         self._solver = "clingo" if solver == "" else solver
         self._profile = "travel" if profile == "" else profile

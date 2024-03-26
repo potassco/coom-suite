@@ -7,7 +7,9 @@ from argparse import ArgumentParser
 from textwrap import dedent
 from typing import Any, Optional, cast
 
-from . import COOM_PROFILES, SOLVERS, logging
+from coomsolver import COOM_PROFILES, SOLVERS
+
+from . import logging
 
 __all__ = ["get_parser"]
 

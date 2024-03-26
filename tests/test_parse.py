@@ -14,19 +14,19 @@ class TestMain(TestCase):
 
     def test_product(self) -> None:
         """
-        Test the 'product' keyword.
+        Test parsing the 'product' keyword.
         """
         self.assertEqual(parse_coom("product{}"), ['structure(":root").'])
 
     def test_structure(self) -> None:
         """
-        Test the 'structure' keyword.
+        Test parsing the 'structure' keyword.
         """
         self.assertEqual(parse_coom("structure Test {}"), ['\nstructure("Test").'])
 
     def test_feature(self) -> None:
         """
-        Test the 'feature' keyword.
+        Test parsing the 'feature' keyword.
         """
         self.assertEqual(
             parse_coom("product{Wheel wheel Frame frame}"),
@@ -55,7 +55,7 @@ class TestMain(TestCase):
 
     def test_enumeration(self) -> None:
         """
-        Test the 'enumeration' keyword.
+        Test parsing the 'enumeration' keyword.
         """
         self.assertEqual(
             parse_coom("enumeration Color {Red Green Yellow Blue}"),
@@ -111,7 +111,7 @@ class TestMain(TestCase):
 
     def test_behavior(self) -> None:
         """
-        Test the 'behavior' keyword.
+        Test parsing the 'behavior' keyword.
         """
         self.assertEqual(
             parse_coom("behavior{require a = b}"),
@@ -254,7 +254,7 @@ class TestMain(TestCase):
 
     def test_condition(self) -> None:
         """
-        Test the 'condition' keyword.
+        Test parsing the 'condition' keyword.
         """
         self.assertEqual(
             parse_coom("behavior{require a = b || a = c}"),
@@ -350,7 +350,7 @@ class TestMain(TestCase):
 
     def test_formula(self) -> None:
         """
-        Test behavior with arithmetic formulas.
+        Test parsing behavior with arithmetic formulas.
         """
         self.assertEqual(
             parse_coom("behavior{require a = b + c}"),
@@ -583,7 +583,7 @@ class TestMain(TestCase):
 
     def test_path(self) -> None:
         """
-        Test behavior with path expressions.
+        Test parsing behavior with path expressions.
         """
         self.assertEqual(
             parse_coom("behavior{require a = b.c.d.e.f}"),

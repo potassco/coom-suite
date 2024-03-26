@@ -13,14 +13,12 @@ from .coom_grammar.ModelLexer import ModelLexer
 from .coom_grammar.ModelParser import ModelParser
 
 # mypy: allow-untyped-calls
-SOLVERS = ["clingo"]  # , "fclingo"]
-COOM_PROFILES = ["kids", "city", "travel"]
 
 
 def get_encoding(file_name: str) -> str:  # nocoverage
     """Gets the path to a given ASP encoding in the encodings folder
 
-    Input:
+    Args:
         file_name (str): The name of the ASP encoding with the extension
 
     Returns:
@@ -33,7 +31,7 @@ def get_encoding(file_name: str) -> str:  # nocoverage
 def run_antlr4_visitor(coom_input_stream: InputStream) -> List[str]:
     """Runs the ANTLR4 Visitor.
 
-    Input:
+    Args:
         coom_input_stream (antlr4.InputStream): The input COOM encoding as a file stream
 
     Returns:

@@ -12,6 +12,9 @@ from .utils.logging import get_logger
 
 log = get_logger("main")
 
+SOLVERS = ["clingo"]  # , "fclingo"]
+COOM_PROFILES = ["kids", "city", "travel"]
+
 
 def convert_instance(coom_file: str, output_dir: Optional[str] = None) -> None:  # nocoverage
     """
@@ -24,7 +27,6 @@ def convert_instance(coom_file: str, output_dir: Optional[str] = None) -> None: 
     if output_dir is None:
         output_lp_file = coom_file.replace(".coom", ".lp")
     else:
-
         output_lp_file = join(output_dir, basename(coom_file).replace(".coom", ".lp"))
 
     input_stream = FileStream(coom_file, encoding="utf-8")
@@ -33,3 +35,5 @@ def convert_instance(coom_file: str, output_dir: Optional[str] = None) -> None: 
     with open(output_lp_file, "w", encoding="utf8") as f:
         f.write("\n".join(asp_instance))
     log.info("ASP file saved in %s", output_lp_file)
+
+    return output_lp_file

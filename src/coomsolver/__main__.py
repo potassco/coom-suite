@@ -3,13 +3,13 @@ The main entry point for the application.
 """
 
 import sys
-from tempfile import NamedTemporaryFile
+from tempfile import TemporaryDirectory
 
 from clingo.application import clingo_main
 
 from . import convert_instance
 from .application import COOMApp
-from .utils.logging import configure_logging  # , get_logger
+from .utils.logging import configure_logging, get_logger
 from .utils.parser import get_parser
 
 
@@ -21,7 +21,7 @@ def main():
     args = parser.parse_args()
     configure_logging(sys.stderr, args.log, sys.stderr.isatty())
 
-    # log = get_logger("main")
+    log = get_logger("main")
 
     # log.info("info")
     # log.warning("warning")
@@ -31,13 +31,15 @@ def main():
     print(args.input)
 
     if args.command == "convert":
-        convert_instance(args.input, args.output)
+        output_lp_file = convert_instance(args.input, args.output)
+        log.info("ASP file saved in %s", output_lp_file)
     elif args.command == "solve":
-        with NamedTemporaryFile(suffix=".lp") as temp:
-            convert_instance(args.input, temp.name)
+        log.info("Converting and solving COOM file %s", args.input)
+        with TemporaryDirectory() as temp_dir:
+            output_lp_file = convert_instance(args.input, temp_dir)
             clingo_main(
                 COOMApp(solver=args.solver, profile=args.profile),
-                [temp.name] + ["--out-ifs=\\n", "--out-atomf=%s."],
+                [output_lp_file] + ["--out-ifs=\\n", "--out-atomf=%s."],
             )
 
 
