@@ -85,5 +85,5 @@ class TestMain(TestCase):
         combinations((":root",0),0,"a").
         path("a",0,a)."""
 
-        test = Assert(Exact(0), False_)
+        test = Assert(Exact(0), False_)  # type: ignore # falsely views False_ as not of type Assertion
         self.run_test(test, program=program)

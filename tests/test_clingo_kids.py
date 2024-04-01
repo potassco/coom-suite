@@ -5,7 +5,7 @@ Test cases for the clingo kids bike encoding.
 from typing import List, Optional
 from unittest import TestCase
 
-from clintest.assertion import And, Contains, SupersetOf, True_
+from clintest.assertion import Contains, SupersetOf, True_
 from clintest.quantifier import All, Any, Exact
 from clintest.test import And as AndTest
 from clintest.test import Assert, Test

@@ -16,7 +16,7 @@ SOLVERS = ["clingo"]  # , "fclingo"]
 COOM_PROFILES = ["kids", "city", "travel"]
 
 
-def convert_instance(coom_file: str, output_dir: Optional[str] = None) -> None:  # nocoverage
+def convert_instance(coom_file: str, output_dir: Optional[str] = None) -> str:  # nocoverage
     """
     Converts a COOM instance into ASP
     Args:

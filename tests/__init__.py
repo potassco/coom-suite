@@ -23,7 +23,7 @@ def parse_coom(coom_input: str) -> List[str]:
     return run_antlr4_visitor(input_stream)
 
 
-def compose(on_app: Callable, on_test: Callable) -> Callable:
+def compose(on_app: Callable, on_test: Callable) -> Callable:  # type: ignore
     """
     Composes two functions
     Args:
@@ -31,7 +31,7 @@ def compose(on_app: Callable, on_test: Callable) -> Callable:
         on_test (Callable): Function for the test
     """
 
-    def f(*args):
+    def f(*args):  # type: ignore
         """Composed function"""
         if on_app is not None:
             on_app(*args)
@@ -40,17 +40,21 @@ def compose(on_app: Callable, on_test: Callable) -> Callable:
     return f
 
 
-def get_solver(program: Optional[str] = "", files=None, ctl_args=None, **kwargs) -> Solver:
+def get_solver(
+    program: Optional[str] = "", files: Optional[List[str]] = None, ctl_args: Optional[List[str]] = None, **kwargs: str
+) -> Solver:
     """
     Gets the test solver for the tests
     Args:
         program (Optional[str], optional): A clingo program. Defaults to "".
         files (Optional[str], optional): List of files saved in examples/tests
+        ctl_args
     Returns:
         _type_: The solver wrapping the application class
     """
     coom_app = COOMApp("coom", **kwargs)
     files = [] if files is None else files
+    ctl_args = [] if ctl_args is None else ctl_args
     file_paths = [os.path.join("examples", "tests", f) for f in files]
     return AppSolver(application=coom_app, files=file_paths, program=program, arguments=ctl_args)
 
@@ -64,25 +68,25 @@ class MockControl:
         self,
         test: Test,
         arguments: Optional[Sequence[str]] = None,
-    ):
+    ) -> None:
         arguments = [] if arguments is None else arguments
         self._test = test
         self._ctl = Control(arguments=arguments)
 
-    def __getattr__(self, attr):
+    def __getattr__(self, attr):  # type: ignore
         try:
             return self._ctl.__getattribute__(attr)
         except AttributeError:
             return self.__get_global_handler(attr)
 
-    def solve(
+    def solve(  # type: ignore
         self,
         on_model=None,
         on_unsat=None,
         on_core=None,
         on_statistics=None,
         on_finish=None,
-    ):
+    ) -> None:
         """
         Replaced the solve of the control by calling first internal callbacks and then
         the ones from the test
