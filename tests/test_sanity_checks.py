@@ -55,11 +55,25 @@ class TestMain(TestCase):
         attr_value("a","a1",b,1)."""
         self.run_test(test_empty, program=program_enum_attr)
 
+    def test_no_feature(self) -> None:
+        """
+        Test solving programs without feature.
+        """
+        test_root_only = Assert(All(), Equals({'instance((),":root")'}))
+        program_no_feature = """
+        structure(":root").
+        enumeration("a").
+        option("a","a1").
+        option("a","a2")."""
+        self.run_test(test_root_only, program=program_no_feature)
+
     def test_undef(self) -> None:
         """
         Test solving constraints with undefined path expressions.
         """
-        program = """
+        test_root_only = Assert(All(), Equals({'instance((),":root")'}))
+
+        program_require = """
         structure(":root").
 
         behavior((":root",0)).
@@ -68,8 +82,22 @@ class TestMain(TestCase):
         path("color",0,color).
         constant("Silver")."""
 
-        test = Assert(All(), Equals({'instance((),":root")'}))
-        self.run_test(test, program=program)
+        self.run_test(test_root_only, program=program_require)
+
+        program_condition = """
+        structure(":root").
+
+        behavior((":root",0)).
+        condition((":root",0),"color=Silver").
+        binary(":root","color=Silver","color","=","Silver").
+        path("color",0,color).
+        constant("Silver").
+        require((":root",0),"size=Big").
+        binary(":root","size=Big","size","=","Big").
+        path("size",0,size).
+        constant("Big")."""
+
+        self.run_test(test_root_only, program=program_condition)
 
     def test_empty_combinations(self) -> None:
         """

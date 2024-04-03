@@ -14,7 +14,7 @@ dependencies = [
     "antlr4-python3-runtime==4.9.3",
     "clingo",
     "importlib_resources",
-    "clintest",
+    "clintest>=0.2.0",
 ]
 license = { file = "LICENSE" }
 dynamic = ["version"]

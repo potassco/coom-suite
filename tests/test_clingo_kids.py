@@ -5,7 +5,7 @@ Test cases for the clingo kids bike encoding.
 from typing import List, Optional
 from unittest import TestCase
 
-from clintest.assertion import Contains, SupersetOf, True_
+from clintest.assertion import And, Contains, Implies, SupersetOf, True_
 from clintest.quantifier import All, Any, Exact
 from clintest.test import And as AndTest
 from clintest.test import Assert, Test
@@ -61,11 +61,23 @@ class TestMain(TestCase):
         """
         Test solving condition constraints with the clingo kids bike encoding.
         """
+        test_condition = Assert(
+            All(), Implies(Contains('val((wheelSupport,((),0)),"True")'), Contains('val((wheel,((),0)),"Small")'))
+        )
+        self.run_test(test_condition, files=["condition.lp"])
 
     def test_combinations_kids(self) -> None:
         """
         Test solving combinations constraints with the clingo kids bike encoding.
         """
+        test_combination = AndTest(
+            Assert(Any(), And(Contains('val((wheelSupport,((),0)),"False")'), Contains('val((wheel,((),0)),"W20")'))),
+            Assert(Any(), And(Contains('val((wheelSupport,((),0)),"False")'), Contains('val((wheel,((),0)),"W18")'))),
+            Assert(Any(), And(Contains('val((wheelSupport,((),0)),"True")'), Contains('val((wheel,((),0)),"W16")'))),
+            Assert(Any(), And(Contains('val((wheelSupport,((),0)),"True")'), Contains('val((wheel,((),0)),"W14")'))),
+            Assert(Exact(4), True_()),
+        )
+        self.run_test(test_combination, files=["combination.lp"])
 
     def test_enumeration_kids(self) -> None:
         """
