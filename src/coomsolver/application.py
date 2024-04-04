@@ -3,10 +3,9 @@ Clingo application class extended to solve COOM configuration problems
 """
 
 import textwrap
-from typing import List, Sequence
+from typing import Callable, List, Optional, Sequence, Tuple
 
-# from clingo import Function, Model, Number, Symbol
-from clingo import Control
+from clingo import Control, Model, Symbol
 from clingo.application import Application, ApplicationOptions  # , Flag
 
 from .utils import get_encoding
@@ -17,37 +16,68 @@ from .utils import get_encoding
 # log = get_logger("main")
 
 
-# def _sym_to_prg(symbols: Sequence[Symbol]):  # nocoverage
-#     """
-#     Turns symbols into a program
-#     """
-#     return "\n".join([f"{str(s)}." for s in symbols])
+def _unpack_path(p: Symbol, l: List[Tuple[str, str]]) -> List[Tuple[str, str]]:  # nocoverage
+    """
+    Recursively unpacks a nested path expression into a list of tuples.
+    """
+    if str(p) != "()":
+        t = (p.arguments[0].name, str(p.arguments[1].arguments[1].number))
+        l.insert(0, t)
+        _unpack_path(p.arguments[1].arguments[0], l)
+    return l
+
+
+def _format_sym(s: Symbol) -> str:  # nocoverage
+    """
+    Formats output symbols.
+    """
+    if s.name == "instance":
+        path = _unpack_path(s.arguments[0], [])
+        return ".".join([f"{p[0]}[{p[1]}]" for p in path])
+    if s.name == "val":
+        path = _unpack_path(s.arguments[0], [])
+        path_joined = ".".join([f"{p[0]}[{p[1]}]" for p in path])
+        return f"{path_joined} = {str(s.arguments[1])}"
+    raise ValueError("Unrecognized predicate.")
+
+
+def _sym_to_prg(symbols: Sequence[Symbol], output: Optional[str] = "asp") -> str:  # nocoverage
+    """
+    Turns symbols into a program.
+    """
+    if output == "asp":
+        output_list = [f"{str(s)}" for s in sorted(symbols)]
+    elif output == "coom":
+        output_list = [f"{_format_sym(s)}" for s in sorted(symbols)][1:]  # First element is root = empty string
+    return "\n".join(output_list)
 
 
 class COOMApp(Application):
     """
-    Application class extending clingo
+    Application class extending clingo.
     """
 
-    _log_level: str
     _input_files: List[str]
     _solver: str
     _profile: str
+    _output: str
+    _log_level: str
     program_name: str = "COOM solver"
     version: str = "0.1"
 
-    def __init__(self, log_level: str = "", solver: str = "", profile: str = ""):
+    def __init__(self, log_level: str = "", solver: str = "", profile: str = "", output: str = ""):
         """
-        Create application
+        Create application.
         """
         self._input_files = []
         self._solver = "clingo" if solver == "" else solver
         self._profile = "travel" if profile == "" else profile
+        self._output = "asp" if output == "" else output
         self._log_level = "WARNING" if log_level == "" else log_level
 
     def parse_log_level(self, log_level: str) -> bool:  # nocoverage
         """
-        Parse log
+        Parse log.
         """
         if log_level is not None:
             self._log_level = log_level.upper()
@@ -57,7 +87,7 @@ class COOMApp(Application):
 
     def register_options(self, options: ApplicationOptions) -> None:  # nocoverage
         """
-        Add custom options
+        Add custom options.
         """
         group = "Clingo.COOM"
         options.add(
@@ -78,7 +108,7 @@ class COOMApp(Application):
 
     # def on_model(self, model: Model) -> None:
     #     """
-    #     Function called after finding each model
+    #     Function called after finding each model.
     #     Args:
     #         model (Model): clingo Model
     #     """
@@ -96,26 +126,15 @@ class COOMApp(Application):
     #         )
     #     )
 
-    # def print_model(self, model: Model, printer) -> None:  # nocoverage
-    #     """
-    #     Print a model on the console
-    #     """
-    #     solution = _sym_to_prg(model.symbols(shown=True, theory=True))
-    #     if self._option == "check" and len(solution) > 0:
-    #         sys.stdout.write("\033[0;31m")
-    #     else:
-    #         sys.stdout.write("\033[0;32m")
-    #     sys.stdout.write(solution)
-    #     if self._option == "check" and len(solution) == 0:
-    #         sys.stdout.write("All checks passed!")
-    #     sys.stdout.write("\033[0m\n")
-    #     if self._view:
-    #         solution = _sym_to_prg(model.symbols(shown=True, atoms=True, theory=True))
-    #         add_atexit_clinguin(solution=solution, scale=self._scale)
+    def print_model(self, model: Model, printer: Callable[[], None]) -> None:  # nocoverage
+        """
+        Print a model on the console.
+        """
+        print(_sym_to_prg(model.symbols(shown=True), self._output))
 
     def main(self, control: Control, files: Sequence[str]) -> None:
         """
-        Main function ran on call
+        Main function ran on call.
         """
 
         self._input_files = list(files)
