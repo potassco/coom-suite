@@ -16,6 +16,13 @@ pos_sinstance(I):-_any(instance(I,S)), structure(S).
 
 cons(I,(C,N)):-_all(constraint(I,(C,N))).
 
+single_instance((I,(I',0))):-sinstance((I,(I',0))), not sinstance((I,(I',1))).
+has_larger_instance((I,(I',N))):-sinstance((I,(I',N))), sinstance((I,(I',N+1))).
+
+sub_type(I,(I',(I,C))):-_all(instance(I,_)), _all(instance((I',(I,C)),_)).
+            sub_type(I,I''):- sub_type(I,I'), sub_type(I',I'').
+            sub_type(I,I):- _all(instance(I,_)).
+
 % For debugging
 % attr(E,class,("border-1";"border";"border-dark")):- elem(E, container, _).
 
@@ -31,7 +38,8 @@ elem(icontainer(()), container, w).
     attr(ititle(I), class, ("d-flex";"flex-row")) :- sinstance(I).
     
         elem(ititle_l(I), label, ititle(I)) :- sinstance(I).
-        attr(ititle_l((F,(P,C))), label,F) :- sinstance((F,(P,C))), instance((F,(P,C)),S).
+        attr(ititle_l((F,(P,C))), label,@concat("",F," [",C,"]")) :- sinstance((F,(P,C))), instance((F,(P,C)),S), not single_instance((F,(P,C))).
+        attr(ititle_l((F,(P,C))), label,F) :- sinstance((F,(P,C))), instance((F,(P,C)),S), single_instance((F,(P,C))).
         attr(ititle_l(I), class, ("h4")) :- sinstance(I), instance(I,S).
         attr(ititle_l(I), order, 1) :- sinstance(I), instance(I,S).
 
@@ -44,14 +52,15 @@ elem(icontainer(()), container, w).
         elem(ititle_bc(I), container, ititle(I)) :- assumed_sinstance(I).
         attr(ititle_bc((F,(P,C))), class,  ("ms-auto")) :- assumed_sinstance((F,(P,C))), instance((F,(P,C)),S).
         attr(ititle_bc((F,(P,C))), order,  3) :- assumed_sinstance((F,(P,C))), instance((F,(P,C)),S).
-            elem(ititle_b(I), button, ititle_bc(I)) :- assumed_sinstance(I).
-            attr(ititle_b((F,(P,C))), icon,  "fa-xmark") :- assumed_sinstance((F,(P,C))), instance((F,(P,C)),S).
-            when(ititle_b(I), click,  call, remove_assumption(instance(I,S))) :- assumed_sinstance(I), instance(I,S).
-            % Remove options
-            when(ititle_b(I), click,  call, remove_assumption_signature(val((F,(I,C)),any))) :- assumed_sinstance(I), einstance((F,(I,C))).
+            %Remove
+            elem(ititle_b(I), button, ititle_bc(I)) :- assumed_sinstance(I), not has_larger_instance(I).
+            attr(ititle_b((F,(P,C))), icon,  "fa-xmark") :- assumed_sinstance((F,(P,C))), instance((F,(P,C)),S), not has_larger_instance((F,(P,C))).
+            when(ititle_b(I), click,  call, remove_assumption(instance(I',S))) :- assumed_sinstance(I), sub_type(I,I'), instance(I',S), not has_larger_instance(I).
+            when(ititle_b(I), click,  call, remove_assumption_signature(val(I',any))) :- assumed_sinstance(I), sub_type(I,I'), not has_larger_instance(I).
             % Remove attr
-            when(ititle_b(I), click,  call, remove_assumption_signature(val((F',((F,(I,C)),C')),any))) :- assumed_sinstance(I), einstance((F,(I,C))), ainstance((F',((F,(I,C)),C'))).
-
+            % when(ititle_b(I), click,  call, remove_assumption_signature(val((F',((F,(I',C)),C')),any))) :- assumed_sinstance(I), sub_type(I,I'), einstance((F,(I,C))), ainstance((F',((F,(I,C)),C'))).
+            % Remove sub instance
+            % when(ititle_b(I), click,  call, remove_assumption(instance((I',(I,C)),S))) :- assumed_sinstance(I), assumed_sinstance((I',(I,C))), instance((I',(I,C)),S).
 
     % Enumerations 
     elem(ienumerations(I), container, icontainer(I)) :- sinstance(I).
@@ -123,6 +132,7 @@ elem(icontainer(()), container, w).
 
         % Container per structre instance
         elem(icontainer((F,(P,C))), container, ifeatures(P)) :- sinstance((F,(P,C))), sinstance(P).
+        attr(icontainer((F,(P,C))), order, C) :- sinstance((F,(P,C))).
         attr(icontainer(I), class, ("m-2";"p-2")) :- sinstance(I).
         % attr(icontainer(I), background_color, "#98B3EA") :- sinstance(I).
         % attr(icontainer(I), background_color, white) :- sinstance(I).
@@ -171,11 +181,13 @@ elem(icontainer(()), container, w).
             % Require Labels 
             elem(icons_lr(I,C), label, icons(I,C)) :- cons(I,C).
             attr(icons_lr(I,C), label, S) :- cons(I,C), require(C, S).
+            attr(icons_lr(I,C), order, 2) :- cons(I,C), require(C, S).
 
             % Condition Labels 
             elem(icons_lc(I,C), label, icons(I,C)) :- cons(I,C).
             attr(icons_lc(I,C), label, @concat("","if ",S)) :- cons(I,C), condition(C, S).
             attr(icons_lc(I,C), class, ("fw-light";"opacity-75")) :- cons(I,C), condition(C, S).
+            attr(icons_lc(I,C), order, 1) :- cons(I,C), condition(C, S).
 
             % Table Labels 
             elem(icons_table(I,C), container, icons(I,C)) :- cons(I,C), combinations(C,_,_).
@@ -186,11 +198,18 @@ elem(icontainer(()), container, w).
                 attr(icons_table_col(I,C,Col), class, ("d-flex";"flex-col")) :- cons(I,C), combinations(C,Col,_).
 
                     allow(C,(Col,-1),Name):-cons(I,C), combinations(C,Col,Name).
-                    elem(icons_table_cell(I,C,Col,Row), label,icons_table_col(I,C,Col)) :- cons(I,C), allow(C,(Col,Row),Name).
-                    attr(icons_table_cell(I,C,Col,Row), label,Name) :- cons(I,C), allow(C,(Col,Row),Name).
-                    attr(icons_table_cell(I,C,Col,Row), order,Row+1) :- cons(I,C), allow(C,(Col,Row),Name).
-                    attr(icons_table_cell(I,C,Col,Row), class,("border";"border-dark";"border-1")) :- cons(I,C), allow(C,(Col,Row),Name).
-                    attr(icons_table_cell(I,C,Col,Row), class,("fw-lighter")) :- cons(I,C), allow(C,(Col,Row),Name), Row>=0.
+                    elem(icons_table_row(I,C,Col,Row), container,icons_table_col(I,C,Col)) :- cons(I,C), allow(C,(Col,Row),Name).
+                    attr(icons_table_row(I,C,Col,Row), class,("d-flex";"flex-row")) :- cons(I,C), allow(C,(Col,Row),Name).
+                    attr(icons_table_row(I,C,Col,Row), order,Row+1) :- cons(I,C), allow(C,(Col,Row),Name).
+                    attr(icons_table_row(I,C,Col,Row), class,("border";"border-dark";"border-1")) :- cons(I,C), allow(C,(Col,Row),Name).
+                    
+                        % elem(icons_table_cell(I,C,Col,Row), label,icons_table_row(I,C,Col,Row)) :- cons(I,C), allow(C,(Col,Row),Name).
+                        % attr(icons_table_cell(I,C,Col,Row), label,Name) :- cons(I,C), allow(C,(Col,Row),Name).
+                        % attr(icons_table_cell(I,C,Col,Row), class,("fw-lighter")) :- cons(I,C), allow(C,(Col,Row),Name), Row>=0.
+
+                        elem(icons_table_cell(I,C,Col,Row,Name), label,icons_table_row(I,C,Col,Row)) :- cons(I,C), allow(C,(Col,Row),Name).
+                        attr(icons_table_cell(I,C,Col,Row,Name), label,Name) :- cons(I,C), allow(C,(Col,Row),Name).
+                        attr(icons_table_cell(I,C,Col,Row,Name), class,("fw-lighter";"p-1")) :- cons(I,C), allow(C,(Col,Row),Name), Row>=0.
 
 
     %%%%%%%%%%%%%%%%%%%%%%%%
@@ -226,7 +245,7 @@ elem(icontainer(()), container, w).
         elem(menu_bar_select, button, menu_bar).
         attr(menu_bar_select, label, "Select solution").
         attr(menu_bar_select, icon, "fa-hand-pointer").
-        when(menu_bar_select, click, call, select).
+        when(menu_bar_select, click, call, select("#show instance/2. #show val/2.")).
 
         elem(menu_bar_next, button, menu_bar).
         attr(menu_bar_next, label, "Next").
