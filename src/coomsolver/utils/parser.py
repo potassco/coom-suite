@@ -90,7 +90,7 @@ def get_parser() -> ArgumentParser:
         help="Path to the COOM file to solve",
         # metavar='',
     )
-    parser_solve.add_argument("--solver", type=str, help="Set solver", choices=SOLVERS, default="clingo")
+    parser_solve.add_argument("--solver", "-s", type=str, help="Set solver", choices=SOLVERS, default="clingo")
 
     parser_solve.add_argument("--profile", type=str, help="Set COOM profile", choices=COOM_PROFILES, default="travel")
     parser_solve.add_argument(
