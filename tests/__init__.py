@@ -124,6 +124,6 @@ class AppSolver(Solver):
             self.__files.append(tmp_name)
 
     def solve(self, test: Test) -> None:
-        """Solves with clintest"""
+        """Solves with clintest."""
         ctl = MockControl(test, self.__arguments)
         self.__application.main(control=ctl, files=self.__files)  # type: ignore

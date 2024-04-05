@@ -3,42 +3,17 @@ Clingo application class extended to solve COOM configuration problems
 """
 
 import textwrap
-from typing import Callable, List, Optional, Sequence, Tuple
+from typing import Callable, List, Optional, Sequence
 
 from clingo import Control, Model, Symbol
 from clingo.application import Application, ApplicationOptions  # , Flag
 
-from .utils import get_encoding
+from .utils import format_sym_coom, get_encoding
 
 # from .utils.logging import get_logger
 
 
 # log = get_logger("main")
-
-
-def _unpack_path(p: Symbol, l: List[Tuple[str, str]]) -> List[Tuple[str, str]]:  # nocoverage
-    """
-    Recursively unpacks a nested path expression into a list of tuples.
-    """
-    if str(p) != "()":
-        t = (p.arguments[0].name, str(p.arguments[1].arguments[1].number))
-        l.insert(0, t)
-        _unpack_path(p.arguments[1].arguments[0], l)
-    return l
-
-
-def _format_sym(s: Symbol) -> str:  # nocoverage
-    """
-    Formats output symbols.
-    """
-    if s.name == "instance":
-        path = _unpack_path(s.arguments[0], [])
-        return ".".join([f"{p[0]}[{p[1]}]" for p in path])
-    if s.name == "val":
-        path = _unpack_path(s.arguments[0], [])
-        path_joined = ".".join([f"{p[0]}[{p[1]}]" for p in path])
-        return f"{path_joined} = {str(s.arguments[1])}"
-    raise ValueError("Unrecognized predicate.")
 
 
 def _sym_to_prg(symbols: Sequence[Symbol], output: Optional[str] = "asp") -> str:  # nocoverage
@@ -48,7 +23,7 @@ def _sym_to_prg(symbols: Sequence[Symbol], output: Optional[str] = "asp") -> str
     if output == "asp":
         output_list = [f"{str(s)}" for s in sorted(symbols)]
     elif output == "coom":
-        output_list = [f"{_format_sym(s)}" for s in sorted(symbols)][1:]  # First element is root = empty string
+        output_list = [f"{format_sym_coom(s)}" for s in sorted(symbols)][1:]  # First element is root = empty string
     return "\n".join(output_list)
 
 
