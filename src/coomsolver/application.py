@@ -3,7 +3,7 @@ Clingo application class extended to solve COOM configuration problems
 """
 
 import textwrap
-from typing import Callable, List, Optional, Sequence
+from typing import Callable, Optional, Sequence
 
 from clingcon import ClingconTheory
 from clingo import Control, Model, Symbol
@@ -39,7 +39,6 @@ class COOMApp(Application):
     Application class extending clingo.
     """
 
-    _input_files: List[str]
     _solver: str
     _profile: str
     _output: str
@@ -53,15 +52,12 @@ class COOMApp(Application):
         """
         Create application.
         """
-        self._input_files = []
         self._solver = "clingo" if solver == "" else solver
         self._profile = "travel" if profile == "" else profile
         self._output = "asp" if output == "" else output
         self._log_level = "WARNING" if log_level == "" else log_level
-        self.config = FclingoConfig(
-            MIN_INT, MAX_INT, Flag(False), Flag(False), DEF
-        )  #  if solver == "fclingo" else None
-        self._propagator = ClingconTheory()  # if solver == "fclingo" else None
+        self.config = FclingoConfig(MIN_INT, MAX_INT, Flag(False), Flag(False), DEF)
+        self._propagator = ClingconTheory()
 
     def parse_log_level(self, log_level: str) -> bool:  # nocoverage
         """
@@ -103,8 +99,18 @@ class COOMApp(Application):
         if self._solver == "fclingo":
             self._propagator.on_model(model)
 
-            log.debug("------- Full model -----")
-            log.debug("\n".join([str(s) for s in model.symbols(atoms=True, shown=True, theory=True)]))
+            valuation = [
+                Function("val", assignment.arguments)
+                for assignment in model.symbols(theory=True)
+                if assignment.name == CSP
+                and len(assignment.arguments) == 2
+                and model.contains(Function(DEF, [assignment.arguments[0]]))
+                and not assignment.arguments[0].name == AUX
+            ]
+            model.extend(valuation)
+
+        log.debug("------- Full model -----")
+        log.debug("\n".join([str(s) for s in model.symbols(atoms=True, shown=True, theory=True)]))
 
     def print_model(self, model: Model, printer: Callable[[], None]) -> None:  # nocoverage
         """
@@ -119,15 +125,7 @@ class COOMApp(Application):
                 for atom in model.symbols(shown=True)
                 if not (atom.name == self.config.defined and len(atom.arguments) == 1)
             ]
-            valuation = [
-                Function("val", assignment.arguments)
-                for assignment in model.symbols(theory=True)
-                if assignment.name == CSP
-                and len(assignment.arguments) == 2
-                and model.contains(Function(self.config.defined, [assignment.arguments[0]]))
-                and not assignment.arguments[0].name == AUX
-            ]
-            output_symbols.extend(valuation)
+            output_symbols.extend([a for a in model.symbols(theory=True) if a.name == "val"])
 
         print(_sym_to_prg(output_symbols, self._output))
 
@@ -136,12 +134,12 @@ class COOMApp(Application):
         Main function ran on call.
         """
 
-        self._input_files = list(files)
+        input_files = list(files)
         encoding = get_encoding(f"{self._solver}-{self._profile}.lp")
-        self._input_files.extend([encoding])
+        input_files.extend([encoding])
 
         if self._solver == "clingo":
-            for f in self._input_files:
+            for f in input_files:
                 control.load(f)
 
             control.ground()
@@ -154,7 +152,8 @@ class COOMApp(Application):
             with ProgramBuilder(control) as bld:
                 hbt = HeadBodyTransformer()
 
-                parse_files(self._input_files, lambda ast: bld.add(hbt.visit(ast)))
+                parse_files(input_files, lambda ast: bld.add(hbt.visit(ast)))
+
                 pos = Position("<string>", 1, 1)
                 loc = Location(pos, pos)
                 for rule in hbt.rules_to_add:

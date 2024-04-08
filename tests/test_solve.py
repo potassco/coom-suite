@@ -1,0 +1,119 @@
+"""
+Test cases for solving.
+"""
+
+from typing import Any
+from unittest import TestCase
+
+from . import run_test
+from .tests import TESTS
+
+# pylint: disable=deprecated-method
+
+
+class TestClingoKids(TestCase):
+    """
+    Test cases for the clingo kids bike encoding.
+    """
+
+    def run_test(self, test: dict[str, Any]) -> None:
+        """Runs a clintest test with the clingo kids bike encoding.
+
+        Args:
+            test (dict): The clintest test as a dictionary.
+                         Should contain keys:
+                            "test" (clintest.Test)
+                            "files" (List[str] or "program" (str)
+        """
+        program = test.get("program", None)
+        files = test.get("files", None)
+        run_test(test["test"], files=files, program=program, ctl_args=["0"], solver="clingo", profile="kids")
+
+    def test_require(self) -> None:
+        """
+        Test solving require constraints with the clingo kids bike encoding.
+        """
+        self.run_test(TESTS["require_with_number"])
+        self.run_test(TESTS["require_with_number_ge"])
+        self.run_test(TESTS["require_with_constant"])
+        self.run_test(TESTS["require_two_wheels"])
+
+    def test_condition(self) -> None:
+        """
+        Test solving condition constraints with the clingo kids bike encoding.
+        """
+        self.run_test(TESTS["condition"])
+
+    def test_combinations(self) -> None:
+        """
+        Test solving combinations constraints with the clingo kids bike encoding.
+        """
+        self.run_test(TESTS["combination"])
+
+    def test_enumeration(self) -> None:
+        """
+        Test solving enumeration features with the clingo kids bike encoding.
+        """
+        self.run_test(TESTS["enumeration"])
+        self.run_test(TESTS["bool_enumeration"])
+
+    def test_attribute(self) -> None:
+        """
+        Test solving enumeration features with attributes with the clingo kids bike encoding.
+        """
+        self.run_test(TESTS["attribute"])
+
+
+class TestFclingoKids(TestCase):
+    """
+    Test cases for the fclingo kids bike encoding.
+    """
+
+    def run_test(self, test: dict[str, Any]) -> None:
+        """Runs a clintest test with the fclingo kids bike encoding.
+
+        Args:
+            test (dict): The clintest test as a dictionary.
+                         Should contain keys:
+                            "test" (clintest.Test)
+                            "files" (List[str] or "program" (str)
+                            "ftest" (Optional[clintest.Test]): A clintest for fclingo
+        """
+        fclingo_test = test.get("ftest", test["test"])
+        program = test.get("program", None)
+        files = test.get("files", None)
+        run_test(fclingo_test, files=files, program=program, ctl_args=["0"], solver="fclingo", profile="kids")
+
+    def test_require(self) -> None:
+        """
+        Test solving require constraints with the fclingo kids bike encoding.
+        """
+        self.run_test(TESTS["require_with_number"])
+        self.run_test(TESTS["require_with_number_ge"])
+        self.run_test(TESTS["require_with_constant"])
+        self.run_test(TESTS["require_two_wheels"])
+
+    def test_condition(self) -> None:
+        """
+        Test solving condition constraints with the clingo kids bike encoding.
+        """
+        self.run_test(TESTS["condition"])
+
+    def test_combinations(self) -> None:
+        """
+        Test solving combinations constraints with the clingo kids bike encoding.
+        """
+        self.run_test(TESTS["combination"])
+
+    def test_enumeration(self) -> None:
+        """
+        Test solving enumeration features with the clingo kids bike encoding.
+        """
+        self.run_test(TESTS["enumeration"])
+        self.run_test(TESTS["bool_enumeration"])
+
+    def test_attribute(self) -> None:
+        """
+        Test solving enumeration features with attributes with the clingo kids bike encoding.
+        """
+        self.run_test(TESTS["attribute"])
