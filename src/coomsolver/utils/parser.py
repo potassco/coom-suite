@@ -92,7 +92,7 @@ def get_parser() -> ArgumentParser:
     )
     parser_solve.add_argument("--solver", "-s", type=str, help="Set solver", choices=SOLVERS, default="clingo")
 
-    parser_solve.add_argument("--profile", type=str, help="Set COOM profile", choices=COOM_PROFILES, default="travel")
+    parser_solve.add_argument("--profile", type=str, help="Set COOM profile", choices=COOM_PROFILES, default="num")
     parser_solve.add_argument(
         "--models", "-n", type=int, help="Compute at most <n> models (0 for all)", default=None, metavar="<n>"
     )

@@ -53,7 +53,7 @@ class COOMApp(Application):
         Create application.
         """
         self._solver = "clingo" if solver == "" else solver
-        self._profile = "travel" if profile == "" else profile
+        self._profile = "num" if profile == "" else profile
         self._output = "asp" if output == "" else output
         self._log_level = "WARNING" if log_level == "" else log_level
         self.config = FclingoConfig(MIN_INT, MAX_INT, Flag(False), Flag(False), DEF)
