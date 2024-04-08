@@ -7,7 +7,7 @@ from unittest import TestCase
 from . import parse_coom
 
 
-class TestMain(TestCase):
+class TestCOOMParser(TestCase):
     """
     Test cases for COOM to ASP parser.
     """
