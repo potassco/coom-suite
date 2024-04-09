@@ -1,4 +1,4 @@
-#include "fclingo-core.lp".
+% #include "fclingo-core.lp".
 
 % Always generate minimal number of objects
 instance((Feature,(Instance,0..Min-1)),Structure) :- feature(Context,Feature,Structure,Min,_), structure(Structure), instance(Instance,Context).

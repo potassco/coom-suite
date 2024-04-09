@@ -1,4 +1,4 @@
-#include "clingo-part.lp".
+% #include "clingo-part.lp".
 
 { val((Feature,(Instance,0)),V) : V = Min..Max }
         :-  feature(Context,Feature,"num",_,_), range(Context,Feature,Min,Max), instance(Instance,Context), not imply((Context,_),Feature,_).
