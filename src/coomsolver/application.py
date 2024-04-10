@@ -64,7 +64,7 @@ class COOMApp(Application):
             return ["core", "numeric", "partonomy"]
         if profile == "core":
             return ["core"]
-        return ["core", profile]  # nocoverage
+        return ["core", profile]
 
     def parse_log_level(self, log_level: str) -> bool:  # nocoverage
         """
@@ -151,7 +151,7 @@ class COOMApp(Application):
 
             control.ground()
             control.solve()
-        elif self._solver == "fclingo":  # nocoverage
+        elif self._solver == "fclingo":
             self._propagator.register(control)
             self._propagator.configure("max-int", str(self.config.max_int))
             self._propagator.configure("min-int", str(self.config.min_int))
@@ -164,7 +164,7 @@ class COOMApp(Application):
                 pos = Position("<string>", 1, 1)
                 loc = Location(pos, pos)
                 for rule in hbt.rules_to_add:
-                    bld.add(Rule(loc, rule[0], rule[1]))
+                    bld.add(Rule(loc, rule[0], rule[1]))  # nocoverage # Not sure when this is needed
 
             control.add("base", [], THEORY)
             control.ground([("base", [])])

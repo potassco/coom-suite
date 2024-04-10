@@ -117,3 +117,59 @@ class TestFclingoCore(TestCase):
         Test solving enumeration features with attributes with the clingo COOM core encoding.
         """
         self.run_test(TESTS["attribute"])
+
+
+class TestClingoPartonomy(TestCase):
+    """
+    Test cases for the clingo COOM partonomy encoding.
+    """
+
+    def run_test(self, test: dict[str, Any]) -> None:
+        """Runs a clintest test with the clingo COOM partonomy encoding.
+
+        Args:
+            test (dict): The clintest test as a dictionary.
+                         Should contain keys:
+                            "test" (clintest.Test)
+                            "files" (List[str] or "program" (str)
+        """
+        program = test.get("program", None)
+        files = test.get("files", None)
+        run_test(test["test"], files=files, program=program, ctl_args=["0"], solver="clingo", profile="partonomy")
+
+    def test_structure(self) -> None:
+        """
+        Test solving structure features with the clingo COOM partonomy encoding.
+        """
+        self.run_test(TESTS["structure"])
+        self.run_test(TESTS["structure_optional"])
+        self.run_test(TESTS["structure_nested"])
+        self.run_test(TESTS["structure_nested_optional"])
+
+
+class TestFclingoPartonomy(TestCase):
+    """
+    Test cases for the fclingo COOM partonomy encoding.
+    """
+
+    def run_test(self, test: dict[str, Any]) -> None:
+        """Runs a clintest test with the fclingo COOM partonomy encoding.
+
+        Args:
+            test (dict): The clintest test as a dictionary.
+                         Should contain keys:
+                            "test" (clintest.Test)
+                            "files" (List[str] or "program" (str)
+        """
+        program = test.get("program", None)
+        files = test.get("files", None)
+        run_test(test["test"], files=files, program=program, ctl_args=["0"], solver="fclingo", profile="partonomy")
+
+    def test_structure(self) -> None:
+        """
+        Test solving structure features with the fclingo COOM partonomy encoding.
+        """
+        self.run_test(TESTS["structure"])
+        self.run_test(TESTS["structure_optional"])
+        self.run_test(TESTS["structure_nested"])
+        self.run_test(TESTS["structure_nested_optional"])
