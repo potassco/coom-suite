@@ -66,9 +66,9 @@ TESTS: dict[str, dict[str, AnyType]] = {
     },
     "enumeration": {
         "test": AndTest(
-            Assert(Any(), Contains('val((color,((),0)),"Red")')),
-            Assert(Any(), Contains('val((color,((),0)),"Green")')),
-            Assert(Any(), Contains('val((color,((),0)),"Blue")')),
+            Assert(Exact(1), Contains('val((color,((),0)),"Red")')),
+            Assert(Exact(1), Contains('val((color,((),0)),"Green")')),
+            Assert(Exact(1), Contains('val((color,((),0)),"Blue")')),
             Assert(Exact(3), True_()),
         ),
         "program": """
@@ -82,8 +82,8 @@ TESTS: dict[str, dict[str, AnyType]] = {
     },
     "bool_enumeration": {
         "test": AndTest(
-            Assert(Any(), Contains('val((boolean,((),0)),"True")')),
-            Assert(Any(), Contains('val((boolean,((),0)),"False")')),
+            Assert(Exact(1), Contains('val((boolean,((),0)),"True")')),
+            Assert(Exact(1), Contains('val((boolean,((),0)),"False")')),
             Assert(Exact(2), True_()),
         ),
         "program": """
@@ -104,5 +104,63 @@ TESTS: dict[str, dict[str, AnyType]] = {
         attribute("Wheel",size,"num").
         option("Wheel", "W14").
         attr_value("Wheel","W14",size,14).""",
+    },
+    "structure": {
+        "test": AndTest(
+            Assert(Exact(1), Contains('instance((wheel,((),0)),"Wheel")')),
+            Assert(Exact(1), True_()),
+        ),
+        "program": """
+        structure(":root").
+        feature(":root",wheel,"Wheel",1,1).
+        structure("Wheel").""",
+    },
+    "structure_optional": {
+        "test": AndTest(
+            Assert(Exact(1), Contains('instance((basket,((),0)),"Basket")')),
+            Assert(Exact(2), True_()),
+        ),
+        "program": """
+        structure(":root").
+        feature(":root",basket,"Basket",0,1).
+        structure("Basket").""",
+    },
+    "structure_nested": {
+        "test": AndTest(
+            Assert(
+                Exact(1),
+                SupersetOf({'instance((carrier,((),0)),"Carrier")', 'instance((bag,((carrier,((),0)),0)),"Bag")'}),
+            ),
+            Assert(Exact(1), True_()),
+        ),
+        "program": """
+        structure(":root").
+        feature(":root",carrier,"Carrier",1,1).
+        structure("Carrier").
+        feature("Carrier",bag,"Bag",1,1).
+        structure("Bag").""",
+    },
+    "structure_nested_optional": {
+        "test": AndTest(
+            Assert(Exact(3), Contains('instance((carrier,((),0)),"Carrier")')),
+            Assert(Exact(2), Contains('instance((bag,((carrier,((),0)),0)),"Bag")')),
+            Assert(
+                Exact(1),
+                SupersetOf(
+                    {
+                        'instance((carrier,((),0)),"Carrier")',
+                        'instance((bag,((carrier,((),0)),0)),"Bag")',
+                        'instance((bag,((carrier,((),0)),1)),"Bag")',
+                    }
+                ),
+            ),
+            Assert(Exact(4), True_()),
+        ),
+        "program": """
+        structure(":root").
+        feature(":root",carrier,"Carrier",0,1).
+        structure("Carrier").
+        feature("Carrier",bag,"Bag",0,2).
+        structure("Bag").""",
     },
 }

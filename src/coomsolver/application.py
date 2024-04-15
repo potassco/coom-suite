@@ -3,7 +3,7 @@ Clingo application class extended to solve COOM configuration problems
 """
 
 import textwrap
-from typing import Callable, Optional, Sequence
+from typing import Callable, List, Optional, Sequence
 
 from clingcon import ClingconTheory
 from clingo import Control, Model, Symbol
@@ -40,7 +40,7 @@ class COOMApp(Application):
     """
 
     _solver: str
-    _profile: str
+    _profile: List[str]
     _output: str
     _log_level: str
     config: FclingoConfig
@@ -53,11 +53,18 @@ class COOMApp(Application):
         Create application.
         """
         self._solver = "clingo" if solver == "" else solver
-        self._profile = "travel" if profile == "" else profile
+        self._profile = self._parse_profile(profile)
         self._output = "asp" if output == "" else output
         self._log_level = "WARNING" if log_level == "" else log_level
         self.config = FclingoConfig(MIN_INT, MAX_INT, Flag(False), Flag(False), DEF)
         self._propagator = ClingconTheory()
+
+    def _parse_profile(self, profile: str) -> List[str]:
+        if profile in ("all", ""):
+            return ["core", "numeric", "partonomy"]
+        if profile == "core":
+            return ["core"]
+        return ["core", profile]
 
     def parse_log_level(self, log_level: str) -> bool:  # nocoverage
         """
@@ -135,8 +142,8 @@ class COOMApp(Application):
         """
 
         input_files = list(files)
-        encoding = get_encoding(f"{self._solver}-{self._profile}.lp")
-        input_files.extend([encoding])
+        encodings = [get_encoding(f"{self._solver}-{p}.lp") for p in self._profile]
+        input_files.extend(encodings)
 
         if self._solver == "clingo":
             for f in input_files:
@@ -144,7 +151,7 @@ class COOMApp(Application):
 
             control.ground()
             control.solve()
-        elif self._solver == "fclingo":  # nocoverage
+        elif self._solver == "fclingo":
             self._propagator.register(control)
             self._propagator.configure("max-int", str(self.config.max_int))
             self._propagator.configure("min-int", str(self.config.min_int))
@@ -157,7 +164,7 @@ class COOMApp(Application):
                 pos = Position("<string>", 1, 1)
                 loc = Location(pos, pos)
                 for rule in hbt.rules_to_add:
-                    bld.add(Rule(loc, rule[0], rule[1]))
+                    bld.add(Rule(loc, rule[0], rule[1]))  # nocoverage # Not sure when this is needed
 
             control.add("base", [], THEORY)
             control.ground([("base", [])])
