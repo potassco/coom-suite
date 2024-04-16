@@ -2,6 +2,7 @@
 Test cases for solving.
 """
 
+from typing import Any, Tuple
 from unittest import TestCase
 
 from . import run_test
@@ -10,13 +11,31 @@ from .tests import TESTS
 # pylint: disable=deprecated-method
 
 
+def unpack_test(test_name: str, fclingo: bool = False) -> Tuple[Any, Any, Any]:
+    """
+    Unpacks a clintest.Test with parameters in a dictionary.
+
+    Args:
+        test_name (str): The dictionary key of the test.
+    """
+    test_dict = TESTS[test_name]
+    program = test_dict.get("program", None)
+    files = test_dict.get("files", None)
+    if fclingo:
+        test = test_dict.get("ftest", test_dict["test"])
+    else:
+        test = test_dict["test"]
+    return test, program, files
+
+
 class TestClingoCore(TestCase):
     """
     Test cases for the clingo COOM core encoding.
     """
 
     def run_test(self, test_name: str) -> None:
-        """Runs a clintest test with the clingo COOM core encoding.
+        """
+        Runs a clintest test with the clingo COOM core encoding.
 
         Args:
             test (dict): The clintest test as a dictionary.
@@ -24,10 +43,8 @@ class TestClingoCore(TestCase):
                             "test" (clintest.Test)
                             "files" (List[str] or "program" (str)
         """
-        test = TESTS[test_name]
-        program = test.get("program", None)
-        files = test.get("files", None)
-        run_test(test["test"], files=files, program=program, ctl_args=["0"], solver="clingo", profile="core")
+        test, program, files = unpack_test(test_name)
+        run_test(test, files=files, program=program, ctl_args=["0"], solver="clingo", profile="core")
 
     def test_require(self) -> None:
         """
@@ -79,11 +96,8 @@ class TestFclingoCore(TestCase):
                             "files" (List[str] or "program" (str)
                             "ftest" (Optional[clintest.Test]): A clintest for fclingo
         """
-        test = TESTS[test_name]
-        fclingo_test = test.get("ftest", test["test"])
-        program = test.get("program", None)
-        files = test.get("files", None)
-        run_test(fclingo_test, files=files, program=program, ctl_args=["0"], solver="fclingo", profile="core")
+        test, program, files = unpack_test(test_name, fclingo=True)
+        run_test(test, files=files, program=program, ctl_args=["0"], solver="fclingo", profile="core")
 
     def test_require(self) -> None:
         """
@@ -134,10 +148,8 @@ class TestClingoPartonomy(TestCase):
                             "test" (clintest.Test)
                             "files" (List[str] or "program" (str)
         """
-        test = TESTS[test_name]
-        program = test.get("program", None)
-        files = test.get("files", None)
-        run_test(test["test"], files=files, program=program, ctl_args=["0"], solver="clingo", profile="partonomy")
+        test, program, files = unpack_test(test_name)
+        run_test(test, files=files, program=program, ctl_args=["0"], solver="clingo", profile="partonomy")
 
     def test_structure(self) -> None:
         """
@@ -163,10 +175,8 @@ class TestFclingoPartonomy(TestCase):
                             "test" (clintest.Test)
                             "files" (List[str] or "program" (str)
         """
-        test = TESTS[test_name]
-        program = test.get("program", None)
-        files = test.get("files", None)
-        run_test(test["test"], files=files, program=program, ctl_args=["0"], solver="fclingo", profile="partonomy")
+        test, program, files = unpack_test(test_name, fclingo=True)
+        run_test(test, files=files, program=program, ctl_args=["0"], solver="fclingo", profile="partonomy")
 
     def test_structure(self) -> None:
         """
