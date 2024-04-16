@@ -5,7 +5,7 @@ Sanity check test cases for clingo encodings.
 from unittest import TestCase
 
 from . import run_test
-from .tests import TESTS
+from .tests import TEST_EMPTY, TEST_ROOT_ONLY, TEST_UNSAT
 
 # pylint: disable=deprecated-method
 
@@ -20,7 +20,7 @@ class TestSanityChecks(TestCase):
         Test solving an empty product (root structure).
         """
         program = 'structure(":root").'
-        run_test(TESTS["root_only"]["test"], program=program)
+        run_test(TEST_ROOT_ONLY, program=program)
 
     def test_no_product(self) -> None:
         """
@@ -28,14 +28,14 @@ class TestSanityChecks(TestCase):
         """
 
         program_feature = 'feature(":root",a,"b",1,1).'
-        run_test(TESTS["empty"]["test"], program=program_feature)
+        run_test(TEST_EMPTY, program=program_feature)
 
         program_enum_attr = """
         enumeration("a").
         attribute("a",b,"num").
         option("a", "a1").
         attr_value("a","a1",b,1)."""
-        run_test(TESTS["empty"]["test"], program=program_enum_attr)
+        run_test(TEST_EMPTY, program=program_enum_attr)
 
     def test_no_feature(self) -> None:
         """
@@ -46,7 +46,7 @@ class TestSanityChecks(TestCase):
         enumeration("a").
         option("a","a1").
         option("a","a2")."""
-        run_test(TESTS["root_only"]["test"], program=program_no_feature)
+        run_test(TEST_ROOT_ONLY, program=program_no_feature)
 
     def test_undef(self) -> None:
         """
@@ -60,7 +60,7 @@ class TestSanityChecks(TestCase):
         binary(":root","color=Silver","color","=","Silver").
         path("color",0,color).
         constant("Silver")."""
-        run_test(TESTS["root_only"]["test"], program=program_require)
+        run_test(TEST_ROOT_ONLY, program=program_require)
 
         program_condition = """
         structure(":root").
@@ -74,7 +74,7 @@ class TestSanityChecks(TestCase):
         binary(":root","size=Big","size","=","Big").
         path("size",0,size).
         constant("Big")."""
-        run_test(TESTS["root_only"]["test"], program=program_condition)
+        run_test(TEST_ROOT_ONLY, program=program_condition)
 
     def test_empty_combinations(self) -> None:
         """
@@ -89,4 +89,4 @@ class TestSanityChecks(TestCase):
         behavior((":root",0)).
         combinations((":root",0),0,"a").
         path("a",0,a)."""
-        run_test(TESTS["unsat"]["test"], program=program)
+        run_test(TEST_UNSAT, program=program)
