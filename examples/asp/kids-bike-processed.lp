@@ -23,14 +23,14 @@ attr_value("Wheel","W20",size,20).
 
 behavior(0).
 context(0,":root").
-condition(0,"color=Yellow").
-binary("color=Yellow","color","=","Yellow").
-path("color",0,color).
+condition(0,"color[0]=Yellow").
+binary("color[0]=Yellow","color[0]","=","Yellow").
+path("color[0]",0,color,0).
 constant("Yellow").
-require(0,"frontWheel.size>16").
-binary("frontWheel.size>16","frontWheel.size",">","16").
-path("frontWheel.size",0,frontWheel).
-path("frontWheel.size",1,size).
+require(0,"frontWheel[0].size[0]>16").
+binary("frontWheel[0].size[0]>16","frontWheel[0].size[0]",">","16").
+path("frontWheel[0].size[0]",0,frontWheel,0).
+path("frontWheel[0].size[0]",1,size,0).
 number("16",16).
 
 behavior(1).
