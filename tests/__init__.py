@@ -23,6 +23,30 @@ def parse_coom(coom_input: str) -> List[str]:
     return run_antlr4_visitor(input_stream)
 
 
+def run_test(
+    test: Test,
+    files: Optional[List[str]] = None,
+    program: Optional[str] = None,
+    ctl_args: Optional[List[str]] = None,
+    **kwargs: str,
+) -> None:
+    """Creates a solver and runs a clintest test.
+
+    Args:
+        test (clintest.test.Test): The clintest test
+        files (Optional[List[str]], optional): List of files saved in examples/tests
+        program (Optional[str], optional): A clingo program. Defaults to ""
+        ctl_args (Optional[List[str]], optional): List of arguments for clingo.Control. Defaults to [].
+    """
+    coom_app = COOMApp("coom", **kwargs)
+    file_paths = [join("examples", "tests", f) for f in files] if files else None
+    ctl_args = [] if ctl_args is None else ctl_args
+    solver = AppSolver(application=coom_app, files=file_paths, program=program, arguments=["0"])
+
+    solver.solve(test)
+    test.assert_()
+
+
 def compose(on_app: Callable, on_test: Callable) -> Callable:  # type: ignore
     """
     Composes two functions
@@ -38,30 +62,6 @@ def compose(on_app: Callable, on_test: Callable) -> Callable:  # type: ignore
         on_test(*args)
 
     return f
-
-
-def run_test(
-    test: Test,
-    files: Optional[List[str]] = None,
-    program: Optional[str] = None,
-    ctl_args: Optional[List[str]] = None,
-    **kwargs: str,
-) -> None:
-    """Creates a solver and runs a clintest test.
-
-    Args:
-        test (clintest.Test): The clintest test
-        files (Optional[List[str]], optional): List of files saved in examples/tests
-        program (Optional[str], optional): A clingo program. Defaults to ""
-        ctl_args (Optional[List[str]], optional): List of arguments for clingo.Control. Defaults to [].
-    """
-    coom_app = COOMApp("coom", **kwargs)
-    file_paths = [join("examples", "tests", f) for f in files] if files else None
-    ctl_args = [] if ctl_args is None else ctl_args
-    solver = AppSolver(application=coom_app, files=file_paths, program=program, arguments=["0"])
-
-    solver.solve(test)
-    test.assert_()
 
 
 class MockControl:
