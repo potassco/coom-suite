@@ -1,3 +1,4 @@
+% Original "COOM" fact format describing the structure of the model
 structure(":root").
 feature(":root",color,"Color",1,1).
 feature(":root",basket,"Basket",0,1).
@@ -59,75 +60,124 @@ option("Material", "Cotton").
 option("Material", "Leather").
 option("Material", "Polyester").
 
-behavior(0).
-context(0,":root")
-require(0,"color=basket.color").
-binary("color=basket.color","color","=","basket.color").
-path("color",0,color).
-path("basket.color",0,basket).
-path("basket.color",1,color).
+% Complete generated instance tree
+structure_instance("City Bike",":root",0).
 
-behavior(1).
-context(1,":root")
-condition(1,"basket.position=Front").
-binary("basket.position=Front","basket.position","=","Front").
-path("basket.position",0,basket).
-path("basket.position",1,position).
+structure_instance("carrier[0]","Carrier",0).
+parent("carrier[0]", "City Bike").
+feature("carrier[0]",carrier).
+
+structure_instance("basket[0]","Basket",0).
+parent("basket[0]", "City Bike").
+feature("basket[0]",basket).
+
+structure_instance("carrier[0].bag[0]","Bag",0).
+parent("carrier[0].bag[0]", "carrier[0]").
+feature("carrier[0].bag[0]",bag).
+
+structure_instance("carrier[0].bag[1]","Bag",1).
+parent("carrier[0].bag[1]", "carrier[0]").
+feature("carrier[0].bag[1]",bag).
+
+enumeration_instance("color[0]","Color").
+parent("color[0]", "City Bike").
+feature("color[0]",color).
+
+
+enumeration_instance("saddle[0]","Saddle").
+parent("saddle[0]", "City Bike").
+feature("saddle[0]",saddle).
+
+enumeration_instance("frontWheel[0]","Wheel").
+parent("frontWheel[0]", "City Bike").
+feature("frontWheel[0]",frontWheel).
+attr_instance("frontWheel[0].size","frontWheel[0]").
+
+enumeration_instance("rearWheel[0]","Wheel").
+parent("rearWheel[0]", "City Bike").
+feature("rearWheel[0]",rearWheel).
+attr_instance("rearWheel[0].size","rearWheel[0]").
+
+enumeration_instance("basket[0].color[0]","Color").
+parent("basket[0].color[0]","basket[0]").
+feature("basket[0].color[0]",color).
+
+enumeration_instance("basket[0].position[0]","Position").
+parent("basket[0].position[0]","basket[0]").
+feature("basket[0].position[0]",position).
+
+
+enumeration_instance("carrier[0].bag[0].capacity[0]","Capacity").
+parent("carrier[0].bag[0].capacity[0]", "carrier[0].bag[0]").
+feature("carrier[0].bag[0].capacity[0]",capacity).
+attr_instance("carrier[0].bag[0].capacity[0].volume","carrier[0].bag[0].capacity[0]").
+
+enumeration_instance("carrier[0].bag[1].capacity[0]","Capacity").
+parent("carrier[0].bag[1].capacity[0]", "carrier[0].bag[1]").
+feature("carrier[0].bag[1].capacity[0]",capacity).
+attr_instance("carrier[0].bag[1].capacity[0].volume","carrier[0].bag[1].capacity[0]").
+
+enumeration_instance("carrier[0].bag[0].material[0]","Material").
+parent("carrier[0].bag[0].material[0]", "carrier[0].bag[0]").
+feature("carrier[0].bag[0].material[0]",material).
+
+enumeration_instance("carrier[0].bag[1].material[0]","Material").
+parent("carrier[0].bag[1].material[0]", "carrier[0].bag[1]").
+feature("carrier[0].bag[1].material[0]",material).
+
+
+% Instantiated constraints on complete instance tree
+constraint(0).
+require(0,"color[0]=basket[0].color[0]").
+binary("color[0]=basket[0].color[0]","color[0]","=","basket[0].color[0]").
+
+constraint(1).
+condition(1,"basket[0].position[0]=Front").
+binary("basket[0].position[0]=Front","basket[0].position[0]","=","Front").
 constant("Front").
-require(1,"frontWheel.size<29").
-binary("frontWheel.size<29","frontWheel.size","<","29").
-path("frontWheel.size",0,frontWheel).
-path("frontWheel.size",1,size).
+require(1,"frontWheel[0].size<29").
+binary("frontWheel[0].size<29","frontWheel[0].size","<","29").
 number("29",29).
 
-behavior(2).
-context(2,":root")
-condition(2,"carrier.bag.capacity.volume=100").
-binary("carrier.bag.capacity.volume=100","carrier.bag.capacity.volume","=","100").
-path("carrier.bag.capacity.volume",0,carrier).
-path("carrier.bag.capacity.volume",1,bag).
-path("carrier.bag.capacity.volume",2,capacity).
-path("carrier.bag.capacity.volume",3,volume).
+constraint((2,0)).
+condition((2,0),"carrier[0].bag[0].capacity[0].volume=100").
+binary("carrier[0].bag[0].capacity[0].volume=100","carrier[0].bag[0].capacity[0].volume","=","100").
 number("100",100).
-require(2,"rearWheel.size>=28").
-binary("rearWheel.size>=28","rearWheel.size",">=","28").
-path("rearWheel.size",0,rearWheel).
-path("rearWheel.size",1,size).
+require((2,0),"rearWheel[0].size>=28").
+binary("rearWheel[0].size>=28","rearWheel[0].size",">=","28").
 number("28",28).
 
-behavior(3).
-context(3,":root")
-condition(3,"saddle=Vintage").
-binary("saddle=Vintage","saddle","=","Vintage").
-path("saddle",0,saddle).
+constraint((2,1)).
+condition((2,1),"carrier[0].bag[1].capacity[0].volume=100").
+binary("carrier[0].bag[1].capacity[0].volume=100","carrier[0].bag[1].capacity[0].volume","=","100").
+require((2,1),"rearWheel[0].size>=28").
+binary("rearWheel[0].size>=28","rearWheel[0].size",">=","28").
+
+constraint((3,0)).
+condition((3,0),"saddle[0]=Vintage").
+binary("saddle[0]=Vintage","saddle[0]","=","Vintage").
 constant("Vintage").
-require(3,"carrier.bag.material=Leather").
-binary("carrier.bag.material=Leather","carrier.bag.material","=","Leather").
-path("carrier.bag.material",0,carrier).
-path("carrier.bag.material",1,bag).
-path("carrier.bag.material",2,material).
+require((3,0),"carrier[0].bag[0].material[0]=Leather").
+binary("carrier[0].bag[0].material[0]=Leather","carrier[0].bag[0].material[0]","=","Leather").
 constant("Leather").
 
-behavior(4).
-context(4,":root")
-require(4,"frontWheel.size=rearWheel.size").
-binary("frontWheel.size=rearWheel.size","frontWheel.size","=","rearWheel.size").
-path("frontWheel.size",0,frontWheel).
-path("frontWheel.size",1,size).
-path("rearWheel.size",0,rearWheel).
-path("rearWheel.size",1,size).
+constraint((3,1)).
+condition((3,1),"saddle[0]=Vintage").
+binary("saddle[0]=Vintage","saddle[0]","=","Vintage").
+require((3,1),"carrier[0].bag[1].material[0]=Leather").
+binary("carrier[0].bag[1].material[0]=Leather","carrier[0].bag[1].material[0]","=","Leather").
 
-% How to handle this?
-behavior(5).
-context(5,"Bag")
-combinations(5,0,"carrier.bag.material").
-combinations(5,1,"carrier.bag.capacity").
-path("carrier.bag.material",0,carrier).
-path("carrier.bag.material",1,bag).
-path("carrier.bag.material",2,material).
-path("carrier.bag.capacity",0,carrier).
-path("carrier.bag.capacity",1,bag).
-path("carrier.bag.capacity",2,capacity).
+constraint(4).
+require(4,"frontWheel[0].size=rearWheel[0].size").
+binary("frontWheel[0].size=rearWheel[0].size","frontWheel[0].size","=","rearWheel[0].size").
+
+constraint((5,0)).
+combinations((5,0),0,"carrier[0].bag[0].material[0]").
+combinations((5,0),1,"carrier[0].bag[0].capacity[0]").
+
+constraint((5,1)).
+combinations((5,1),0,"carrier[0].bag[1].material[0]").
+combinations((5,1),1,"carrier[0].bag[1].capacity[0]").
 allow(5,(0,0),"Leather").
 allow(5,(1,0),"B10").
 allow(5,(0,1),"Cotton").

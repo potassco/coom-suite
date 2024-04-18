@@ -1,9 +1,12 @@
+instance(Instance,":root") :- structure_instance(Instance,":root",0).
+
 % Generate enumeration and attribute values
+instance(Instance,Type) :- feature(Context,_,Type,_,_), enumeration_instance(Instance,Type), parent(Instance,Parent), instance(Parent,Context).
 { val(Instance,Option) : option(Type,Option) } :-        enumeration(Type), instance(Instance,Type).
 :-  { val(Instance,Option) : option(Type,Option) } != 1, enumeration(Type), instance(Instance,Type).
 
 % Derive associated attribute values
-val(AtInstance,V) :- attr_instance(AtInstance,Instance), attr_value(Type,Option,Attr,V), instance(Instance,Type), val(Instance,Option).
+val(AtInstance,V) :- attr_instance(AtInstance,Instance), attr_value(Type,Option,_,V), instance(Instance,Type), val(Instance,Option).
 
 %%% Constraints
 :- constraint(Constraint), unsat(Constraint).
@@ -19,9 +22,11 @@ unsat(Constraint) :- not condition(Constraint,_), require(Constraint,Binary), bi
 
 % Combinations Table (only for allow)
 % Table constraint is satisfied if a row is satisfied
-unsat(Constraint) :- combinations(Constraint,_,_), not hit_row(Constraint).
+unsat(Constraint) :- combinations(Constraint,_,_), not hit_row(Constraint), not combinations_undef(Constraint).
 
 % Satisfaction of binary relations
+binary_def(Formula) :- binary(Formula,X1,_,X2), val(X1,_), val(X2,_).
+
 binary_sat(Formula) :- binary(Formula,X1,"=", X2), V1 = V2,  val(X1,V1), val(X2,V2).
 binary_sat(Formula) :- binary(Formula,X1,"!=",X2), V1 != V2, val(X1,V1), val(X2,V2).
 binary_sat(Formula) :- binary(Formula,X1,">", X2), V1 > V2,  val(X1,V1), val(X2,V2).
@@ -29,14 +34,16 @@ binary_sat(Formula) :- binary(Formula,X1,">=",X2), V1 >= V2, val(X1,V1), val(X2,
 binary_sat(Formula) :- binary(Formula,X1,"<", X2), V1 < V2,  val(X1,V1), val(X2,V2).
 binary_sat(Formula) :- binary(Formula,X1,"<=",X2), V1 <= V2, val(X1,V1), val(X2,V2).
 
-binary_unsat(Formula) :- binary(Formula,_,_,_), not binary_sat(Formula).
+binary_unsat(Formula) :- binary(Formula,_,_,_), binary_def(Formula), not binary_sat(Formula).
 
 %%% Check combinations
-hit_cell(Constraint,(Col,Row)) :- allow(Constraint,(Col,Row),V), combinations(Constraint,Col,X), val(X,V).
+hit_cell(Constraint,(Col,Row)) :- allow(Idx,(Col,Row),V), combinations(Constraint,Col,X), val(X,V), Constraint=(Idx,_).
 
-hit_row(Constraint) :- allow(Constraint,(_,Row),_),
-                       0 = #sum{ 1,Col: allow(Constraint,(Col,Row),_);
+hit_row(Constraint) :- allow(Idx,(_,Row),_), combinations(Constraint,_,_), Constraint=(Idx,_),
+                       0 = #sum{ 1,Col: allow(Idx,(Col,Row),_);
                                 -1,Col': hit_cell(Constraint,(Col',Row)) }.
+
+combinations_undef(Constraint) :- combinations(Constraint,_,X), not val(X,_).
 
 % Always include boolean enumeration
 enumeration("bool").
@@ -50,11 +57,10 @@ val(Path,N)    :- number(Path,N).
 
 % Show statements
 #show .
-#show instance(I,S) : instance(I,S), structure(S).
+#show instance(I,S) : structure_instance(I,S,_).
 
-#show val/2.
-% #show val(X,V) : val(X,V), instance(X,Type), option(Type,_).
-% #show val(X,V) : val(X,V), instance(X,Attr), attr_value(_,_,Attr,_).
+#show val(X,V) : val(X,V), enumeration_instance(X,_).
+#show val(X,V) : val(X,V), attr_instance(X,_).
 
 #defined structure/1.
 #defined feature/5.
