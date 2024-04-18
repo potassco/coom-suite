@@ -21,31 +21,34 @@ attr_value("Wheel","W18",size,18).
 option("Wheel", "W20").
 attr_value("Wheel","W20",size,20).
 
-behavior((":root",0)).
-condition((":root",0),"color=Yellow").
+behavior(0).
+context(0,":root").
+condition(0,"color=Yellow").
 binary(":root","color=Yellow","color","=","Yellow").
 path("color",0,color).
 constant("Yellow").
-require((":root",0),"frontWheel.size>16").
+require(0,"frontWheel.size>16").
 binary(":root","frontWheel.size>16","frontWheel.size",">","16").
 path("frontWheel.size",0,frontWheel).
 path("frontWheel.size",1,size).
 number("16",16).
 
-behavior((":root",1)).
-combinations((":root",1),0,"wheelSupport").
-combinations((":root",1),1,"rearWheel").
+behavior(1).
+context(1,":root").
+combinations(1,0,"wheelSupport").
+combinations(1,1,"rearWheel").
 path("wheelSupport",0,wheelSupport).
 path("rearWheel",0,rearWheel).
-allow((":root",1),(0,0),"True").
-allow((":root",1),(1,0),"W14").
-allow((":root",1),(1,0),"W16").
-allow((":root",1),(0,1),"False").
-allow((":root",1),(1,1),"W18").
-allow((":root",1),(1,1),"W20").
+allow(1,(0,0),"True").
+allow(1,(1,0),"W14").
+allow(1,(1,0),"W16").
+allow(1,(0,1),"False").
+allow(1,(1,1),"W18").
+allow(1,(1,1),"W20").
 
-behavior((":root",2)).
-require((":root",2),"frontWheel.size=rearWheel.size").
+behavior(2).
+context(2,":root").
+require(2,"frontWheel.size=rearWheel.size").
 binary(":root","frontWheel.size=rearWheel.size","frontWheel.size","=","rearWheel.size").
 path("frontWheel.size",0,frontWheel).
 path("frontWheel.size",1,size).

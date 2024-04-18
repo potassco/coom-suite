@@ -16,12 +16,13 @@ attr_value("Capacity","B50",volume,50).
 option("Capacity", "B100").
 attr_value("Capacity","B100",volume,100).
 
-behavior((":root",0)).
-condition((":root",0),"storageNeeded=True").
+behavior(0).
+context(0,":root").
+condition(0,"storageNeeded=True").
 binary(":root","storageNeeded=True","storageNeeded","=","True").
 path("storageNeeded",0,storageNeeded).
 constant("True").
-require((":root",0),"bag.capacity.volume>=50").
+require(0,"bag.capacity.volume>=50").
 binary(":root","bag.capacity.volume>=50","bag.capacity.volume",">=","50").
 path("bag.capacity.volume",0,bag).
 path("bag.capacity.volume",1,capacity).

@@ -17,11 +17,11 @@ instance((Attr,(Instance,0)),Attr) :- attr_value(Type,_,Attr,_), instance(Instan
 
 %%% Constraints
 % Instantiate constraint for each instance
-constraint(Instance,(Context,Idx)) :- behavior((Context,Idx)), instance(Instance,Context).
+constraint(Instance,Constraint) :- behavior(Constraint), context(Constraint,Context), instance(Instance,Context).
 :- constraint(Instance,Constraint), unsat(Instance,Constraint,_).
 
 % Require without condition
-% require must not be false to be satisfies (can be undefined)
+% require must not be false to be satisfied (can be undefined)
 unsat(Instance,Constraint,(CX,RX)) :-   condition(Constraint,CBinary),      require(Constraint,RBinary),
                                         binary_sat(Instance,CBinary,CX),    binary_unsat(Instance,RBinary,RX),
                                         constraint(Instance,Constraint).
@@ -58,7 +58,8 @@ binary_unsat(Instance,Formula,(X1,X2)) :- binary_instances(Instance,Formula,X1,_
 %%% Get values of path expressions
 path_instance(Instance,Path) :- binary(Context,_,Path,_,_),       path(Path,0,_), instance(Instance,Context).
 path_instance(Instance,Path) :- binary(Context,_,_,_,Path),       path(Path,0,_), instance(Instance,Context).
-path_instance(Instance,Path) :- combinations((Context,_),_,Path), path(Path,0,_), instance(Instance,Context).
+path_instance(Instance,Path) :- combinations(Constraint,_,Path),  path(Path,0,_), instance(Instance,Context),
+                                context(Constraint,Context).
 
 path_instance(Instance,Path,0,X)  :- path(Path,0,Name),
                                      path_instance(Instance,Path), instance(X,_), X=(Name,(Instance,_)).
@@ -78,12 +79,12 @@ val(Path,Path)      :- constant(Path).
 %%% Check combinations
 % Generate all possible values of combinations first
 combinations_instances(Instance,Constraint,Col,(X,())) :- constraint(Instance,Constraint),
-                                                       combinations(Constraint,Col,Path), not combinations(Constraint,Col+1,_),
-                                                       path_instance(Instance,Path,X).
+                                                          combinations(Constraint,Col,Path), not combinations(Constraint,Col+1,_),
+                                                          path_instance(Instance,Path,X).
 combinations_instances(Instance,Constraint,Col,(X',X)) :- combinations_instances(Instance,Constraint,Col+1,X),
-                                                       combinations(Constraint,Col,Path), Col >= 0,
-                                                       path_instance(Instance,Path,X').
-combinations_instances(Instance,Constraint,CI)          :- combinations_instances(Instance,Constraint,0,CI).
+                                                          combinations(Constraint,Col,Path), Col >= 0,
+                                                          path_instance(Instance,Path,X').
+combinations_instances(Instance,Constraint,CI)         :- combinations_instances(Instance,Constraint,0,CI).
 
 in_path((V,CI'),CI',V)    :- combinations_instances(_,_,(V,CI')).
 in_path(CI,CI',V)         :- in_path(CI,(V,CI'),_).
@@ -119,6 +120,7 @@ option("bool", "False").
 #defined attribute/3.
 #defined attr_value/4.
 #defined behavior/1.
+#defined context/2.
 #defined require/2.
 #defined condition/2.
 #defined combinations/3.
