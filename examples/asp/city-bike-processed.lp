@@ -61,14 +61,14 @@ option("Material", "Leather").
 option("Material", "Polyester").
 
 % Complete generated instance tree
-structure_instance("City Bike",":root",0).
+structure_instance(":root",":root",0).
 
 structure_instance("carrier[0]","Carrier",0).
-parent("carrier[0]", "City Bike").
+parent("carrier[0]", ":root").
 feature("carrier[0]",carrier).
 
 structure_instance("basket[0]","Basket",0).
-parent("basket[0]", "City Bike").
+parent("basket[0]", ":root").
 feature("basket[0]",basket).
 
 structure_instance("carrier[0].bag[0]","Bag",0).
@@ -80,21 +80,21 @@ parent("carrier[0].bag[1]", "carrier[0]").
 feature("carrier[0].bag[1]",bag).
 
 enumeration_instance("color[0]","Color").
-parent("color[0]", "City Bike").
+parent("color[0]", ":root").
 feature("color[0]",color).
 
 
 enumeration_instance("saddle[0]","Saddle").
-parent("saddle[0]", "City Bike").
+parent("saddle[0]", ":root").
 feature("saddle[0]",saddle).
 
 enumeration_instance("frontWheel[0]","Wheel").
-parent("frontWheel[0]", "City Bike").
+parent("frontWheel[0]", ":root").
 feature("frontWheel[0]",frontWheel).
 attr_instance("frontWheel[0].size","frontWheel[0]").
 
 enumeration_instance("rearWheel[0]","Wheel").
-parent("rearWheel[0]", "City Bike").
+parent("rearWheel[0]", ":root").
 feature("rearWheel[0]",rearWheel).
 attr_instance("rearWheel[0].size","rearWheel[0]").
 

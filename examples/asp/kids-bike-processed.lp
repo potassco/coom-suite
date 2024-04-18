@@ -23,21 +23,25 @@ option("Wheel", "W20").
 attr_value("Wheel","W20",size,20).
 
 % Complete generated instance tree
-structure_instance("Kids Bike",":root",0).
+structure_instance(":root",":root",0).
 
 enumeration_instance("color[0]","Color").
-parent("color[0]", "Kids Bike").
+parent("color[0]", ":root").
+feature("color[0]",color).
 
 enumeration_instance("frontWheel[0]","Wheel").
-parent("frontWheel[0]", "Kids Bike").
+parent("frontWheel[0]", ":root").
+feature("frontWheel[0]",frontWheel).
 attr_instance("frontWheel[0].size","frontWheel[0]").
 
 enumeration_instance("rearWheel[0]","Wheel").
-parent("rearWheel[0]", "Kids Bike").
+parent("rearWheel[0]", ":root").
+feature("rearWheel[0]",rearWheel).
 attr_instance("rearWheel[0].size","rearWheel[0]").
 
 enumeration_instance("wheelSupport[0]","bool").
-parent("wheelSupport[0]", "Kids Bike").
+parent("wheelSupport[0]", ":root").
+feature("wheelSupport[0]",wheelSupport).
 
 % Instantiated constraints on complete instance tree
 constraint((0,0)).
