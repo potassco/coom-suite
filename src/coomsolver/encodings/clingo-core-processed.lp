@@ -1,102 +1,60 @@
-instance((),":root") :- structure(":root").
-
 % Generate enumeration and attribute values
-instance((Feature,(Instance,0)),Type) :- feature(Context,Feature,Type,_,_), enumeration(Type), instance(Instance,Context).
-{ val((Instance),Option) : option(Type,Option) } :- instance(Instance,Type).
+{ val(Instance,Option) : option(Type,Option) } :-        enumeration(Type), instance(Instance,Type).
 :-  { val(Instance,Option) : option(Type,Option) } != 1, enumeration(Type), instance(Instance,Type).
 
-% Derive associated attribute values (the index 0 is needed for the sake of uniformity)
-val((Attr,(Instance,0)),V) :- attr_value(Type,Option,Attr,V), instance(Instance,Type), val(Instance,Option).
-
-% Create auxiliary instance predicate for attribute values (for following path expressions)
-instance((Attr,(Instance,0)),Attr) :- attr_value(Type,_,Attr,_), instance(Instance,Type).
+% Derive associated attribute values
+val(AtInstance,V) :- attr_instance(AtInstance,Instance), attr_value(Type,Option,Attr,V), instance(Instance,Type), val(Instance,Option).
 
 %%% Constraints
-% Instantiate constraint for each instance
-constraint(Instance,Idx) :- behavior(Idx), context(Idx,Context),instance(Instance,Context).
-:- constraint(Instance,Constraint), unsat(Instance,Constraint,_).
+:- constraint(Constraint), unsat(Constraint).
 
 % Require without condition
-% require must not be false to be satisfies (can be undefined)
-unsat(Instance,Constraint,(CX,RX)) :-   condition(Constraint,CBinary),      require(Constraint,RBinary),
-                                        binary_sat(Instance,CBinary,CX),    binary_unsat(Instance,RBinary,RX),
-                                        constraint(Instance,Constraint).
+% Require must not be false to be satisfied (can be undefined)
+unsat(Constraint) :- condition(Constraint,CBinary), require(Constraint,RBinary),
+                     binary_sat(CBinary),           binary_unsat(RBinary).
+
 % Require with condition
-% condition has to be true to become active (must not be undefined)
-unsat(Instance,Constraint,X) :- not condition(Constraint,_),     require(Constraint,Binary),
-                                constraint(Instance,Constraint), binary_unsat(Instance,Binary,X).
+% Condition has to be true to become active (must not be undefined)
+unsat(Constraint) :- not condition(Constraint,_), require(Constraint,Binary), binary_unsat(Binary).
+
 % Combinations Table (only for allow)
-% check for every possible combination of values
-unsat(Instance,Constraint,CI) :- combinations(Constraint,_,_), constraint(Instance,Constraint),
-                                 combinations_instances(Instance,Constraint,CI), not hit_row(Instance,Constraint,CI).
+% Table constraint is satisfied if a row is satisfied
+unsat(Constraint) :- combinations(Constraint,_,_), not hit_row(Constraint).
 
 % Satisfaction of binary relations
-binary_instances(Formula,X1,Operator,X2) :- binary(Formula,Path1,Operator,Path2),
-                                            path_instance(Instance,Path1,X1),
-                                            path_instance(Instance,Path2,X2).
+binary_sat(Formula) :- binary(Formula,X1,"=", X2), V1 = V2,  val(X1,V1), val(X2,V2).
+binary_sat(Formula) :- binary(Formula,X1,"!=",X2), V1 != V2, val(X1,V1), val(X2,V2).
+binary_sat(Formula) :- binary(Formula,X1,">", X2), V1 > V2,  val(X1,V1), val(X2,V2).
+binary_sat(Formula) :- binary(Formula,X1,">=",X2), V1 >= V2, val(X1,V1), val(X2,V2).
+binary_sat(Formula) :- binary(Formula,X1,"<", X2), V1 < V2,  val(X1,V1), val(X2,V2).
+binary_sat(Formula) :- binary(Formula,X1,"<=",X2), V1 <= V2, val(X1,V1), val(X2,V2).
 
-binary_sat(Instance,Formula,(X1,X2)) :- binary_instances(Instance,Formula,X1,"=", X2), V1 = V2,  val(X1,V1), val(X2,V2).
-binary_sat(Instance,Formula,(X1,X2)) :- binary_instances(Instance,Formula,X1,"!=",X2), V1 != V2, val(X1,V1), val(X2,V2).
-binary_sat(Instance,Formula,(X1,X2)) :- binary_instances(Instance,Formula,X1,">", X2), V1 > V2,  val(X1,V1), val(X2,V2).
-binary_sat(Instance,Formula,(X1,X2)) :- binary_instances(Instance,Formula,X1,">=",X2), V1 >= V2, val(X1,V1), val(X2,V2).
-binary_sat(Instance,Formula,(X1,X2)) :- binary_instances(Instance,Formula,X1,"<", X2), V1 < V2,  val(X1,V1), val(X2,V2).
-binary_sat(Instance,Formula,(X1,X2)) :- binary_instances(Instance,Formula,X1,"<=",X2), V1 <= V2, val(X1,V1), val(X2,V2).
-
-binary_unsat(Instance,Formula,(X1,X2)) :- binary_instances(Instance,Formula,X1,_,X2), not binary_sat(Instance,Formula,(X1,X2)).
-
-%%% Get values of path expressions
-path_instance(Instance,Path) :- binary(_,Path,_,_),       path(Path,0,_), instance(Instance,Context).
-path_instance(Instance,Path) :- binary(_,_,_,Path),       path(Path,0,_), instance(Instance,Context).
-path_instance(Instance,Path) :- combinations((Context,_),_,Path), path(Path,0,_), instance(Instance,Context).
-
-path_instance(Instance,Path,0,X)  :- path(Path,0,Name),
-                                     path_instance(Instance,Path), instance(X,_), X=(Name,(Instance,_)).
-path_instance(Instance,Path,N,X') :- path(Path,N,Name),
-                                     path_instance(Instance,Path,N-1,X), instance(X',_), X'=(Name,(X,_)).
-
-path_instance(Instance,Path,X)    :- not path(Path,N+1,_), path_instance(Instance,Path,N,X).
-
-% Constants and numbers
-% TODO: Also needed for first argument?
-path_instance(Instance,Path,Path) :- binary(Context,_,_,_,Path), instance(Instance,Context), constant(Path).
-path_instance(Instance,Path,Path) :- binary(Context,_,_,_,Path), instance(Instance,Context), number(Path,_).
-
-val(Path,Path) :- constant(Path).
-val(Path,N)    :- number(Path,N).
+binary_unsat(Formula) :- binary(Formula,_,_,_), not binary_sat(Formula).
 
 %%% Check combinations
-% Generate all possible values of combinations first
-combinations_instances(Instance,Constraint,Col,(X,())) :- constraint(Instance,Constraint),
-                                                       combinations(Constraint,Col,Path), not combinations(Constraint,Col+1,_),
-                                                       path_instance(Instance,Path,X).
-combinations_instances(Instance,Constraint,Col,(X',X)) :- combinations_instances(Instance,Constraint,Col+1,X),
-                                                       combinations(Constraint,Col,Path), Col >= 0,
-                                                       path_instance(Instance,Path,X').
-combinations_instances(Instance,Constraint,CI)          :- combinations_instances(Instance,Constraint,0,CI).
+hit_cell(Constraint,(Col,Row)) :- allow(Constraint,(Col,Row),V), combinations(Constraint,Col,X), val(X,V).
 
-in_path((V,CI'),CI',V)    :- combinations_instances(_,_,(V,CI')).
-in_path(CI,CI',V)         :- in_path(CI,(V,CI'),_).
-in_path(CI,V)             :- in_path(CI,_,V).
-
-hit_cell(Instance,Constraint,CI,(Col,Row)) :- allow(Constraint,(Col,Row),V), combinations(Constraint,Col,Path), constraint(Instance,Constraint),
-                                              combinations_instances(Instance,Constraint,CI), in_path(CI,X), val(X,V).
-
-hit_row(Instance,Constraint,CI) :- allow(Constraint,(_,Row),_), constraint(Instance,Constraint),
-                                   combinations_instances(Instance,Constraint,CI),
-                                   0 = #sum{ 1,Col: allow(Constraint,(Col,Row),_);
-                                             -1,Col': hit_cell(Instance,Constraint,CI,(Col',Row)) }.
+hit_row(Constraint) :- allow(Constraint,(_,Row),_),
+                       0 = #sum{ 1,Col: allow(Constraint,(Col,Row),_);
+                                -1,Col': hit_cell(Constraint,(Col',Row)) }.
 
 % Always include boolean enumeration
 enumeration("bool").
 option("bool", "True").
 option("bool", "False").
 
+% Auxiliary val/2 atoms for constants and numbers.
+val(Path,Path) :- constant(Path).
+val(Path,N)    :- number(Path,N).
+
+
 % Show statements
 #show .
 #show instance(I,S) : instance(I,S), structure(S).
 
-#show val(X,V) : val(X,V), instance(X,Type), option(Type,_).
-#show val(X,V) : val(X,V), instance(X,Attr), attr_value(_,_,Attr,_).
+#show val/2.
+% #show val(X,V) : val(X,V), instance(X,Type), option(Type,_).
+% #show val(X,V) : val(X,V), instance(X,Attr), attr_value(_,_,Attr,_).
 
 #defined structure/1.
 #defined feature/5.
