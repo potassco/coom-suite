@@ -44,17 +44,17 @@ parent("wheelSupport[0]", ":root").
 feature("wheelSupport[0]",wheelSupport).
 
 % Instantiated constraints on complete instance tree
-constraint((0,0)).
-condition((0,0),"color[0]=Yellow").
+constraint((0,":root")).
+condition_instance((0,":root"),"color[0]=Yellow").
 binary("color[0]=Yellow","color[0]","=","Yellow").
 constant("Yellow").
-require((0,0),"frontWheel[0].size>16").
+require_instance((0,":root"),"frontWheel[0].size>16").
 binary("frontWheel[0].size>16","frontWheel[0].size",">","16").
 number("16",16).
 
-constraint((1,0)).
-combinations((1,0),0,"wheelSupport[0]").
-combinations((1,0),1,"rearWheel[0]").
+constraint((1,":root")).
+combinations_instance((1,":root"),0,0,"wheelSupport[0]").
+combinations_instance((1,":root"),0,1,"rearWheel[0]").
 allow(1,(0,0),"True").
 allow(1,(1,0),"W14").
 allow(1,(1,0),"W16").
@@ -62,6 +62,6 @@ allow(1,(0,1),"False").
 allow(1,(1,1),"W18").
 allow(1,(1,1),"W20").
 
-constraint((2,0)).
-require((2,0),"frontWheel[0].size=rearWheel[0].size").
+constraint((2,":root")).
+require_instance((2,":root"),"frontWheel[0].size=rearWheel[0].size").
 binary("frontWheel[0].size=rearWheel[0].size","frontWheel[0].size","=","rearWheel[0].size").

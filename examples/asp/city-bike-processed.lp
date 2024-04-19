@@ -106,7 +106,6 @@ enumeration_instance("basket[0].position[0]","Position").
 parent("basket[0].position[0]","basket[0]").
 feature("basket[0].position[0]",position).
 
-
 enumeration_instance("carrier[0].bag[0].capacity[0]","Capacity").
 parent("carrier[0].bag[0].capacity[0]", "carrier[0].bag[0]").
 feature("carrier[0].bag[0].capacity[0]",capacity).
@@ -127,57 +126,59 @@ feature("carrier[0].bag[1].material[0]",material).
 
 
 % Instantiated constraints on complete instance tree
-constraint(0).
-require(0,"color[0]=basket[0].color[0]").
+constraint((0,":root")).
+require_instance((0,":root"),"color[0]=basket[0].color[0]").
 binary("color[0]=basket[0].color[0]","color[0]","=","basket[0].color[0]").
 
-constraint(1).
-condition(1,"basket[0].position[0]=Front").
+constraint((1,":root")).
+condition_instance((1,":root"),"basket[0].position[0]=Front").
 binary("basket[0].position[0]=Front","basket[0].position[0]","=","Front").
 constant("Front").
-require(1,"frontWheel[0].size<29").
+require_instance((1,":root"),"frontWheel[0].size<29").
 binary("frontWheel[0].size<29","frontWheel[0].size","<","29").
 number("29",29).
 
-constraint((2,0)).
-condition((2,0),"carrier[0].bag[0].capacity[0].volume=100").
+constraint((2,":root")).
+condition_instance((2,":root"),"carrier[0].bag[0].capacity[0].volume=100").
 binary("carrier[0].bag[0].capacity[0].volume=100","carrier[0].bag[0].capacity[0].volume","=","100").
-number("100",100).
-require((2,0),"rearWheel[0].size>=28").
+require_instance((2,":root"),"rearWheel[0].size>=28").
 binary("rearWheel[0].size>=28","rearWheel[0].size",">=","28").
+
+
+condition_instance((2,":root"),"carrier[0].bag[1].capacity[0].volume=100").
+binary("carrier[0].bag[1].capacity[0].volume=100","carrier[0].bag[1].capacity[0].volume","=","100").
+require_instance((2,":root"),"rearWheel[0].size>=28").
+binary("rearWheel[0].size>=28","rearWheel[0].size",">=","28").
+
+number("100",100).
 number("28",28).
 
-constraint((2,1)).
-condition((2,1),"carrier[0].bag[1].capacity[0].volume=100").
-binary("carrier[0].bag[1].capacity[0].volume=100","carrier[0].bag[1].capacity[0].volume","=","100").
-require((2,1),"rearWheel[0].size>=28").
-binary("rearWheel[0].size>=28","rearWheel[0].size",">=","28").
 
-constraint((3,0)).
-condition((3,0),"saddle[0]=Vintage").
+constraint((3,":root")).
+condition_instance((3,":root"),"saddle[0]=Vintage").
 binary("saddle[0]=Vintage","saddle[0]","=","Vintage").
-constant("Vintage").
-require((3,0),"carrier[0].bag[0].material[0]=Leather").
+require_instance((3,":root"),"carrier[0].bag[0].material[0]=Leather").
 binary("carrier[0].bag[0].material[0]=Leather","carrier[0].bag[0].material[0]","=","Leather").
-constant("Leather").
 
-constraint((3,1)).
-condition((3,1),"saddle[0]=Vintage").
+condition_instance((3,":root"),"saddle[0]=Vintage").
 binary("saddle[0]=Vintage","saddle[0]","=","Vintage").
-require((3,1),"carrier[0].bag[1].material[0]=Leather").
+require_instance((3,":root"),"carrier[0].bag[1].material[0]=Leather").
 binary("carrier[0].bag[1].material[0]=Leather","carrier[0].bag[1].material[0]","=","Leather").
 
-constraint(4).
-require(4,"frontWheel[0].size=rearWheel[0].size").
+constant("Vintage").
+constant("Leather").
+
+constraint((4,":root")).
+require_instance((4,":root"),"frontWheel[0].size=rearWheel[0].size").
 binary("frontWheel[0].size=rearWheel[0].size","frontWheel[0].size","=","rearWheel[0].size").
 
-constraint((5,0)).
-combinations((5,0),0,"carrier[0].bag[0].material[0]").
-combinations((5,0),1,"carrier[0].bag[0].capacity[0]").
+constraint((5,"carrier[0].bag[0]")).
+combinations_instance((5,"carrier[0].bag[0]"),0,0,"carrier[0].bag[0].material[0]").
+combinations_instance((5,"carrier[0].bag[0]"),0,1,"carrier[0].bag[0].capacity[0]").
 
-constraint((5,1)).
-combinations((5,1),0,"carrier[0].bag[1].material[0]").
-combinations((5,1),1,"carrier[0].bag[1].capacity[0]").
+constraint((5,"carrier[0].bag[1]")).
+combinations_instance((5,"carrier[0].bag[1]"),0,0,"carrier[0].bag[1].material[0]").
+combinations_instance((5,"carrier[0].bag[1]"),0,1,"carrier[0].bag[1].capacity[0]").
 allow(5,(0,0),"Leather").
 allow(5,(1,0),"B10").
 allow(5,(0,1),"Cotton").
@@ -187,3 +188,18 @@ allow(5,(0,2),"Polyester").
 allow(5,(1,2),"B20").
 allow(5,(1,2),"B50").
 allow(5,(1,2),"B100").
+
+
+% constraint((6,":root")).
+% combinations_instance((6,":root"),0,0,"saddle[0]").
+% combinations_instance((6,":root"),0,1,"carrier[0].bag[0].material[0]").
+
+% combinations_instance((6,":root"),1,0,"saddle[0]").
+% combinations_instance((6,":root"),1,1,"carrier[0].bag[1].material[0]").
+
+% allow(6,(0,0),"Vintage").
+% allow(6,(1,0),"Leather").
+% allow(6,(0,1),"Comfort").
+% allow(6,(1,1),"Cotton").
+% allow(6,(0,2),"Standard").
+% allow(6,(1,2),"Polyester").
