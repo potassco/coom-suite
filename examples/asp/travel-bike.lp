@@ -69,8 +69,9 @@ option("Color", "Green").
 option("Color", "Yellow").
 option("Color", "Blue").
 
-behavior((":root",0)).
-require((":root",0),"count(carrier.bags)+count(frame.bags)<=4").
+behavior(0).
+context(0,":root").
+require(0,"count(carrier.bags)+count(frame.bags)<=4").
 binary(":root","count(carrier.bags)+count(frame.bags)<=4","count(carrier.bags)+count(frame.bags)","<=","4").
 binary(":root","count(carrier.bags)+count(frame.bags)","count(carrier.bags)","+","count(frame.bags)").
 function(":root","count(carrier.bags)","count","carrier.bags").
@@ -81,8 +82,9 @@ path("frame.bags",0,frame).
 path("frame.bags",1,bags).
 number("4",4).
 
-behavior((":root",1)).
-imply((":root",1),totalWeight,"frontWheel.weight+rearWheel.weight+sum(carrier.bags.capacity.weight)+sum(frame.bags.capacity.weight)").
+behavior(1).
+context(1,":root").
+imply(1,totalWeight,"frontWheel.weight+rearWheel.weight+sum(carrier.bags.capacity.weight)+sum(frame.bags.capacity.weight)").
 path("totalWeight",0,totalWeight).
 binary(":root","frontWheel.weight+rearWheel.weight+sum(carrier.bags.capacity.weight)+sum(frame.bags.capacity.weight)","frontWheel.weight","+","rearWheel.weight+sum(carrier.bags.capacity.weight)+sum(frame.bags.capacity.weight)").
 binary(":root","rearWheel.weight+sum(carrier.bags.capacity.weight)+sum(frame.bags.capacity.weight)","rearWheel.weight","+","sum(carrier.bags.capacity.weight)+sum(frame.bags.capacity.weight)").
@@ -102,16 +104,18 @@ path("frame.bags.capacity.weight",1,bags).
 path("frame.bags.capacity.weight",2,capacity).
 path("frame.bags.capacity.weight",3,weight).
 
-behavior((":root",2)).
-require((":root",2),"totalWeight<=maxWeight*1000").
+behavior(2).
+context(2,":root").
+require(2,"totalWeight<=maxWeight*1000").
 binary(":root","totalWeight<=maxWeight*1000","totalWeight","<=","maxWeight*1000").
 path("totalWeight",0,totalWeight).
 binary(":root","maxWeight*1000","maxWeight","*","1000").
 path("maxWeight",0,maxWeight).
 number("1000",1000).
 
-behavior((":root",3)).
-imply((":root",3),totalVolume,"sum(carrier.bags.capacity.volume)+sum(frame.bags.capacity.volume)").
+behavior(3).
+context(3,":root").
+imply(3,totalVolume,"sum(carrier.bags.capacity.volume)+sum(frame.bags.capacity.volume)").
 path("totalVolume",0,totalVolume).
 binary(":root","sum(carrier.bags.capacity.volume)+sum(frame.bags.capacity.volume)","sum(carrier.bags.capacity.volume)","+","sum(frame.bags.capacity.volume)").
 function(":root","sum(carrier.bags.capacity.volume)","sum","carrier.bags.capacity.volume").
@@ -125,29 +129,32 @@ path("frame.bags.capacity.volume",1,bags).
 path("frame.bags.capacity.volume",2,capacity).
 path("frame.bags.capacity.volume",3,volume).
 
-behavior((":root",4)).
-require((":root",4),"totalVolume>=requestedVolume").
+behavior(4).
+context(4,":root").
+require(4,"totalVolume>=requestedVolume").
 binary(":root","totalVolume>=requestedVolume","totalVolume",">=","requestedVolume").
 path("totalVolume",0,totalVolume).
 path("requestedVolume",0,requestedVolume).
 
-behavior((":root",5)).
-condition((":root",5),"color=Red").
+behavior(5).
+context(5,":root").
+condition(5,"color=Red").
 binary(":root","color=Red","color","=","Red").
 path("color",0,color).
 constant("Red").
-require((":root",5),"frontWheel.size=20").
+require(5,"frontWheel.size=20").
 binary(":root","frontWheel.size=20","frontWheel.size","=","20").
 path("frontWheel.size",0,frontWheel).
 path("frontWheel.size",1,size).
 number("20",20).
 
-behavior(("Bag",6)).
-condition(("Bag",6),"material=Leather").
+behavior(6).
+context(6,"Bag").
+condition(6,"material=Leather").
 binary("Bag","material=Leather","material","=","Leather").
 path("material",0,material).
 constant("Leather").
-require(("Bag",6),"capacity=B10").
+require(6,"capacity=B10").
 binary("Bag","capacity=B10","capacity","=","B10").
 path("capacity",0,capacity).
 constant("B10").

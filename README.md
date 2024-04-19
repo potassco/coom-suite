@@ -18,7 +18,7 @@ coomsolver -h
 
 ## Name ideas
 
-- coomsuite
+- coomsuite (favorite)
 - coompiler
 - coompressor
 - coom2asp
