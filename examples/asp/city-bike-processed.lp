@@ -188,18 +188,3 @@ allow(5,(0,2),"Polyester").
 allow(5,(1,2),"B20").
 allow(5,(1,2),"B50").
 allow(5,(1,2),"B100").
-
-
-% constraint((6,":root")).
-% combinations_instance((6,":root"),0,0,"saddle[0]").
-% combinations_instance((6,":root"),0,1,"carrier[0].bag[0].material[0]").
-
-% combinations_instance((6,":root"),1,0,"saddle[0]").
-% combinations_instance((6,":root"),1,1,"carrier[0].bag[1].material[0]").
-
-% allow(6,(0,0),"Vintage").
-% allow(6,(1,0),"Leather").
-% allow(6,(0,1),"Comfort").
-% allow(6,(1,1),"Cotton").
-% allow(6,(0,2),"Standard").
-% allow(6,(1,2),"Polyester").
