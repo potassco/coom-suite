@@ -24,9 +24,25 @@ path_instance(Instance,Path,Path) :- binary(Context,_,_,_,Path), aux_instance(In
 path_instance(Instance,Path,Path) :- binary(Context,_,Path,_,_), aux_instance(Instance,Context), constant(Path).
 path_instance(Instance,Path,Path) :- binary(Context,_,Path,_,_), aux_instance(Instance,Context), number(Path,_).
 
-
+% Constraint, binaries and combinations
+behavior((Constraint,Instance)) :- behavior(Constraint), context(Constraint,Context), aux_instance(Instance,Context).
 binary_instance(Instance,Formula,X1,Op,X2) :- binary(Context,Formula,Left,Op,Right), aux_instance(Instance,Context),
                                               path_instance(Instance,Left,X1), path_instance(Instance,Right,X2).
+
+
+combinations_tuple((Constraint,Instance),Col,(X,())) :- behavior((Constraint,Instance)),
+                                                        combinations(Constraint,Col,Path), not combinations(Constraint,Col+1,_),
+                                                        path_instance(Instance,Path,X).
+combinations_tuple((Constraint,Instance),Col,(X',X)) :- combinations_tuple((Constraint,Instance),Col+1,X),
+                                                        combinations(Constraint,Col,Path), Col >= 0,
+                                                        path_instance(Instance,Path,X').
+combinations_tuple(Constraint,CT) :- combinations_tuple(Constraint,0,CT).
+
+tuple_order(Constraint,CT,ID) :-  combinations_tuple(Constraint,CT), ID = #count{ CT': combinations_tuple(Constraint,CT'), CT'<CT }.
+
+in_tuple((X,CT'),CT',X) :- combinations_tuple(_,CT), CT=(X,CT').
+in_tuple(CT,CT',X)      :- in_tuple(CT,(X,CT'),_).
+in_tuple(CT,X)          :- in_tuple(CT,_,X).
 
 
 %%% Output atoms
@@ -39,46 +55,43 @@ attr_instance(@dotpath((Attr,(Instance,0))),@dotpath(Instance)) :- aux_instance(
 parent(@dotpath(Instance),@dotpath(Parent))   :- aux_instance(Instance,_), Instance=(_,(Parent,_)).
 feature(@dotpath(Instance),Feature) :- aux_instance(Instance,_), Instance=(Feature,(_,_)).
 
-% #show structure_instance/3.
-% #show enumeration_instance/2.
-% #show attr_instance/2.
-% #show parent/2.
-% #show feature/2.
+#show structure_instance/3.
+#show enumeration_instance/2.
+#show attr_instance/2.
+#show parent/2.
+#show feature/2.
 
 % Constraints
-constraint((Constraint,Instance)) :- behavior(Constraint), context(Constraint,Context), aux_instance(Instance,Context).
+constraint((Constraint,@dotpath(Instance))) :- behavior((Constraint,Instance)).
 
 require_instance((Constraint,@dotpath(Instance)),@binary(Left,Op,Right)) :- require(Constraint,Formula), binary_instance(Instance,Formula,Left,Op,Right).
 condition_instance((Constraint,@dotpath(Instance)),@binary(Left,Op,Right)) :- condition(Constraint,Formula), binary_instance(Instance,Formula,Left,Op,Right).
 binary(@binary(Left,Op,Right),@dotpath(Left),Op,@dotpath(Right)) :- binary_instance(Instance,Formula,Left,Op,Right).
 
-
-combinations_instance((1,":root"),0,0,"wheelSupport[0]").
-combinations_instance((1,":root"),0,1,"rearWheel[0]").
+combinations_instance((Constraint,@dotpath(Instance)),ID,Col,@dotpath(X)) :- combinations(Constraint,Col,Path), path_instance(Instance,Path,X), in_tuple(CT,X), tuple_order((Constraint,Instance),CT,ID).
 
 
-combinations(1,0,"wheelSupport").
-combinations(1,1,"rearWheel").
+#show constraint/1.
+#show require_instance/2.
+#show condition_instance/2.
+#show binary/4.
+#show combinations_instance/4.
 
 
-
-% #show binary/4.
-% #show require_instance/2.
-% #show condition_instance/2.
-
-% Pass through facts from COOM fact format
-% #show feature/5.
-% #show structure/1.
-% #show enumeration/1.
-% #show option/2.
-% #show attribute/3.
-% #show attr_value/4.
-% #show allow/3.
-% #show constant/1.
-% #show number/2.
+%%% Pass through facts from COOM fact format
+#show feature/5.
+#show structure/1.
+#show enumeration/1.
+#show option/2.
+#show attribute/3.
+#show attr_value/4.
+#show allow/3.
+#show constant/1.
+#show number/2.
 
 #script (python)
 from clingo import String, SymbolType
+import math
 
 def dotpath(path):
     if path.type in (SymbolType.String, SymbolType.Number):
