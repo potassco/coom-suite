@@ -56,16 +56,16 @@ class ContainsTheory(Contains):
     def holds_for(self, model: Model) -> bool:
         if self.__check_theory:
             return self.__symbol in model.symbols(shown=True, theory=True)
-        return super().holds_for(model)
+        return super().holds_for(model)  # nocoverage
 
 
 TEST_EMPTY = Assert(All(), SubsetOf(set()))
-TEST_UNSAT = Assert(Exact(0), False_)  # type: ignore # falsely views False_ as not of type Assertion
+TEST_UNSAT = Assert(All(), False_)  # type: ignore # falsely views False_ as not of type Assertion
 TEST_ROOT_ONLY = Assert(Exact(1), Equals({'instance((),":root")'}))
 
 TESTS: dict[str, dict[str, AnyType]] = {
     "require_with_number": {
-        "test": Assert(All(), ContainsTheory(("val((size,((wheel,((),0)),0)),27)"))),
+        "test": Assert(All(), ContainsTheory("val((size,((wheel,((),0)),0)),27)")),
         "ftest": Assert(All(), ContainsTheory("val((size,((wheel,((),0)),0)),27)", check_theory=True)),
         "files": ["require_with_number.lp"],
     },
@@ -87,6 +87,22 @@ TESTS: dict[str, dict[str, AnyType]] = {
             Assert(
                 Exact(1),
                 SupersetOf({("val((size,((frontWheel,((),0)),0)),28)"), ("val((size,((rearWheel,((),0)),0)),28)")}),
+            ),
+        ),
+        "ftest": AndTest(
+            Assert(
+                Exact(1),
+                SupersetOfTheory(
+                    {("val((size,((frontWheel,((),0)),0)),27)"), ("val((size,((rearWheel,((),0)),0)),27)")},
+                    check_theory=True,
+                ),
+            ),
+            Assert(
+                Exact(1),
+                SupersetOfTheory(
+                    {("val((size,((frontWheel,((),0)),0)),28)"), ("val((size,((rearWheel,((),0)),0)),28)")},
+                    check_theory=True,
+                ),
             ),
         ),
         "files": ["require_two_wheels.lp"],
