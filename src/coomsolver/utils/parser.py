@@ -86,16 +86,12 @@ def get_parser() -> ArgumentParser:
     )
     parser_solve.add_argument(
         "input",
-        type=str,  # FileType('r', encoding='UTF-8'),
+        type=str,
         help="Path to the COOM file to solve",
-        # metavar='',
     )
     parser_solve.add_argument("--solver", "-s", type=str, help="Set solver", choices=SOLVERS, default="clingo")
 
     parser_solve.add_argument("--profile", type=str, help="Set COOM profile", choices=COOM_PROFILES, default="all")
-    parser_solve.add_argument(
-        "--models", "-n", type=int, help="Compute at most <n> models (0 for all)", default=None, metavar="<n>"
-    )
 
     parser_solve.add_argument(
         "--output", "-o", type=str, help="Set console output format ", choices=["asp", "coom"], default="asp"

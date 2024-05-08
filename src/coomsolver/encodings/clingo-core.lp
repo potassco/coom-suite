@@ -79,7 +79,8 @@ in_path((V,CI'),CI',V)    :- combinations_instances(_,_,(V,CI')).
 in_path(CI,CI',V)         :- in_path(CI,(V,CI'),_).
 in_path(CI,V)             :- in_path(CI,_,V).
 
-hit_cell(Instance,Constraint,CI,(Col,Row)) :- allow(Constraint,(Col,Row),V), combinations(Constraint,Col,Path), constraint(Instance,Constraint),
+hit_cell(Instance,Constraint,CI,(Col,Row)) :- allow(Constraint,(Col,Row),V), combinations(Constraint,Col,Path),
+                                              constraint(Instance,Constraint), path_instance(Instance,Path,X),
                                               combinations_instances(Instance,Constraint,CI), in_path(CI,X), val(X,V).
 
 hit_row(Instance,Constraint,CI) :- allow(Constraint,(_,Row),_), constraint(Instance,Constraint),
