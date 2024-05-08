@@ -45,6 +45,11 @@ in_tuple(CT,CT',X)      :- in_tuple(CT,(X,CT'),_).
 in_tuple(CT,X)          :- in_tuple(CT,_,X).
 
 
+% Always include boolean enumeration
+enumeration("bool").
+option("bool", "True").
+option("bool", "False").
+
 %%% Output atoms
 % Structure, enumeration and attribute instances
 structure_instance(":root",":root",0) :- structure(":root").

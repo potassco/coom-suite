@@ -2,7 +2,8 @@
 instance(Instance,":root") :- structure_instance(Instance,":root",0).
 
 % Generate enumeration and attribute values
-instance(Instance,Type) :- feature(Context,_,Type,_,_), enumeration_instance(Instance,Type), parent(Instance,Parent), instance(Parent,Context).
+% instance(Instance,Type) :- feature(Context,_,Type,_,_), enumeration_instance(Instance,Type), parent(Instance,Parent), instance(Parent,Context).
+instance(Instance,Type) :- enumeration_instance(Instance,Type), parent(Instance,Parent), instance(Parent,_).
 { val(Instance,Option) : option(Type,Option) } :-        enumeration(Type), instance(Instance,Type).
 :-  { val(Instance,Option) : option(Type,Option) } != 1, enumeration(Type), instance(Instance,Type).
 
@@ -14,12 +15,12 @@ val(AtInstance,V) :- attr_instance(AtInstance,Instance), attr_value(Type,Option,
 
 % Require without condition
 % Require must not be false to be satisfied (can be undefined)
-unsat(Constraint,(CB,RB)) :- condition_instance(Constraint,CB), require_instance(Constraint,RB),
-                             binary_sat(CB),                    binary_unsat(RB).
+unsat(Constraint,B) :- not condition_instance(Constraint,_), require_instance(Constraint,B), binary_unsat(B).
 
 % Require with condition
 % Condition has to be true to become active (must not be undefined)
-unsat(Constraint,B) :- not condition_instance(Constraint,_), require_instance(Constraint,B), binary_unsat(B).
+unsat(Constraint,(CB,RB)) :- condition_instance(Constraint,CB), require_instance(Constraint,RB),
+                             binary_sat(CB),                    binary_unsat(RB).
 
 % Combinations Table (only for allow)
 % Table constraint is satisfied if a row is satisfied
