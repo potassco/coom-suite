@@ -27,16 +27,21 @@ class ASPUserInputVisitor(UserInputVisitor):
         self.context: str = ""
         self.output_asp: List[str] = []
 
+    def visitInput_block(self, ctx: UserInputParser.Input_blockContext):
+        self.context = ctx.path().getText() + "."
+        super().visitInput_block(ctx)
+        self.context = ""
+
     def visitSet_value(self, ctx: UserInputParser.Set_valueContext):
-        path = ctx.path().getText()
+        path = self.context + ctx.path().getText()
         value = ctx.formula_atom().getText()
-        self.output_asp.append(f'user_val("{path}",{value}).')
+        self.output_asp.append(f'val("{path}",{value}).')
         super().visitSet_value(ctx)
 
     def visitAdd_instance(self, ctx: UserInputParser.Add_instanceContext):
-        path = ctx.path().getText()
-        INT = ctx.INTEGER().getText()
-        num_instance = int(INT) if INT is not None else 1
+        path = self.context + ctx.path().getText()
+        INT = ctx.INTEGER()
+        num_instance = int(INT.getText()) if INT is not None else 1
         for i in range(num_instance):
             self.output_asp.append(f'user_instance("{path}[{i}]").')
         super().visitAdd_instance(ctx)

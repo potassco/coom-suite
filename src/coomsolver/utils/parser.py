@@ -67,7 +67,7 @@ def get_parser() -> ArgumentParser:
     parser_convert.add_argument(
         "input",
         type=str,  # FileType('r', encoding='UTF-8'),
-        help="Input the COOM file corresponding to the instance.",
+        help="Input the COOM model file corresponding to the instance.",
         # metavar='',
     )
     parser_convert.add_argument(
@@ -76,6 +76,7 @@ def get_parser() -> ArgumentParser:
         type=str,
         help="Path to output directory. Same directory as input by default.",
     )
+    parser_convert.add_argument("--user-input", "-u", type=str, help="Input the COOM user input.")
 
     # -------------
     # Solve parser
@@ -90,6 +91,7 @@ def get_parser() -> ArgumentParser:
         help="Path to the COOM file to solve",
         # metavar='',
     )
+    parser_solve.add_argument("--user_input", "-u", type=str, help="Input the COOM user input.")
     parser_solve.add_argument("--solver", "-s", type=str, help="Set solver", choices=SOLVERS, default="clingo")
 
     parser_solve.add_argument("--profile", type=str, help="Set COOM profile", choices=COOM_PROFILES, default="all")

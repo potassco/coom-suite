@@ -33,6 +33,11 @@ def convert_instance(coom_file: str, grammar: str, output_dir: Optional[str] = N
     asp_instance = run_antlr4_visitor(input_stream, grammar=grammar)
 
     with open(output_lp_file, "w", encoding="utf8") as f:
+        if grammar == "model":
+            f.write("%%% COOM model\n")
+        elif grammar == "user_input":
+            f.write("%%% User Input\n")
+
         f.write("\n".join(asp_instance))
     log.info("ASP file saved in %s", output_lp_file)
 
