@@ -22,7 +22,7 @@ def parse_coom(coom_input: str) -> List[str]:
     Helper function for testing the COOM to ASP parser.
     """
     input_stream = InputStream(coom_input)
-    return run_antlr4_visitor(input_stream)
+    return run_antlr4_visitor(input_stream, grammar="model")
 
 
 def compose(on_app: Callable, on_test: Callable) -> Callable:  # type: ignore

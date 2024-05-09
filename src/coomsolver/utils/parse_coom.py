@@ -10,13 +10,41 @@ in a visitor style fashion and outputs ASP facts.
 # mypy: ignore-errors
 from typing import List, Optional
 
-from .coom_grammar.ModelParser import ModelParser
-from .coom_grammar.ModelVisitor import ModelVisitor
+from .coom_grammar.model.ModelParser import ModelParser
+from .coom_grammar.model.ModelVisitor import ModelVisitor
+from .coom_grammar.user_input.UserInputParser import UserInputParser
+from .coom_grammar.user_input.UserInputVisitor import UserInputVisitor
 
 
-class ASPVisitor(ModelVisitor):
+class ASPUserInputVisitor(UserInputVisitor):
     """
-    Custom visitor of the COOM Parser.
+    Custom visitor of the COOM User Input Parser.
+    Generates a list of ASP facts as strings.
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.context: str = ""
+        self.output_asp: List[str] = []
+
+    def visitSet_value(self, ctx: UserInputParser.Set_valueContext):
+        path = ctx.path().getText()
+        value = ctx.formula_atom().getText()
+        self.output_asp.append(f'user_val("{path}",{value}).')
+        super().visitSet_value(ctx)
+
+    def visitAdd_instance(self, ctx: UserInputParser.Add_instanceContext):
+        path = ctx.path().getText()
+        INT = ctx.INTEGER().getText()
+        num_instance = int(INT) if INT is not None else 1
+        for i in range(num_instance):
+            self.output_asp.append(f'user_instance("{path}[{i}]").')
+        super().visitAdd_instance(ctx)
+
+
+class ASPModelVisitor(ModelVisitor):
+    """
+    Custom visitor of the COOM Model Parser.
     Generates a list of ASP facts as strings.
     """
 

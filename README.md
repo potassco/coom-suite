@@ -63,6 +63,14 @@ python -m pipx install pre-commit
 pre-commit install
 ```
 
+## Generate ANTLR4 Python files
+
+From the corresponding folder run
+
+```
+antlr4 -v 4.9.3 -Dlanguage=Python3 UserInput.g4 -visitor
+```
+
 [editable]: https://setuptools.pypa.io/en/latest/userguide/development_mode.html
 [nox]: https://nox.thea.codes/en/stable/index.html
 [pipx]: https://pypa.github.io/pipx/
