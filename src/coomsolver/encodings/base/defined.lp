@@ -13,12 +13,12 @@
 #defined attr_enum/2.
 #defined isnumeric/1.
 
-#defined behavior/1.
+#defined constraint/1.
 #defined require_instance/2.
 #defined condition_instance/2.
 #defined combinations_instance/4.
 #defined allow/3.
 #defined binary/4.
-#defined function/4.
 #defined constant/1.
 #defined number/2.
+#defined function/4.

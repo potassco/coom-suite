@@ -61,57 +61,55 @@ class ContainsTheory(Contains):
 
 TEST_EMPTY = Assert(All(), SubsetOf(set()))
 TEST_UNSAT = Assert(Exact(0), False_)  # type: ignore # falsely views False_ as not of type Assertion
-TEST_ROOT_ONLY = Assert(Exact(1), Equals({'instance((),"")'}))
+# TEST_ROOT_ONLY = Assert(Exact(1), Equals({'included((),"")'}))
 
 TESTS: dict[str, dict[str, AnyType]] = {
     "require_with_number": {
-        "test": Assert(All(), ContainsTheory(("val((size,((wheel,((),0)),0)),27)"))),
-        "ftest": Assert(All(), ContainsTheory("val((size,((wheel,((),0)),0)),27)", check_theory=True)),
+        "test": Assert(All(), ContainsTheory(('val("wheel[0].size[0]",27)'))),
+        "ftest": Assert(All(), ContainsTheory('val("wheel[0].size[0]",27)', check_theory=True)),
         "files": ["require_with_number.lp"],
     },
     "require_with_number_ge": {
-        "test": Assert(All(), ContainsTheory(("val((size,((wheel,((),0)),0)),28)"))),
-        "ftest": Assert(All(), ContainsTheory("val((size,((wheel,((),0)),0)),28)", check_theory=True)),
+        "test": Assert(All(), ContainsTheory(('val("wheel[0].size[0]",28)'))),
+        "ftest": Assert(All(), ContainsTheory('val("wheel[0].size[0]",28)', check_theory=True)),
         "files": ["require_with_number_ge.lp"],
     },
     "require_with_constant": {
-        "test": Assert(All(), Contains(('val((wheel,((),0)),"W28")'))),
+        "test": Assert(All(), Contains(('val("wheel[0]","W28")'))),
         "files": ["require_with_constant.lp"],
     },
     "require_two_wheels": {
         "test": AndTest(
             Assert(
                 Exact(1),
-                SupersetOf({("val((size,((frontWheel,((),0)),0)),27)"), ("val((size,((rearWheel,((),0)),0)),27)")}),
+                SupersetOf({('val("frontWheel[0].size[0]",27)'), ('val("rearWheel[0].size[0]",27)')}),
             ),
             Assert(
                 Exact(1),
-                SupersetOf({("val((size,((frontWheel,((),0)),0)),28)"), ("val((size,((rearWheel,((),0)),0)),28)")}),
+                SupersetOf({('val("frontWheel[0].size[0]",28)'), ('val("rearWheel[0].size[0]",28)')}),
             ),
         ),
         "files": ["require_two_wheels.lp"],
     },
     "condition": {
-        "test": Assert(
-            All(), Implies(Contains('val((wheelSupport,((),0)),"True")'), Contains('val((wheel,((),0)),"Small")'))
-        ),
+        "test": Assert(All(), Implies(Contains('val("wheelSupport[0]","True")'), Contains('val("wheel[0]","Small")'))),
         "files": ["condition.lp"],
     },
     "combination": {
         "test": AndTest(
-            Assert(Any(), SupersetOf({'val((wheelSupport,((),0)),"False")', 'val((wheel,((),0)),"W20")'})),
-            Assert(Any(), SupersetOf({'val((wheelSupport,((),0)),"False")', 'val((wheel,((),0)),"W18")'})),
-            Assert(Any(), SupersetOf({'val((wheelSupport,((),0)),"True")', 'val((wheel,((),0)),"W16")'})),
-            Assert(Any(), SupersetOf({'val((wheelSupport,((),0)),"True")', 'val((wheel,((),0)),"W14")'})),
+            Assert(Any(), SupersetOf({'val("wheelSupport[0]","False")', 'val("wheel[0]","W20")'})),
+            Assert(Any(), SupersetOf({'val("wheelSupport[0]","False")', 'val("wheel[0]","W18")'})),
+            Assert(Any(), SupersetOf({'val("wheelSupport[0]","True")', 'val("wheel[0]","W16")'})),
+            Assert(Any(), SupersetOf({'val("wheelSupport[0]","True")', 'val("wheel[0]","W14")'})),
             Assert(Exact(4), True_()),
         ),
         "files": ["combination.lp"],
     },
     "enumeration": {
         "test": AndTest(
-            Assert(Exact(1), Contains('val((color,((),0)),"Red")')),
-            Assert(Exact(1), Contains('val((color,((),0)),"Green")')),
-            Assert(Exact(1), Contains('val((color,((),0)),"Blue")')),
+            Assert(Exact(1), Contains('val("color[0]","Red")')),
+            Assert(Exact(1), Contains('val("color[0]","Green")')),
+            Assert(Exact(1), Contains('val("color[0]","Blue")')),
             Assert(Exact(3), True_()),
         ),
         "program": """
@@ -125,8 +123,8 @@ TESTS: dict[str, dict[str, AnyType]] = {
     },
     "bool_enumeration": {
         "test": AndTest(
-            Assert(Exact(1), Contains('val((boolean,((),0)),"True")')),
-            Assert(Exact(1), Contains('val((boolean,((),0)),"False")')),
+            Assert(Exact(1), Contains('val("boolean[0]","True")')),
+            Assert(Exact(1), Contains('val("boolean[0]","False")')),
             Assert(Exact(2), True_()),
         ),
         "program": """
@@ -134,12 +132,10 @@ TESTS: dict[str, dict[str, AnyType]] = {
         feature("",boolean,"bool",1,1).""",
     },
     "attribute": {
-        "test": Assert(
-            Exact(1), SupersetOfTheory({"val((size,((wheel,((),0)),0)),14)", 'val(((wheel,((),0))),"W14")'})
-        ),
+        "test": Assert(Exact(1), SupersetOfTheory({'val("wheel[0].size[0]",14)', 'val("wheel[0]","W14")'})),
         "ftest": Assert(
             Exact(1),
-            SupersetOfTheory({"val((size,((wheel,((),0)),0)),14)", 'val(((wheel,((),0))),"W14")'}, check_theory=True),
+            SupersetOfTheory({'val("wheel[0].size[0]",14)', 'val("wheel[0]","W14")'}, check_theory=True),
         ),
         "program": """
         structure("").
@@ -152,7 +148,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
     },
     "structure": {
         "test": AndTest(
-            Assert(Exact(1), Contains('instance((wheel,((),0)),"Wheel")')),
+            Assert(Exact(1), Contains('included("wheel[0]")')),
             Assert(Exact(1), True_()),
         ),
         "program": """
@@ -162,7 +158,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
     },
     "structure_optional": {
         "test": AndTest(
-            Assert(Exact(1), Contains('instance((basket,((),0)),"Basket")')),
+            Assert(Exact(1), Contains('included("basket[0]")')),
             Assert(Exact(2), True_()),
         ),
         "program": """
@@ -174,7 +170,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
         "test": AndTest(
             Assert(
                 Exact(1),
-                SupersetOf({'instance((carrier,((),0)),"Carrier")', 'instance((bag,((carrier,((),0)),0)),"Bag")'}),
+                SupersetOf({'included("carrier[0]")', 'included("carrier[0].bag[0]")'}),
             ),
             Assert(Exact(1), True_()),
         ),
@@ -187,15 +183,15 @@ TESTS: dict[str, dict[str, AnyType]] = {
     },
     "structure_nested_optional": {
         "test": AndTest(
-            Assert(Exact(3), Contains('instance((carrier,((),0)),"Carrier")')),
-            Assert(Exact(2), Contains('instance((bag,((carrier,((),0)),0)),"Bag")')),
+            Assert(Exact(3), Contains('included("carrier[0]")')),
+            Assert(Exact(2), Contains('included("carrier[0].bag[0]")')),
             Assert(
                 Exact(1),
                 SupersetOf(
                     {
-                        'instance((carrier,((),0)),"Carrier")',
-                        'instance((bag,((carrier,((),0)),0)),"Bag")',
-                        'instance((bag,((carrier,((),0)),1)),"Bag")',
+                        'included("carrier[0]")',
+                        'included("carrier[0].bag[0]")',
+                        'included("carrier[0].bag[1]")',
                     }
                 ),
             ),

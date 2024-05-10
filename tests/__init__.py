@@ -3,6 +3,7 @@ Basic functions to run tests.
 """
 
 import tempfile
+from copy import deepcopy
 from os.path import join
 from typing import Callable, List, Optional, Sequence
 
@@ -42,9 +43,9 @@ def run_test(
     file_paths = [join("examples", "tests", f) for f in files] if files else None
     ctl_args = [] if ctl_args is None else ctl_args
     solver = AppSolver(application=coom_app, files=file_paths, program=program, arguments=["0"])
-
-    solver.solve(test)
-    test.assert_()
+    test_copy = deepcopy(test)
+    solver.solve(test_copy)
+    test_copy.assert_()
 
 
 def compose(on_app: Callable, on_test: Callable) -> Callable:  # type: ignore

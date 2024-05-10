@@ -2,10 +2,11 @@
 Sanity check test cases for clingo encodings.
 """
 
+from copy import deepcopy
 from unittest import TestCase
 
 from . import run_test
-from .tests import TEST_EMPTY, TEST_ROOT_ONLY, TEST_UNSAT
+from .tests import TEST_EMPTY, TEST_UNSAT
 
 # pylint: disable=deprecated-method
 
@@ -20,7 +21,7 @@ class TestSanityChecks(TestCase):
         Test solving an empty product (root structure).
         """
         program = 'structure("").'
-        run_test(TEST_ROOT_ONLY, program=program)
+        run_test(deepcopy(TEST_EMPTY), program=program, profile="core")
 
     def test_no_product(self) -> None:
         """
@@ -28,14 +29,14 @@ class TestSanityChecks(TestCase):
         """
 
         program_feature = 'feature("",a,"b",1,1).'
-        run_test(TEST_EMPTY, program=program_feature)
+        run_test(deepcopy(TEST_EMPTY), program=program_feature, profile="core")
 
         program_enum_attr = """
         enumeration("a").
         attribute("a",b,"num").
         option("a", "a1").
         attr_value("a","a1",b,1)."""
-        run_test(TEST_EMPTY, program=program_enum_attr)
+        run_test(deepcopy(TEST_EMPTY), program=program_enum_attr, profile="core")
 
     def test_no_feature(self) -> None:
         """
@@ -46,7 +47,7 @@ class TestSanityChecks(TestCase):
         enumeration("a").
         option("a","a1").
         option("a","a2")."""
-        run_test(TEST_ROOT_ONLY, program=program_no_feature)
+        run_test(deepcopy(TEST_EMPTY), program=program_no_feature, profile="core")
 
     def test_undef(self) -> None:
         """
@@ -60,7 +61,7 @@ class TestSanityChecks(TestCase):
         binary("","color=Silver","color","=","Silver").
         path("color",0,color).
         constant("Silver")."""
-        run_test(TEST_ROOT_ONLY, program=program_require)
+        run_test(deepcopy(TEST_EMPTY), program=program_require, profile="core")
 
         program_condition = """
         structure("").
@@ -74,7 +75,7 @@ class TestSanityChecks(TestCase):
         binary("","size=Big","size","=","Big").
         path("size",0,size).
         constant("Big")."""
-        run_test(TEST_ROOT_ONLY, program=program_condition)
+        run_test(deepcopy(TEST_EMPTY), program=program_condition, profile="core")
 
     def test_empty_combinations(self) -> None:
         """
@@ -89,4 +90,4 @@ class TestSanityChecks(TestCase):
         behavior(("",0)).
         combinations(("",0),0,"a").
         path("a",0,a)."""
-        run_test(TEST_UNSAT, program=program)
+        run_test(deepcopy(TEST_UNSAT), program=program, profile="core")
