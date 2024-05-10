@@ -1,18 +1,24 @@
 #include "clingo-core-processed.lp".
 
-% Always generate minimal number of objects
-instance(Instance,Type) :- feature(Context,_,Type,Min,_), structure_instance(Instance,Type,Idx), Idx < Min,
-                           parent(Instance,Parent), instance(Parent,Context).
+% Generate structure objects
+{ included(X) : struct_type(X,Type) }.
 
-% Optionally generate additional objects
-{ instance(Instance,Type) : feature(Context,_,Type,Min,_), structure_instance(Instance,Type,_) }.
+% Always include minimal number of objects
+included(X) :- feature(Context,_,Type,Min,_), struct_type(X,Type), index(X,Idx), Idx < Min,
+               parent(X,Parent), included(Parent), struct_type(Parent,Context).
+
+% No structure object without feature (really needed?)
+:- included(X), struct_type(X,Type), not feature(_,_,Type,_,_), X != "".
 
 % No instances without their parent instantiated
-:- instance(Instance,_), structure_instance(Instance,_,_), parent(Instance,Parent), not instance(Parent,_).
+:- included(X), struct_type(X,_), parent(X,Parent), not included(Parent).
 
 % Indices in ascending order for a feature
-:- feature(_,Feature,Type,_,_), instance(Instance,Type),      structure_instance(Instance,Type,Idx),    feature(Instance,Feature),
-                                not instance(Instance2,Type), structure_instance(Instance2,Type,Idx-1), feature(Instance2,Feature), Idx > 0.
+:- feature(_,Feature,Type,_,_), included(X),      struct_type(X,Type),  feature(X,Feature),  index(X, Idx), Idx > 0,
+                                not included(X'), struct_type(X',Type), feature(X',Feature), index(X',Idx-1).
 
 % Check cardinalities
-:- feature(Context,Feature,Type,Min,Max), instance(Parent,Context), not Min<=X<=Max, X = #count { I : instance(I,Type), parent(I,Parent), feature(I,Feature) }.
+:- feature(Context,Feature,Type,Min,Max), included(Parent), struct_type(Parent,Context),
+   not Min<=N<=Max, N = #count { X : included(X), parent(X,Parent), feature(X,Feature) }.
+
+#show included(X) : included(X), struct_type(X,_), X != "".

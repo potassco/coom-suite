@@ -1,4 +1,4 @@
-instance((),":root") :- structure(":root").
+instance((),"") :- structure("").
 
 % Generate enumeration and attribute values
 instance((Feature,(Instance,0)),Type) :- feature(Context,Feature,Type,_,_), enumeration(Type), instance(Instance,Context).

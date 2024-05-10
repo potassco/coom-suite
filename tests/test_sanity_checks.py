@@ -19,7 +19,7 @@ class TestSanityChecks(TestCase):
         """
         Test solving an empty product (root structure).
         """
-        program = 'structure(":root").'
+        program = 'structure("").'
         run_test(TEST_ROOT_ONLY, program=program)
 
     def test_no_product(self) -> None:
@@ -27,7 +27,7 @@ class TestSanityChecks(TestCase):
         Test solving programs without program (root structure).
         """
 
-        program_feature = 'feature(":root",a,"b",1,1).'
+        program_feature = 'feature("",a,"b",1,1).'
         run_test(TEST_EMPTY, program=program_feature)
 
         program_enum_attr = """
@@ -42,7 +42,7 @@ class TestSanityChecks(TestCase):
         Test solving programs without feature.
         """
         program_no_feature = """
-        structure(":root").
+        structure("").
         enumeration("a").
         option("a","a1").
         option("a","a2")."""
@@ -53,25 +53,25 @@ class TestSanityChecks(TestCase):
         Test solving constraints with undefined path expressions.
         """
         program_require = """
-        structure(":root").
+        structure("").
 
-        behavior((":root",0)).
-        require((":root",0),"color=Silver").
-        binary(":root","color=Silver","color","=","Silver").
+        behavior(("",0)).
+        require(("",0),"color=Silver").
+        binary("","color=Silver","color","=","Silver").
         path("color",0,color).
         constant("Silver")."""
         run_test(TEST_ROOT_ONLY, program=program_require)
 
         program_condition = """
-        structure(":root").
+        structure("").
 
-        behavior((":root",0)).
-        condition((":root",0),"color=Silver").
-        binary(":root","color=Silver","color","=","Silver").
+        behavior(("",0)).
+        condition(("",0),"color=Silver").
+        binary("","color=Silver","color","=","Silver").
         path("color",0,color).
         constant("Silver").
-        require((":root",0),"size=Big").
-        binary(":root","size=Big","size","=","Big").
+        require(("",0),"size=Big").
+        binary("","size=Big","size","=","Big").
         path("size",0,size).
         constant("Big")."""
         run_test(TEST_ROOT_ONLY, program=program_condition)
@@ -81,12 +81,12 @@ class TestSanityChecks(TestCase):
         Test solving empty combination tables
         """
         program = """
-        structure(":root").
-        feature(":root",a,"b",1,1).
+        structure("").
+        feature("",a,"b",1,1).
 
         enumeration("b").
 
-        behavior((":root",0)).
-        combinations((":root",0),0,"a").
+        behavior(("",0)).
+        combinations(("",0),0,"a").
         path("a",0,a)."""
         run_test(TEST_UNSAT, program=program)

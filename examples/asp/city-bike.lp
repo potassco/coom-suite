@@ -1,10 +1,10 @@
-structure(":root").
-feature(":root",color,"Color",1,1).
-feature(":root",basket,"Basket",0,1).
-feature(":root",saddle,"Saddle",1,1).
-feature(":root",frontWheel,"Wheel",1,1).
-feature(":root",rearWheel,"Wheel",1,1).
-feature(":root",carrier,"Carrier",1,1).
+structure("").
+feature("",color,"Color",1,1).
+feature("",basket,"Basket",0,1).
+feature("",saddle,"Saddle",1,1).
+feature("",frontWheel,"Wheel",1,1).
+feature("",rearWheel,"Wheel",1,1).
+feature("",carrier,"Carrier",1,1).
 
 structure("Basket").
 feature("Basket",position,"Position",1,1).
@@ -60,58 +60,58 @@ option("Material", "Leather").
 option("Material", "Polyester").
 
 behavior(0).
-context(0,":root").
+context(0,"").
 require(0,"color=basket.color").
-binary(":root","color=basket.color","color","=","basket.color").
+binary("","color=basket.color","color","=","basket.color").
 path("color",0,color).
 path("basket.color",0,basket).
 path("basket.color",1,color).
 
 behavior(1).
-context(1,":root").
+context(1,"").
 condition(1,"basket.position=Front").
-binary(":root","basket.position=Front","basket.position","=","Front").
+binary("","basket.position=Front","basket.position","=","Front").
 path("basket.position",0,basket).
 path("basket.position",1,position).
 constant("Front").
 require(1,"frontWheel.size<29").
-binary(":root","frontWheel.size<29","frontWheel.size","<","29").
+binary("","frontWheel.size<29","frontWheel.size","<","29").
 path("frontWheel.size",0,frontWheel).
 path("frontWheel.size",1,size).
 number("29",29).
 
 behavior(2).
-context(2,":root").
+context(2,"").
 condition(2,"carrier.bag.capacity.volume=100").
-binary(":root","carrier.bag.capacity.volume=100","carrier.bag.capacity.volume","=","100").
+binary("","carrier.bag.capacity.volume=100","carrier.bag.capacity.volume","=","100").
 path("carrier.bag.capacity.volume",0,carrier).
 path("carrier.bag.capacity.volume",1,bag).
 path("carrier.bag.capacity.volume",2,capacity).
 path("carrier.bag.capacity.volume",3,volume).
 number("100",100).
 require(2,"rearWheel.size>=28").
-binary(":root","rearWheel.size>=28","rearWheel.size",">=","28").
+binary("","rearWheel.size>=28","rearWheel.size",">=","28").
 path("rearWheel.size",0,rearWheel).
 path("rearWheel.size",1,size).
 number("28",28).
 
 behavior(3).
-context(3,":root").
+context(3,"").
 condition(3,"saddle=Vintage").
-binary(":root","saddle=Vintage","saddle","=","Vintage").
+binary("","saddle=Vintage","saddle","=","Vintage").
 path("saddle",0,saddle).
 constant("Vintage").
 require(3,"carrier.bag.material=Leather").
-binary(":root","carrier.bag.material=Leather","carrier.bag.material","=","Leather").
+binary("","carrier.bag.material=Leather","carrier.bag.material","=","Leather").
 path("carrier.bag.material",0,carrier).
 path("carrier.bag.material",1,bag).
 path("carrier.bag.material",2,material).
 constant("Leather").
 
 behavior(4).
-context(4,":root").
+context(4,"").
 require(4,"frontWheel.size=rearWheel.size").
-binary(":root","frontWheel.size=rearWheel.size","frontWheel.size","=","rearWheel.size").
+binary("","frontWheel.size=rearWheel.size","frontWheel.size","=","rearWheel.size").
 path("frontWheel.size",0,frontWheel).
 path("frontWheel.size",1,size).
 path("rearWheel.size",0,rearWheel).

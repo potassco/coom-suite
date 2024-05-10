@@ -1,26 +1,32 @@
 % Always include root instance
-instance(Instance,":root") :- structure_instance(Instance,":root",0).
+included(""). % :- structure_type(X,"").
 
-% Generate enumeration and attribute values
-% instance(Instance,Type) :- feature(Context,_,Type,_,_), enumeration_instance(Instance,Type), parent(Instance,Parent), instance(Parent,Context).
-instance(Instance,Type) :- enumeration_instance(Instance,Type), parent(Instance,Parent), instance(Parent,_).
-{ val(Instance,Option) : option(Type,Option) } :-        enumeration(Type), instance(Instance,Type).
-:-  { val(Instance,Option) : option(Type,Option) } != 1, enumeration(Type), instance(Instance,Type).
+% Generate enumeration values
+{ val(X,Option) : option(Type,Option), enum_type(X,Type) }.
+
+% Enumeration variables are always included when its parents are included
+included(X) :- enum_type(X,_), parent(X,Parent), included(Parent).
+
+% No value if variable has not been included
+:- enum_type(X,_), val(X,_),  not included(X).
+
+% Exactly one value if variable has been included
+:- enum_type(X,_), included(X), not { val(X,_) } = 1.
 
 % Derive associated attribute values
-val(AtInstance,V) :- attr_instance(AtInstance,Instance), attr_value(Type,Option,_,V), instance(Instance,Type), val(Instance,Option).
+val(X,V) :- attr_enum(X,X'), enum_type(X',Type), attr_value(Type,Option,_,V), included(X'), val(X',Option).
 
 %%% Constraints
 :- constraint(Constraint), unsat(Constraint,_).
 
 % Require without condition
 % Require must not be false to be satisfied (can be undefined)
-unsat(Constraint,B) :- not condition_instance(Constraint,_), require_instance(Constraint,B), binary_unsat(B).
+unsat(Constraint,B) :- not condition_instance(Constraint,_), require_instance(Constraint,B), -binary_sat(B).
 
 % Require with condition
 % Condition has to be true to become active (must not be undefined)
 unsat(Constraint,(CB,RB)) :- condition_instance(Constraint,CB), require_instance(Constraint,RB),
-                             binary_sat(CB),                    binary_unsat(RB).
+                             binary_sat(CB),                    -binary_sat(RB).
 
 % Combinations Table (only for allow)
 % Table constraint is satisfied if a row is satisfied
@@ -36,7 +42,7 @@ binary_sat(Formula) :- binary(Formula,X1,">=",X2), V1 >= V2, val(X1,V1), val(X2,
 binary_sat(Formula) :- binary(Formula,X1,"<", X2), V1 < V2,  val(X1,V1), val(X2,V2).
 binary_sat(Formula) :- binary(Formula,X1,"<=",X2), V1 <= V2, val(X1,V1), val(X2,V2).
 
-binary_unsat(Formula) :- binary(Formula,_,_,_), binary_def(Formula), not binary_sat(Formula).
+-binary_sat(Formula) :- binary(Formula,_,_,_), binary_def(Formula), not binary_sat(Formula).
 
 %%% Check combinations
 hit_cell(Constraint,ID,(Col,Row)) :- allow(Idx,(Col,Row),V), combinations_instance(Constraint,ID,Col,X), val(X,V), Constraint=(Idx,_).
@@ -59,10 +65,9 @@ val(Path,N)    :- number(Path,N).
 
 % Show statements
 #show .
-#show instance(I,S) : instance(I,S), structure_instance(I,S,_).
 
-#show val(X,V) : val(X,V), enumeration_instance(X,_).
-#show val(X,V) : val(X,V), attr_instance(X,_).
+#show val(X,V) : val(X,V), enum_type(X,_).
+#show val(X,V) : val(X,V), attr_enum(X,_).
 
 #defined structure/1.
 #defined feature/5.
@@ -70,13 +75,20 @@ val(Path,N)    :- number(Path,N).
 #defined option/2.
 #defined attribute/3.
 #defined attr_value/4.
+
+#defined struct_type/2.
+#defined index/2.
+#defined enum_type/2.
+#defined parent/2.
+#defined feature/2.
+#defined attr_enum/2.
+
 #defined behavior/1.
 #defined require_instance/2.
 #defined condition_instance/2.
 #defined combinations_instance/4.
 #defined allow/3.
-#defined binary/5.
+#defined binary/4.
 #defined function/4.
-#defined path/3.
 #defined constant/1.
 #defined number/2.

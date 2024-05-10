@@ -61,7 +61,7 @@ class ContainsTheory(Contains):
 
 TEST_EMPTY = Assert(All(), SubsetOf(set()))
 TEST_UNSAT = Assert(Exact(0), False_)  # type: ignore # falsely views False_ as not of type Assertion
-TEST_ROOT_ONLY = Assert(Exact(1), Equals({'instance((),":root")'}))
+TEST_ROOT_ONLY = Assert(Exact(1), Equals({'instance((),"")'}))
 
 TESTS: dict[str, dict[str, AnyType]] = {
     "require_with_number": {
@@ -115,8 +115,8 @@ TESTS: dict[str, dict[str, AnyType]] = {
             Assert(Exact(3), True_()),
         ),
         "program": """
-            structure(":root").
-            feature(":root",color,"Color",1,1).
+            structure("").
+            feature("",color,"Color",1,1).
 
             enumeration("Color").
             option("Color", "Red").
@@ -130,8 +130,8 @@ TESTS: dict[str, dict[str, AnyType]] = {
             Assert(Exact(2), True_()),
         ),
         "program": """
-        structure(":root").
-        feature(":root",boolean,"bool",1,1).""",
+        structure("").
+        feature("",boolean,"bool",1,1).""",
     },
     "attribute": {
         "test": Assert(
@@ -142,8 +142,8 @@ TESTS: dict[str, dict[str, AnyType]] = {
             SupersetOfTheory({"val((size,((wheel,((),0)),0)),14)", 'val(((wheel,((),0))),"W14")'}, check_theory=True),
         ),
         "program": """
-        structure(":root").
-        feature(":root",wheel,"Wheel",1,1).
+        structure("").
+        feature("",wheel,"Wheel",1,1).
 
         enumeration("Wheel").
         attribute("Wheel",size,"num").
@@ -156,8 +156,8 @@ TESTS: dict[str, dict[str, AnyType]] = {
             Assert(Exact(1), True_()),
         ),
         "program": """
-        structure(":root").
-        feature(":root",wheel,"Wheel",1,1).
+        structure("").
+        feature("",wheel,"Wheel",1,1).
         structure("Wheel").""",
     },
     "structure_optional": {
@@ -166,8 +166,8 @@ TESTS: dict[str, dict[str, AnyType]] = {
             Assert(Exact(2), True_()),
         ),
         "program": """
-        structure(":root").
-        feature(":root",basket,"Basket",0,1).
+        structure("").
+        feature("",basket,"Basket",0,1).
         structure("Basket").""",
     },
     "structure_nested": {
@@ -179,8 +179,8 @@ TESTS: dict[str, dict[str, AnyType]] = {
             Assert(Exact(1), True_()),
         ),
         "program": """
-        structure(":root").
-        feature(":root",carrier,"Carrier",1,1).
+        structure("").
+        feature("",carrier,"Carrier",1,1).
         structure("Carrier").
         feature("Carrier",bag,"Bag",1,1).
         structure("Bag").""",
@@ -202,8 +202,8 @@ TESTS: dict[str, dict[str, AnyType]] = {
             Assert(Exact(4), True_()),
         ),
         "program": """
-        structure(":root").
-        feature(":root",carrier,"Carrier",0,1).
+        structure("").
+        feature("",carrier,"Carrier",0,1).
         structure("Carrier").
         feature("Carrier",bag,"Bag",0,2).
         structure("Bag").""",

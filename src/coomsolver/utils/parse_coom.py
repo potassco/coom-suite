@@ -23,7 +23,7 @@ class ASPVisitor(ModelVisitor):
     def __init__(self) -> None:
         super().__init__()
         self.parent_enum: Optional[ModelParser.EnumerationContext] = None
-        self.root_name: str = ":root"
+        self.root_name: str = ""
         self.structure_name: str = self.root_name
         self.context: str = self.root_name
         self.constraint_idx: int = 0
