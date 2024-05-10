@@ -41,7 +41,7 @@ class COOMApp(Application):
     """
 
     _solver: str
-    _profile: List[str]
+    _profile: str
     _output: str
     _log_level: str
     config: FclingoConfig
@@ -136,6 +136,7 @@ class COOMApp(Application):
         """
         Preprocesses COOM ASP facts into a "grounded" configuration fact format
         """
+        # pylint: disable=not-context-manager
         input_files = files
         preprocess = get_encoding("preprocess.lp")
         input_files.append(preprocess)
