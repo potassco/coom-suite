@@ -9,6 +9,7 @@ from clingcon import ClingconTheory
 from clingo import Control, Model, Symbol
 from clingo.application import Application, ApplicationOptions, Flag
 from clingo.ast import Location, Position, ProgramBuilder, Rule, parse_files
+from clingo.script import enable_python
 from clingo.symbol import Function
 from fclingo.__main__ import CSP, DEF, MAX_INT, MIN_INT
 from fclingo.__main__ import AppConfig as FclingoConfig
@@ -53,18 +54,18 @@ class COOMApp(Application):
         Create application.
         """
         self._solver = "clingo" if solver == "" else solver
-        self._profile = self._parse_profile(profile)
+        self._profile = profile
         self._output = "asp" if output == "" else output
         self._log_level = "WARNING" if log_level == "" else log_level
         self.config = FclingoConfig(MIN_INT, MAX_INT, Flag(False), Flag(False), DEF)
         self._propagator = ClingconTheory()
 
-    def _parse_profile(self, profile: str) -> List[str]:
-        if profile in ("all", ""):
-            return ["core", "numeric", "partonomy"]
-        if profile == "core":
-            return ["core"]
-        return ["core", profile]
+    # def _parse_profile(self, profile: str) -> List[str]:
+    #     if profile in ("all", ""):
+    #         return ["core", "numeric", "partonomy"]
+    #     if profile == "core":
+    #         return ["core"]
+    #     return ["core", profile]
 
     def parse_log_level(self, log_level: str) -> bool:  # nocoverage
         """
@@ -105,15 +106,16 @@ class COOMApp(Application):
         """
         if self._solver == "fclingo":
             self._propagator.on_model(model)
-
+            print(model.symbols(shown=True))
             valuation = [
                 Function("val", assignment.arguments)
                 for assignment in model.symbols(theory=True)
                 if assignment.name == CSP
                 and len(assignment.arguments) == 2
                 and model.contains(Function(DEF, [assignment.arguments[0]]))
-                and not assignment.arguments[0].name == AUX
+                # and not assignment.arguments[0].name == AUX
             ]
+            print(valuation)
             model.extend(valuation)
 
         log.debug("------- Full model -----")
@@ -136,18 +138,33 @@ class COOMApp(Application):
 
         print(_sym_to_prg(output_symbols, self._output))
 
+    def preprocess(self, files: List[str]) -> str:
+        """
+        Preprocesses COOM ASP facts into a "grounded" configuration fact format
+        """
+        input_files = files
+        preprocess = get_encoding("preprocess.lp")
+        input_files.append(preprocess)
+        enable_python()
+
+        pre_ctl = Control(message_limit=0)
+        for f in input_files:
+            pre_ctl.load(f)
+        pre_ctl.ground()
+        with pre_ctl.solve(yield_=True) as handle:
+            facts = [str(s) + "." for s in handle.model().symbols(shown=True)]
+        return "".join(facts)
+
     def main(self, control: Control, files: Sequence[str]) -> None:
         """
         Main function ran on call.
         """
-
-        input_files = list(files)
-        encodings = [get_encoding(f"{self._solver}-{p}.lp") for p in self._profile]
-        input_files.extend(encodings)
+        processed_facts = self.preprocess(list(files))
+        encoding = get_encoding(f"{self._solver}-{self._profile}.lp")
 
         if self._solver == "clingo":
-            for f in input_files:
-                control.load(f)
+            control.load(encoding)
+            control.add(processed_facts)
 
             control.ground()
             control.solve()
@@ -156,18 +173,20 @@ class COOMApp(Application):
             self._propagator.configure("max-int", str(self.config.max_int))
             self._propagator.configure("min-int", str(self.config.min_int))
 
+            control.add(processed_facts)
+            control.add(THEORY)
+
             with ProgramBuilder(control) as bld:
                 hbt = HeadBodyTransformer()
 
-                parse_files(input_files, lambda ast: bld.add(hbt.visit(ast)))
+                parse_files([encoding], lambda ast: bld.add(hbt.visit(ast)))
 
                 pos = Position("<string>", 1, 1)
                 loc = Location(pos, pos)
                 for rule in hbt.rules_to_add:
                     bld.add(Rule(loc, rule[0], rule[1]))  # nocoverage # Not sure when this is needed
 
-            control.add("base", [], THEORY)
-            control.ground([("base", [])])
+            control.ground()
             translator = Translator(control, self.config)
             translator.translate(control.theory_atoms)
 
