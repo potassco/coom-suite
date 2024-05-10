@@ -66,9 +66,8 @@ def get_parser() -> ArgumentParser:
     parser_convert = subparsers.add_parser("convert", help="Convert COOM instance to ASP.")
     parser_convert.add_argument(
         "input",
-        type=str,  # FileType('r', encoding='UTF-8'),
+        type=str,
         help="Input the COOM file corresponding to the instance.",
-        # metavar='',
     )
     parser_convert.add_argument(
         "--output",
