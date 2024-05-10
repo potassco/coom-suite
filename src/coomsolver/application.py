@@ -10,7 +10,7 @@ from clingo import Control, Model, Symbol
 from clingo.application import Application, ApplicationOptions, Flag
 from clingo.ast import Location, Position, ProgramBuilder, Rule, parse_files
 from clingo.script import enable_python
-from clingo.symbol import Function
+from clingo.symbol import Function, SymbolType
 from fclingo.__main__ import CSP, DEF, MAX_INT, MIN_INT
 from fclingo.__main__ import AppConfig as FclingoConfig
 from fclingo.parsing import THEORY, HeadBodyTransformer
@@ -106,16 +106,17 @@ class COOMApp(Application):
         """
         if self._solver == "fclingo":
             self._propagator.on_model(model)
-            print(model.symbols(shown=True))
+
             valuation = [
                 Function("val", assignment.arguments)
                 for assignment in model.symbols(theory=True)
                 if assignment.name == CSP
                 and len(assignment.arguments) == 2
-                and model.contains(Function(DEF, [assignment.arguments[0]]))
-                # and not assignment.arguments[0].name == AUX
+                and model.contains(
+                    Function(DEF, [Function(str(assignment.arguments[0]), [], True)])
+                )  # Temporary fix until fclingo fixes String behavior
+                and not (assignment.arguments[0].type is SymbolType.Function and assignment.arguments[0].name == AUX)
             ]
-            print(valuation)
             model.extend(valuation)
 
         log.debug("------- Full model -----")
@@ -173,8 +174,8 @@ class COOMApp(Application):
             self._propagator.configure("max-int", str(self.config.max_int))
             self._propagator.configure("min-int", str(self.config.min_int))
 
-            control.add(processed_facts)
-            control.add(THEORY)
+            control.add("base", [], processed_facts)
+            control.add("base", [], THEORY)
 
             with ProgramBuilder(control) as bld:
                 hbt = HeadBodyTransformer()
@@ -186,7 +187,7 @@ class COOMApp(Application):
                 for rule in hbt.rules_to_add:
                     bld.add(Rule(loc, rule[0], rule[1]))  # nocoverage # Not sure when this is needed
 
-            control.ground()
+            control.ground([("base", [])])
             translator = Translator(control, self.config)
             translator.translate(control.theory_atoms)
 
