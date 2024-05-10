@@ -31,7 +31,7 @@ def _sym_to_prg(symbols: Sequence[Symbol], output: Optional[str] = "asp") -> str
     if output == "asp":
         output_list = [f"{str(s)}" for s in sorted_symbols]
     elif output == "coom":
-        output_list = [f"{format_sym_coom(s)}" for s in sorted_symbols][1:]  # First element is root = empty string
+        output_list = [f"{format_sym_coom(s)}" for s in sorted_symbols]
     return "\n".join(output_list)
 
 
@@ -59,13 +59,6 @@ class COOMApp(Application):
         self._log_level = "WARNING" if log_level == "" else log_level
         self.config = FclingoConfig(MIN_INT, MAX_INT, Flag(False), Flag(False), DEF)
         self._propagator = ClingconTheory()
-
-    # def _parse_profile(self, profile: str) -> List[str]:
-    #     if profile in ("all", ""):
-    #         return ["core", "numeric", "partonomy"]
-    #     if profile == "core":
-    #         return ["core"]
-    #     return ["core", profile]
 
     def parse_log_level(self, log_level: str) -> bool:  # nocoverage
         """
