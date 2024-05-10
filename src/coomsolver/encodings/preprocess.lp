@@ -57,6 +57,7 @@ struct_type(@dotpath(Instance),Type) :- structure(Type), aux_type(Instance,Type)
 index(@dotpath(Instance),Idx) :- structure(Type), aux_type(Instance,Type), Instance=((_,(_,Idx))).
 enum_type(@dotpath(Instance),Type) :- enumeration(Type), aux_type(Instance,Type).
 attr_enum(@dotpath((Attr,(Instance,0))),@dotpath(Instance)) :- aux_type((Attr,(Instance,0)),Attr), attr_value(Type,_,Attr,_).
+isnumeric(@dotpath((Attr,(Instance,0)))) :- aux_type((Attr,(Instance,0)),Attr), attr_value(Type,_,Attr,_), attribute(Type,Attr,"num").
 
 parent(@dotpath(Instance),@dotpath(Parent))   :- aux_type(Instance,_), Instance=(_,(Parent,_)).
 feature(@dotpath(Instance),Feature) :- aux_type(Instance,_), Instance=(Feature,(_,_)).
@@ -65,6 +66,7 @@ feature(@dotpath(Instance),Feature) :- aux_type(Instance,_), Instance=(Feature,(
 #show index/2.
 #show enum_type/2.
 #show attr_enum/2.
+#show isnumeric/1.
 #show parent/2.
 #show feature/2.
 

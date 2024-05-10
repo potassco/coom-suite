@@ -95,11 +95,13 @@ enum_type("frontWheel[0]","Wheel").
 parent("frontWheel[0]", "").
 feature("frontWheel[0]",frontWheel).
 attr_enum("frontWheel[0].size","frontWheel[0]").
+isnumeric("frontWheel[0].size").
 
 enum_type("rearWheel[0]","Wheel").
 parent("rearWheel[0]", "").
 feature("rearWheel[0]",rearWheel).
 attr_enum("rearWheel[0].size","rearWheel[0]").
+isnumeric("rearWheel[0].size").
 
 enum_type("basket[0].color[0]","Color").
 parent("basket[0].color[0]","basket[0]").
@@ -113,11 +115,13 @@ enum_type("carrier[0].bag[0].capacity[0]","Capacity").
 parent("carrier[0].bag[0].capacity[0]", "carrier[0].bag[0]").
 feature("carrier[0].bag[0].capacity[0]",capacity).
 attr_enum("carrier[0].bag[0].capacity[0].volume","carrier[0].bag[0].capacity[0]").
+isnumeric("carrier[0].bag[0].capacity[0].volume").
 
 enum_type("carrier[0].bag[1].capacity[0]","Capacity").
 parent("carrier[0].bag[1].capacity[0]", "carrier[0].bag[1]").
 feature("carrier[0].bag[1].capacity[0]",capacity).
 attr_enum("carrier[0].bag[1].capacity[0].volume","carrier[0].bag[1].capacity[0]").
+isnumeric("carrier[0].bag[1].capacity[0].volume").
 
 enum_type("carrier[0].bag[0].material[0]","Material").
 parent("carrier[0].bag[0].material[0]", "carrier[0].bag[0]").

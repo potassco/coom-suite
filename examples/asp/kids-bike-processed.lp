@@ -33,11 +33,13 @@ enum_type("frontWheel[0]","Wheel").
 parent("frontWheel[0]", "").
 feature("frontWheel[0]",frontWheel).
 attr_enum("frontWheel[0].size","frontWheel[0]").
+isnumeric("frontWheel[0].size").
 
 enum_type("rearWheel[0]","Wheel").
 parent("rearWheel[0]", "").
 feature("rearWheel[0]",rearWheel).
 attr_enum("rearWheel[0].size","rearWheel[0]").
+isnumeric("rearWheel[0].size").
 
 enum_type("wheelSupport[0]","bool").
 parent("wheelSupport[0]", "").

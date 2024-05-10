@@ -1,5 +1,3 @@
-#include "clingo-core-processed.lp".
-
 % Generate structure objects
 { included(X) : struct_type(X,Type) }.
 
