@@ -257,7 +257,7 @@ class TestCOOMParser(TestCase):
 
         self.assertEqual(
             parse_coom("behavior{imply a = b}"),
-            ["\nbehavior(0).", 'context(0,"").', 'imply(0,a,"b").', 'path("a",0,a).', 'path("b",0,b).'],
+            ["\nbehavior(0).", 'context(0,"").', 'imply("","a","b").', 'path("a",0,a).', 'path("b",0,b).'],
         )
 
         self.assertEqual(parse_coom("behavior{readonly totalWeight}"), [])
