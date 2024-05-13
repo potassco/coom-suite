@@ -160,6 +160,26 @@ class TestClingoPartonomy(TestCase):
         self.run_test("structure_nested")
         self.run_test("structure_nested_optional")
 
+    def test_require(self) -> None:
+        """
+        Test solving require constraints with structure involved.
+
+        Ideas: - Context is root and points to one instance
+               - Context is root and points to multiple instances
+               - Context is not root and constraint gets instantiated more than once
+               - Context is not root and constraints gets instantiated more than once and points to multiple instances
+        """
+
+    def test_combinations(self) -> None:
+        """
+        Test solving combinations constraints with structure involed.
+
+        Ideas:  - Context is root and points to multiple instance instances, cross-product needed
+                - Context is not root and constraint gets instantiated more than once
+                - Context is not root and constraints gets instantiated more than once
+                  and points to multiple instances, cross-product needed
+        """
+
 
 class TestFclingoPartonomy(TestCase):
     """

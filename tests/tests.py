@@ -56,7 +56,7 @@ class ContainsTheory(Contains):
     def holds_for(self, model: Model) -> bool:
         if self.__check_theory:
             return self.__symbol in model.symbols(shown=True, theory=True)
-        return super().holds_for(model)
+        return super().holds_for(model)  # nocoverage
 
 
 TEST_EMPTY = Assert(All(), SubsetOf(set()))
@@ -99,6 +99,22 @@ TESTS: dict[str, dict[str, AnyType]] = {
                 Exact(1),
                 SupersetOfTheory(
                     {('val("frontWheel[0].size[0]",28)'), ('val("rearWheel[0].size[0]",28)')}, check_theory=True
+                ),
+            ),
+        ),
+        "ftest": AndTest(
+            Assert(
+                Exact(1),
+                SupersetOfTheory(
+                    {("val((size,((frontWheel,((),0)),0)),27)"), ("val((size,((rearWheel,((),0)),0)),27)")},
+                    check_theory=True,
+                ),
+            ),
+            Assert(
+                Exact(1),
+                SupersetOfTheory(
+                    {("val((size,((frontWheel,((),0)),0)),28)"), ("val((size,((rearWheel,((),0)),0)),28)")},
+                    check_theory=True,
                 ),
             ),
         ),
