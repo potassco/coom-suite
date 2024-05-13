@@ -2,11 +2,11 @@
 range(X,Min,Max) :- feature(Context,Feature,"num",_,_), range(Context,Feature,Min,Max),
                     num(X), feature(X,Feature), parent(X,Parent), struct_type(Parent,Context).
 
-% Generate numeric values
-{ val(X,V) : V = Min..Max } :- num(X), range(X,Min,Max), not imply_instance(X,_).
-
 % Numeric variables are always included when its parents are included
 included(X) :- num(X), parent(X,Parent), included(Parent).
+
+% Generate numeric values
+{ val(X,V) : V = Min..Max } :- num(X), range(X,Min,Max), not imply_instance(X,_).
 
 % Do not generate value if variable is not included
 :- num(X), val(X,_), not included(X).
