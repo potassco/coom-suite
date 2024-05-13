@@ -148,6 +148,7 @@ class COOMApp(Application):
         pre_ctl.ground()
         with pre_ctl.solve(yield_=True) as handle:
             facts = [str(s) + "." for s in handle.model().symbols(shown=True)]
+
         return "".join(facts)
 
     def main(self, control: Control, files: Sequence[str]) -> None:

@@ -84,7 +84,7 @@ number("4",4).
 
 behavior(1).
 context(1,"").
-imply(1,totalWeight,"frontWheel.weight+rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
+imply("","totalWeight","frontWheel.weight+rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
 path("totalWeight",0,totalWeight).
 binary("","frontWheel.weight+rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)","frontWheel.weight","+","rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
 binary("","rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)","rearWheel.weight","+","sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
@@ -115,7 +115,7 @@ number("1000",1000).
 
 behavior(3).
 context(3,"").
-imply(3,totalVolume,"sum(carrier.bag.capacity.volume)+sum(frame.bag.capacity.volume)").
+imply("","totalVolume","sum(carrier.bag.capacity.volume)+sum(frame.bag.capacity.volume)").
 path("totalVolume",0,totalVolume).
 binary("","sum(carrier.bag.capacity.volume)+sum(frame.bag.capacity.volume)","sum(carrier.bag.capacity.volume)","+","sum(frame.bag.capacity.volume)").
 function("","sum(carrier.bag.capacity.volume)","sum","carrier.bag.capacity.volume").

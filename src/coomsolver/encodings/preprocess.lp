@@ -1,3 +1,5 @@
+#include "base/boolean.lp".
+
 %%% Instantiate complete instance tree
 aux_type((),"") :- structure("").
 
@@ -11,14 +13,14 @@ path_aux(X,Path) :- binary(Context,_,_,_,Path),      path(Path,0,_), aux_type(X,
 path_aux(X,Path) :- combinations(Constraint,_,Path), path(Path,0,_), aux_type(X,Context),
                                 context(Constraint,Context).
 path_aux(X,Path) :- function(Context,_,_,Path), path(Path,0,_), aux_type(X,Context).
-path_aux(X,Path) :- imply((Context,_),_,Path),  path(Path,0,_), aux_type(X,Context).
+path_aux(X,Path) :- imply(Context,Path,_),  path(Path,0,_), aux_type(X,Context).
 
 path_instance(PathContext,Path,0,X)  :- path(Path,0,Name),
-                                    path_aux(PathContext,Path), aux_type(X,_), X=(Name,(PathContext,_)).
+                                        path_aux(PathContext,Path), aux_type(X,_), X=(Name,(PathContext,_)).
 path_instance(PathContext,Path,N,X') :- path(Path,N,Name),
-                                    path_instance(PathContext,Path,N-1,X), aux_type(X',_), X'=(Name,(X,_)).
+                                        path_instance(PathContext,Path,N-1,X), aux_type(X',_), X'=(Name,(X,_)).
 
-path_instance(PathContext,Path,X)    :- not path(Path,N+1,_), path_instance(PathContext,Path,N,X).
+path_instance(PathContext,Path,@dotpath(X)) :- not path(Path,N+1,_), path_instance(PathContext,Path,N,X).
 
 % Constants and numbers
 path_instance(PathContext,Path,Path) :- binary(Type,_,_,_,Path), aux_type(PathContext,Type), constant(Path).
@@ -26,13 +28,22 @@ path_instance(PathContext,Path,Path) :- binary(Type,_,_,_,Path), aux_type(PathCo
 path_instance(PathContext,Path,Path) :- binary(Type,_,Path,_,_), aux_type(PathContext,Type), constant(Path).
 path_instance(PathContext,Path,Path) :- binary(Type,_,Path,_,_), aux_type(PathContext,Type), number(Path,_).
 
-% Constraint, binaries and combinations
-behavior((Constraint,X)) :- behavior(Constraint), context(Constraint,Context), aux_type(X,Context).
-binary_instance(X,Formula,X1,Op,X2) :- binary(Context,Formula,Left,Op,Right), aux_type(X,Context),
-                                              path_instance(X,Left,X1), path_instance(X,Right,X2).
+% Constraints and binaries
+behavior(Constraint,X) :- behavior(Constraint), context(Constraint,Context), aux_type(X,Context).
 
+binary_instance(X,Formula,@binary(X1,Op,X2),X1,Op,X2) :- binary(Context,Formula,Left,Op,Right), aux_type(X,Context),
+                                                         path_instance(X,Left,X1), path_instance(X,Right,X2).
+binary_instance(X,Formula,Grounded) :- binary_instance(X,Formula,Grounded,_,_,_).
+path_instance(X,Formula,Grounded) :- binary_instance(X,Formula,Grounded).
 
-combinations_tuple((Constraint,Context),Col,(X,())) :- behavior((Constraint,Context)),
+% Functions
+function_aux(X,Function,Type,Path) :- function(Context,Function,Type,Path), aux_type(X,Context).
+function_path(Context,Path,X)      :- function_aux(Context,Function,_,Path), path_instance(Context,Path,X).
+
+path_instance(Context,Function,@function(Type,Context,Path)) :- function_aux(Context,Function,Type,Path).
+
+% Combinations
+combinations_tuple((Constraint,Context),Col,(X,())) :- behavior(Constraint,Context),
                                                         combinations(Constraint,Col,Path), not combinations(Constraint,Col+1,_),
                                                         path_instance(Context,Path,X).
 combinations_tuple((Constraint,Context),Col,(X',X)) :- combinations_tuple((Constraint,Context),Col+1,X),
@@ -46,21 +57,24 @@ in_tuple((X,CT'),CT',X) :- combinations_tuple(_,CT), CT=(X,CT').
 in_tuple(CT,CT',X)      :- in_tuple(CT,(X,CT'),_).
 in_tuple(CT,X)          :- in_tuple(CT,_,X).
 
+% Imply
+imply_aux(X,X',Formula) :- imply(Context,Path,Formula), aux_type(X,Context), path_instance(X,Path,X').
 
-% Always include boolean enumeration
-enumeration("bool").
-option("bool", "True").
-option("bool", "False").
+
 
 %%% Output atoms
 % Structure, enumeration and attribute instances
 struct_type("","") :- structure("").
-struct_type(@dotpath(Instance),Type) :- structure(Type), aux_type(Instance,Type).
-index(@dotpath(Instance),Idx) :- structure(Type), aux_type(Instance,Type), Instance=((_,(_,Idx))).
-enum_type(@dotpath(Instance),Type) :- enumeration(Type), aux_type(Instance,Type).
+
+struct_type(@dotpath(Instance),Type) :- structure(Type),   aux_type(Instance,Type).
+index(@dotpath(Instance),Idx)        :- structure(Type),   aux_type(Instance,Type), Instance=((_,(_,Idx))).
+enum_type(@dotpath(Instance),Type)   :- enumeration(Type), aux_type(Instance,Type).
+
 attr_enum(@dotpath((Attr,(Instance,0))),@dotpath(Instance)) :- aux_type((Attr,(Instance,0)),Attr).
-attr_name(@dotpath((Attr,(Instance,0))),Attr) :- aux_type((Attr,(Instance,0)),Attr).
-isnumeric(@dotpath((Attr,(Instance,0)))) :- aux_type((Attr,(Instance,0)),Attr), attr_value(Type,_,Attr,_), attribute(Type,Attr,"num").
+attr_name(@dotpath((Attr,(Instance,0))),Attr)               :- aux_type((Attr,(Instance,0)),Attr).
+isnumeric(@dotpath((Attr,(Instance,0))))                    :- aux_type((Attr,(Instance,0)),Attr),
+                                                               attr_value(Type,_,Attr,_), attribute(Type,Attr,"num").
+
 num(@dotpath(Instance)) :- aux_type(Instance,"num").
 
 parent(@dotpath(Instance),@dotpath(Parent))   :- aux_type(Instance,_), Instance=(_,(Parent,_)).
@@ -77,13 +91,18 @@ feature(@dotpath(Instance),Feature) :- aux_type(Instance,_), Instance=(Feature,(
 #show num/1.
 
 % Constraints
-constraint((Constraint,@dotpath(Instance))) :- behavior((Constraint,Instance)).
+constraint((Constraint,@dotpath(Instance))) :- behavior(Constraint,Instance).
 
-require_instance((Constraint,@dotpath(Instance)),@binary(Left,Op,Right)) :- require(Constraint,Formula), binary_instance(Instance,Formula,Left,Op,Right).
-condition_instance((Constraint,@dotpath(Instance)),@binary(Left,Op,Right)) :- condition(Constraint,Formula), binary_instance(Instance,Formula,Left,Op,Right).
-binary(@binary(Left,Op,Right),@dotpath(Left),Op,@dotpath(Right)) :- binary_instance(Instance,Formula,Left,Op,Right).
+require_instance((Constraint,@dotpath(Instance)),Grounded)   :- require(Constraint,Formula),   binary_instance(Instance,Formula,Grounded).
+condition_instance((Constraint,@dotpath(Instance)),Grounded) :- condition(Constraint,Formula), binary_instance(Instance,Formula,Grounded).
+binary(Grounded,Left,Op,Right) :- binary_instance(_,_,Grounded,Left,Op,Right).
 
 combinations_instance((Constraint,@dotpath(Instance)),ID,Col,@dotpath(X)) :- combinations(Constraint,Col,Path), path_instance(Instance,Path,X), in_tuple(CT,X), tuple_order((Constraint,Instance),CT,ID).
+
+function_instance(@function(Type,Context,Path),Type,@join(Context,Path)) :- function_aux(Context,_,Type,Path).
+function_path(@join(Context,Path),@dotpath(X)) :- function_path(Context,Path,X).
+
+imply_instance(@join(X,X'),Grounded) :- imply_aux(X,X',Formula), binary_instance(X,Formula,Grounded).
 
 
 #show constraint/1.
@@ -91,10 +110,13 @@ combinations_instance((Constraint,@dotpath(Instance)),ID,Col,@dotpath(X)) :- com
 #show condition_instance/2.
 #show binary/4.
 #show combinations_instance/4.
+#show function_instance/3.
+#show function_path/2.
+#show imply_instance/2.
 
-
-%%% Pass through facts from COOM fact format
+% Pass through facts from COOM fact format
 #show feature/5.
+#show range/4.
 #show structure/1.
 #show enumeration/1.
 #show option/2.
@@ -104,6 +126,7 @@ combinations_instance((Constraint,@dotpath(Instance)),ID,Col,@dotpath(X)) :- com
 #show constant/1.
 #show number/2.
 
+% Python helper functions
 #script (python)
 from clingo import String, SymbolType
 import math
@@ -127,5 +150,16 @@ def unpack(p, l):
     return l
 
 def binary(l,op,r):
-    return String(f"{dotpath(l).string}{op.string}{dotpath(r).string}")
+    return String(f"{l.string}{op.string}{r.string}")
+
+def join(p1,p2):
+    context = dotpath(p1).string
+    if context == "":
+        return p2
+    else:
+        return String(f"{context}.{p2.string}")
+
+def function(f,c,p):
+    joined = join(c,p).string
+    return String(f"{f.string}({joined})")
 #end.

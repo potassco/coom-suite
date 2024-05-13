@@ -233,7 +233,7 @@ function_path("frame.bag","frame[0].bag[1]").
 number("4",4).
 
 constraint((1,"")).
-imply_instance((1,""),"totalWeight[0]","frontWheel[0].weight[0]+rearWheel[0].weight[0]+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
+imply_instance("totalWeight[0]","frontWheel[0].weight[0]+rearWheel[0].weight[0]+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
 binary("frontWheel[0].weight[0]+rearWheel[0].weight[0]+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)","frontWheel[0].weight[0]","+","rearWheel[0].weight[0]+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
 binary("rearWheel[0].weight[0]+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)","rearWheel[0].weight[0]","+","sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
 binary("sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)","sum(carrier.bag.capacity.weight)","+","sum(frame.bag.capacity.weight)").
@@ -252,7 +252,7 @@ binary("maxWeight[0]*1000","maxWeight[0]","*","1000").
 number("1000",1000).
 
 constraint((3,"")).
-imply_instance((3,""),"totalVolume[0]","sum(carrier.bag.capacity.volume)+sum(frame.bag.capacity.volume)").
+imply_instance("totalVolume[0]","sum(carrier.bag.capacity.volume)+sum(frame.bag.capacity.volume)").
 binary("sum(carrier.bag.capacity.volume)+sum(frame.bag.capacity.volume)","sum(carrier.bag.capacity.volume)","+","sum(frame.bag.capacity.volume)").
 function_instance("sum(carrier.bag.capacity.volume)","sum","carrier.bag.capacity.volume").
 function_path("carrier.bag.capacity.volume","carrier[0].bag[0].capacity[0].volume[0]").

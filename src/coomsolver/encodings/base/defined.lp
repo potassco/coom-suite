@@ -27,4 +27,4 @@
 #defined num/1.
 #defined function_instance/3.
 #defined function_path/2.
-#defined imply_instance/3.
+#defined imply_instance/2.

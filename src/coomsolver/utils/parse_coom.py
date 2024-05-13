@@ -131,7 +131,7 @@ class ASPVisitor(ModelVisitor):
     def visitAssign_imply(self, ctx: ModelParser.Assign_implyContext):
         path = ctx.path().getText()
         formula = ctx.formula().getText()
-        self.output_asp.append(f'imply({self.constraint_idx},{path},"{formula}").')
+        self.output_asp.append(f'imply("{self.context}","{path}","{formula}").')
         super().visitAssign_imply(ctx)
 
     def visitCombinations(self, ctx: ModelParser.CombinationsContext):
