@@ -10,6 +10,8 @@ path_aux(X,Path) :- binary(Context,_,Path,_,_),      path(Path,0,_), aux_type(X,
 path_aux(X,Path) :- binary(Context,_,_,_,Path),      path(Path,0,_), aux_type(X,Context).
 path_aux(X,Path) :- combinations(Constraint,_,Path), path(Path,0,_), aux_type(X,Context),
                                 context(Constraint,Context).
+path_aux(X,Path) :- function(Context,_,_,Path), path(Path,0,_), aux_type(X,Context).
+path_aux(X,Path) :- imply((Context,_),_,Path),  path(Path,0,_), aux_type(X,Context).
 
 path_instance(PathContext,Path,0,X)  :- path(Path,0,Name),
                                     path_aux(PathContext,Path), aux_type(X,_), X=(Name,(PathContext,_)).
@@ -56,8 +58,10 @@ struct_type("","") :- structure("").
 struct_type(@dotpath(Instance),Type) :- structure(Type), aux_type(Instance,Type).
 index(@dotpath(Instance),Idx) :- structure(Type), aux_type(Instance,Type), Instance=((_,(_,Idx))).
 enum_type(@dotpath(Instance),Type) :- enumeration(Type), aux_type(Instance,Type).
-attr_enum(@dotpath((Attr,(Instance,0))),@dotpath(Instance)) :- aux_type((Attr,(Instance,0)),Attr), attr_value(Type,_,Attr,_).
+attr_enum(@dotpath((Attr,(Instance,0))),@dotpath(Instance)) :- aux_type((Attr,(Instance,0)),Attr).
+attr_name(@dotpath((Attr,(Instance,0))),Attr) :- aux_type((Attr,(Instance,0)),Attr).
 isnumeric(@dotpath((Attr,(Instance,0)))) :- aux_type((Attr,(Instance,0)),Attr), attr_value(Type,_,Attr,_), attribute(Type,Attr,"num").
+num(@dotpath(Instance)) :- aux_type(Instance,"num").
 
 parent(@dotpath(Instance),@dotpath(Parent))   :- aux_type(Instance,_), Instance=(_,(Parent,_)).
 feature(@dotpath(Instance),Feature) :- aux_type(Instance,_), Instance=(Feature,(_,_)).
@@ -66,9 +70,11 @@ feature(@dotpath(Instance),Feature) :- aux_type(Instance,_), Instance=(Feature,(
 #show index/2.
 #show enum_type/2.
 #show attr_enum/2.
+#show attr_name/2.
 #show isnumeric/1.
 #show parent/2.
 #show feature/2.
+#show num/1.
 
 % Constraints
 constraint((Constraint,@dotpath(Instance))) :- behavior((Constraint,Instance)).

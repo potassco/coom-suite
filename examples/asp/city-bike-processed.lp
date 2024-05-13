@@ -94,14 +94,16 @@ feature("saddle[0]",saddle).
 enum_type("frontWheel[0]","Wheel").
 parent("frontWheel[0]", "").
 feature("frontWheel[0]",frontWheel).
-attr_enum("frontWheel[0].size","frontWheel[0]").
-isnumeric("frontWheel[0].size").
+attr_enum("frontWheel[0].size[0]","frontWheel[0]").
+attr_name("frontWheel[0].size[0]",size).
+isnumeric("frontWheel[0].size[0]").
 
 enum_type("rearWheel[0]","Wheel").
 parent("rearWheel[0]", "").
 feature("rearWheel[0]",rearWheel).
-attr_enum("rearWheel[0].size","rearWheel[0]").
-isnumeric("rearWheel[0].size").
+attr_enum("rearWheel[0].size[0]","rearWheel[0]").
+attr_name("rearWheel[0].size[0]",size).
+isnumeric("rearWheel[0].size[0]").
 
 enum_type("basket[0].color[0]","Color").
 parent("basket[0].color[0]","basket[0]").
@@ -114,14 +116,16 @@ feature("basket[0].position[0]",position).
 enum_type("carrier[0].bag[0].capacity[0]","Capacity").
 parent("carrier[0].bag[0].capacity[0]", "carrier[0].bag[0]").
 feature("carrier[0].bag[0].capacity[0]",capacity).
-attr_enum("carrier[0].bag[0].capacity[0].volume","carrier[0].bag[0].capacity[0]").
-isnumeric("carrier[0].bag[0].capacity[0].volume").
+attr_enum("carrier[0].bag[0].capacity[0].volume[0]","carrier[0].bag[0].capacity[0]").
+attr_name("carrier[0].bag[0].capacity[0].volume[0]",volume).
+isnumeric("carrier[0].bag[0].capacity[0].volume[0]").
 
 enum_type("carrier[0].bag[1].capacity[0]","Capacity").
 parent("carrier[0].bag[1].capacity[0]", "carrier[0].bag[1]").
 feature("carrier[0].bag[1].capacity[0]",capacity).
-attr_enum("carrier[0].bag[1].capacity[0].volume","carrier[0].bag[1].capacity[0]").
-isnumeric("carrier[0].bag[1].capacity[0].volume").
+attr_enum("carrier[0].bag[1].capacity[0].volume[0]","carrier[0].bag[1].capacity[0]").
+attr_name("carrier[0].bag[1].capacity[0].volume[0]",volume).
+isnumeric("carrier[0].bag[1].capacity[0].volume[0]").
 
 enum_type("carrier[0].bag[0].material[0]","Material").
 parent("carrier[0].bag[0].material[0]", "carrier[0].bag[0]").
@@ -141,21 +145,21 @@ constraint((1,"")).
 condition_instance((1,""),"basket[0].position[0]=Front").
 binary("basket[0].position[0]=Front","basket[0].position[0]","=","Front").
 constant("Front").
-require_instance((1,""),"frontWheel[0].size<29").
-binary("frontWheel[0].size<29","frontWheel[0].size","<","29").
+require_instance((1,""),"frontWheel[0].size[0]<29").
+binary("frontWheel[0].size[0]<29","frontWheel[0].size[0]","<","29").
 number("29",29).
 
 constraint((2,"")).
-condition_instance((2,""),"carrier[0].bag[0].capacity[0].volume=100").
-binary("carrier[0].bag[0].capacity[0].volume=100","carrier[0].bag[0].capacity[0].volume","=","100").
-require_instance((2,""),"rearWheel[0].size>=28").
-binary("rearWheel[0].size>=28","rearWheel[0].size",">=","28").
+condition_instance((2,""),"carrier[0].bag[0].capacity[0].volume[0]=100").
+binary("carrier[0].bag[0].capacity[0].volume[0]=100","carrier[0].bag[0].capacity[0].volume[0]","=","100").
+require_instance((2,""),"rearWheel[0].size[0]>=28").
+binary("rearWheel[0].size[0]>=28","rearWheel[0].size[0]",">=","28").
 
 
-condition_instance((2,""),"carrier[0].bag[1].capacity[0].volume=100").
-binary("carrier[0].bag[1].capacity[0].volume=100","carrier[0].bag[1].capacity[0].volume","=","100").
-require_instance((2,""),"rearWheel[0].size>=28").
-binary("rearWheel[0].size>=28","rearWheel[0].size",">=","28").
+condition_instance((2,""),"carrier[0].bag[1].capacity[0].volume[0]=100").
+binary("carrier[0].bag[1].capacity[0].volume[0]=100","carrier[0].bag[1].capacity[0].volume[0]","=","100").
+require_instance((2,""),"rearWheel[0].size[0]>=28").
+binary("rearWheel[0].size[0]>=28","rearWheel[0].size[0]",">=","28").
 
 number("100",100).
 number("28",28).
@@ -176,8 +180,8 @@ constant("Vintage").
 constant("Leather").
 
 constraint((4,"")).
-require_instance((4,""),"frontWheel[0].size=rearWheel[0].size").
-binary("frontWheel[0].size=rearWheel[0].size","frontWheel[0].size","=","rearWheel[0].size").
+require_instance((4,""),"frontWheel[0].size[0]=rearWheel[0].size[0]").
+binary("frontWheel[0].size[0]=rearWheel[0].size[0]","frontWheel[0].size[0]","=","rearWheel[0].size[0]").
 
 constraint((5,"carrier[0].bag[0]")).
 combinations_instance((5,"carrier[0].bag[0]"),0,0,"carrier[0].bag[0].material[0]").

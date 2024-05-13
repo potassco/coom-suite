@@ -13,7 +13,7 @@ from .utils.logging import get_logger
 log = get_logger("main")
 
 SOLVERS = ["clingo", "fclingo"]
-COOM_PROFILES = ["core", "partonomy"]  # , "numeric", "all"]
+COOM_PROFILES = ["core", "partonomy", "numeric", "all"]
 
 
 def convert_instance(coom_file: str, output_dir: Optional[str] = None) -> str:  # nocoverage

@@ -1,3 +1,5 @@
+#include "constraints.lp".
+
 % Satisfaction of binary relations for numeric values in fclingo
 binary_def(Formula) :- binary(Formula,X1,_,X2), &df{X1}, &df{X2}.
 
