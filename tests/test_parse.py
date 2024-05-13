@@ -116,8 +116,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = b}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=b").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=b").',
                 'binary(":root","a=b","a","=","b").',
                 'path("a",0,a).',
                 'path("b",0,b).',
@@ -127,8 +128,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior Bag {require a = b}"),
             [
-                '\nbehavior(("Bag",0)).',
-                'require(("Bag",0),"a=b").',
+                "\nbehavior(0).",
+                'context(0,"Bag").',
+                'require(0,"a=b").',
                 'binary("Bag","a=b","a","=","b").',
                 'path("a",0,a).',
                 'path("b",0,b).',
@@ -138,8 +140,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior {require color = Red}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"color=Red").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"color=Red").',
                 'binary(":root","color=Red","color","=","Red").',
                 'path("color",0,color).',
                 'constant("Red").',
@@ -149,8 +152,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior {default color = red}"),
             [
-                '\nbehavior((":root",0)).',
-                'default((":root",0),"color","red").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'default(0,"color","red").',
                 'path("color",0,color).',
                 'path("red",0,red).',
             ],
@@ -159,13 +163,15 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = b require c = d}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=b").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=b").',
                 'binary(":root","a=b","a","=","b").',
                 'path("a",0,a).',
                 'path("b",0,b).',
-                '\nbehavior((":root",1)).',
-                'require((":root",1),"c=d").',
+                "\nbehavior(1).",
+                'context(1,":root").',
+                'require(1,"c=d").',
                 'binary(":root","c=d","c","=","d").',
                 'path("c",0,c).',
                 'path("d",0,d).',
@@ -180,17 +186,18 @@ class TestCOOMParser(TestCase):
                             allow         (False         (W18, W20))}"""
             ),
             [
-                '\nbehavior((":root",0)).',
-                'combinations((":root",0),0,"wheelSupport").',
-                'combinations((":root",0),1,"rearWheel").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'combinations(0,0,"wheelSupport").',
+                'combinations(0,1,"rearWheel").',
                 'path("wheelSupport",0,wheelSupport).',
                 'path("rearWheel",0,rearWheel).',
-                'allow((":root",0),(0,0),"True").',
-                'allow((":root",0),(1,0),"W14").',
-                'allow((":root",0),(1,0),"W16").',
-                'allow((":root",0),(0,1),"False").',
-                'allow((":root",0),(1,1),"W18").',
-                'allow((":root",0),(1,1),"W20").',
+                'allow(0,(0,0),"True").',
+                'allow(0,(1,0),"W14").',
+                'allow(0,(1,0),"W16").',
+                'allow(0,(0,1),"False").',
+                'allow(0,(1,1),"W18").',
+                'allow(0,(1,1),"W20").',
             ],
         )
 
@@ -202,29 +209,31 @@ class TestCOOMParser(TestCase):
                             allow         (False         (W18, W20))}"""
             ),
             [
-                '\nbehavior(("Bike",0)).',
-                'combinations(("Bike",0),0,"wheelSupport").',
-                'combinations(("Bike",0),1,"rearWheel").',
+                "\nbehavior(0).",
+                'context(0,"Bike").',
+                'combinations(0,0,"wheelSupport").',
+                'combinations(0,1,"rearWheel").',
                 'path("wheelSupport",0,wheelSupport).',
                 'path("rearWheel",0,rearWheel).',
-                'allow(("Bike",0),(0,0),"True").',
-                'allow(("Bike",0),(1,0),"W14").',
-                'allow(("Bike",0),(1,0),"W16").',
-                'allow(("Bike",0),(0,1),"False").',
-                'allow(("Bike",0),(1,1),"W18").',
-                'allow(("Bike",0),(1,1),"W20").',
+                'allow(0,(0,0),"True").',
+                'allow(0,(1,0),"W14").',
+                'allow(0,(1,0),"W16").',
+                'allow(0,(0,1),"False").',
+                'allow(0,(1,1),"W18").',
+                'allow(0,(1,1),"W20").',
             ],
         )
 
         self.assertEqual(
             parse_coom("behavior {condition a = b require c > 5}"),
             [
-                '\nbehavior((":root",0)).',
-                'condition((":root",0),"a=b").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'condition(0,"a=b").',
                 'binary(":root","a=b","a","=","b").',
                 'path("a",0,a).',
                 'path("b",0,b).',
-                'require((":root",0),"c>5").',
+                'require(0,"c>5").',
                 'binary(":root","c>5","c",">","5").',
                 'path("c",0,c).',
                 'number("5",5).',
@@ -234,12 +243,13 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior {condition a = b default c = d}"),
             [
-                '\nbehavior((":root",0)).',
-                'condition((":root",0),"a=b").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'condition(0,"a=b").',
                 'binary(":root","a=b","a","=","b").',
                 'path("a",0,a).',
                 'path("b",0,b).',
-                'default((":root",0),"c","d").',
+                'default(0,"c","d").',
                 'path("c",0,c).',
                 'path("d",0,d).',
             ],
@@ -247,7 +257,7 @@ class TestCOOMParser(TestCase):
 
         self.assertEqual(
             parse_coom("behavior{imply a = b}"),
-            ['\nbehavior((":root",0)).', 'imply((":root",0),a,"b").', 'path("a",0,a).', 'path("b",0,b).'],
+            ["\nbehavior(0).", 'context(0,":root").', 'imply(0,a,"b").', 'path("a",0,a).', 'path("b",0,b).'],
         )
 
         self.assertEqual(parse_coom("behavior{readonly totalWeight}"), [])
@@ -259,8 +269,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = b || a = c}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=b||a=c").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=b||a=c").',
                 'binary(":root","a=b||a=c","a=b","||","a=c").',
                 'binary(":root","a=b","a","=","b").',
                 'path("a",0,a).',
@@ -274,8 +285,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = b || a = c || a = d}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=b||a=c||a=d").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=b||a=c||a=d").',
                 'binary(":root","a=b||a=c||a=d","a=b","||","a=c||a=d").',
                 'binary(":root","a=c||a=d","a=c","||","a=d").',
                 'binary(":root","a=b","a","=","b").',
@@ -293,8 +305,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = b && a = c}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=b&&a=c").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=b&&a=c").',
                 'binary(":root","a=b&&a=c","a=b","&&","a=c").',
                 'binary(":root","a=b","a","=","b").',
                 'path("a",0,a).',
@@ -308,8 +321,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = b && a = c && a = d}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=b&&a=c&&a=d").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=b&&a=c&&a=d").',
                 'binary(":root","a=b&&a=c&&a=d","a=b","&&","a=c&&a=d").',
                 'binary(":root","a=c&&a=d","a=c","&&","a=d").',
                 'binary(":root","a=b","a","=","b").',
@@ -327,8 +341,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require ! a = b }"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"!a=b").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"!a=b").',
                 'unary(":root","!a=b","!","a=b").',
                 'binary(":root","a=b","a","=","b").',
                 'path("a",0,a).',
@@ -339,8 +354,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require (a = b) }"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"(a=b)").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"(a=b)").',
                 'unary(":root","(a=b)","()","a=b").',
                 'binary(":root","a=b","a","=","b").',
                 'path("a",0,a).',
@@ -355,8 +371,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = b + c}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=b+c").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=b+c").',
                 'binary(":root","a=b+c","a","=","b+c").',
                 'path("a",0,a).',
                 'binary(":root","b+c","b","+","c").',
@@ -368,8 +385,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = b - c}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=b-c").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=b-c").',
                 'binary(":root","a=b-c","a","=","b-c").',
                 'path("a",0,a).',
                 'binary(":root","b-c","b","-","c").',
@@ -381,8 +399,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = b * c}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=b*c").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=b*c").',
                 'binary(":root","a=b*c","a","=","b*c").',
                 'path("a",0,a).',
                 'binary(":root","b*c","b","*","c").',
@@ -393,8 +412,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = b / c}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=b/c").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=b/c").',
                 'binary(":root","a=b/c","a","=","b/c").',
                 'path("a",0,a).',
                 'binary(":root","b/c","b","/","c").',
@@ -406,8 +426,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = b ^ c}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=b^c").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=b^c").',
                 'binary(":root","a=b^c","a","=","b^c").',
                 'path("a",0,a).',
                 'binary(":root","b^c","b","^","c").',
@@ -419,8 +440,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = - b}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=-b").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=-b").',
                 'binary(":root","a=-b","a","=","-b").',
                 'path("a",0,a).',
                 'unary(":root","-b","-","b").',
@@ -431,8 +453,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = + b}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=+b").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=+b").',
                 'binary(":root","a=+b","a","=","+b").',
                 'path("a",0,a).',
                 'unary(":root","+b","+","b").',
@@ -443,8 +466,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = (b)}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=(b)").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=(b)").',
                 'binary(":root","a=(b)","a","=","(b)").',
                 'path("a",0,a).',
                 'unary(":root","(b)","()","b").',
@@ -455,8 +479,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = sum(b)}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=sum(b)").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=sum(b)").',
                 'binary(":root","a=sum(b)","a","=","sum(b)").',
                 'path("a",0,a).',
                 'function(":root","sum(b)","sum","b").',
@@ -467,8 +492,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = sum(b,c)}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=sum(b,c)").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=sum(b,c)").',
                 'binary(":root","a=sum(b,c)","a","=","sum(b,c)").',
                 'path("a",0,a).',
                 'function(":root","sum(b,c)","sum","b").',
@@ -481,8 +507,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = count(b)}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=count(b)").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=count(b)").',
                 'binary(":root","a=count(b)","a","=","count(b)").',
                 'path("a",0,a).',
                 'function(":root","count(b)","count","b").',
@@ -493,8 +520,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = count(b,c)}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=count(b,c)").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=count(b,c)").',
                 'binary(":root","a=count(b,c)","a","=","count(b,c)").',
                 'path("a",0,a).',
                 'function(":root","count(b,c)","count","b").',
@@ -506,8 +534,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = min(b)}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=min(b)").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=min(b)").',
                 'binary(":root","a=min(b)","a","=","min(b)").',
                 'path("a",0,a).',
                 'function(":root","min(b)","min","b").',
@@ -518,8 +547,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = min(b,c)}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=min(b,c)").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=min(b,c)").',
                 'binary(":root","a=min(b,c)","a","=","min(b,c)").',
                 'path("a",0,a).',
                 'function(":root","min(b,c)","min","b").',
@@ -532,8 +562,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = max(b)}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=max(b)").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=max(b)").',
                 'binary(":root","a=max(b)","a","=","max(b)").',
                 'path("a",0,a).',
                 'function(":root","max(b)","max","b").',
@@ -544,8 +575,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = max(b,c)}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=max(b,c)").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=max(b,c)").',
                 'binary(":root","a=max(b,c)","a","=","max(b,c)").',
                 'path("a",0,a).',
                 'function(":root","max(b,c)","max","b").',
@@ -558,8 +590,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = delta(b)}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=delta(b)").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=delta(b)").',
                 'binary(":root","a=delta(b)","a","=","delta(b)").',
                 'path("a",0,a).',
                 'function(":root","delta(b)","delta","b").',
@@ -570,8 +603,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = delta(b,c)}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=delta(b,c)").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=delta(b,c)").',
                 'binary(":root","a=delta(b,c)","a","=","delta(b,c)").',
                 'path("a",0,a).',
                 'function(":root","delta(b,c)","delta","b").',
@@ -588,8 +622,9 @@ class TestCOOMParser(TestCase):
         self.assertEqual(
             parse_coom("behavior{require a = b.c.d.e.f}"),
             [
-                '\nbehavior((":root",0)).',
-                'require((":root",0),"a=b.c.d.e.f").',
+                "\nbehavior(0).",
+                'context(0,":root").',
+                'require(0,"a=b.c.d.e.f").',
                 'binary(":root","a=b.c.d.e.f","a","=","b.c.d.e.f").',
                 'path("a",0,a).',
                 'path("b.c.d.e.f",0,b).',
