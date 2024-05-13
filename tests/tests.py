@@ -13,7 +13,7 @@ from typing import Set, Union
 
 from clingo import Symbol
 from clingo.solving import Model
-from clintest.assertion import Contains, Equals, False_, Implies, SubsetOf, SupersetOf, True_
+from clintest.assertion import Contains, False_, Implies, SubsetOf, SupersetOf, True_
 from clintest.quantifier import All, Any, Exact
 from clintest.test import And as AndTest
 from clintest.test import Assert
@@ -61,7 +61,6 @@ class ContainsTheory(Contains):
 
 TEST_EMPTY = Assert(All(), SubsetOf(set()))
 TEST_UNSAT = Assert(Exact(0), False_)  # type: ignore # falsely views False_ as not of type Assertion
-# TEST_ROOT_ONLY = Assert(Exact(1), Equals({'included((),"")'}))
 
 TESTS: dict[str, dict[str, AnyType]] = {
     "require_with_number": {
@@ -87,6 +86,20 @@ TESTS: dict[str, dict[str, AnyType]] = {
             Assert(
                 Exact(1),
                 SupersetOf({('val("frontWheel[0].size[0]",28)'), ('val("rearWheel[0].size[0]",28)')}),
+            ),
+        ),
+        "ftest": AndTest(
+            Assert(
+                Exact(1),
+                SupersetOfTheory(
+                    {('val("frontWheel[0].size[0]",27)'), ('val("rearWheel[0].size[0]",27)')}, check_theory=True
+                ),
+            ),
+            Assert(
+                Exact(1),
+                SupersetOfTheory(
+                    {('val("frontWheel[0].size[0]",28)'), ('val("rearWheel[0].size[0]",28)')}, check_theory=True
+                ),
             ),
         ),
         "files": ["require_two_wheels.lp"],
