@@ -3,82 +3,84 @@
 %%% Instantiate complete instance tree
 aux_type((),"") :- structure("").
 
-aux_type((Feature,(X,Idx)),Type) :- feature(Context,Feature,Type,_,Max), aux_type(X,Context), Idx = 0..Max-1.
+% Create auxiliary predicate for every feature
+aux_type((Feat,(X,Idx)),Type) :- feature(Ctx,Feat,Type,_,Max), aux_type(X,Ctx), Idx = 0..Max-1.
+
+% Create auxiliary prediate for attribute variables
 aux_type((Attr,(X,0)),Attr) :- aux_type(X,Type), enumeration(Type), attr_value(Type,_,Attr,_).
 
 
 %%% Instantiate paths
-path_aux(X,Path) :- binary(Context,_,Path,_,_),      path(Path,0,_), aux_type(X,Context).
-path_aux(X,Path) :- binary(Context,_,_,_,Path),      path(Path,0,_), aux_type(X,Context).
-path_aux(X,Path) :- combinations(Constraint,_,Path), path(Path,0,_), aux_type(X,Context),
-                                context(Constraint,Context).
-path_aux(X,Path) :- function(Context,_,_,Path), path(Path,0,_), aux_type(X,Context).
-path_aux(X,Path) :- imply(Context,Path,_),  path(Path,0,_), aux_type(X,Context).
+path_start(X,Path) :- binary(Ctx,_,Path,_,_), path(Path,0,_), aux_type(X,Ctx).
+path_start(X,Path) :- binary(Ctx,_,_,_,Path), path(Path,0,_), aux_type(X,Ctx).
+path_start(X,Path) :- combinations(C,_,Path), path(Path,0,_), aux_type(X,Ctx), context(C,Ctx).
+path_start(X,Path) :- function(Ctx,_,_,Path), path(Path,0,_), aux_type(X,Ctx).
+path_start(X,Path) :- imply(Ctx,Path,_),      path(Path,0,_), aux_type(X,Ctx).
 
-path_instance(PathContext,Path,0,X)  :- path(Path,0,Name),
-                                        path_aux(PathContext,Path), aux_type(X,_), X=(Name,(PathContext,_)).
-path_instance(PathContext,Path,N,X') :- path(Path,N,Name),
-                                        path_instance(PathContext,Path,N-1,X), aux_type(X',_), X'=(Name,(X,_)).
+% Determine all grounded paths
+path_to(PathCtx,Path,0,X)  :- path(Path,0,Name),
+                              path_start(PathCtx,Path), aux_type(X,_), X=(Name,(PathCtx,_)).
+path_to(PathCtx,Path,N,X') :- path(Path,N,Name),
+                              path_to(PathCtx,Path,N-1,X), aux_type(X',_), X'=(Name,(X,_)).
 
-path_instance(PathContext,Path,@dotpath(X)) :- not path(Path,N+1,_), path_instance(PathContext,Path,N,X).
+path_to(PathCtx,Path,@dotpath(X)) :- not path(Path,N+1,_), path_to(PathCtx,Path,N,X).
 
 % Constants and numbers
-path_instance(PathContext,Path,Path) :- binary(Type,_,_,_,Path), aux_type(PathContext,Type), constant(Path).
-path_instance(PathContext,Path,Path) :- binary(Type,_,_,_,Path), aux_type(PathContext,Type), number(Path,_).
-path_instance(PathContext,Path,Path) :- binary(Type,_,Path,_,_), aux_type(PathContext,Type), constant(Path).
-path_instance(PathContext,Path,Path) :- binary(Type,_,Path,_,_), aux_type(PathContext,Type), number(Path,_).
+path_to(PathCtx,Path,Path) :- binary(Type,_,_,_,Path), aux_type(PathCtx,Type), constant(Path).
+path_to(PathCtx,Path,Path) :- binary(Type,_,Path,_,_), aux_type(PathCtx,Type), constant(Path).
+path_to(PathCtx,Path,Path) :- binary(Type,_,_,_,Path), aux_type(PathCtx,Type), number(Path,_).
+path_to(PathCtx,Path,Path) :- binary(Type,_,Path,_,_), aux_type(PathCtx,Type), number(Path,_).
 
-% Constraints and binaries
-behavior(Constraint,X) :- behavior(Constraint), context(Constraint,Context), aux_type(X,Context).
+% Instantiate constraints and binaries
+behavior_instance(C,X) :- behavior(C), context(C,Ctx), aux_type(X,Ctx).
 
-binary_instance(X,Formula,@binary(X1,Op,X2),X1,Op,X2) :- binary(Context,Formula,Left,Op,Right), aux_type(X,Context),
-                                                         path_instance(X,Left,X1), path_instance(X,Right,X2).
+binary_instance(X,Formula,@binary(X1,Op,X2),X1,Op,X2) :- binary(Ctx,Formula,L,Op,R), aux_type(X,Ctx),
+                                                         path_to(X,L,X1), path_to(X,R,X2).
 binary_instance(X,Formula,Grounded) :- binary_instance(X,Formula,Grounded,_,_,_).
-path_instance(X,Formula,Grounded) :- binary_instance(X,Formula,Grounded).
+path_to(X,Formula,Grounded)         :- binary_instance(X,Formula,Grounded).
 
-% Functions
-function_aux(X,Function,Type,Path) :- function(Context,Function,Type,Path), aux_type(X,Context).
-function_path(Context,Path,X)      :- function_aux(Context,Function,_,Path), path_instance(Context,Path,X).
+% Instantiate functions
+function_aux(X,Function,Type,Path) :- function(Ctx,Function,Type,Path), aux_type(X,Ctx).
+function_path(Ctx,Path,X)          :- function_aux(Ctx,Function,_,Path), path_to(Ctx,Path,X).
 
-path_instance(Context,Function,@function(Type,Context,Path)) :- function_aux(Context,Function,Type,Path).
+% Auxiliary path for function
+path_to(Ctx,Function,@function(Type,Ctx,Path)) :- function_aux(Ctx,Function,Type,Path).
 
-% Combinations
-combinations_tuple((Constraint,Context),Col,(X,())) :- behavior(Constraint,Context),
-                                                        combinations(Constraint,Col,Path), not combinations(Constraint,Col+1,_),
-                                                        path_instance(Context,Path,X).
-combinations_tuple((Constraint,Context),Col,(X',X)) :- combinations_tuple((Constraint,Context),Col+1,X),
-                                                        combinations(Constraint,Col,Path), Col >= 0,
-                                                        path_instance(Context,Path,X').
-combinations_tuple(Constraint,CT) :- combinations_tuple(Constraint,0,CT).
+% Instantiate combinations
+combinations_tuple((C,Ctx),Col,(X,())) :- behavior_instance(C,Ctx),
+                                          combinations(C,Col,Path), not combinations(C,Col+1,_),
+                                          path_to(Ctx,Path,X).
+combinations_tuple((C,Ctx),Col,(X',X)) :- combinations_tuple((C,Ctx),Col+1,X),
+                                          combinations(C,Col,Path), Col >= 0,
+                                          path_to(Ctx,Path,X').
+combinations_tuple(C,CT) :- combinations_tuple(C,0,CT).
 
-tuple_order(Constraint,CT,ID) :-  combinations_tuple(Constraint,CT), ID = #count{ CT': combinations_tuple(Constraint,CT'), CT'<CT }.
+tuple_order(C,CT,ID) :-  combinations_tuple(C,CT), ID = #count{ CT': combinations_tuple(C,CT'), CT'<CT }.
 
 in_tuple((X,CT'),CT',X) :- combinations_tuple(_,CT), CT=(X,CT').
 in_tuple(CT,CT',X)      :- in_tuple(CT,(X,CT'),_).
 in_tuple(CT,X)          :- in_tuple(CT,_,X).
 
-% Imply
-imply_aux(X,X',Formula) :- imply(Context,Path,Formula), aux_type(X,Context), path_instance(X,Path,X').
-
-
+% Instantiate imply statement
+imply_aux(X,X',Formula) :- imply(Ctx,Path,Formula), aux_type(X,Ctx), path_to(X,Path,X').
 
 %%% Output atoms
 % Structure, enumeration and attribute instances
 struct_type("","") :- structure("").
 
-struct_type(@dotpath(Instance),Type) :- structure(Type),   aux_type(Instance,Type).
-index(@dotpath(Instance),Idx)        :- structure(Type),   aux_type(Instance,Type), Instance=((_,(_,Idx))).
-enum_type(@dotpath(Instance),Type)   :- enumeration(Type), aux_type(Instance,Type).
+struct_type(@dotpath(X),Type) :- structure(Type),   aux_type(X,Type).
+index(@dotpath(X),Idx)        :- structure(Type),   aux_type(X,Type), X=((_,(_,Idx))).
+enum_type(@dotpath(X),Type)   :- enumeration(Type), aux_type(X,Type).
 
-attr_enum(@dotpath((Attr,(Instance,0))),@dotpath(Instance)) :- aux_type((Attr,(Instance,0)),Attr).
-attr_name(@dotpath((Attr,(Instance,0))),Attr)               :- aux_type((Attr,(Instance,0)),Attr).
-isnumeric(@dotpath((Attr,(Instance,0))))                    :- aux_type((Attr,(Instance,0)),Attr),
-                                                               attr_value(Type,_,Attr,_), attribute(Type,Attr,"num").
+attr_enum(@dotpath((Attr,(X,0))),@dotpath(X)) :-    aux_type((Attr,(X,0)),Attr).
+attr_name(@dotpath((Attr,(X,0))),Attr)        :-    aux_type((Attr,(X,0)),Attr).
+isnumeric(@dotpath((Attr,(X,0))))             :-    aux_type((Attr,(X,0)),Attr),
+                                                    attr_value(Type,_,Attr,_), attribute(Type,Attr,"num").
 
-num(@dotpath(Instance)) :- aux_type(Instance,"num").
+num(@dotpath(X)) :- aux_type(X,"num").
 
-parent(@dotpath(Instance),@dotpath(Parent))   :- aux_type(Instance,_), Instance=(_,(Parent,_)).
-feature(@dotpath(Instance),Feature) :- aux_type(Instance,_), Instance=(Feature,(_,_)).
+parent(@dotpath(X),@dotpath(Parent)) :- aux_type(X,_), X=(_,(Parent,_)).
+feature(@dotpath(X),Feat)         :- aux_type(X,_), X=(Feat,(_,_)).
 
 #show struct_type/2.
 #show index/2.
@@ -91,16 +93,16 @@ feature(@dotpath(Instance),Feature) :- aux_type(Instance,_), Instance=(Feature,(
 #show num/1.
 
 % Constraints
-constraint((Constraint,@dotpath(Instance))) :- behavior(Constraint,Instance).
+constraint((C,@dotpath(X))) :- behavior_instance(C,X).
 
-require_instance((Constraint,@dotpath(Instance)),Grounded)   :- require(Constraint,Formula),   binary_instance(Instance,Formula,Grounded).
-condition_instance((Constraint,@dotpath(Instance)),Grounded) :- condition(Constraint,Formula), binary_instance(Instance,Formula,Grounded).
-binary(Grounded,Left,Op,Right) :- binary_instance(_,_,Grounded,Left,Op,Right).
+require_instance((C,@dotpath(X)),Grounded)   :- require(C,Formula),   binary_instance(X,Formula,Grounded).
+condition_instance((C,@dotpath(X)),Grounded) :- condition(C,Formula), binary_instance(X,Formula,Grounded).
+binary(Grounded,L,Op,R) :- binary_instance(_,_,Grounded,L,Op,R).
 
-combinations_instance((Constraint,@dotpath(Instance)),ID,Col,@dotpath(X)) :- combinations(Constraint,Col,Path), path_instance(Instance,Path,X), in_tuple(CT,X), tuple_order((Constraint,Instance),CT,ID).
+combinations_instance((C,@dotpath(X)),ID,Col,@dotpath(X')) :- combinations(C,Col,Path), path_to(X,Path,X'), in_tuple(CT,X'), tuple_order((C,X),CT,ID).
 
-function_instance(@function(Type,Context,Path),Type,@join(Context,Path)) :- function_aux(Context,_,Type,Path).
-function_path(@join(Context,Path),@dotpath(X)) :- function_path(Context,Path,X).
+function_instance(@function(Type,Ctx,Path),Type,@join(Ctx,Path)) :- function_aux(Ctx,_,Type,Path).
+function_path(@join(Ctx,Path),@dotpath(X)) :- function_path(Ctx,Path,X).
 
 imply_instance(@join(X,X'),Grounded) :- imply_aux(X,X',Formula), binary_instance(X,Formula,Grounded).
 
@@ -163,3 +165,26 @@ def function(f,c,p):
     joined = join(c,p).string
     return String(f"{f.string}({joined})")
 #end.
+
+#defined structure/1.
+#defined feature/5.
+#defined range/4.
+#defined structure/1.
+#defined enumeration/1.
+#defined option/2.
+#defined attribute/3.
+#defined attr_value/4.
+
+#defined behavior/1.
+#defined context/2.
+#defined require/2.
+#defined condition/2.
+#defined combinations/3.
+#defined allow/3.
+#defined binary/5.
+#defined path/3.
+#defined constant/1.
+#defined number/2.
+
+#defined function/4.
+#defined imply/3.

@@ -13,11 +13,15 @@ included(X) :- enum_type(X,_), parent(X,Parent), included(Parent).
 % Exactly one value if variable has been included
 :- enum_type(X,_), included(X), not { val(X,_) } = 1.
 
-% Derive associated attribute values
-attr_aux(X,V) :- attr_value(Type,Option,Name,V), attr_enum(X,X'), enum_type(X',Type), attr_name(X,Name), included(X'), val(X',Option).
+% Attribute variables are included when their enumeration variables are included.
+included(X) :- attr_enum(X,X'), included(X').
 
-% Attribute variables are included when they have a value.
-included(X) :- attr_aux(X,V).
+% Derive associated attribute values
+attr_aux(X,V) :- attr_value(Type,Option,Name,V),
+                 attr_enum(X,X'), enum_type(X',Type), attr_name(X,Name),
+                 val(X',Option).
+
+
 
 % Show statements
 #show .

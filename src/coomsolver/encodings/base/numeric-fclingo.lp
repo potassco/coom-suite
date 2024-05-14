@@ -1,6 +1,6 @@
 % Derive range for each numeric feature variable
-range(X,Min,Max) :- feature(Context,Feature,"num",_,_), range(Context,Feature,Min,Max),
-                    num(X), feature(X,Feature), parent(X,Parent), struct_type(Parent,Context).
+range(X,Min,Max) :- feature(Ctx,Feat,"num",_,_), range(Ctx,Feat,Min,Max),
+                    num(X), feature(X,Feat), parent(X,Parent), struct_type(Parent,Ctx).
 
 % Numeric variables are always included when its parents are included
 included(X) :- num(X), parent(X,Parent), included(Parent).

@@ -12,6 +12,6 @@ binary_sat(Formula) :- binary(Formula,X1,"<=",X2), &sum{X1} <= X2.
 
 
 % Satisfaction of combinations tables for numeric values in fclingo
-hit_cell(Constraint,ID,(Col,Row)) :- allow(Idx,(Col,Row),V), combinations_instance(Constraint,ID,Col,X), &sum{X} = V, Constraint=(Idx,_).
+hit_cell(C,ID,(Col,Row)) :- allow(Idx,(Col,Row),V), combinations_instance(C,ID,Col,X), &sum{X} = V, C=(Idx,_).
 
-combinations_def(Constraint,ID) :- combinations_instance(Constraint,ID,_,X), &df{X}.
+combinations_def(C,ID,Col) :- combinations_instance(C,ID,Col,X), &df{X}.
