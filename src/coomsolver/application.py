@@ -32,6 +32,8 @@ def _sym_to_prg(symbols: Sequence[Symbol], output: Optional[str] = "asp") -> str
         output_list = [f"{str(s)}" for s in sorted_symbols]
     elif output == "coom":
         output_list = [f"{format_sym_coom(s)}" for s in sorted_symbols]
+    else:
+        raise ValueError(f"Unrecognized output format: {output}")
     return "\n".join(output_list)
 
 
