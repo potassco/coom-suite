@@ -1,12 +1,12 @@
 % Derive range for each numeric feature variable
-range(X,Min,Max) :- feature(Ctx,Feat,"num",_,_), range(Ctx,Feat,Min,Max),
-                    num(X), feature(X,Feat), parent(X,Parent), struct_type(Parent,Ctx).
+range(X,Min,Max) :- feature(C,F,"num",_,_), range(C,F,Min,Max),
+                    num(X), feature(X,F), parent(X,P), structure_type(P,C).
 
 % Numeric variables are always included when its parents are included
-included(X) :- num(X), parent(X,Parent), included(Parent).
+included(X) :- num(X), parent(X,P), included(P).
 
 % Generate numeric values
-{ val(X,V) : V = Min..Max } :- num(X), range(X,Min,Max), not imply_instance(X,_).
+{ val(X,V) : V = Min..Max } :- num(X), range(X,Min,Max), not imply(X,_).
 
 % Do not generate value if variable is not included
 :- num(X), val(X,_), not included(X).
@@ -18,20 +18,20 @@ included(X) :- num(X), parent(X,Parent), included(Parent).
 :- num(X), val(X,V), range(X,Min,Max), not Min <= V <= Max.
 
 % Evaluate functions (aggregates)
-val(Function,V) :- function_instance(Function,"count",Path), V = #count{ X : function_path(Path,X), included(X) }.
-val(Function,V) :- function_instance(Function,"sum",  Path), V = #sum  { V': function_path(Path,X), val(X,V')   }.
-val(Function,V) :- function_instance(Function,"min",  Path), V = #min  { V': function_path(Path,X), val(X,V')   }.
-val(Function,V) :- function_instance(Function,"max",  Path), V = #max  { V': function_path(Path,X), val(X,V')   }.
+val(F,V) :- function(F,"count",P), V = #count{ X : function_path(P,X), included(X) }.
+val(F,V) :- function(F,"sum",  P), V = #sum  { V': function_path(P,X), val(X,V')   }.
+val(F,V) :- function(F,"min",  P), V = #min  { V': function_path(P,X), val(X,V')   }.
+val(F,V) :- function(F,"max",  P), V = #max  { V': function_path(P,X), val(X,V')   }.
 
 
 % Arithmetics
-val(Formula,VL+VR) :- binary(Formula,XL,"+",XR), val(XL,VL), val(XR,VR).
-val(Formula,VL-VR) :- binary(Formula,XL,"-",XR), val(XL,VL), val(XR,VR).
-val(Formula,VL*VR) :- binary(Formula,XL,"*",XR), val(XL,VL), val(XR,VR).
+val(F,VL+VR) :- binary(F,XL,"+",XR), val(XL,VL), val(XR,VR).
+val(F,VL-VR) :- binary(F,XL,"-",XR), val(XL,VL), val(XR,VR).
+val(F,VL*VR) :- binary(F,XL,"*",XR), val(XL,VL), val(XR,VR).
 % TODO: Add more arithmetics (division and power)
 
 % Imply statements
-val(X,V) :- imply_instance(X,Formula), included(X), val(Formula,V).
+val(X,V) :- imply(X,F), included(X), val(F,V).
 
 % Show statement for numeric values
 #show val(X,V) : val(X,V), num(X).

@@ -1,22 +1,22 @@
 % Generate structure objects
-{ included(X) : struct_type(X,Type) }.
+{ included(X) : structure_type(X,T) }.
 
 % Always include minimal number of objects
-included(X) :- feature(Ctx,_,Type,Min,_), struct_type(X,Type), index(X,Idx), Idx < Min,
-               parent(X,Parent), included(Parent), struct_type(Parent,Ctx).
+included(X) :- feature(C,_,T,Min,_), structure_type(X,T), index(X,I), I < Min,
+               parent(X,P), included(P), structure_type(P,C).
 
 % No structure object without feature (really needed?)
-:- included(X), struct_type(X,Type), not feature(_,_,Type,_,_), X != "".
+:- included(X), structure_type(X,T), not feature(_,_,T,_,_), X != "root".
 
 % No instances without their parent instantiated
-:- included(X), struct_type(X,_), parent(X,Parent), not included(Parent).
+:- included(X), structure_type(X,_), parent(X,P), not included(P).
 
 % Indices in ascending order for a feature
-:- feature(_,Feat,Type,_,_),     included(X),  struct_type(X,Type),  feature(X, Feat), index(X, Idx), Idx > 0,
-                                not included(X'), struct_type(X',Type), feature(X',Feat), index(X',Idx-1).
+:- feature(_,F,T,_,_),    included(X),  structure_type(X, T), feature(X, F), index(X, I), I > 0,
+                      not included(X'), structure_type(X',T), feature(X',F), index(X',I-1).
 
 % Check cardinalities
-:- feature(Ctx,Feat,Type,Min,Max), included(Parent), struct_type(Parent,Ctx),
-   not Min<=N<=Max, N = #count { X : included(X), parent(X,Parent), feature(X,Feat) }.
+:- feature(C,F,T,Min,Max), included(P), structure_type(P,C),
+   not Min<=N<=Max, N = #count { X : included(X), parent(X,P), feature(X,F) }.
 
-#show included(X) : included(X), struct_type(X,_), X != "".
+#show included(X) : included(X), structure_type(X,_), X != "root".

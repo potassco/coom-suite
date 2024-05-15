@@ -31,6 +31,7 @@ def convert_instance(coom_file: str, output_dir: Optional[str] = None) -> str:  
 
     input_stream = FileStream(coom_file, encoding="utf-8")
     asp_instance = run_antlr4_visitor(input_stream)
+    asp_instance = [f"coom_{a}" if a != "" else a for a in asp_instance]
 
     with open(output_lp_file, "w", encoding="utf8") as f:
         f.write("\n".join(asp_instance))

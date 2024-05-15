@@ -23,7 +23,7 @@ class ASPVisitor(ModelVisitor):
     def __init__(self) -> None:
         super().__init__()
         self.parent_enum: Optional[ModelParser.EnumerationContext] = None
-        self.root_name: str = ""
+        self.root_name: str = "product"
         self.structure_name: str = self.root_name
         self.context: str = self.root_name
         self.constraint_idx: int = 0
@@ -37,13 +37,15 @@ class ASPVisitor(ModelVisitor):
 
     def visitStructure(self, ctx: ModelParser.StructureContext):
         self.structure_name = ctx.name().getText()
-        self.output_asp.append(f'\nstructure("{self.structure_name}").')
+        self.output_asp.append("")
+        self.output_asp.append(f'structure("{self.structure_name}").')
         super().visitStructure(ctx)
         self.structure_name = self.root_name
 
     def visitEnumeration(self, ctx: ModelParser.EnumerationContext):
         self.parent_enum = ctx
-        self.output_asp.append(f'\nenumeration("{ctx.name().getText()}").')
+        self.output_asp.append("")
+        self.output_asp.append(f'enumeration("{ctx.name().getText()}").')
         super().visitEnumeration(ctx)
         self.parent_enum = None
 
@@ -76,12 +78,12 @@ class ASPVisitor(ModelVisitor):
             if cardinality.max is not None:
                 c_max = cardinality.max.text.replace("x", "").replace("*", "#sup")
 
-        self.output_asp.append(f'feature("{self.structure_name}",{feature_name},"{type_name}",{c_min},{c_max}).')
+        self.output_asp.append(f'feature("{self.structure_name}","{feature_name}","{type_name}",{c_min},{c_max}).')
         if type_name == "num":
             num: ModelParser.Number_defContext = field.number_def()
             r_min = "#inf" if num.min is None else num.min.INTEGER()
             r_max = "#sup" if num.max is None else num.max.INTEGER()
-            self.output_asp.append(f'range("{self.structure_name}",{feature_name},{r_min},{r_max}).')
+            self.output_asp.append(f'range("{self.structure_name}","{feature_name}",{r_min},{r_max}).')
 
     def visitAttribute(self, ctx: ModelParser.AttributeContext):
         # if self.parent_enum is None:
@@ -93,7 +95,7 @@ class ASPVisitor(ModelVisitor):
         else:
             field_type = "str"
         field_name = field.fieldName.getText()
-        self.output_asp.append(f'attribute("{parent_name}",{field_name},"{field_type}").')
+        self.output_asp.append(f'attribute("{parent_name}","{field_name}","{field_type}").')
         super().visitAttribute(ctx)
 
     def visitOption(self, ctx: ModelParser.OptionContext):
@@ -113,11 +115,14 @@ class ASPVisitor(ModelVisitor):
                     option_value = c.floating().getText()
                 elif c.name() is not None:
                     option_value = f'"{c.name().getText()}"'
-                self.output_asp.append(f'attr_value("{parent_name}","{option_name}",{attr_name},{option_value}).')
+                self.output_asp.append(
+                    f'attribute_value("{parent_name}","{option_name}","{attr_name}",{option_value}).'
+                )
 
     def visitConditioned(self, ctx: ModelParser.ConditionedContext):
         if ctx.interaction() is None:
-            self.output_asp.append(f"\nbehavior({self.constraint_idx}).")
+            self.output_asp.append("")
+            self.output_asp.append(f"behavior({self.constraint_idx}).")
             self.output_asp.append(f'context({self.constraint_idx},"{self.context}").')
             super().visitConditioned(ctx)
             self.constraint_idx += 1
@@ -287,7 +292,7 @@ class ASPVisitor(ModelVisitor):
                 self.output_asp.append(f'constant("{full_path}").')
             else:
                 for i, p in enumerate(ctx.path_item()):
-                    self.output_asp.append(f'path("{full_path}",{i},{p.getText()}).')
+                    self.output_asp.append(f'path("{full_path}",{i},"{p.getText()}").')
 
     def visitFloating(self, ctx: ModelParser.FloatingContext):
         # if ctx.FLOATING() is not None:

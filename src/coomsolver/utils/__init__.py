@@ -53,9 +53,9 @@ def format_sym_coom(s: Symbol) -> str:
     Formats output symbols to a more readable COOM format.
     """
     if s.name == "included":
-        return s.arguments[0].string
+        return s.arguments[0].string.removeprefix("root.")
     if s.name == "val":
-        path = s.arguments[0].string
+        path = s.arguments[0].string.removeprefix("root.")
         value = s.arguments[1]
         return f"{path} = {value}"
     raise ValueError(f"Unrecognized predicate: {s.name}")

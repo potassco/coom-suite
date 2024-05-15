@@ -1,7 +1,7 @@
 % For fclingo distinguish between numeric and non-numeric attributes
-val(X,V)       :- attr_aux(X,V), not isnumeric(X).
-&in{V..V} =: X :- attr_aux(X,V), isnumeric(X).
+val(X,V)       :- attribute_aux(X,V), not isnumeric(X).
+&in{V..V} =: X :- attribute_aux(X,V), isnumeric(X).
 
-#show val(X,V) : val(X,V), attr_enum(X,_).
+#show val(X,V) : val(X,V), attribute_enumeration(X,_).
 
-&show { X : attr_enum(X,_), isnumeric(X) }.
+&show { X : attribute_enumeration(X,_), isnumeric(X) }.

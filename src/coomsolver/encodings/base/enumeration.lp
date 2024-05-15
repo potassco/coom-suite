@@ -1,29 +1,26 @@
 % Always include root instance
-included("").
+included("root").
 
 % Generate enumeration values
-{ val(X,Option) : enum_type(X,Type), option(Type,Option) }.
+{ val(X,O) : enumeration_type(X,T), option(T,O) }.
 
 % Enumeration variables are always included when its parents are included
-included(X) :- enum_type(X,_), parent(X,Parent), included(Parent).
+included(X) :- enumeration_type(X,_), parent(X,P), included(P).
 
 % No value if variable has not been included
-:- enum_type(X,_), val(X,_),  not included(X).
+:- enumeration_type(X,_), val(X,_),  not included(X).
 
 % Exactly one value if variable has been included
-:- enum_type(X,_), included(X), not { val(X,_) } = 1.
+:- enumeration_type(X,_), included(X), not { val(X,_) } = 1.
 
 % Attribute variables are included when their enumeration variables are included.
-included(X) :- attr_enum(X,X'), included(X').
+included(X) :- attribute_enumeration(X,X'), included(X').
 
 % Derive associated attribute values
-attr_aux(X,V) :- attr_value(Type,Option,Name,V),
-                 attr_enum(X,X'), enum_type(X',Type), attr_name(X,Name),
-                 val(X',Option).
-
-
+attribute_aux(X,V) :- attribute_value(T,O,N,V),
+                      attribute_enumeration(X,X'), enumeration_type(X',T), attribute_name(X,N),
+                      val(X',O).
 
 % Show statements
 #show .
-
-#show val(X,V) : val(X,V), enum_type(X,_).
+#show val(X,V) : val(X,V), enumeration_type(X,_).

@@ -1,252 +1,252 @@
-structure("").
-feature("",usage,"Usage",1,1).
-feature("",efficiency,"Efficiency",1,1).
-feature("",maxPrice,"num",1,1).
-range("",maxPrice,0,2500).
-feature("",price,"num",1,1).
-range("",price,0,2500).
-feature("",internetConn,"bool",1,1).
-feature("",hdunit,"HDUnit",1,2).
-feature("",motherboard,"Motherboard",1,1).
-feature("",screen,"Screen",1,2).
-feature("",os,"OS",1,1).
-feature("",applications,"Application",1,5).
+coom_structure("product").
+coom_feature("product","usage","Usage",1,1).
+coom_feature("product","efficiency","Efficiency",1,1).
+coom_feature("product","maxPrice","num",1,1).
+coom_range("product","maxPrice",0,2500).
+coom_feature("product","price","num",1,1).
+coom_range("product","price",0,2500).
+coom_feature("product","internetConn","bool",1,1).
+coom_feature("product","hdunit","HDUnit",1,2).
+coom_feature("product","motherboard","Motherboard",1,1).
+coom_feature("product","screen","Screen",1,2).
+coom_feature("product","os","OS",1,1).
+coom_feature("product","applications","Application",1,5).
 
-enumeration("Usage").
-option("Usage", "Internet").
-option("Usage", "Scientific").
-option("Usage", "Multimedia").
+coom_enumeration("Usage").
+coom_option("Usage", "Internet").
+coom_option("Usage", "Scientific").
+coom_option("Usage", "Multimedia").
 
-enumeration("Efficiency").
-option("Efficiency", "A").
-option("Efficiency", "B").
-option("Efficiency", "C").
+coom_enumeration("Efficiency").
+coom_option("Efficiency", "A").
+coom_option("Efficiency", "B").
+coom_option("Efficiency", "C").
 
-structure("HDUnit").
-feature("HDUnit",price,"num",1,1).
-range("HDUnit",price,0,1000).
-feature("HDUnit",hdisk,"HDisk",1,4).
-feature("HDUnit",hdcontroller,"HDController",1,2).
+coom_structure("HDUnit").
+coom_feature("HDUnit","price","num",1,1).
+coom_range("HDUnit","price",0,1000).
+coom_feature("HDUnit","hdisk","HDisk",1,4).
+coom_feature("HDUnit","hdcontroller","HDController",1,2).
 
-enumeration("HDisk").
-attribute("HDisk",capacity,"num").
-attribute("HDisk",price,"num").
-option("HDisk", "MedStoreDisk").
-attr_value("HDisk","MedStoreDisk",capacity,200).
-attr_value("HDisk","MedStoreDisk",price,200).
-option("HDisk", "MaxStoreDisk").
-attr_value("HDisk","MaxStoreDisk",capacity,1000).
-attr_value("HDisk","MaxStoreDisk",price,500).
+coom_enumeration("HDisk").
+coom_attribute("HDisk","capacity","num").
+coom_attribute("HDisk","price","num").
+coom_option("HDisk", "MedStoreDisk").
+coom_attribute_value("HDisk","MedStoreDisk","capacity",200).
+coom_attribute_value("HDisk","MedStoreDisk","price",200).
+coom_option("HDisk", "MaxStoreDisk").
+coom_attribute_value("HDisk","MaxStoreDisk","capacity",1000).
+coom_attribute_value("HDisk","MaxStoreDisk","price",500).
 
-enumeration("HDController").
-attribute("HDController",price,"num").
-option("HDController", "MedStoreC").
-attr_value("HDController","MedStoreC",price,500).
-option("HDController", "MaxStoreC").
-attr_value("HDController","MaxStoreC",price,500).
+coom_enumeration("HDController").
+coom_attribute("HDController","price","num").
+coom_option("HDController", "MedStoreC").
+coom_attribute_value("HDController","MedStoreC","price",500).
+coom_option("HDController", "MaxStoreC").
+coom_attribute_value("HDController","MaxStoreC","price",500).
 
-structure("Motherboard").
-feature("Motherboard",price,"num",1,1).
-range("Motherboard",price,0,350).
-feature("Motherboard",mbtype,"MBType",1,1).
-feature("Motherboard",cpu,"CPU",1,1).
+coom_structure("Motherboard").
+coom_feature("Motherboard","price","num",1,1).
+coom_range("Motherboard","price",0,350).
+coom_feature("Motherboard","mbtype","MBType",1,1).
+coom_feature("Motherboard","cpu","CPU",1,1).
 
-enumeration("MBType").
-attribute("MBType",efficiency,"str").
-attribute("MBType",price,"num").
-option("MBType", "MBSilver").
-attr_value("MBType","MBSilver",efficiency,"B").
-attr_value("MBType","MBSilver",price,250).
-option("MBType", "MBDiamond").
-attr_value("MBType","MBDiamond",efficiency,"A").
-attr_value("MBType","MBDiamond",price,350).
+coom_enumeration("MBType").
+coom_attribute("MBType","efficiency","str").
+coom_attribute("MBType","price","num").
+coom_option("MBType", "MBSilver").
+coom_attribute_value("MBType","MBSilver","efficiency","B").
+coom_attribute_value("MBType","MBSilver","price",250).
+coom_option("MBType", "MBDiamond").
+coom_attribute_value("MBType","MBDiamond","efficiency","A").
+coom_attribute_value("MBType","MBDiamond","price",350).
 
-enumeration("CPU").
-attribute("CPU",clockrate,"str").
-attribute("CPU",price,"num").
-option("CPU", "CPUD").
-attr_value("CPU","CPUD",clockrate,"fast").
-attr_value("CPU","CPUD",price,150).
-option("CPU", "CPUS").
-attr_value("CPU","CPUS",clockrate,"medium").
-attr_value("CPU","CPUS",price,100).
+coom_enumeration("CPU").
+coom_attribute("CPU","clockrate","str").
+coom_attribute("CPU","price","num").
+coom_option("CPU", "CPUD").
+coom_attribute_value("CPU","CPUD","clockrate","fast").
+coom_attribute_value("CPU","CPUD","price",150).
+coom_option("CPU", "CPUS").
+coom_attribute_value("CPU","CPUS","clockrate","medium").
+coom_attribute_value("CPU","CPUS","price",100).
 
-enumeration("Screen").
-attribute("Screen",efficiency,"str").
-attribute("Screen",price,"num").
-option("Screen", "ScreenA").
-attr_value("Screen","ScreenA",efficiency,"A").
-attr_value("Screen","ScreenA",price,200).
-option("Screen", "ScreenB").
-attr_value("Screen","ScreenB",efficiency,"B").
-attr_value("Screen","ScreenB",price,150).
-option("Screen", "ScreenC").
-attr_value("Screen","ScreenC",efficiency,"C").
-attr_value("Screen","ScreenC",price,100).
+coom_enumeration("Screen").
+coom_attribute("Screen","efficiency","str").
+coom_attribute("Screen","price","num").
+coom_option("Screen", "ScreenA").
+coom_attribute_value("Screen","ScreenA","efficiency","A").
+coom_attribute_value("Screen","ScreenA","price",200).
+coom_option("Screen", "ScreenB").
+coom_attribute_value("Screen","ScreenB","efficiency","B").
+coom_attribute_value("Screen","ScreenB","price",150).
+coom_option("Screen", "ScreenC").
+coom_attribute_value("Screen","ScreenC","efficiency","C").
+coom_attribute_value("Screen","ScreenC","price",100).
 
-enumeration("OS").
-attribute("OS",hdcapacity,"num").
-attribute("OS",price,"num").
-option("OS", "OSBeta").
-attr_value("OS","OSBeta",hdcapacity,13).
-attr_value("OS","OSBeta",price,500).
-option("OS", "OSAlpha").
-attr_value("OS","OSAlpha",hdcapacity,6).
-attr_value("OS","OSAlpha",price,100).
+coom_enumeration("OS").
+coom_attribute("OS","hdcapacity","num").
+coom_attribute("OS","price","num").
+coom_option("OS", "OSBeta").
+coom_attribute_value("OS","OSBeta","hdcapacity",13).
+coom_attribute_value("OS","OSBeta","price",500).
+coom_option("OS", "OSAlpha").
+coom_attribute_value("OS","OSAlpha","hdcapacity",6).
+coom_attribute_value("OS","OSAlpha","price",100).
 
-structure("Application").
-feature("Application",hdcapacity,"num",1,1).
-range("Application",hdcapacity,200,200).
-feature("Application",price,"num",1,1).
-range("Application",price,50,50).
+coom_structure("Application").
+coom_feature("Application","hdcapacity","num",1,1).
+coom_range("Application","hdcapacity",200,200).
+coom_feature("Application","price","num",1,1).
+coom_range("Application","price",50,50).
 
-behavior(0).
-context(0,"").
-imply(0,price,"sum(hdunit.price)+motherboard.price+sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)").
-path("price",0,price).
-binary("","sum(hdunit.price)+motherboard.price+sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)","sum(hdunit.price)","+","motherboard.price+sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)").
-binary("","motherboard.price+sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)","motherboard.price","+","sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)").
-binary("","sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)","sum(motherboard.cpu.price)","+","os.price+sum(screen.price)+sum(applications.price)").
-binary("","os.price+sum(screen.price)+sum(applications.price)","os.price","+","sum(screen.price)+sum(applications.price)").
-binary("","sum(screen.price)+sum(applications.price)","sum(screen.price)","+","sum(applications.price)").
-function("","sum(hdunit.price)","sum","hdunit.price").
-path("hdunit.price",0,hdunit).
-path("hdunit.price",1,price).
-path("motherboard.price",0,motherboard).
-path("motherboard.price",1,price).
-function("","sum(motherboard.cpu.price)","sum","motherboard.cpu.price").
-path("motherboard.cpu.price",0,motherboard).
-path("motherboard.cpu.price",1,cpu).
-path("motherboard.cpu.price",2,price).
-path("os.price",0,os).
-path("os.price",1,price).
-function("","sum(screen.price)","sum","screen.price").
-path("screen.price",0,screen).
-path("screen.price",1,price).
-function("","sum(applications.price)","sum","applications.price").
-path("applications.price",0,applications).
-path("applications.price",1,price).
+coom_behavior(0).
+coom_context(0,"product").
+coom_imply("product","price","sum(hdunit.price)+motherboard.price+sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)").
+coom_path("price",0,"price").
+coom_binary("product","sum(hdunit.price)+motherboard.price+sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)","sum(hdunit.price)","+","motherboard.price+sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)").
+coom_binary("product","motherboard.price+sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)","motherboard.price","+","sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)").
+coom_binary("product","sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)","sum(motherboard.cpu.price)","+","os.price+sum(screen.price)+sum(applications.price)").
+coom_binary("product","os.price+sum(screen.price)+sum(applications.price)","os.price","+","sum(screen.price)+sum(applications.price)").
+coom_binary("product","sum(screen.price)+sum(applications.price)","sum(screen.price)","+","sum(applications.price)").
+coom_function("product","sum(hdunit.price)","sum","hdunit.price").
+coom_path("hdunit.price",0,"hdunit").
+coom_path("hdunit.price",1,"price").
+coom_path("motherboard.price",0,"motherboard").
+coom_path("motherboard.price",1,"price").
+coom_function("product","sum(motherboard.cpu.price)","sum","motherboard.cpu.price").
+coom_path("motherboard.cpu.price",0,"motherboard").
+coom_path("motherboard.cpu.price",1,"cpu").
+coom_path("motherboard.cpu.price",2,"price").
+coom_path("os.price",0,"os").
+coom_path("os.price",1,"price").
+coom_function("product","sum(screen.price)","sum","screen.price").
+coom_path("screen.price",0,"screen").
+coom_path("screen.price",1,"price").
+coom_function("product","sum(applications.price)","sum","applications.price").
+coom_path("applications.price",0,"applications").
+coom_path("applications.price",1,"price").
 
-behavior(1).
-context(1,"").
-require(1,"price<=maxPrice").
-binary("","price<=maxPrice","price","<=","maxPrice").
-path("price",0,price).
-path("maxPrice",0,maxPrice).
+coom_behavior(1).
+coom_context(1,"product").
+coom_require(1,"price<=maxPrice").
+coom_binary("product","price<=maxPrice","price","<=","maxPrice").
+coom_path("price",0,"price").
+coom_path("maxPrice",0,"maxPrice").
 
-behavior(2).
-context(2,"").
-require(2,"os.hdcapacity+sum(applications.hdcapacity)<=sum(hdunit.hdisk.capacity)").
-binary("","os.hdcapacity+sum(applications.hdcapacity)<=sum(hdunit.hdisk.capacity)","os.hdcapacity+sum(applications.hdcapacity)","<=","sum(hdunit.hdisk.capacity)").
-binary("","os.hdcapacity+sum(applications.hdcapacity)","os.hdcapacity","+","sum(applications.hdcapacity)").
-path("os.hdcapacity",0,os).
-path("os.hdcapacity",1,hdcapacity).
-function("","sum(applications.hdcapacity)","sum","applications.hdcapacity").
-path("applications.hdcapacity",0,applications).
-path("applications.hdcapacity",1,hdcapacity).
-function("","sum(hdunit.hdisk.capacity)","sum","hdunit.hdisk.capacity").
-path("hdunit.hdisk.capacity",0,hdunit).
-path("hdunit.hdisk.capacity",1,hdisk).
-path("hdunit.hdisk.capacity",2,capacity).
+coom_behavior(2).
+coom_context(2,"product").
+coom_require(2,"os.hdcapacity+sum(applications.hdcapacity)<=sum(hdunit.hdisk.capacity)").
+coom_binary("product","os.hdcapacity+sum(applications.hdcapacity)<=sum(hdunit.hdisk.capacity)","os.hdcapacity+sum(applications.hdcapacity)","<=","sum(hdunit.hdisk.capacity)").
+coom_binary("product","os.hdcapacity+sum(applications.hdcapacity)","os.hdcapacity","+","sum(applications.hdcapacity)").
+coom_path("os.hdcapacity",0,"os").
+coom_path("os.hdcapacity",1,"hdcapacity").
+coom_function("product","sum(applications.hdcapacity)","sum","applications.hdcapacity").
+coom_path("applications.hdcapacity",0,"applications").
+coom_path("applications.hdcapacity",1,"hdcapacity").
+coom_function("product","sum(hdunit.hdisk.capacity)","sum","hdunit.hdisk.capacity").
+coom_path("hdunit.hdisk.capacity",0,"hdunit").
+coom_path("hdunit.hdisk.capacity",1,"hdisk").
+coom_path("hdunit.hdisk.capacity",2,"capacity").
 
-behavior(3).
-context(3,"").
-condition(3,"usage=Internet").
-binary("","usage=Internet","usage","=","Internet").
-path("usage",0,usage).
-constant("Internet").
-require(3,"internetConn=True").
-binary("","internetConn=True","internetConn","=","True").
-path("internetConn",0,internetConn).
-constant("True").
+coom_behavior(3).
+coom_context(3,"product").
+coom_condition(3,"usage=Internet").
+coom_binary("product","usage=Internet","usage","=","Internet").
+coom_path("usage",0,"usage").
+coom_constant("Internet").
+coom_require(3,"internetConn=True").
+coom_binary("product","internetConn=True","internetConn","=","True").
+coom_path("internetConn",0,"internetConn").
+coom_constant("True").
 
-behavior(4).
-context(4,"").
-condition(4,"usage=Multimedia").
-binary("","usage=Multimedia","usage","=","Multimedia").
-path("usage",0,usage).
-constant("Multimedia").
-require(4,"internetConn=True").
-binary("","internetConn=True","internetConn","=","True").
-path("internetConn",0,internetConn).
-constant("True").
+coom_behavior(4).
+coom_context(4,"product").
+coom_condition(4,"usage=Multimedia").
+coom_binary("product","usage=Multimedia","usage","=","Multimedia").
+coom_path("usage",0,"usage").
+coom_constant("Multimedia").
+coom_require(4,"internetConn=True").
+coom_binary("product","internetConn=True","internetConn","=","True").
+coom_path("internetConn",0,"internetConn").
+coom_constant("True").
 
-behavior(5).
-context(5,"").
-combinations(5,0,"efficiency").
-combinations(5,1,"motherboard.mbtype.efficiency").
-combinations(5,2,"screen.efficiency").
-path("efficiency",0,efficiency).
-path("motherboard.mbtype.efficiency",0,motherboard).
-path("motherboard.mbtype.efficiency",1,mbtype).
-path("motherboard.mbtype.efficiency",2,efficiency).
-path("screen.efficiency",0,screen).
-path("screen.efficiency",1,efficiency).
-allow(5,(0,0),"A").
-allow(5,(1,0),"A").
-allow(5,(2,0),"A").
-allow(5,(0,1),"B").
-allow(5,(1,1),"A").
-allow(5,(1,1),"B").
-allow(5,(2,1),"A").
-allow(5,(2,1),"B").
-allow(5,(0,2),"C").
-allow(5,(1,2),"A").
-allow(5,(1,2),"B").
-allow(5,(1,2),"C").
-allow(5,(2,2),"A").
-allow(5,(2,2),"B").
-allow(5,(2,2),"C").
+coom_behavior(5).
+coom_context(5,"product").
+coom_combinations(5,0,"efficiency").
+coom_combinations(5,1,"motherboard.mbtype.efficiency").
+coom_combinations(5,2,"screen.efficiency").
+coom_path("efficiency",0,"efficiency").
+coom_path("motherboard.mbtype.efficiency",0,"motherboard").
+coom_path("motherboard.mbtype.efficiency",1,"mbtype").
+coom_path("motherboard.mbtype.efficiency",2,"efficiency").
+coom_path("screen.efficiency",0,"screen").
+coom_path("screen.efficiency",1,"efficiency").
+coom_allow(5,(0,0),"A").
+coom_allow(5,(1,0),"A").
+coom_allow(5,(2,0),"A").
+coom_allow(5,(0,1),"B").
+coom_allow(5,(1,1),"A").
+coom_allow(5,(1,1),"B").
+coom_allow(5,(2,1),"A").
+coom_allow(5,(2,1),"B").
+coom_allow(5,(0,2),"C").
+coom_allow(5,(1,2),"A").
+coom_allow(5,(1,2),"B").
+coom_allow(5,(1,2),"C").
+coom_allow(5,(2,2),"A").
+coom_allow(5,(2,2),"B").
+coom_allow(5,(2,2),"C").
 
-behavior(6).
-context(6,"").
-condition(6,"os=OSAlpha").
-binary("","os=OSAlpha","os","=","OSAlpha").
-path("os",0,os).
-constant("OSAlpha").
-require(6,"motherboard.cpu=CPUD").
-binary("","motherboard.cpu=CPUD","motherboard.cpu","=","CPUD").
-path("motherboard.cpu",0,motherboard).
-path("motherboard.cpu",1,cpu).
-constant("CPUD").
+coom_behavior(6).
+coom_context(6,"product").
+coom_condition(6,"os=OSAlpha").
+coom_binary("product","os=OSAlpha","os","=","OSAlpha").
+coom_path("os",0,"os").
+coom_constant("OSAlpha").
+coom_require(6,"motherboard.cpu=CPUD").
+coom_binary("product","motherboard.cpu=CPUD","motherboard.cpu","=","CPUD").
+coom_path("motherboard.cpu",0,"motherboard").
+coom_path("motherboard.cpu",1,"cpu").
+coom_constant("CPUD").
 
-behavior(7).
-context(7,"HDUnit").
-imply(7,price,"sum(hdisk.price)+sum(hdcontroller.price)").
-path("price",0,price).
-binary("HDUnit","sum(hdisk.price)+sum(hdcontroller.price)","sum(hdisk.price)","+","sum(hdcontroller.price)").
-function("HDUnit","sum(hdisk.price)","sum","hdisk.price").
-path("hdisk.price",0,hdisk).
-path("hdisk.price",1,price).
-function("HDUnit","sum(hdcontroller.price)","sum","hdcontroller.price").
-path("hdcontroller.price",0,hdcontroller).
-path("hdcontroller.price",1,price).
+coom_behavior(7).
+coom_context(7,"HDUnit").
+coom_imply("HDUnit","price","sum(hdisk.price)+sum(hdcontroller.price)").
+coom_path("price",0,"price").
+coom_binary("HDUnit","sum(hdisk.price)+sum(hdcontroller.price)","sum(hdisk.price)","+","sum(hdcontroller.price)").
+coom_function("HDUnit","sum(hdisk.price)","sum","hdisk.price").
+coom_path("hdisk.price",0,"hdisk").
+coom_path("hdisk.price",1,"price").
+coom_function("HDUnit","sum(hdcontroller.price)","sum","hdcontroller.price").
+coom_path("hdcontroller.price",0,"hdcontroller").
+coom_path("hdcontroller.price",1,"price").
 
-behavior(8).
-context(8,"Motherboard").
-imply(8,price,"mbtype.price").
-path("price",0,price).
-path("mbtype.price",0,mbtype).
-path("mbtype.price",1,price).
+coom_behavior(8).
+coom_context(8,"Motherboard").
+coom_imply("Motherboard","price","mbtype.price").
+coom_path("price",0,"price").
+coom_path("mbtype.price",0,"mbtype").
+coom_path("mbtype.price",1,"price").
 
-behavior(9).
-context(9,"Motherboard").
-condition(9,"mbtype=MBSilver").
-binary("Motherboard","mbtype=MBSilver","mbtype","=","MBSilver").
-path("mbtype",0,mbtype).
-constant("MBSilver").
-require(9,"cpu!=CPUD").
-binary("Motherboard","cpu!=CPUD","cpu","!=","CPUD").
-path("cpu",0,cpu).
-constant("CPUD").
+coom_behavior(9).
+coom_context(9,"Motherboard").
+coom_condition(9,"mbtype=MBSilver").
+coom_binary("Motherboard","mbtype=MBSilver","mbtype","=","MBSilver").
+coom_path("mbtype",0,"mbtype").
+coom_constant("MBSilver").
+coom_require(9,"cpu!=CPUD").
+coom_binary("Motherboard","cpu!=CPUD","cpu","!=","CPUD").
+coom_path("cpu",0,"cpu").
+coom_constant("CPUD").
 
-behavior(10).
-context(10,"Motherboard").
-condition(10,"mbtype=MBDiamond").
-binary("Motherboard","mbtype=MBDiamond","mbtype","=","MBDiamond").
-path("mbtype",0,mbtype).
-constant("MBDiamond").
-require(10,"cpu!=CPUS").
-binary("Motherboard","cpu!=CPUS","cpu","!=","CPUS").
-path("cpu",0,cpu).
-constant("CPUS").
+coom_behavior(10).
+coom_context(10,"Motherboard").
+coom_condition(10,"mbtype=MBDiamond").
+coom_binary("Motherboard","mbtype=MBDiamond","mbtype","=","MBDiamond").
+coom_path("mbtype",0,"mbtype").
+coom_constant("MBDiamond").
+coom_require(10,"cpu!=CPUS").
+coom_binary("Motherboard","cpu!=CPUS","cpu","!=","CPUS").
+coom_path("cpu",0,"cpu").
+coom_constant("CPUS").
