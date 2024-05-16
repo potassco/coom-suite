@@ -1,5 +1,11 @@
 # Fact format of instances
-The instances are generated automatically by parsing a COOM file. We describe here the ASP fact format used for the translation.
+The instances are generated automatically by parsing a COOM file.
+We describe here the ASP fact format used for the translation.
+We prefix every predicate by `coom_` to make distinguish the predicates here
+from the processed predicates used later in the encoding.
+
+
+TODO: Add prefix
 
 ## Building up a product domain
 
@@ -80,7 +86,7 @@ Enumerations represent features with a finite domain of predefined choices.
 The predicate `enumeration/1` declares an enumeration field and
 is always accompanied at least by `option/2` predicates specifying the possible choices.
 Optionally, enumerations can also contain attributes such that each option comes along with a fixed set of values.
-These are specified by predicates `attribute/3` and `attr_value/4`.
+These are specified by predicates `attribute/3` and `attribute_value/4`.
 
 
 ```prolog
@@ -136,7 +142,7 @@ attribute("Capacity","weight","num").
 Assigns an attribute value to an enumeration option.
 
 ```prolog
-attr_value(NameOfEnumeration,NameOfOption,NameOfAttribute,AttributeValue).
+attribute_value(NameOfEnumeration,NameOfOption,NameOfAttribute,AttributeValue).
 ```
 
 Parameters:
@@ -147,14 +153,14 @@ Parameters:
 
 Examples:
 ```prolog
-attr_value("Capacity","B10","volume",10).
-attr_value("Capacity","B10","weight",100).
-attr_value("Capacity","B20","volume",20).
-attr_value("Capacity","B20","weight",250).
-attr_value("Capacity","B50","volume",50).
-attr_value("Capacity","B50","weight",600).
-attr_value("Capacity","B100","volume",100).
-attr_value("Capacity","B100","weight",1200).
+attribute_value("Capacity","B10","volume",10).
+attribute_value("Capacity","B10","weight",100).
+attribute_value("Capacity","B20","volume",20).
+attribute_value("Capacity","B20","weight",250).
+attribute_value("Capacity","B50","volume",50).
+attribute_value("Capacity","B50","weight",600).
+attribute_value("Capacity","B100","volume",100).
+attribute_value("Capacity","B100","weight",1200).
 ```
 
 ## Constraints

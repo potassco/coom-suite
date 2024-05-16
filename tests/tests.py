@@ -64,157 +64,161 @@ TEST_UNSAT = Assert(Exact(0), False_)  # type: ignore # falsely views False_ as 
 
 TESTS: dict[str, dict[str, AnyType]] = {
     "require_with_number": {
-        "test": Assert(All(), ContainsTheory(('val("wheel[0].size[0]",27)'))),
-        "ftest": Assert(All(), ContainsTheory('val("wheel[0].size[0]",27)', check_theory=True)),
+        "test": Assert(All(), ContainsTheory(('val("root.wheel[0].size[0]",27)'))),
+        "ftest": Assert(All(), ContainsTheory('val("root.wheel[0].size[0]",27)', check_theory=True)),
         "files": ["require_with_number.lp"],
     },
     "require_with_number_ge": {
-        "test": Assert(All(), ContainsTheory(('val("wheel[0].size[0]",28)'))),
-        "ftest": Assert(All(), ContainsTheory('val("wheel[0].size[0]",28)', check_theory=True)),
+        "test": Assert(All(), ContainsTheory(('val("root.wheel[0].size[0]",28)'))),
+        "ftest": Assert(All(), ContainsTheory('val("root.wheel[0].size[0]",28)', check_theory=True)),
         "files": ["require_with_number_ge.lp"],
     },
     "require_with_constant": {
-        "test": Assert(All(), Contains(('val("wheel[0]","W28")'))),
+        "test": Assert(All(), Contains(('val("root.wheel[0]","W28")'))),
         "files": ["require_with_constant.lp"],
     },
     "require_two_wheels": {
         "test": AndTest(
             Assert(
                 Exact(1),
-                SupersetOf({('val("frontWheel[0].size[0]",27)'), ('val("rearWheel[0].size[0]",27)')}),
+                SupersetOf({('val("root.frontWheel[0].size[0]",27)'), ('val("root.rearWheel[0].size[0]",27)')}),
             ),
             Assert(
                 Exact(1),
-                SupersetOf({('val("frontWheel[0].size[0]",28)'), ('val("rearWheel[0].size[0]",28)')}),
+                SupersetOf({('val("root.frontWheel[0].size[0]",28)'), ('val("root.rearWheel[0].size[0]",28)')}),
             ),
         ),
         "ftest": AndTest(
             Assert(
                 Exact(1),
                 SupersetOfTheory(
-                    {('val("frontWheel[0].size[0]",27)'), ('val("rearWheel[0].size[0]",27)')}, check_theory=True
+                    {('val("root.frontWheel[0].size[0]",27)'), ('val("root.rearWheel[0].size[0]",27)')},
+                    check_theory=True,
                 ),
             ),
             Assert(
                 Exact(1),
                 SupersetOfTheory(
-                    {('val("frontWheel[0].size[0]",28)'), ('val("rearWheel[0].size[0]",28)')}, check_theory=True
+                    {('val("root.frontWheel[0].size[0]",28)'), ('val("root.rearWheel[0].size[0]",28)')},
+                    check_theory=True,
                 ),
             ),
         ),
         "files": ["require_two_wheels.lp"],
     },
     "condition": {
-        "test": Assert(All(), Implies(Contains('val("wheelSupport[0]","True")'), Contains('val("wheel[0]","Small")'))),
+        "test": Assert(
+            All(), Implies(Contains('val("root.wheelSupport[0]","True")'), Contains('val("root.wheel[0]","Small")'))
+        ),
         "files": ["condition.lp"],
     },
     "combination": {
         "test": AndTest(
-            Assert(Any(), SupersetOf({'val("wheelSupport[0]","False")', 'val("wheel[0]","W20")'})),
-            Assert(Any(), SupersetOf({'val("wheelSupport[0]","False")', 'val("wheel[0]","W18")'})),
-            Assert(Any(), SupersetOf({'val("wheelSupport[0]","True")', 'val("wheel[0]","W16")'})),
-            Assert(Any(), SupersetOf({'val("wheelSupport[0]","True")', 'val("wheel[0]","W14")'})),
+            Assert(Any(), SupersetOf({'val("root.wheelSupport[0]","False")', 'val("root.wheel[0]","W20")'})),
+            Assert(Any(), SupersetOf({'val("root.wheelSupport[0]","False")', 'val("root.wheel[0]","W18")'})),
+            Assert(Any(), SupersetOf({'val("root.wheelSupport[0]","True")', 'val("root.wheel[0]","W16")'})),
+            Assert(Any(), SupersetOf({'val("root.wheelSupport[0]","True")', 'val("root.wheel[0]","W14")'})),
             Assert(Exact(4), True_()),
         ),
         "files": ["combination.lp"],
     },
     "enumeration": {
         "test": AndTest(
-            Assert(Exact(1), Contains('val("color[0]","Red")')),
-            Assert(Exact(1), Contains('val("color[0]","Green")')),
-            Assert(Exact(1), Contains('val("color[0]","Blue")')),
+            Assert(Exact(1), Contains('val("root.color[0]","Red")')),
+            Assert(Exact(1), Contains('val("root.color[0]","Green")')),
+            Assert(Exact(1), Contains('val("root.color[0]","Blue")')),
             Assert(Exact(3), True_()),
         ),
         "program": """
-            structure("").
-            feature("",color,"Color",1,1).
+            coom_structure("product").
+            coom_feature("product","color","Color",1,1).
 
-            enumeration("Color").
-            option("Color", "Red").
-            option("Color", "Green").
-            option("Color", "Blue").""",
+            coom_enumeration("Color").
+            coom_option("Color", "Red").
+            coom_option("Color", "Green").
+            coom_option("Color", "Blue").""",
     },
     "bool_enumeration": {
         "test": AndTest(
-            Assert(Exact(1), Contains('val("boolean[0]","True")')),
-            Assert(Exact(1), Contains('val("boolean[0]","False")')),
+            Assert(Exact(1), Contains('val("root.boolean[0]","True")')),
+            Assert(Exact(1), Contains('val("root.boolean[0]","False")')),
             Assert(Exact(2), True_()),
         ),
         "program": """
-        structure("").
-        feature("",boolean,"bool",1,1).""",
+        coom_structure("product").
+        coom_feature("product","boolean","bool",1,1).""",
     },
     "attribute": {
-        "test": Assert(Exact(1), SupersetOfTheory({'val("wheel[0].size[0]",14)', 'val("wheel[0]","W14")'})),
+        "test": Assert(Exact(1), SupersetOfTheory({'val("root.wheel[0].size[0]",14)', 'val("root.wheel[0]","W14")'})),
         "ftest": Assert(
             Exact(1),
-            SupersetOfTheory({'val("wheel[0].size[0]",14)', 'val("wheel[0]","W14")'}, check_theory=True),
+            SupersetOfTheory({'val("root.wheel[0].size[0]",14)', 'val("root.wheel[0]","W14")'}, check_theory=True),
         ),
         "program": """
-        structure("").
-        feature("",wheel,"Wheel",1,1).
+        coom_structure("product").
+        coom_feature("product","wheel","Wheel",1,1).
 
-        enumeration("Wheel").
-        attribute("Wheel",size,"num").
-        option("Wheel", "W14").
-        attr_value("Wheel","W14",size,14).""",
+        coom_enumeration("Wheel").
+        coom_attribute("Wheel","size","num").
+        coom_option("Wheel", "W14").
+        coom_attribute_value("Wheel","W14","size",14).""",
     },
     "structure": {
         "test": AndTest(
-            Assert(Exact(1), Contains('included("wheel[0]")')),
+            Assert(Exact(1), Contains('included("root.wheel[0]")')),
             Assert(Exact(1), True_()),
         ),
         "program": """
-        structure("").
-        feature("",wheel,"Wheel",1,1).
-        structure("Wheel").""",
+        coom_structure("product").
+        coom_feature("product","wheel","Wheel",1,1).
+        coom_structure("Wheel").""",
     },
     "structure_optional": {
         "test": AndTest(
-            Assert(Exact(1), Contains('included("basket[0]")')),
+            Assert(Exact(1), Contains('included("root.basket[0]")')),
             Assert(Exact(2), True_()),
         ),
         "program": """
-        structure("").
-        feature("",basket,"Basket",0,1).
-        structure("Basket").""",
+        coom_structure("product").
+        coom_feature("product","basket","Basket",0,1).
+        coom_structure("Basket").""",
     },
     "structure_nested": {
         "test": AndTest(
             Assert(
                 Exact(1),
-                SupersetOf({'included("carrier[0]")', 'included("carrier[0].bag[0]")'}),
+                SupersetOf({'included("root.carrier[0]")', 'included("root.carrier[0].bag[0]")'}),
             ),
             Assert(Exact(1), True_()),
         ),
         "program": """
-        structure("").
-        feature("",carrier,"Carrier",1,1).
-        structure("Carrier").
-        feature("Carrier",bag,"Bag",1,1).
-        structure("Bag").""",
+        coom_structure("product").
+        coom_feature("product","carrier","Carrier",1,1).
+        coom_structure("Carrier").
+        coom_feature("Carrier","bag","Bag",1,1).
+        coom_structure("Bag").""",
     },
     "structure_nested_optional": {
         "test": AndTest(
-            Assert(Exact(3), Contains('included("carrier[0]")')),
-            Assert(Exact(2), Contains('included("carrier[0].bag[0]")')),
+            Assert(Exact(3), Contains('included("root.carrier[0]")')),
+            Assert(Exact(2), Contains('included("root.carrier[0].bag[0]")')),
             Assert(
                 Exact(1),
                 SupersetOf(
                     {
-                        'included("carrier[0]")',
-                        'included("carrier[0].bag[0]")',
-                        'included("carrier[0].bag[1]")',
+                        'included("root.carrier[0]")',
+                        'included("root.carrier[0].bag[0]")',
+                        'included("root.carrier[0].bag[1]")',
                     }
                 ),
             ),
             Assert(Exact(4), True_()),
         ),
         "program": """
-        structure("").
-        feature("",carrier,"Carrier",0,1).
-        structure("Carrier").
-        feature("Carrier",bag,"Bag",0,2).
-        structure("Bag").""",
+        coom_structure("product").
+        coom_feature("product","carrier","Carrier",0,1).
+        coom_structure("Carrier").
+        coom_feature("Carrier","bag","Bag",0,2).
+        coom_structure("Bag").""",
     },
 }

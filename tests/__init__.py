@@ -21,7 +21,8 @@ def parse_coom(coom_input: str) -> List[str]:
     Helper function for testing the COOM to ASP parser.
     """
     input_stream = InputStream(coom_input)
-    return run_antlr4_visitor(input_stream)
+    asp_facts = run_antlr4_visitor(input_stream)
+    return [a for a in asp_facts if a != ""]
 
 
 def run_test(

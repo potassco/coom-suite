@@ -4,7 +4,7 @@
 #defined enumeration/1.
 #defined option/2.
 #defined attribute/3.
-#defined attr_value/4.
+#defined attribute_value/4.
 
 #defined structure_type/2.
 #defined index/2.
