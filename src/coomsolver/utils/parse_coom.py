@@ -175,7 +175,7 @@ class ASPVisitor(ModelVisitor):
             left = cond_and[i].getText()
             right = "||".join([a.getText() for a in cond_and[i + 1 :]])
             complete = left + "||" + right
-            self.output_asp.append(f'binary("{self.context}","{complete}","{left}","||","{right}").')
+            self.output_asp.append(f'binary("{complete}","{left}","||","{right}").')
         super().visitCondition_or(ctx)
 
     def visitCondition_and(self, ctx: ModelParser.Condition_andContext):
@@ -184,17 +184,17 @@ class ASPVisitor(ModelVisitor):
             left = cond_not[i].getText()
             right = "&&".join([a.getText() for a in cond_not[i + 1 :]])
             complete = left + "&&" + right
-            self.output_asp.append(f'binary("{self.context}","{complete}","{left}","&&","{right}").')
+            self.output_asp.append(f'binary("{complete}","{left}","&&","{right}").')
         super().visitCondition_and(ctx)
 
     def visitCondition_not(self, ctx: ModelParser.Condition_notContext):
         complete = ctx.getText()
         if ctx.condition_not() is not None:
             negated = ctx.condition_not().getText()
-            self.output_asp.append(f'unary("{self.context}","{complete}","!","{negated}").')
+            self.output_asp.append(f'unary("{complete}","!","{negated}").')
         elif ctx.condition() is not None:
             in_brackets = ctx.condition().getText()
-            self.output_asp.append(f'unary("{self.context}","{complete}","()","{in_brackets}").')
+            self.output_asp.append(f'unary("{complete}","()","{in_brackets}").')
         super().visitCondition_not(ctx)
 
     def visitCondition_compare(self, ctx: ModelParser.Condition_compareContext):
@@ -207,7 +207,7 @@ class ASPVisitor(ModelVisitor):
             right = p.formula().getText()
             compare = p.compare().getText()
             complete = left + compare + right
-            self.output_asp.append(f'binary("{self.context}","{complete}","{left}","{compare}","{right}").')
+            self.output_asp.append(f'binary("{complete}","{left}","{compare}","{right}").')
             left = right
 
             # # For multiple comparisons rewrite as propositional formulas connected by &&
@@ -225,7 +225,7 @@ class ASPVisitor(ModelVisitor):
             left = form_sub[i].getText()
             right = "+".join([a.getText() for a in form_sub[i + 1 :]])
             complete = left + "+" + right
-            self.output_asp.append(f'binary("{self.context}","{complete}","{left}","+","{right}").')
+            self.output_asp.append(f'binary("{complete}","{left}","+","{right}").')
         super().visitFormula_add(ctx)
 
     def visitFormula_sub(self, ctx: ModelParser.Formula_subContext):
@@ -234,7 +234,7 @@ class ASPVisitor(ModelVisitor):
             left = form_mul[i].getText()
             right = "-".join([a.getText() for a in form_mul[i + 1 :]])
             complete = left + "-" + right
-            self.output_asp.append(f'binary("{self.context}","{complete}","{left}","-","{right}").')
+            self.output_asp.append(f'binary("{complete}","{left}","-","{right}").')
         super().visitFormula_sub(ctx)
 
     def visitFormula_mul(self, ctx: ModelParser.Formula_mulContext):
@@ -243,7 +243,7 @@ class ASPVisitor(ModelVisitor):
             left = form_div[i].getText()
             right = "*".join([a.getText() for a in form_div[i + 1 :]])
             complete = left + "*" + right
-            self.output_asp.append(f'binary("{self.context}","{complete}","{left}","*","{right}").')
+            self.output_asp.append(f'binary("{complete}","{left}","*","{right}").')
         super().visitFormula_mul(ctx)
 
     def visitFormula_div(self, ctx: ModelParser.Formula_divContext):
@@ -252,7 +252,7 @@ class ASPVisitor(ModelVisitor):
             left = form_pow[i].getText()
             right = "/".join([a.getText() for a in form_pow[i + 1 :]])
             complete = left + "/" + right
-            self.output_asp.append(f'binary("{self.context}","{complete}","{left}","/","{right}").')
+            self.output_asp.append(f'binary("{complete}","{left}","/","{right}").')
         super().visitFormula_div(ctx)
 
     def visitFormula_pow(self, ctx: ModelParser.Formula_powContext):
@@ -261,7 +261,7 @@ class ASPVisitor(ModelVisitor):
             left = form_sign[i].getText()
             right = "^".join([a.getText() for a in form_sign[i + 1 :]])
             complete = left + "^" + right
-            self.output_asp.append(f'binary("{self.context}","{complete}","{left}","^","{right}").')
+            self.output_asp.append(f'binary("{complete}","{left}","^","{right}").')
         super().visitFormula_pow(ctx)
 
     def visitFormula_sign(self, ctx: ModelParser.Formula_signContext):
@@ -269,14 +269,14 @@ class ASPVisitor(ModelVisitor):
         if ctx.formula_sign() is not None:
             if ctx.neg is not None:
                 negated = ctx.formula_sign().getText()
-                self.output_asp.append(f'unary("{self.context}","{complete}","-","{negated}").')
+                self.output_asp.append(f'unary("{complete}","-","{negated}").')
             else:
                 # Is this really necessary?
                 positive = ctx.formula_sign().getText()
-                self.output_asp.append(f'unary("{self.context}","{complete}","+","{positive}").')
+                self.output_asp.append(f'unary("{complete}","+","{positive}").')
         elif ctx.formula() is not None:
             in_brackets = ctx.formula().getText()
-            self.output_asp.append(f'unary("{self.context}","{complete}","()","{in_brackets}").')
+            self.output_asp.append(f'unary("{complete}","()","{in_brackets}").')
         elif ctx.formula_func() is not None:
             func = ctx.formula_func().FUNCTION()
             for f in ctx.formula_func().formula():

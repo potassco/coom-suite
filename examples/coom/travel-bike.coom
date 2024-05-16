@@ -1,8 +1,8 @@
 product {
     num .#/g	1-10000 totalWeight
-	num .#/kg	1-10    maxWeight
+	num .#/kg	10-10    maxWeight
 	num .#/l	0-200   totalVolume
-	num .#/l	0-200   requestedVolume
+	num .#/l	200-200   requestedVolume
 	Wheel			    frontWheel
 	Wheel			    rearWheel
 	Frame			    frame

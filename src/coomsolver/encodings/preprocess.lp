@@ -1,4 +1,5 @@
 %%% Instantiate complete instance tree
+% Root is always included
 type((),"product") :- coom_structure("product").
 
 % Create auxiliary predicate for every feature
@@ -8,14 +9,27 @@ type((Feat,(X,Idx)),Type) :- coom_feature(Ctx,Feat,Type,_,Max), type(X,Ctx), Idx
 type((Attr,(X,0)),Attr) :- type(X,Type), coom_enumeration(Type), coom_attribute_value(Type,_,Attr,_).
 
 
-%%% Instantiate paths
-path_start(X,Path) :- coom_binary(Ctx,_,Path,_,_), coom_path(Path,0,_), type(X,Ctx).
-path_start(X,Path) :- coom_binary(Ctx,_,_,_,Path), coom_path(Path,0,_), type(X,Ctx).
-path_start(X,Path) :- coom_combinations(C,_,Path), coom_path(Path,0,_), type(X,Ctx), coom_context(C,Ctx).
-path_start(X,Path) :- coom_function(Ctx,_,_,Path), coom_path(Path,0,_), type(X,Ctx).
-path_start(X,Path) :- coom_imply(Ctx,Path,_),      coom_path(Path,0,_), type(X,Ctx).
+%%% Constraints
 
-% Determine all grounded paths
+% Instantiate constraints for each path
+behavior(C,X) :- coom_behavior(C), coom_context(C,Ctx), type(X,Ctx).
+
+% Get binary context
+binary_context(Formula,Ctx) :- coom_binary(Formula,_,_,_), coom_require(C,Formula),   coom_context(C,Ctx).
+binary_context(Formula,Ctx) :- coom_binary(Formula,_,_,_), coom_condition(C,Formula), coom_context(C,Ctx).
+binary_context(Formula,Ctx) :- coom_binary(Formula,_,_,_), coom_imply(Ctx,_,Formula).
+
+binary_context(Left,Ctx)  :- coom_binary(Left,_,_,_),  coom_binary(Formula,Left,_,_),  binary_context(Formula,Ctx).
+binary_context(Right,Ctx) :- coom_binary(Right,_,_,_), coom_binary(Formula,_,_,Right), binary_context(Formula,Ctx).
+
+% Instantiate paths
+path_start(X,Path) :- coom_binary(Formula,Path,_,_), coom_path(Path,0,_), type(X,Ctx), binary_context(Formula,Ctx).
+path_start(X,Path) :- coom_binary(Formula,_,_,Path), coom_path(Path,0,_), type(X,Ctx), binary_context(Formula,Ctx).
+path_start(X,Path) :- coom_combinations(C,_,Path),   coom_path(Path,0,_), type(X,Ctx), coom_context(C,Ctx).
+path_start(X,Path) :- coom_function(Ctx,_,_,Path),   coom_path(Path,0,_), type(X,Ctx).
+path_start(X,Path) :- coom_imply(Ctx,Path,_),        coom_path(Path,0,_), type(X,Ctx).
+
+% Determine all ground paths
 path_to(PathCtx,Path,0,X)  :- coom_path(Path,0,Name),
                               path_start(PathCtx,Path), type(X,_), X=(Name,(PathCtx,_)).
 path_to(PathCtx,Path,N,X') :- coom_path(Path,N,Name),
@@ -24,17 +38,18 @@ path_to(PathCtx,Path,N,X') :- coom_path(Path,N,Name),
 path_to(PathCtx,Path,@dotpath(X)) :- not coom_path(Path,N+1,_), path_to(PathCtx,Path,N,X).
 
 % Constants and numbers
-path_to(PathCtx,Path,Path) :- coom_binary(Type,_,_,_,Path), type(PathCtx,Type), coom_constant(Path).
-path_to(PathCtx,Path,Path) :- coom_binary(Type,_,Path,_,_), type(PathCtx,Type), coom_constant(Path).
-path_to(PathCtx,Path,Path) :- coom_binary(Type,_,_,_,Path), type(PathCtx,Type), coom_number(Path,_).
-path_to(PathCtx,Path,Path) :- coom_binary(Type,_,Path,_,_), type(PathCtx,Type), coom_number(Path,_).
+path_to(PathCtx,Path,Path) :- coom_binary(Formula,_,_,Path), coom_constant(Path), binary_context(Formula,Type), type(PathCtx,Type).
+path_to(PathCtx,Path,Path) :- coom_binary(Formula,Path,_,_), coom_constant(Path), binary_context(Formula,Type), type(PathCtx,Type).
+path_to(PathCtx,Path,Path) :- coom_binary(Formula,_,_,Path), coom_number(Path,_), binary_context(Formula,Type), type(PathCtx,Type).
+path_to(PathCtx,Path,Path) :- coom_binary(Formula,Path,_,_), coom_number(Path,_), binary_context(Formula,Type), type(PathCtx,Type).
 
-% Instantiate constraints and binaries
-behavior(C,X) :- coom_behavior(C), coom_context(C,Ctx), type(X,Ctx).
-
-binary(X,Formula,@binary(X1,Op,X2),X1,Op,X2) :- coom_binary(Ctx,Formula,L,Op,R),
+% Instantiate binaries
+binary(X,Formula,@binary(X1,Op,X2),X1,Op,X2) :- coom_binary(Formula,L,Op,R),
+                                                binary_context(Formula,Ctx),
                                                 type(X,Ctx), path_to(X,L,X1), path_to(X,R,X2).
 binary(X,Formula,Grounded)  :- binary(X,Formula,Grounded,_,_,_).
+
+% Auxiliary paths for arithmetic binary evaluation
 path_to(X,Formula,Grounded) :- binary(X,Formula,Grounded).
 
 % Instantiate functions
@@ -195,7 +210,7 @@ def function(f,c,p):
 #defined coom_condition/2.
 #defined coom_combinations/3.
 #defined coom_allow/3.
-#defined coom_binary/5.
+#defined coom_binary/4.
 #defined coom_path/3.
 #defined coom_constant/1.
 #defined coom_number/2.

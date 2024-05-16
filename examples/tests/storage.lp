@@ -19,11 +19,11 @@ attribute_value("Capacity","B100","volume",100).
 behavior(0).
 context(0,"product").
 condition(0,"storageNeeded=True").
-binary("product","storageNeeded=True","storageNeeded","=","True").
+binary("storageNeeded=True","storageNeeded","=","True").
 path("storageNeeded",0,"storageNeeded").
 constant("True").
 require(0,"bag.capacity.volume>=50").
-binary("product","bag.capacity.volume>=50","bag.capacity.volume",">=","50").
+binary("bag.capacity.volume>=50","bag.capacity.volume",">=","50").
 path("bag.capacity.volume",0,"bag").
 path("bag.capacity.volume",1,"capacity").
 path("bag.capacity.volume",2,"volume").

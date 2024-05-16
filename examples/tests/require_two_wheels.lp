@@ -12,7 +12,7 @@ coom_attribute_value("Wheel","W28","size",28).
 coom_behavior(0).
 coom_context(0,"product").
 coom_require(0,"frontWheel.size=rearWheel.size").
-coom_binary("product","frontWheel.size=rearWheel.size","frontWheel.size","=","rearWheel.size").
+coom_binary("frontWheel.size=rearWheel.size","frontWheel.size","=","rearWheel.size").
 coom_path("frontWheel.size",0,"frontWheel").
 coom_path("frontWheel.size",1,"size").
 coom_path("rearWheel.size",0,"rearWheel").

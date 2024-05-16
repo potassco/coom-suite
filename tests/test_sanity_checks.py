@@ -58,7 +58,7 @@ class TestSanityChecks(TestCase):
 
         coom_behavior(("product",0)).
         coom_require(("product",0),"color=Silver").
-        coom_binary("product","color=Silver","color","=","Silver").
+        coom_binary("color=Silver","color","=","Silver").
         coom_path("color",0,"color").
         coom_constant("Silver")."""
         run_test(deepcopy(TEST_EMPTY), program=program_require, profile="core")
@@ -68,11 +68,11 @@ class TestSanityChecks(TestCase):
 
         coom_behavior(("product",0)).
         coom_condition(("product",0),"color=Silver").
-        coom_binary("product","color=Silver","color","=","Silver").
+        coom_binary("color=Silver","color","=","Silver").
         coom_path("color",0,"color").
         coom_constant("Silver").
         coom_require(("product",0),"size=Big").
-        coom_binary("product","size=Big","size","=","Big").
+        coom_binary("size=Big","size","=","Big").
         coom_path("size",0,"size").
         coom_constant("Big")."""
         run_test(deepcopy(TEST_EMPTY), program=program_condition, profile="core")

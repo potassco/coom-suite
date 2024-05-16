@@ -104,11 +104,11 @@ coom_behavior(0).
 coom_context(0,"product").
 coom_imply("product","price","sum(hdunit.price)+motherboard.price+sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)").
 coom_path("price",0,"price").
-coom_binary("product","sum(hdunit.price)+motherboard.price+sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)","sum(hdunit.price)","+","motherboard.price+sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)").
-coom_binary("product","motherboard.price+sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)","motherboard.price","+","sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)").
-coom_binary("product","sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)","sum(motherboard.cpu.price)","+","os.price+sum(screen.price)+sum(applications.price)").
-coom_binary("product","os.price+sum(screen.price)+sum(applications.price)","os.price","+","sum(screen.price)+sum(applications.price)").
-coom_binary("product","sum(screen.price)+sum(applications.price)","sum(screen.price)","+","sum(applications.price)").
+coom_binary("sum(hdunit.price)+motherboard.price+sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)","sum(hdunit.price)","+","motherboard.price+sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)").
+coom_binary("motherboard.price+sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)","motherboard.price","+","sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)").
+coom_binary("sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)","sum(motherboard.cpu.price)","+","os.price+sum(screen.price)+sum(applications.price)").
+coom_binary("os.price+sum(screen.price)+sum(applications.price)","os.price","+","sum(screen.price)+sum(applications.price)").
+coom_binary("sum(screen.price)+sum(applications.price)","sum(screen.price)","+","sum(applications.price)").
 coom_function("product","sum(hdunit.price)","sum","hdunit.price").
 coom_path("hdunit.price",0,"hdunit").
 coom_path("hdunit.price",1,"price").
@@ -130,15 +130,15 @@ coom_path("applications.price",1,"price").
 coom_behavior(1).
 coom_context(1,"product").
 coom_require(1,"price<=maxPrice").
-coom_binary("product","price<=maxPrice","price","<=","maxPrice").
+coom_binary("price<=maxPrice","price","<=","maxPrice").
 coom_path("price",0,"price").
 coom_path("maxPrice",0,"maxPrice").
 
 coom_behavior(2).
 coom_context(2,"product").
 coom_require(2,"os.hdcapacity+sum(applications.hdcapacity)<=sum(hdunit.hdisk.capacity)").
-coom_binary("product","os.hdcapacity+sum(applications.hdcapacity)<=sum(hdunit.hdisk.capacity)","os.hdcapacity+sum(applications.hdcapacity)","<=","sum(hdunit.hdisk.capacity)").
-coom_binary("product","os.hdcapacity+sum(applications.hdcapacity)","os.hdcapacity","+","sum(applications.hdcapacity)").
+coom_binary("os.hdcapacity+sum(applications.hdcapacity)<=sum(hdunit.hdisk.capacity)","os.hdcapacity+sum(applications.hdcapacity)","<=","sum(hdunit.hdisk.capacity)").
+coom_binary("os.hdcapacity+sum(applications.hdcapacity)","os.hdcapacity","+","sum(applications.hdcapacity)").
 coom_path("os.hdcapacity",0,"os").
 coom_path("os.hdcapacity",1,"hdcapacity").
 coom_function("product","sum(applications.hdcapacity)","sum","applications.hdcapacity").
@@ -152,22 +152,22 @@ coom_path("hdunit.hdisk.capacity",2,"capacity").
 coom_behavior(3).
 coom_context(3,"product").
 coom_condition(3,"usage=Internet").
-coom_binary("product","usage=Internet","usage","=","Internet").
+coom_binary("usage=Internet","usage","=","Internet").
 coom_path("usage",0,"usage").
 coom_constant("Internet").
 coom_require(3,"internetConn=True").
-coom_binary("product","internetConn=True","internetConn","=","True").
+coom_binary("internetConn=True","internetConn","=","True").
 coom_path("internetConn",0,"internetConn").
 coom_constant("True").
 
 coom_behavior(4).
 coom_context(4,"product").
 coom_condition(4,"usage=Multimedia").
-coom_binary("product","usage=Multimedia","usage","=","Multimedia").
+coom_binary("usage=Multimedia","usage","=","Multimedia").
 coom_path("usage",0,"usage").
 coom_constant("Multimedia").
 coom_require(4,"internetConn=True").
-coom_binary("product","internetConn=True","internetConn","=","True").
+coom_binary("internetConn=True","internetConn","=","True").
 coom_path("internetConn",0,"internetConn").
 coom_constant("True").
 
@@ -201,11 +201,11 @@ coom_allow(5,(2,2),"C").
 coom_behavior(6).
 coom_context(6,"product").
 coom_condition(6,"os=OSAlpha").
-coom_binary("product","os=OSAlpha","os","=","OSAlpha").
+coom_binary("os=OSAlpha","os","=","OSAlpha").
 coom_path("os",0,"os").
 coom_constant("OSAlpha").
 coom_require(6,"motherboard.cpu=CPUD").
-coom_binary("product","motherboard.cpu=CPUD","motherboard.cpu","=","CPUD").
+coom_binary("motherboard.cpu=CPUD","motherboard.cpu","=","CPUD").
 coom_path("motherboard.cpu",0,"motherboard").
 coom_path("motherboard.cpu",1,"cpu").
 coom_constant("CPUD").

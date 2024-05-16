@@ -72,8 +72,8 @@ coom_option("Color", "Blue").
 coom_behavior(0).
 coom_context(0,"product").
 coom_require(0,"count(carrier.bag)+count(frame.bag)<=4").
-coom_binary("product","count(carrier.bag)+count(frame.bag)<=4","count(carrier.bag)+count(frame.bag)","<=","4").
-coom_binary("product","count(carrier.bag)+count(frame.bag)","count(carrier.bag)","+","count(frame.bag)").
+coom_binary("count(carrier.bag)+count(frame.bag)<=4","count(carrier.bag)+count(frame.bag)","<=","4").
+coom_binary("count(carrier.bag)+count(frame.bag)","count(carrier.bag)","+","count(frame.bag)").
 coom_function("product","count(carrier.bag)","count","carrier.bag").
 coom_path("carrier.bag",0,"carrier").
 coom_path("carrier.bag",1,"bag").
@@ -86,9 +86,9 @@ coom_behavior(1).
 coom_context(1,"product").
 coom_imply("product","totalWeight","frontWheel.weight+rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
 coom_path("totalWeight",0,"totalWeight").
-coom_binary("product","frontWheel.weight+rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)","frontWheel.weight","+","rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
-coom_binary("product","rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)","rearWheel.weight","+","sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
-coom_binary("product","sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)","sum(carrier.bag.capacity.weight)","+","sum(frame.bag.capacity.weight)").
+coom_binary("frontWheel.weight+rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)","frontWheel.weight","+","rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
+coom_binary("rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)","rearWheel.weight","+","sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
+coom_binary("sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)","sum(carrier.bag.capacity.weight)","+","sum(frame.bag.capacity.weight)").
 coom_path("frontWheel.weight",0,"frontWheel").
 coom_path("frontWheel.weight",1,"weight").
 coom_path("rearWheel.weight",0,"rearWheel").
@@ -107,9 +107,9 @@ coom_path("frame.bag.capacity.weight",3,"weight").
 coom_behavior(2).
 coom_context(2,"product").
 coom_require(2,"totalWeight<=maxWeight*1000").
-coom_binary("product","totalWeight<=maxWeight*1000","totalWeight","<=","maxWeight*1000").
+coom_binary("totalWeight<=maxWeight*1000","totalWeight","<=","maxWeight*1000").
 coom_path("totalWeight",0,"totalWeight").
-coom_binary("product","maxWeight*1000","maxWeight","*","1000").
+coom_binary("maxWeight*1000","maxWeight","*","1000").
 coom_path("maxWeight",0,"maxWeight").
 coom_number("1000",1000).
 
@@ -117,7 +117,7 @@ coom_behavior(3).
 coom_context(3,"product").
 coom_imply("product","totalVolume","sum(carrier.bag.capacity.volume)+sum(frame.bag.capacity.volume)").
 coom_path("totalVolume",0,"totalVolume").
-coom_binary("product","sum(carrier.bag.capacity.volume)+sum(frame.bag.capacity.volume)","sum(carrier.bag.capacity.volume)","+","sum(frame.bag.capacity.volume)").
+coom_binary("sum(carrier.bag.capacity.volume)+sum(frame.bag.capacity.volume)","sum(carrier.bag.capacity.volume)","+","sum(frame.bag.capacity.volume)").
 coom_function("product","sum(carrier.bag.capacity.volume)","sum","carrier.bag.capacity.volume").
 coom_path("carrier.bag.capacity.volume",0,"carrier").
 coom_path("carrier.bag.capacity.volume",1,"bag").
@@ -132,18 +132,18 @@ coom_path("frame.bag.capacity.volume",3,"volume").
 coom_behavior(4).
 coom_context(4,"product").
 coom_require(4,"totalVolume>=requestedVolume").
-coom_binary("product","totalVolume>=requestedVolume","totalVolume",">=","requestedVolume").
+coom_binary("totalVolume>=requestedVolume","totalVolume",">=","requestedVolume").
 coom_path("totalVolume",0,"totalVolume").
 coom_path("requestedVolume",0,"requestedVolume").
 
 coom_behavior(5).
 coom_context(5,"product").
 coom_condition(5,"color=Red").
-coom_binary("product","color=Red","color","=","Red").
+coom_binary("color=Red","color","=","Red").
 coom_path("color",0,"color").
 coom_constant("Red").
 coom_require(5,"frontWheel.size=20").
-coom_binary("product","frontWheel.size=20","frontWheel.size","=","20").
+coom_binary("frontWheel.size=20","frontWheel.size","=","20").
 coom_path("frontWheel.size",0,"frontWheel").
 coom_path("frontWheel.size",1,"size").
 coom_number("20",20).
@@ -151,10 +151,10 @@ coom_number("20",20).
 coom_behavior(6).
 coom_context(6,"Bag").
 coom_condition(6,"material=Leather").
-coom_binary("Bag","material=Leather","material","=","Leather").
+coom_binary("material=Leather","material","=","Leather").
 coom_path("material",0,"material").
 coom_constant("Leather").
 coom_require(6,"capacity=B10").
-coom_binary("Bag","capacity=B10","capacity","=","B10").
+coom_binary("capacity=B10","capacity","=","B10").
 coom_path("capacity",0,"capacity").
 coom_constant("B10").

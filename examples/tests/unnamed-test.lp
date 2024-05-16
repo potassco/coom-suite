@@ -11,7 +11,7 @@ attribute_value("Capacity","B50","volume",50).
 option("Capacity", "B100").
 attribute_value("Capacity","B100","volume",100).
 
-binary("product","bag.capacity.volume=100","bag.capacity.volume","=","100").
+binary("bag.capacity.volume=100","bag.capacity.volume","=","100").
 path("bag.capacity.volume",0,"bag").
 path("bag.capacity.volume",1,"capacity").
 path("bag.capacity.volume",2,"volume").
