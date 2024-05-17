@@ -1,6 +1,6 @@
 % Derive range for each numeric feature variable
 range(X,Min,Max) :- feature(C,F,"num",_,_), range(C,F,Min,Max),
-                    num(X), feature(X,F), parent(X,P), structure_type(P,C).
+                    num(X), feature(X,F), parent(X,P), type(P,C).
 
 % Numeric variables are always included when its parents are included
 included(X) :- num(X), parent(X,P), included(P).

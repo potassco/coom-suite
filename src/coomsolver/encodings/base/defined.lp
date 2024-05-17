@@ -6,13 +6,10 @@
 #defined attribute/3.
 #defined attribute_value/4.
 
-#defined structure_type/2.
+#defined type/2.
 #defined index/2.
-#defined enumeration_type/2.
 #defined parent/2.
 #defined feature/2.
-#defined attribute_enumeration/2.
-#defined attribute_name/2.
 #defined isnumeric/1.
 
 #defined constraint/1.

@@ -1,18 +1,18 @@
 %%% Instantiate complete instance tree
 % Root is always included
-type((),"product") :- coom_structure("product").
+type_aux((),"product") :- coom_structure("product").
 
 % Create auxiliary predicate for every feature
-type((Feat,(X,Idx)),Type) :- coom_feature(Ctx,Feat,Type,_,Max), type(X,Ctx), Idx = 0..Max-1.
+type_aux((Feat,(X,Idx)),Type) :- coom_feature(Ctx,Feat,Type,_,Max), type_aux(X,Ctx), Idx = 0..Max-1.
 
 % Create auxiliary prediate for attribute variables
-type((Attr,(X,0)),Attr) :- type(X,Type), coom_enumeration(Type), coom_attribute_value(Type,_,Attr,_).
+type_aux((Attr,(X,0)),Attr) :- type_aux(X,Type), coom_enumeration(Type), coom_attribute_value(Type,_,Attr,_).
 
 
 %%% Constraints
 
 % Instantiate constraints for each path
-behavior(C,X) :- coom_behavior(C), coom_context(C,Ctx), type(X,Ctx).
+behavior(C,X) :- coom_behavior(C), coom_context(C,Ctx), type_aux(X,Ctx).
 
 % Get binary context
 binary_context(Formula,Ctx) :- coom_binary(Formula,_,_,_), coom_require(C,Formula),   coom_context(C,Ctx).
@@ -23,37 +23,37 @@ binary_context(Left,Ctx)  :- coom_binary(Left,_,_,_),  coom_binary(Formula,Left,
 binary_context(Right,Ctx) :- coom_binary(Right,_,_,_), coom_binary(Formula,_,_,Right), binary_context(Formula,Ctx).
 
 % Instantiate paths
-path_start(X,Path) :- coom_binary(Formula,Path,_,_), coom_path(Path,0,_), type(X,Ctx), binary_context(Formula,Ctx).
-path_start(X,Path) :- coom_binary(Formula,_,_,Path), coom_path(Path,0,_), type(X,Ctx), binary_context(Formula,Ctx).
-path_start(X,Path) :- coom_combinations(C,_,Path),   coom_path(Path,0,_), type(X,Ctx), coom_context(C,Ctx).
-path_start(X,Path) :- coom_function(Ctx,_,_,Path),   coom_path(Path,0,_), type(X,Ctx).
-path_start(X,Path) :- coom_imply(Ctx,Path,_),        coom_path(Path,0,_), type(X,Ctx).
+path_start(X,Path) :- coom_binary(Formula,Path,_,_), coom_path(Path,0,_), type_aux(X,Ctx), binary_context(Formula,Ctx).
+path_start(X,Path) :- coom_binary(Formula,_,_,Path), coom_path(Path,0,_), type_aux(X,Ctx), binary_context(Formula,Ctx).
+path_start(X,Path) :- coom_combinations(C,_,Path),   coom_path(Path,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
+path_start(X,Path) :- coom_function(Ctx,_,_,Path),   coom_path(Path,0,_), type_aux(X,Ctx).
+path_start(X,Path) :- coom_imply(Ctx,Path,_),        coom_path(Path,0,_), type_aux(X,Ctx).
 
 % Determine all ground paths
 path_to(PathCtx,Path,0,X)  :- coom_path(Path,0,Name),
-                              path_start(PathCtx,Path), type(X,_), X=(Name,(PathCtx,_)).
+                              path_start(PathCtx,Path), type_aux(X,_), X=(Name,(PathCtx,_)).
 path_to(PathCtx,Path,N,X') :- coom_path(Path,N,Name),
-                              path_to(PathCtx,Path,N-1,X), type(X',_), X'=(Name,(X,_)).
+                              path_to(PathCtx,Path,N-1,X), type_aux(X',_), X'=(Name,(X,_)).
 
 path_to(PathCtx,Path,@dotpath(X)) :- not coom_path(Path,N+1,_), path_to(PathCtx,Path,N,X).
 
 % Constants and numbers
-path_to(PathCtx,Path,Path) :- coom_binary(Formula,_,_,Path), coom_constant(Path), binary_context(Formula,Type), type(PathCtx,Type).
-path_to(PathCtx,Path,Path) :- coom_binary(Formula,Path,_,_), coom_constant(Path), binary_context(Formula,Type), type(PathCtx,Type).
-path_to(PathCtx,Path,Path) :- coom_binary(Formula,_,_,Path), coom_number(Path,_), binary_context(Formula,Type), type(PathCtx,Type).
-path_to(PathCtx,Path,Path) :- coom_binary(Formula,Path,_,_), coom_number(Path,_), binary_context(Formula,Type), type(PathCtx,Type).
+path_to(PathCtx,Path,Path) :- coom_binary(Formula,_,_,Path), coom_constant(Path), binary_context(Formula,Type), type_aux(PathCtx,Type).
+path_to(PathCtx,Path,Path) :- coom_binary(Formula,Path,_,_), coom_constant(Path), binary_context(Formula,Type), type_aux(PathCtx,Type).
+path_to(PathCtx,Path,Path) :- coom_binary(Formula,_,_,Path), coom_number(Path,_), binary_context(Formula,Type), type_aux(PathCtx,Type).
+path_to(PathCtx,Path,Path) :- coom_binary(Formula,Path,_,_), coom_number(Path,_), binary_context(Formula,Type), type_aux(PathCtx,Type).
 
 % Instantiate binaries
 binary(X,Formula,@binary(X1,Op,X2),X1,Op,X2) :- coom_binary(Formula,L,Op,R),
                                                 binary_context(Formula,Ctx),
-                                                type(X,Ctx), path_to(X,L,X1), path_to(X,R,X2).
+                                                type_aux(X,Ctx), path_to(X,L,X1), path_to(X,R,X2).
 binary(X,Formula,Grounded)  :- binary(X,Formula,Grounded,_,_,_).
 
 % Auxiliary paths for arithmetic binary evaluation
 path_to(X,Formula,Grounded) :- binary(X,Formula,Grounded).
 
 % Instantiate functions
-function(X,Function,Type,Path) :- coom_function(Ctx,Function,Type,Path), type(X,Ctx).
+function(X,Function,Type,Path) :- coom_function(Ctx,Function,Type,Path), type_aux(X,Ctx).
 function_path(Ctx,Path,X)      :- function(Ctx,Function,_,Path), path_to(Ctx,Path,X).
 
 % Auxiliary path for function
@@ -75,7 +75,7 @@ in_tuple(CT,CT',X)      :- in_tuple(CT,(X,CT'),_).
 in_tuple(CT,X)          :- in_tuple(CT,_,X).
 
 % Instantiate imply statement
-imply(X,X',Formula) :- coom_imply(Ctx,Path,Formula), type(X,Ctx), path_to(X,Path,X').
+imply(X,X',Formula) :- coom_imply(Ctx,Path,Formula), type_aux(X,Ctx), path_to(X,Path,X').
 
 % Always include boolean enumeration
 coom_enumeration("bool").
@@ -85,28 +85,26 @@ coom_option("bool", "False").
 
 %%% Output atoms
 % Structure, enumeration and attribute instances
-structure_type("root","product")   :- coom_structure("product").
+type("root","product") :- coom_structure("product").
 
-structure_type(@dotpath(X),Type)   :- coom_structure(Type),   type(X,Type).
-index(@dotpath(X),Idx)             :- coom_structure(Type),   type(X,Type), X=((_,(_,Idx))).
-enumeration_type(@dotpath(X),Type) :- coom_enumeration(Type), type(X,Type).
+type(@dotpath(X),Type) :- coom_structure(Type),   type_aux(X,Type).
+index(@dotpath(X),Idx) :- coom_structure(Type),   type_aux(X,Type), X=((_,(_,Idx))).
+type(@dotpath(X),Type) :- coom_enumeration(Type), type_aux(X,Type).
 
-attribute_enumeration(@dotpath((Attr,(X,0))),@dotpath(X)) :-    type((Attr,(X,0)),Attr).
-attribute_name(@dotpath((Attr,(X,0))),Attr)               :-    type((Attr,(X,0)),Attr).
-isnumeric(@dotpath((Attr,(X,0))))                         :-    type((Attr,(X,0)),Attr),
-                                                                coom_attribute_value(Type,_,Attr,_),
-                                                                coom_attribute(Type,Attr,"num").
+type(@dotpath((Attr,(X,0))),Attr)        :- type_aux((Attr,(X,0)),Attr).
+type(@dotpath((Attr,(X,0))),@dotpath(X)) :- type_aux((Attr,(X,0)),Attr).
 
-num(@dotpath(X)) :- type(X,"num").
+isnumeric(@dotpath((Attr,(X,0))))        :- type_aux((Attr,(X,0)),Attr),
+                                            coom_attribute_value(Type,_,Attr,_),
+                                            coom_attribute(Type,Attr,"num").
 
-parent(@dotpath(X),@dotpath(Parent)) :- type(X,_), X=(_,(Parent,_)).
-feature(@dotpath(X),Feat)            :- type(X,_), X=(Feat,(_,_)).
+num(@dotpath(X)) :- type_aux(X,"num").
 
-#show structure_type/2.
+parent(@dotpath(X),@dotpath(Parent)) :- type_aux(X,_), X=(_,(Parent,_)).
+feature(@dotpath(X),Feat)            :- type_aux(X,_), X=(Feat,(_,_)).
+
+#show type/2.
 #show index/2.
-#show enumeration_type/2.
-#show attribute_enumeration/2.
-#show attribute_name/2.
 #show isnumeric/1.
 #show parent/2.
 #show feature/2.

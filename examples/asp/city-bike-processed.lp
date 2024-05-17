@@ -61,77 +61,77 @@ option("Material", "Leather").
 option("Material", "Polyester").
 
 % Complete generated instance tree
-structure_type("root","product").
+type("root","product").
 
-structure_type("root.carrier[0]","Carrier").
+type("root.carrier[0]","Carrier").
 index("root.carrier[0]",0).
 parent("root.carrier[0]", "root").
 feature("root.carrier[0]","carrier").
 
-structure_type("root.basket[0]","Basket").
+type("root.basket[0]","Basket").
 index("root.basket[0]",0).
 parent("root.basket[0]", "root").
 feature("root.basket[0]","basket").
 
-structure_type("root.carrier[0].bag[0]","Bag").
+type("root.carrier[0].bag[0]","Bag").
 index("root.carrier[0].bag[0]",0).
 parent("root.carrier[0].bag[0]", "root.carrier[0]").
 feature("root.carrier[0].bag[0]","bag").
 
-structure_type("root.carrier[0].bag[1]","Bag").
+type("root.carrier[0].bag[1]","Bag").
 index("root.carrier[0].bag[1]",1).
 parent("root.carrier[0].bag[1]", "root.carrier[0]").
 feature("root.carrier[0].bag[1]","bag").
 
-enumeration_type("root.color[0]","Color").
+type("root.color[0]","Color").
 parent("root.color[0]", "root").
 feature("root.color[0]","color").
 
-enumeration_type("root.saddle[0]","Saddle").
+type("root.saddle[0]","Saddle").
 parent("root.saddle[0]", "root").
 feature("root.saddle[0]","saddle").
 
-enumeration_type("root.frontWheel[0]","Wheel").
+type("root.frontWheel[0]","Wheel").
 parent("root.frontWheel[0]", "root").
 feature("root.frontWheel[0]","frontWheel").
-attribute_enumeration("root.frontWheel[0].size[0]","root.frontWheel[0]").
-attribute_name("root.frontWheel[0].size[0]","size").
+parent("root.frontWheel[0].size[0]","root.frontWheel[0]").
+type("root.frontWheel[0].size[0]","size").
 isnumeric("root.frontWheel[0].size[0]").
 
-enumeration_type("root.rearWheel[0]","Wheel").
+type("root.rearWheel[0]","Wheel").
 parent("root.rearWheel[0]", "root").
 feature("root.rearWheel[0]","rearWheel").
-attribute_enumeration("root.rearWheel[0].size[0]","root.rearWheel[0]").
-attribute_name("root.rearWheel[0].size[0]","size").
+parent("root.rearWheel[0].size[0]","root.rearWheel[0]").
+type("root.rearWheel[0].size[0]","size").
 isnumeric("root.rearWheel[0].size[0]").
 
-enumeration_type("root.basket[0].root.color[0]","Color").
+type("root.basket[0].root.color[0]","Color").
 parent("root.basket[0].root.color[0]","root.basket[0]").
 feature("root.basket[0].root.color[0]","color").
 
-enumeration_type("root.basket[0].position[0]","Position").
+type("root.basket[0].position[0]","Position").
 parent("root.basket[0].position[0]","root.basket[0]").
 feature("root.basket[0].position[0]","position").
 
-enumeration_type("root.carrier[0].bag[0].capacity[0]","Capacity").
+type("root.carrier[0].bag[0].capacity[0]","Capacity").
 parent("root.carrier[0].bag[0].capacity[0]", "root.carrier[0].bag[0]").
 feature("root.carrier[0].bag[0].capacity[0]","capacity").
-attribute_enumeration("root.carrier[0].bag[0].capacity[0].volume[0]","root.carrier[0].bag[0].capacity[0]").
-attribute_name("root.carrier[0].bag[0].capacity[0].volume[0]","volume").
+parent("root.carrier[0].bag[0].capacity[0].volume[0]","root.carrier[0].bag[0].capacity[0]").
+type("root.carrier[0].bag[0].capacity[0].volume[0]","volume").
 isnumeric("root.carrier[0].bag[0].capacity[0].volume[0]").
 
-enumeration_type("root.carrier[0].bag[1].capacity[0]","Capacity").
+type("root.carrier[0].bag[1].capacity[0]","Capacity").
 parent("root.carrier[0].bag[1].capacity[0]", "root.carrier[0].bag[1]").
 feature("root.carrier[0].bag[1].capacity[0]","capacity").
-attribute_enumeration("root.carrier[0].bag[1].capacity[0].volume[0]","root.carrier[0].bag[1].capacity[0]").
-attribute_name("root.carrier[0].bag[1].capacity[0].volume[0]","volume").
+parent("root.carrier[0].bag[1].capacity[0].volume[0]","root.carrier[0].bag[1].capacity[0]").
+type("root.carrier[0].bag[1].capacity[0].volume[0]","volume").
 isnumeric("root.carrier[0].bag[1].capacity[0].volume[0]").
 
-enumeration_type("root.carrier[0].bag[0].material[0]","Material").
+type("root.carrier[0].bag[0].material[0]","Material").
 parent("root.carrier[0].bag[0].material[0]", "root.carrier[0].bag[0]").
 feature("root.carrier[0].bag[0].material[0]","material").
 
-enumeration_type("root.carrier[0].bag[1].material[0]","Material").
+type("root.carrier[0].bag[1].material[0]","Material").
 parent("root.carrier[0].bag[1].material[0]", "root.carrier[0].bag[1]").
 feature("root.carrier[0].bag[1].material[0]","material").
 

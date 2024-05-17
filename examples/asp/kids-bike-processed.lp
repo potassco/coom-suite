@@ -23,29 +23,55 @@ option("Wheel", "W20").
 attribute_value("Wheel","W20","size",20).
 
 % Complete generated instance tree
-structure_type("root","product").
+type("root","product").
 
-enumeration_type("root.color[0]","Color").
+type("root.color[0]","Color").
 parent("root.color[0]", "root").
 feature("root.color[0]","color").
 
-enumeration_type("root.frontWheel[0]","Wheel").
+type("root.frontWheel[0]","Wheel").
 parent("root.frontWheel[0]", "root").
 feature("root.frontWheel[0]","frontWheel").
-attribute_enumeration("root.frontWheel[0].size[0]","root.frontWheel[0]").
-attribute_name("root.frontWheel[0].size[0]","size").
+
+type("root.frontWheel[0].size[0]","size").
+parent("root.frontWheel[0].size[0]","root.frontWheel[0]").
 isnumeric("root.frontWheel[0].size[0]").
 
-enumeration_type("root.rearWheel[0]","Wheel").
+type("root.rearWheel[0]","Wheel").
 parent("root.rearWheel[0]", "root").
 feature("root.rearWheel[0]","rearWheel").
-attribute_enumeration("root.rearWheel[0].size[0]","root.rearWheel[0]").
-attribute_name("root.rearWheel[0].size[0]","size").
+
+type("root.rearWheel[0].size[0]","size").
+parent("root.rearWheel[0].size[0]","root.rearWheel[0]").
 isnumeric("root.rearWheel[0].size[0]").
 
-enumeration_type("root.wheelSupport[0]","bool").
+type("root.wheelSupport[0]","bool").
 parent("root.wheelSupport[0]", "root").
 feature("root.wheelSupport[0]","wheelSupport").
+
+% structure_type("root","product").
+
+% enumeration_type("root.color[0]","Color").
+% parent("root.color[0]", "root").
+% feature("root.color[0]","color").
+
+% enumeration_type("root.frontWheel[0]","Wheel").
+% parent("root.frontWheel[0]", "root").
+% feature("root.frontWheel[0]","frontWheel").
+% attribute_enumeration("root.frontWheel[0].size[0]","root.frontWheel[0]").
+% attribute_name("root.frontWheel[0].size[0]","size").
+% isnumeric("root.frontWheel[0].size[0]").
+
+% enumeration_type("root.rearWheel[0]","Wheel").
+% parent("root.rearWheel[0]", "root").
+% feature("root.rearWheel[0]","rearWheel").
+% attribute_enumeration("root.rearWheel[0].size[0]","root.rearWheel[0]").
+% attribute_name("root.rearWheel[0].size[0]","size").
+% isnumeric("root.rearWheel[0].size[0]").
+
+% enumeration_type("root.wheelSupport[0]","bool").
+% parent("root.wheelSupport[0]", "root").
+% feature("root.wheelSupport[0]","wheelSupport").
 
 % Instantiated constraints on complete instance tree
 constraint((0,"root")).
