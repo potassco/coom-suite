@@ -10,8 +10,9 @@ included("root").
 included(X) :- enumeration(T), type(X,T), parent(X,P), included(P).
 
 % No value if variable has not been included
+% Can be made general as structures do not have val/2
 % :- enumeration_type(X,_), val(X,_),  not included(X).
-:- enumeration(T), type(X,T), val(X,_),  not included(X).
+:- type(X,T), val(X,_),  not included(X).
 
 % Exactly one value if variable has been included
 % :- enumeration_type(X,_), included(X), not { val(X,_) } = 1.

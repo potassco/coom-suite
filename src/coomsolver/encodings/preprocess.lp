@@ -87,28 +87,22 @@ coom_option("bool", "False").
 % Structure, enumeration and attribute instances
 type("root","product") :- coom_structure("product").
 
-type(@dotpath(X),Type) :- coom_structure(Type),   type_aux(X,Type).
-index(@dotpath(X),Idx) :- coom_structure(Type),   type_aux(X,Type), X=((_,(_,Idx))).
-type(@dotpath(X),Type) :- coom_enumeration(Type), type_aux(X,Type).
-
-type(@dotpath((Attr,(X,0))),Attr)        :- type_aux((Attr,(X,0)),Attr).
-type(@dotpath((Attr,(X,0))),@dotpath(X)) :- type_aux((Attr,(X,0)),Attr).
-
-isnumeric(@dotpath((Attr,(X,0))))        :- type_aux((Attr,(X,0)),Attr),
-                                            coom_attribute_value(Type,_,Attr,_),
-                                            coom_attribute(Type,Attr,"num").
-
-num(@dotpath(X)) :- type_aux(X,"num").
+type(@dotpath(X),Type) :- type_aux(X,Type).
+index(@dotpath(X),Idx) :- type_aux(X,Type), coom_structure(Type), X=((_,(_,Idx))).
 
 parent(@dotpath(X),@dotpath(Parent)) :- type_aux(X,_), X=(_,(Parent,_)).
 feature(@dotpath(X),Feat)            :- type_aux(X,_), X=(Feat,(_,_)).
 
+isnumeric(@dotpath((Attr,(X,0))))    :- type_aux((Attr,(X,0)),Attr),
+                                        coom_attribute_value(Type,_,Attr,_),
+                                         coom_attribute(Type,Attr,"num").
+
 #show type/2.
 #show index/2.
-#show isnumeric/1.
 #show parent/2.
 #show feature/2.
-#show num/1.
+#show isnumeric/1.
+% #show num/1.
 
 % Constraints
 constraint((C,@dotpath(X))) :- behavior(C,X).
