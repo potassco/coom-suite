@@ -8,7 +8,7 @@ from os.path import join
 from typing import Any, Callable, List, Optional, Sequence
 
 from antlr4 import InputStream
-from clingo import Application, Control
+from clingo import Application, Control, Model
 from clintest.solver import Solver
 from clintest.test import Test
 
@@ -40,7 +40,7 @@ def run_test(
         program (Optional[str], optional): A clingo program. Defaults to ""
         ctl_args (Optional[List[str]], optional): List of arguments for clingo.Control. Defaults to [].
     """
-    coom_app = COOMApp("coom", **kwargs)
+    coom_app = COOMApp("coom", istest=True, **kwargs)
     file_paths = [join("examples", "tests", f) for f in files] if files else None
     ctl_args = [] if ctl_args is None else ctl_args
     solver = AppSolver(application=coom_app, files=file_paths, program=program, arguments=["0"])

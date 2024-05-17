@@ -22,7 +22,6 @@
 #defined constant/1.
 #defined number/2.
 
-#defined num/1.
 #defined function/3.
 #defined function_path/2.
 #defined imply/2.

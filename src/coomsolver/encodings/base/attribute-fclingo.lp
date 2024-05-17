@@ -4,4 +4,4 @@ val(X,V)       :- attribute_aux(X,V), not isnumeric(X).
 
 #show val(X,V) : val(X,V), attribute_aux(X,V).
 
-&show { X : isnumeric(X) }. % complicated but seems like fclingo does not accept show statements with derived atoms in the body
+&show { X : isnumeric(X) }. % fclingo throws error for show statements with non-domain atoms in the body

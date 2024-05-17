@@ -23,6 +23,19 @@ from .utils.logging import get_logger
 log = get_logger("main")
 
 
+def _get_valuation(model: Model) -> List[Symbol]:
+    return [
+        Function("val", assignment.arguments)
+        for assignment in model.symbols(theory=True)
+        if assignment.name == CSP
+        and len(assignment.arguments) == 2
+        and model.contains(
+            Function(DEF, [Function(str(assignment.arguments[0]), [], True)])
+        )  # Temporary fix until fclingo fixes String behavior
+        and not (assignment.arguments[0].type is SymbolType.Function and assignment.arguments[0].name == AUX)
+    ]
+
+
 def _sym_to_prg(symbols: Sequence[Symbol], output: Optional[str] = "asp") -> str:  # nocoverage
     """
     Turns symbols into a program.
@@ -46,13 +59,22 @@ class COOMApp(Application):
     _profile: str
     _output: str
     _show: bool
+    _istest: bool
     _log_level: str
     config: FclingoConfig
     _propagator: ClingconTheory
     program_name: str = "COOM solver"
     version: str = "0.1"
 
-    def __init__(self, log_level: str = "", solver: str = "", profile: str = "", output: str = "", show: bool = False):
+    def __init__(
+        self,
+        log_level: str = "",
+        solver: str = "",
+        profile: str = "",
+        output: str = "",
+        show: bool = False,
+        istest: bool = False,
+    ):
         """
         Create application.
         """
@@ -60,6 +82,7 @@ class COOMApp(Application):
         self._profile = profile
         self._output = "asp" if output == "" else output
         self._show = show
+        self._istest = istest
         self._log_level = "WARNING" if log_level == "" else log_level
         self.config = FclingoConfig(MIN_INT, MAX_INT, Flag(False), Flag(False), DEF)
         self._propagator = ClingconTheory()
@@ -104,17 +127,10 @@ class COOMApp(Application):
         if self._solver == "fclingo":
             self._propagator.on_model(model)
 
-            valuation = [
-                Function("val", assignment.arguments)
-                for assignment in model.symbols(theory=True)
-                if assignment.name == CSP
-                and len(assignment.arguments) == 2
-                and model.contains(
-                    Function(DEF, [Function(str(assignment.arguments[0]), [], True)])
-                )  # Temporary fix until fclingo fixes String behavior
-                and not (assignment.arguments[0].type is SymbolType.Function and assignment.arguments[0].name == AUX)
-            ]
-            model.extend(valuation)
+            if self._istest:
+                # this slows down solving considerably but makes tests for clingo and fclingo uniform
+                # better way?
+                model.extend(_get_valuation(model))
 
         # log.debug("------- Full model -----") # disabled because makes solving much slower
         # log.debug("\n".join([str(s) for s in model.symbols(atoms=True, shown=True, theory=True)]))
@@ -132,7 +148,7 @@ class COOMApp(Application):
                 for atom in model.symbols(shown=True)
                 if not (atom.name == self.config.defined and len(atom.arguments) == 1)
             ]
-            output_symbols.extend([a for a in model.symbols(theory=True) if a.name == "val"])
+            output_symbols.extend(_get_valuation(model))
 
         print(_sym_to_prg(output_symbols, self._output))
 
