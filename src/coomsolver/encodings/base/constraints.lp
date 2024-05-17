@@ -3,8 +3,8 @@
 
 % Require without condition
 % Require must not be false to be satisfied (can be undefined)
-unsat(C,B) :- not condition(C,_), require(C,B),
-                                  -sat(B).
+unsat(C,B) :- not condition(I), require(C,B), C = (I,_),
+                                -sat(B).
 
 % Require with condition
 % Condition has to be true to become active (must not be undefined)

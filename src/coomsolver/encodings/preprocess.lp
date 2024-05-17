@@ -115,6 +115,7 @@ constraint((C,@dotpath(X))) :- behavior(C,X).
 
 require((C,@dotpath(X)),Grounded)   :- coom_require(C,Formula),   binary(X,Formula,Grounded).
 condition((C,@dotpath(X)),Grounded) :- coom_condition(C,Formula), binary(X,Formula,Grounded).
+condition(C)                        :- coom_condition(C,_).
 binary(Grounded,L,Op,R) :- binary(_,_,Grounded,L,Op,R).
 
 combinations((C,@dotpath(X)),ID,Col,@dotpath(X')) :- coom_combinations(C,Col,Path), path_to(X,Path,X'), in_tuple(CT,X'), tuple_order((C,X),CT,ID).
@@ -129,6 +130,7 @@ imply(X',Grounded) :- imply(X,X',Formula), binary(X,Formula,Grounded).
 #show constraint/1.
 #show require/2.
 #show condition/2.
+#show condition/1.
 #show binary/4.
 #show combinations/4.
 #show function/3.

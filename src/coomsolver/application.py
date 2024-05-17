@@ -45,19 +45,21 @@ class COOMApp(Application):
     _solver: str
     _profile: str
     _output: str
+    _show: bool
     _log_level: str
     config: FclingoConfig
     _propagator: ClingconTheory
     program_name: str = "COOM solver"
     version: str = "0.1"
 
-    def __init__(self, log_level: str = "", solver: str = "", profile: str = "", output: str = ""):
+    def __init__(self, log_level: str = "", solver: str = "", profile: str = "", output: str = "", show: bool = False):
         """
         Create application.
         """
         self._solver = "clingo" if solver == "" else solver
         self._profile = profile
         self._output = "asp" if output == "" else output
+        self._show = show
         self._log_level = "WARNING" if log_level == "" else log_level
         self.config = FclingoConfig(MIN_INT, MAX_INT, Flag(False), Flag(False), DEF)
         self._propagator = ClingconTheory()
@@ -114,8 +116,8 @@ class COOMApp(Application):
             ]
             model.extend(valuation)
 
-        log.debug("------- Full model -----")
-        log.debug("\n".join([str(s) for s in model.symbols(atoms=True, shown=True, theory=True)]))
+        # log.debug("------- Full model -----") # disabled because makes solving much slower
+        # log.debug("\n".join([str(s) for s in model.symbols(atoms=True, shown=True, theory=True)]))
 
     def print_model(self, model: Model, printer: Callable[[], None]) -> None:  # nocoverage
         """
@@ -151,42 +153,46 @@ class COOMApp(Application):
         with pre_ctl.solve(yield_=True) as handle:
             facts = [str(s) + "." for s in handle.model().symbols(shown=True)]
 
-        return "".join(facts)
+        return facts
 
     def main(self, control: Control, files: Sequence[str]) -> None:
         """
         Main function ran on call.
         """
         processed_facts = self.preprocess(list(files))
-        encoding = get_encoding(f"{self._solver}-{self._profile}.lp")
+        if self._show:
+            print("\n".join(processed_facts))
+        else:
+            encoding = get_encoding(f"{self._solver}-{self._profile}.lp")
+            facts = "".join(processed_facts)
+            if self._solver == "clingo":
 
-        if self._solver == "clingo":
-            control.load(encoding)
-            control.add(processed_facts)
+                control.load(encoding)
+                control.add(facts)
 
-            control.ground()
-            control.solve()
-        elif self._solver == "fclingo":
-            self._propagator.register(control)
-            self._propagator.configure("max-int", str(self.config.max_int))
-            self._propagator.configure("min-int", str(self.config.min_int))
+                control.ground()
+                control.solve()
+            elif self._solver == "fclingo":
+                self._propagator.register(control)
+                self._propagator.configure("max-int", str(self.config.max_int))
+                self._propagator.configure("min-int", str(self.config.min_int))
 
-            control.add("base", [], processed_facts)
-            control.add("base", [], THEORY)
+                control.add("base", [], facts)
+                control.add("base", [], THEORY)
 
-            with ProgramBuilder(control) as bld:
-                hbt = HeadBodyTransformer()
+                with ProgramBuilder(control) as bld:
+                    hbt = HeadBodyTransformer()
 
-                parse_files([encoding], lambda ast: bld.add(hbt.visit(ast)))
+                    parse_files([encoding], lambda ast: bld.add(hbt.visit(ast)))
 
-                pos = Position("<string>", 1, 1)
-                loc = Location(pos, pos)
-                for rule in hbt.rules_to_add:
-                    bld.add(Rule(loc, rule[0], rule[1]))  # nocoverage # Not sure when this is needed
+                    pos = Position("<string>", 1, 1)
+                    loc = Location(pos, pos)
+                    for rule in hbt.rules_to_add:
+                        bld.add(Rule(loc, rule[0], rule[1]))  # nocoverage # Not sure when this is needed
 
-            control.ground([("base", [])])
-            translator = Translator(control, self.config)
-            translator.translate(control.theory_atoms)
+                control.ground([("base", [])])
+                translator = Translator(control, self.config)
+                translator.translate(control.theory_atoms)
 
-            self._propagator.prepare(control)
-            control.solve(on_model=self.on_model, on_statistics=self._propagator.on_statistics)
+                self._propagator.prepare(control)
+                control.solve(on_model=self.on_model, on_statistics=self._propagator.on_statistics)
