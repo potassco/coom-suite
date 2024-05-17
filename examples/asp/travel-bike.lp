@@ -2,11 +2,11 @@ coom_structure("product").
 coom_feature("product","totalWeight","num",1,1).
 coom_range("product","totalWeight",1,10000).
 coom_feature("product","maxWeight","num",1,1).
-coom_range("product","maxWeight",1,10).
+coom_range("product","maxWeight",10,10).
 coom_feature("product","totalVolume","num",1,1).
 coom_range("product","totalVolume",0,200).
 coom_feature("product","requestedVolume","num",1,1).
-coom_range("product","requestedVolume",0,200).
+coom_range("product","requestedVolume",200,200).
 coom_feature("product","frontWheel","Wheel",1,1).
 coom_feature("product","rearWheel","Wheel",1,1).
 coom_feature("product","frame","Frame",1,1).

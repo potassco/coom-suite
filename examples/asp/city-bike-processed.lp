@@ -94,15 +94,17 @@ feature("root.saddle[0]","saddle").
 type("root.frontWheel[0]","Wheel").
 parent("root.frontWheel[0]", "root").
 feature("root.frontWheel[0]","frontWheel").
-parent("root.frontWheel[0].size[0]","root.frontWheel[0]").
+
 type("root.frontWheel[0].size[0]","size").
+parent("root.frontWheel[0].size[0]","root.frontWheel[0]").
 isnumeric("root.frontWheel[0].size[0]").
 
 type("root.rearWheel[0]","Wheel").
 parent("root.rearWheel[0]", "root").
 feature("root.rearWheel[0]","rearWheel").
-parent("root.rearWheel[0].size[0]","root.rearWheel[0]").
+
 type("root.rearWheel[0].size[0]","size").
+parent("root.rearWheel[0].size[0]","root.rearWheel[0]").
 isnumeric("root.rearWheel[0].size[0]").
 
 type("root.basket[0].root.color[0]","Color").
@@ -116,15 +118,17 @@ feature("root.basket[0].position[0]","position").
 type("root.carrier[0].bag[0].capacity[0]","Capacity").
 parent("root.carrier[0].bag[0].capacity[0]", "root.carrier[0].bag[0]").
 feature("root.carrier[0].bag[0].capacity[0]","capacity").
-parent("root.carrier[0].bag[0].capacity[0].volume[0]","root.carrier[0].bag[0].capacity[0]").
+
 type("root.carrier[0].bag[0].capacity[0].volume[0]","volume").
+parent("root.carrier[0].bag[0].capacity[0].volume[0]","root.carrier[0].bag[0].capacity[0]").
 isnumeric("root.carrier[0].bag[0].capacity[0].volume[0]").
 
 type("root.carrier[0].bag[1].capacity[0]","Capacity").
 parent("root.carrier[0].bag[1].capacity[0]", "root.carrier[0].bag[1]").
 feature("root.carrier[0].bag[1].capacity[0]","capacity").
-parent("root.carrier[0].bag[1].capacity[0].volume[0]","root.carrier[0].bag[1].capacity[0]").
+
 type("root.carrier[0].bag[1].capacity[0].volume[0]","volume").
+parent("root.carrier[0].bag[1].capacity[0].volume[0]","root.carrier[0].bag[1].capacity[0]").
 isnumeric("root.carrier[0].bag[1].capacity[0].volume[0]").
 
 type("root.carrier[0].bag[0].material[0]","Material").
@@ -141,7 +145,9 @@ constraint((0,"root")).
 require((0,"root"),"root.color[0]=root.basket[0].root.color[0]").
 binary("root.color[0]=root.basket[0].root.color[0]","root.color[0]","=","root.basket[0].root.color[0]").
 
+
 constraint((1,"root")).
+condition(1).
 condition((1,"root"),"root.basket[0].position[0]=Front").
 binary("root.basket[0].position[0]=Front","root.basket[0].position[0]","=","Front").
 constant("Front").
@@ -149,7 +155,9 @@ require((1,"root"),"root.frontWheel[0].size[0]<29").
 binary("root.frontWheel[0].size[0]<29","root.frontWheel[0].size[0]","<","29").
 number("29",29).
 
+
 constraint((2,"root")).
+condition(2).
 condition((2,"root"),"root.carrier[0].bag[0].capacity[0].volume[0]=100").
 binary("root.carrier[0].bag[0].capacity[0].volume[0]=100","root.carrier[0].bag[0].capacity[0].volume[0]","=","100").
 require((2,"root"),"root.rearWheel[0].size[0]>=28").
@@ -166,6 +174,7 @@ number("28",28).
 
 
 constraint((3,"root")).
+condition(3).
 condition((3,"root"),"root.saddle[0]=Vintage").
 binary("root.saddle[0]=Vintage","root.saddle[0]","=","Vintage").
 require((3,"root"),"root.carrier[0].bag[0].material[0]=Leather").
@@ -179,9 +188,11 @@ binary("root.carrier[0].bag[1].material[0]=Leather","root.carrier[0].bag[1].mate
 constant("Vintage").
 constant("Leather").
 
+
 constraint((4,"root")).
 require((4,"root"),"root.frontWheel[0].size[0]=root.rearWheel[0].size[0]").
 binary("root.frontWheel[0].size[0]=root.rearWheel[0].size[0]","root.frontWheel[0].size[0]","=","root.rearWheel[0].size[0]").
+
 
 constraint((5,"root.carrier[0].bag[0]")).
 combinations((5,"root.carrier[0].bag[0]"),0,0,"root.carrier[0].bag[0].material[0]").
@@ -190,6 +201,7 @@ combinations((5,"root.carrier[0].bag[0]"),0,1,"root.carrier[0].bag[0].capacity[0
 constraint((5,"root.carrier[0].bag[1]")).
 combinations((5,"root.carrier[0].bag[1]"),0,0,"root.carrier[0].bag[1].material[0]").
 combinations((5,"root.carrier[0].bag[1]"),0,1,"root.carrier[0].bag[1].capacity[0]").
+
 allow(5,(0,0),"Leather").
 allow(5,(1,0),"B10").
 allow(5,(0,1),"Cotton").

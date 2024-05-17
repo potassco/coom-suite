@@ -73,19 +73,19 @@ option("Color", "Blue").
 % Complete generated instance tree
 type("root","product").
 
-num("root.totalWeight[0]").
+type("root.totalWeight[0]","num").
 parent("root.totalWeight[0]","root").
 feature("root.totalWeight[0]","totalWeight").
 
-num("root.maxWeight[0]").
+type("root.maxWeight[0]","num").
 parent("root.maxWeight[0]","root").
 feature("root.maxWeight[0]","maxWeight").
 
-num("root.totalVolume[0]").
+type("root.totalVolume[0]","num").
 parent("root.totalVolume[0]","root").
 feature("root.totalVolume[0]","totalVolume").
 
-num("root.requestedVolume[0]").
+type("root.requestedVolume[0]","num").
 parent("root.requestedVolume[0]","root").
 feature("root.requestedVolume[0]","requestedVolume").
 
@@ -127,21 +127,25 @@ feature("root.frame[0].bag[1]","bag").
 type("root.frontWheel[0]","Wheel").
 parent("root.frontWheel[0]", "root").
 feature("root.frontWheel[0]","frontWheel").
-parent("root.frontWheel[0].size[0]","root.frontWheel[0]").
+
 type("root.frontWheel[0].size[0]","size").
+parent("root.frontWheel[0].size[0]","root.frontWheel[0]").
 isnumeric("root.frontWheel[0].size[0]").
-parent("root.frontWheel[0].weight[0]","root.frontWheel[0]").
+
 type("root.frontWheel[0].weight[0]","weight").
+parent("root.frontWheel[0].weight[0]","root.frontWheel[0]").
 isnumeric("root.frontWheel[0].weight[0]").
 
 type("root.rearWheel[0]","Wheel").
 parent("root.rearWheel[0]", "root").
 feature("root.rearWheel[0]","rearWheel").
-parent("root.rearWheel[0].size[0]","root.rearWheel[0]").
+
 type("root.rearWheel[0].size[0]","size").
+parent("root.rearWheel[0].size[0]","root.rearWheel[0]").
 isnumeric("root.rearWheel[0].size[0]").
-parent("root.rearWheel[0].weight[0]","root.rearWheel[0]").
+
 type("root.rearWheel[0].weight[0]","weight").
+parent("root.rearWheel[0].weight[0]","root.rearWheel[0]").
 isnumeric("root.rearWheel[0].weight[0]").
 
 type("root.color[0]","Color").
@@ -151,31 +155,37 @@ feature("root.color[0]","color").
 type("root.carrier[0].bag[0].capacity[0]","Capacity").
 parent("root.carrier[0].bag[0].capacity[0]", "root.carrier[0].bag[0]").
 feature("root.carrier[0].bag[0].capacity[0]","capacity").
-parent("root.carrier[0].bag[0].capacity[0].volume[0]","root.carrier[0].bag[0].capacity[0]").
+
 type("root.carrier[0].bag[0].capacity[0].volume[0]","volume").
+parent("root.carrier[0].bag[0].capacity[0].volume[0]","root.carrier[0].bag[0].capacity[0]").
 isnumeric("root.carrier[0].bag[0].capacity[0].volume[0]").
-parent("root.carrier[0].bag[0].capacity[0].weight[0]","root.carrier[0].bag[0].capacity[0]").
+
 type("root.carrier[0].bag[0].capacity[0].weight[0]","weight").
+parent("root.carrier[0].bag[0].capacity[0].weight[0]","root.carrier[0].bag[0].capacity[0]").
 isnumeric("root.carrier[0].bag[0].capacity[0].weight[0]").
 
 type("root.carrier[0].bag[1].capacity[0]","Capacity").
 parent("root.carrier[0].bag[1].capacity[0]", "root.carrier[0].bag[1]").
 feature("root.carrier[0].bag[1].capacity[0]","capacity").
-parent("root.carrier[0].bag[1].capacity[0].volume[0]","root.carrier[0].bag[1].capacity[0]").
+
 type("root.carrier[0].bag[1].capacity[0].volume[0]","volume").
+parent("root.carrier[0].bag[1].capacity[0].volume[0]","root.carrier[0].bag[1].capacity[0]").
 isnumeric("root.carrier[0].bag[1].capacity[0].volume[0]").
-parent("root.carrier[0].bag[1].capacity[0].weight[0]","root.carrier[0].bag[1].capacity[0]").
+
 type("root.carrier[0].bag[1].capacity[0].weight[0]","weight").
+parent("root.carrier[0].bag[1].capacity[0].weight[0]","root.carrier[0].bag[1].capacity[0]").
 isnumeric("root.carrier[0].bag[1].capacity[0].weight[0]").
 
 type("root.carrier[0].bag[2].capacity[0]","Capacity").
 parent("root.carrier[0].bag[2].capacity[0]", "root.carrier[0].bag[2]").
 feature("root.carrier[0].bag[2].capacity[0]","capacity").
-parent("root.carrier[0].bag[2].capacity[0].volume[0]","root.carrier[0].bag[2].capacity[0]").
+
 type("root.carrier[0].bag[2].capacity[0].volume[0]","volume").
+parent("root.carrier[0].bag[2].capacity[0].volume[0]","root.carrier[0].bag[2].capacity[0]").
 isnumeric("root.carrier[0].bag[2].capacity[0].volume[0]").
-parent("root.carrier[0].bag[2].capacity[0].weight[0]","root.carrier[0].bag[2].capacity[0]").
+
 type("root.carrier[0].bag[2].capacity[0].weight[0]","weight").
+parent("root.carrier[0].bag[2].capacity[0].weight[0]","root.carrier[0].bag[2].capacity[0]").
 isnumeric("root.carrier[0].bag[2].capacity[0].weight[0]").
 
 type("root.carrier[0].bag[0].material[0]","Material").
@@ -193,21 +203,25 @@ feature("root.carrier[0].bag[2].material[0]","material").
 type("root.frame[0].bag[0].capacity[0]","Capacity").
 parent("root.frame[0].bag[0].capacity[0]", "root.frame[0].bag[0]").
 feature("root.frame[0].bag[0].capacity[0]","capacity").
-parent("root.frame[0].bag[0].capacity[0].volume[0]","root.frame[0].bag[0].capacity[0]").
+
 type("root.frame[0].bag[0].capacity[0].volume[0]","volume").
+parent("root.frame[0].bag[0].capacity[0].volume[0]","root.frame[0].bag[0].capacity[0]").
 isnumeric("root.frame[0].bag[0].capacity[0].volume[0]").
-parent("root.frame[0].bag[0].capacity[0].weight[0]","root.frame[0].bag[0].capacity[0]").
+
 type("root.frame[0].bag[0].capacity[0].weight[0]","weight").
+parent("root.frame[0].bag[0].capacity[0].weight[0]","root.frame[0].bag[0].capacity[0]").
 isnumeric("root.frame[0].bag[0].capacity[0].weight[0]").
 
 type("root.frame[0].bag[1].capacity[0]","Capacity").
 parent("root.frame[0].bag[1].capacity[0]", "root.frame[0].bag[1]").
 feature("root.frame[0].bag[1].capacity[0]","capacity").
-parent("root.frame[0].bag[1].capacity[0].volume[0]","root.frame[0].bag[1].capacity[0]").
+
 type("root.frame[0].bag[1].capacity[0].volume[0]","volume").
+parent("root.frame[0].bag[1].capacity[0].volume[0]","root.frame[0].bag[1].capacity[0]").
 isnumeric("root.frame[0].bag[1].capacity[0].volume[0]").
-parent("root.frame[0].bag[1].capacity[0].weight[0]","root.frame[0].bag[1].capacity[0]").
+
 type("root.frame[0].bag[1].capacity[0].weight[0]","weight").
+parent("root.frame[0].bag[1].capacity[0].weight[0]","root.frame[0].bag[1].capacity[0]").
 isnumeric("root.frame[0].bag[1].capacity[0].weight[0]").
 
 type("root.frame[0].bag[0].material[0]","Material").
@@ -267,6 +281,7 @@ require((4,"root"),"root.totalVolume[0]>=root.requestedVolume[0]").
 binary("root.totalVolume[0]>=root.requestedVolume[0]","root.totalVolume[0]",">=","root.requestedVolume[0]").
 
 constraint((5,"root")).
+condition(5).
 condition((5,"root"),"root.color[0]=Red").
 binary("root.color[0]=Red","root.color[0]","=","Red").
 constant("Red").
@@ -275,6 +290,7 @@ binary("root.frontWheel[0].size[0]=20","root.frontWheel[0].size[0]","=","20").
 number("20",20).
 
 constraint((6,"root.carrier[0].bag[0]")).
+condition(6).
 condition((6,"root.carrier[0].bag[0]"),"root.carrier[0].bag[0].material[0]=Leather").
 binary("root.carrier[0].bag[0].material[0]=Leather","root.carrier[0].bag[0].material[0]","=","Leather").
 require((6,"root.carrier[0].bag[0]"),"root.carrier[0].bag[0].capacity[0]=B10").

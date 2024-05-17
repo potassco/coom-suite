@@ -49,38 +49,16 @@ type("root.wheelSupport[0]","bool").
 parent("root.wheelSupport[0]", "root").
 feature("root.wheelSupport[0]","wheelSupport").
 
-% structure_type("root","product").
-
-% enumeration_type("root.color[0]","Color").
-% parent("root.color[0]", "root").
-% feature("root.color[0]","color").
-
-% enumeration_type("root.frontWheel[0]","Wheel").
-% parent("root.frontWheel[0]", "root").
-% feature("root.frontWheel[0]","frontWheel").
-% attribute_enumeration("root.frontWheel[0].size[0]","root.frontWheel[0]").
-% attribute_name("root.frontWheel[0].size[0]","size").
-% isnumeric("root.frontWheel[0].size[0]").
-
-% enumeration_type("root.rearWheel[0]","Wheel").
-% parent("root.rearWheel[0]", "root").
-% feature("root.rearWheel[0]","rearWheel").
-% attribute_enumeration("root.rearWheel[0].size[0]","root.rearWheel[0]").
-% attribute_name("root.rearWheel[0].size[0]","size").
-% isnumeric("root.rearWheel[0].size[0]").
-
-% enumeration_type("root.wheelSupport[0]","bool").
-% parent("root.wheelSupport[0]", "root").
-% feature("root.wheelSupport[0]","wheelSupport").
-
 % Instantiated constraints on complete instance tree
 constraint((0,"root")).
+condition(0).
 condition((0,"root"),"root.color[0]=Yellow").
 binary("root.color[0]=Yellow","root.color[0]","=","Yellow").
 constant("Yellow").
 require((0,"root"),"root.frontWheel[0].size[0]>16").
 binary("root.frontWheel[0].size[0]>16","root.frontWheel[0].size[0]",">","16").
 number("16",16).
+
 
 constraint((1,"root")).
 combinations((1,"root"),0,0,"root.wheelSupport[0]").
@@ -91,6 +69,7 @@ allow(1,(1,0),"W16").
 allow(1,(0,1),"False").
 allow(1,(1,1),"W18").
 allow(1,(1,1),"W20").
+
 
 constraint((2,"root")).
 require((2,"root"),"root.frontWheel[0].size[0]=root.rearWheel[0].size[0]").
