@@ -136,7 +136,7 @@ class COOMApp(Application):
 
         print(_sym_to_prg(output_symbols, self._output))
 
-    def preprocess(self, files: List[str]) -> str:
+    def preprocess(self, files: List[str]) -> List[str]:
         """
         Preprocesses COOM ASP facts into a "grounded" configuration fact format
         """

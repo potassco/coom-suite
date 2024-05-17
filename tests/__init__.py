@@ -5,7 +5,7 @@ Basic functions to run tests.
 import tempfile
 from copy import deepcopy
 from os.path import join
-from typing import Callable, List, Optional, Sequence
+from typing import Any, Callable, List, Optional, Sequence
 
 from antlr4 import InputStream
 from clingo import Application, Control
@@ -30,7 +30,7 @@ def run_test(
     files: Optional[List[str]] = None,
     program: Optional[str] = None,
     ctl_args: Optional[List[str]] = None,
-    **kwargs: str,
+    **kwargs: Any,
 ) -> None:
     """Creates a solver and runs a clintest test.
 
