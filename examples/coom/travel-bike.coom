@@ -6,7 +6,7 @@ product {
 	Wheel			    frontWheel
 	Wheel			    rearWheel
 	Frame			    frame
-	Carrier			    carrier
+    Carrier			    carrier
 	Color				color
 }
 

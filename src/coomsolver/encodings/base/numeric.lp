@@ -18,10 +18,10 @@ included(X) :- num(X), parent(X,P), included(P).
 :- num(X), val(X,V), range(X,Min,Max), not Min <= V <= Max.
 
 % Evaluate functions (aggregates)
-val(F,V) :- function(F,"count",P), V = #count{ X : function_path(P,X), included(X) }.
-val(F,V) :- function(F,"sum",  P), V = #sum  { V': function_path(P,X), val(X,V')   }.
-val(F,V) :- function(F,"min",  P), V = #min  { V': function_path(P,X), val(X,V')   }.
-val(F,V) :- function(F,"max",  P), V = #max  { V': function_path(P,X), val(X,V')   }.
+val(F,V) :- function(F,"count",P), V = #count{ X    : function_path(P,X), included(X) }.
+val(F,V) :- function(F,"sum",  P), V = #sum  { V',X : function_path(P,X), val(X,V')   }.
+val(F,V) :- function(F,"min",  P), V = #min  { V',X : function_path(P,X), val(X,V')   }.
+val(F,V) :- function(F,"max",  P), V = #max  { V',X : function_path(P,X), val(X,V')   }.
 
 
 % Arithmetics
@@ -29,6 +29,13 @@ val(F,VL+VR) :- binary(F,XL,"+",XR), val(XL,VL), val(XR,VR).
 val(F,VL-VR) :- binary(F,XL,"-",XR), val(XL,VL), val(XR,VR).
 val(F,VL*VR) :- binary(F,XL,"*",XR), val(XL,VL), val(XR,VR).
 % TODO: Add more arithmetics (division and power)
+
+% Default arithmetics
+val(F,VL)  :- binary(F,XL,"+",XR), val(XL,VL), not val(XR,_).
+val(F,VR)  :- binary(F,XL,"+",XR), val(XR,VR), not val(XL,_).
+val(F,VL)  :- binary(F,XL,"-",XR), val(XL,VL), not val(XR,_).
+val(F,-VR) :- binary(F,XL,"-",XR), val(XR,VR), not val(XL,_).
+% TODO: More rules for multiplication?
 
 % Imply statements
 val(X,V) :- imply(X,F), included(X), val(F,V).

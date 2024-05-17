@@ -161,7 +161,7 @@ class COOMApp(Application):
         """
         processed_facts = self.preprocess(list(files))
         if self._show:
-            print("\n".join(processed_facts))
+            print("\n".join(processed_facts))  # nocoverage
         else:
             encoding = get_encoding(f"{self._solver}-{self._profile}.lp")
             facts = "".join(processed_facts)

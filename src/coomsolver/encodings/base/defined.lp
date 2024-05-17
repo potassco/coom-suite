@@ -15,6 +15,7 @@
 #defined constraint/1.
 #defined require/2.
 #defined condition/2.
+#defined condition/1.
 #defined combinations/4.
 #defined allow/3.
 #defined binary/4.
