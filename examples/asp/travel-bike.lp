@@ -1,160 +1,323 @@
-coom_structure("product").
-coom_feature("product","totalWeight","num",1,1).
-coom_range("product","totalWeight",1,10000).
-coom_feature("product","maxWeight","num",1,1).
-coom_range("product","maxWeight",10,10).
-coom_feature("product","totalVolume","num",1,1).
-coom_range("product","totalVolume",0,200).
-coom_feature("product","requestedVolume","num",1,1).
-coom_range("product","requestedVolume",200,200).
-coom_feature("product","frontWheel","Wheel",1,1).
-coom_feature("product","rearWheel","Wheel",1,1).
-coom_feature("product","frame","Frame",1,1).
-coom_feature("product","carrier","Carrier",1,1).
-coom_feature("product","color","Color",1,1).
+% Original "COOM" fact format describing the structure of the model
+structure("product").
+feature("product","totalWeight","num",1,1).
+range("product","totalWeight",1,10000).
+feature("product","maxWeight","num",1,1).
+range("product","maxWeight",1,10).
+feature("product","totalVolume","num",1,1).
+range("product","totalVolume",0,200).
+feature("product","requestedVolume","num",1,1).
+range("product","requestedVolume",0,200).
+feature("product","frontWheel","Wheel",1,1).
+feature("product","rearWheel","Wheel",1,1).
+feature("product","frame","Frame",1,1).
+feature("product","carrier","Carrier",1,1).
+feature("product","color","Color",1,1).
 
-coom_structure("Carrier").
-coom_feature("Carrier","bag","Bag",0,3).
+structure("Carrier").
+feature("Carrier","bag","Bag",0,3).
 
-coom_structure("Frame").
-coom_feature("Frame","bag","Bag",0,2).
+structure("Frame").
+feature("Frame","bag","Bag",0,2).
 
-coom_structure("Bag").
-coom_feature("Bag","capacity","Capacity",1,1).
-coom_feature("Bag","material","Material",1,1).
+structure("Bag").
+feature("Bag","capacity","Capacity",1,1).
+feature("Bag","material","Material",1,1).
 
-coom_enumeration("Capacity").
-coom_attribute("Capacity","volume","num").
-coom_attribute("Capacity","weight","num").
-coom_option("Capacity", "B10").
-coom_attribute_value("Capacity","B10","volume",10).
-coom_attribute_value("Capacity","B10","weight",100).
-coom_option("Capacity", "B20").
-coom_attribute_value("Capacity","B20","volume",20).
-coom_attribute_value("Capacity","B20","weight",250).
-coom_option("Capacity", "B50").
-coom_attribute_value("Capacity","B50","volume",50).
-coom_attribute_value("Capacity","B50","weight",600).
-coom_option("Capacity", "B100").
-coom_attribute_value("Capacity","B100","volume",100).
-coom_attribute_value("Capacity","B100","weight",1200).
+enumeration("Capacity").
+attribute("Capacity","volume","num").
+attribute("Capacity","weight","num").
+option("Capacity", "B10").
+attribute_value("Capacity","B10","volume",10).
+attribute_value("Capacity","B10","weight",100).
+option("Capacity", "B20").
+attribute_value("Capacity","B20","volume",20).
+attribute_value("Capacity","B20","weight",250).
+option("Capacity", "B50").
+attribute_value("Capacity","B50","volume",50).
+attribute_value("Capacity","B50","weight",600).
+option("Capacity", "B100").
+attribute_value("Capacity","B100","volume",100).
+attribute_value("Capacity","B100","weight",1200).
 
-coom_enumeration("Material").
-coom_option("Material", "Cotton").
-coom_option("Material", "Leather").
-coom_option("Material", "Polyester").
+enumeration("Material").
+option("Material", "Cotton").
+option("Material", "Leather").
+option("Material", "Polyester").
 
-coom_enumeration("Wheel").
-coom_attribute("Wheel","size","num").
-coom_attribute("Wheel","weight","num").
-coom_option("Wheel", "W20").
-coom_attribute_value("Wheel","W20","size",20).
-coom_attribute_value("Wheel","W20","weight",650).
-coom_option("Wheel", "W22").
-coom_attribute_value("Wheel","W22","size",22).
-coom_attribute_value("Wheel","W22","weight",700).
-coom_option("Wheel", "W24").
-coom_attribute_value("Wheel","W24","size",24).
-coom_attribute_value("Wheel","W24","weight",800).
-coom_option("Wheel", "W26").
-coom_attribute_value("Wheel","W26","size",26).
-coom_attribute_value("Wheel","W26","weight",900).
-coom_option("Wheel", "W28").
-coom_attribute_value("Wheel","W28","size",28).
-coom_attribute_value("Wheel","W28","weight",1000).
+enumeration("Wheel").
+attribute("Wheel","size","num").
+attribute("Wheel","weight","num").
+option("Wheel", "W20").
+attribute_value("Wheel","W20","size",20).
+attribute_value("Wheel","W20","weight",650).
+option("Wheel", "W22").
+attribute_value("Wheel","W22","size",22).
+attribute_value("Wheel","W22","weight",700).
+option("Wheel", "W24").
+attribute_value("Wheel","W24","size",24).
+attribute_value("Wheel","W24","weight",800).
+option("Wheel", "W26").
+attribute_value("Wheel","W26","size",26).
+attribute_value("Wheel","W26","weight",900).
+option("Wheel", "W28").
+attribute_value("Wheel","W28","size",28).
+attribute_value("Wheel","W28","weight",1000).
 
-coom_enumeration("Color").
-coom_option("Color", "Red").
-coom_option("Color", "Green").
-coom_option("Color", "Yellow").
-coom_option("Color", "Blue").
+enumeration("Color").
+option("Color", "Red").
+option("Color", "Green").
+option("Color", "Yellow").
+option("Color", "Blue").
 
-coom_behavior(0).
-coom_context(0,"product").
-coom_require(0,"count(carrier.bag)+count(frame.bag)<=4").
-coom_binary("count(carrier.bag)+count(frame.bag)<=4","count(carrier.bag)+count(frame.bag)","<=","4").
-coom_binary("count(carrier.bag)+count(frame.bag)","count(carrier.bag)","+","count(frame.bag)").
-coom_function("product","count(carrier.bag)","count","carrier.bag").
-coom_path("carrier.bag",0,"carrier").
-coom_path("carrier.bag",1,"bag").
-coom_function("product","count(frame.bag)","count","frame.bag").
-coom_path("frame.bag",0,"frame").
-coom_path("frame.bag",1,"bag").
-coom_number("4",4).
+% Complete generated instance tree
+type("root","product").
 
-coom_behavior(1).
-coom_context(1,"product").
-coom_imply("product","totalWeight","frontWheel.weight+rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
-coom_path("totalWeight",0,"totalWeight").
-coom_binary("frontWheel.weight+rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)","frontWheel.weight","+","rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
-coom_binary("rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)","rearWheel.weight","+","sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
-coom_binary("sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)","sum(carrier.bag.capacity.weight)","+","sum(frame.bag.capacity.weight)").
-coom_path("frontWheel.weight",0,"frontWheel").
-coom_path("frontWheel.weight",1,"weight").
-coom_path("rearWheel.weight",0,"rearWheel").
-coom_path("rearWheel.weight",1,"weight").
-coom_function("product","sum(carrier.bag.capacity.weight)","sum","carrier.bag.capacity.weight").
-coom_path("carrier.bag.capacity.weight",0,"carrier").
-coom_path("carrier.bag.capacity.weight",1,"bag").
-coom_path("carrier.bag.capacity.weight",2,"capacity").
-coom_path("carrier.bag.capacity.weight",3,"weight").
-coom_function("product","sum(frame.bag.capacity.weight)","sum","frame.bag.capacity.weight").
-coom_path("frame.bag.capacity.weight",0,"frame").
-coom_path("frame.bag.capacity.weight",1,"bag").
-coom_path("frame.bag.capacity.weight",2,"capacity").
-coom_path("frame.bag.capacity.weight",3,"weight").
+type("root.totalWeight[0]","num").
+parent("root.totalWeight[0]","root").
+feature("root.totalWeight[0]","totalWeight").
 
-coom_behavior(2).
-coom_context(2,"product").
-coom_require(2,"totalWeight<=maxWeight*1000").
-coom_binary("totalWeight<=maxWeight*1000","totalWeight","<=","maxWeight*1000").
-coom_path("totalWeight",0,"totalWeight").
-coom_binary("maxWeight*1000","maxWeight","*","1000").
-coom_path("maxWeight",0,"maxWeight").
-coom_number("1000",1000).
+type("root.maxWeight[0]","num").
+parent("root.maxWeight[0]","root").
+feature("root.maxWeight[0]","maxWeight").
 
-coom_behavior(3).
-coom_context(3,"product").
-coom_imply("product","totalVolume","sum(carrier.bag.capacity.volume)+sum(frame.bag.capacity.volume)").
-coom_path("totalVolume",0,"totalVolume").
-coom_binary("sum(carrier.bag.capacity.volume)+sum(frame.bag.capacity.volume)","sum(carrier.bag.capacity.volume)","+","sum(frame.bag.capacity.volume)").
-coom_function("product","sum(carrier.bag.capacity.volume)","sum","carrier.bag.capacity.volume").
-coom_path("carrier.bag.capacity.volume",0,"carrier").
-coom_path("carrier.bag.capacity.volume",1,"bag").
-coom_path("carrier.bag.capacity.volume",2,"capacity").
-coom_path("carrier.bag.capacity.volume",3,"volume").
-coom_function("product","sum(frame.bag.capacity.volume)","sum","frame.bag.capacity.volume").
-coom_path("frame.bag.capacity.volume",0,"frame").
-coom_path("frame.bag.capacity.volume",1,"bag").
-coom_path("frame.bag.capacity.volume",2,"capacity").
-coom_path("frame.bag.capacity.volume",3,"volume").
+type("root.totalVolume[0]","num").
+parent("root.totalVolume[0]","root").
+feature("root.totalVolume[0]","totalVolume").
 
-coom_behavior(4).
-coom_context(4,"product").
-coom_require(4,"totalVolume>=requestedVolume").
-coom_binary("totalVolume>=requestedVolume","totalVolume",">=","requestedVolume").
-coom_path("totalVolume",0,"totalVolume").
-coom_path("requestedVolume",0,"requestedVolume").
+type("root.requestedVolume[0]","num").
+parent("root.requestedVolume[0]","root").
+feature("root.requestedVolume[0]","requestedVolume").
 
-coom_behavior(5).
-coom_context(5,"product").
-coom_condition(5,"color=Red").
-coom_binary("color=Red","color","=","Red").
-coom_path("color",0,"color").
-coom_constant("Red").
-coom_require(5,"frontWheel.size=20").
-coom_binary("frontWheel.size=20","frontWheel.size","=","20").
-coom_path("frontWheel.size",0,"frontWheel").
-coom_path("frontWheel.size",1,"size").
-coom_number("20",20).
+type("root.carrier[0]","Carrier").
+index("root.carrier[0]",0).
+parent("root.carrier[0]", "root").
+feature("root.carrier[0]","carrier").
 
-coom_behavior(6).
-coom_context(6,"Bag").
-coom_condition(6,"material=Leather").
-coom_binary("material=Leather","material","=","Leather").
-coom_path("material",0,"material").
-coom_constant("Leather").
-coom_require(6,"capacity=B10").
-coom_binary("capacity=B10","capacity","=","B10").
-coom_path("capacity",0,"capacity").
-coom_constant("B10").
+type("root.frame[0]","Frame").
+index("root.frame[0]",0).
+parent("root.frame[0]", "root").
+feature("root.frame[0]","frame").
+
+type("root.carrier[0].bag[0]","Bag").
+index("root.carrier[0].bag[0]",0).
+parent("root.carrier[0].bag[0]", "root.carrier[0]").
+feature("root.carrier[0].bag[0]","bag").
+
+type("root.carrier[0].bag[1]","Bag").
+index("root.carrier[0].bag[1]",1).
+parent("root.carrier[0].bag[1]", "root.carrier[0]").
+feature("root.carrier[0].bag[1]","bag").
+
+type("root.carrier[0].bag[2]","Bag").
+index("root.carrier[0].bag[2]",2).
+parent("root.carrier[0].bag[2]", "root.carrier[0]").
+feature("root.carrier[0].bag[2]","bag").
+
+type("root.frame[0].bag[0]","Bag").
+index("root.frame[0].bag[0]",0).
+parent("root.frame[0].bag[0]", "root.frame[0]").
+feature("root.frame[0].bag[0]","bag").
+
+type("root.frame[0].bag[1]","Bag").
+index("root.frame[0].bag[1]",1).
+parent("root.frame[0].bag[1]", "root.frame[0]").
+feature("root.frame[0].bag[1]","bag").
+
+type("root.frontWheel[0]","Wheel").
+parent("root.frontWheel[0]", "root").
+feature("root.frontWheel[0]","frontWheel").
+
+type("root.frontWheel[0].size[0]","size").
+parent("root.frontWheel[0].size[0]","root.frontWheel[0]").
+isnumeric("root.frontWheel[0].size[0]").
+
+type("root.frontWheel[0].weight[0]","weight").
+parent("root.frontWheel[0].weight[0]","root.frontWheel[0]").
+isnumeric("root.frontWheel[0].weight[0]").
+
+type("root.rearWheel[0]","Wheel").
+parent("root.rearWheel[0]", "root").
+feature("root.rearWheel[0]","rearWheel").
+
+type("root.rearWheel[0].size[0]","size").
+parent("root.rearWheel[0].size[0]","root.rearWheel[0]").
+isnumeric("root.rearWheel[0].size[0]").
+
+type("root.rearWheel[0].weight[0]","weight").
+parent("root.rearWheel[0].weight[0]","root.rearWheel[0]").
+isnumeric("root.rearWheel[0].weight[0]").
+
+type("root.color[0]","Color").
+parent("root.color[0]", "root").
+feature("root.color[0]","color").
+
+type("root.carrier[0].bag[0].capacity[0]","Capacity").
+parent("root.carrier[0].bag[0].capacity[0]", "root.carrier[0].bag[0]").
+feature("root.carrier[0].bag[0].capacity[0]","capacity").
+
+type("root.carrier[0].bag[0].capacity[0].volume[0]","volume").
+parent("root.carrier[0].bag[0].capacity[0].volume[0]","root.carrier[0].bag[0].capacity[0]").
+isnumeric("root.carrier[0].bag[0].capacity[0].volume[0]").
+
+type("root.carrier[0].bag[0].capacity[0].weight[0]","weight").
+parent("root.carrier[0].bag[0].capacity[0].weight[0]","root.carrier[0].bag[0].capacity[0]").
+isnumeric("root.carrier[0].bag[0].capacity[0].weight[0]").
+
+type("root.carrier[0].bag[1].capacity[0]","Capacity").
+parent("root.carrier[0].bag[1].capacity[0]", "root.carrier[0].bag[1]").
+feature("root.carrier[0].bag[1].capacity[0]","capacity").
+
+type("root.carrier[0].bag[1].capacity[0].volume[0]","volume").
+parent("root.carrier[0].bag[1].capacity[0].volume[0]","root.carrier[0].bag[1].capacity[0]").
+isnumeric("root.carrier[0].bag[1].capacity[0].volume[0]").
+
+type("root.carrier[0].bag[1].capacity[0].weight[0]","weight").
+parent("root.carrier[0].bag[1].capacity[0].weight[0]","root.carrier[0].bag[1].capacity[0]").
+isnumeric("root.carrier[0].bag[1].capacity[0].weight[0]").
+
+type("root.carrier[0].bag[2].capacity[0]","Capacity").
+parent("root.carrier[0].bag[2].capacity[0]", "root.carrier[0].bag[2]").
+feature("root.carrier[0].bag[2].capacity[0]","capacity").
+
+type("root.carrier[0].bag[2].capacity[0].volume[0]","volume").
+parent("root.carrier[0].bag[2].capacity[0].volume[0]","root.carrier[0].bag[2].capacity[0]").
+isnumeric("root.carrier[0].bag[2].capacity[0].volume[0]").
+
+type("root.carrier[0].bag[2].capacity[0].weight[0]","weight").
+parent("root.carrier[0].bag[2].capacity[0].weight[0]","root.carrier[0].bag[2].capacity[0]").
+isnumeric("root.carrier[0].bag[2].capacity[0].weight[0]").
+
+type("root.carrier[0].bag[0].material[0]","Material").
+parent("root.carrier[0].bag[0].material[0]", "root.carrier[0].bag[0]").
+feature("root.carrier[0].bag[0].material[0]","material").
+
+type("root.carrier[0].bag[1].material[0]","Material").
+parent("root.carrier[0].bag[1].material[0]", "root.carrier[0].bag[1]").
+feature("root.carrier[0].bag[1].material[0]","material").
+
+type("root.carrier[0].bag[2].material[0]","Material").
+parent("root.carrier[0].bag[2].material[0]", "root.carrier[0].bag[2]").
+feature("root.carrier[0].bag[2].material[0]","material").
+
+type("root.frame[0].bag[0].capacity[0]","Capacity").
+parent("root.frame[0].bag[0].capacity[0]", "root.frame[0].bag[0]").
+feature("root.frame[0].bag[0].capacity[0]","capacity").
+
+type("root.frame[0].bag[0].capacity[0].volume[0]","volume").
+parent("root.frame[0].bag[0].capacity[0].volume[0]","root.frame[0].bag[0].capacity[0]").
+isnumeric("root.frame[0].bag[0].capacity[0].volume[0]").
+
+type("root.frame[0].bag[0].capacity[0].weight[0]","weight").
+parent("root.frame[0].bag[0].capacity[0].weight[0]","root.frame[0].bag[0].capacity[0]").
+isnumeric("root.frame[0].bag[0].capacity[0].weight[0]").
+
+type("root.frame[0].bag[1].capacity[0]","Capacity").
+parent("root.frame[0].bag[1].capacity[0]", "root.frame[0].bag[1]").
+feature("root.frame[0].bag[1].capacity[0]","capacity").
+
+type("root.frame[0].bag[1].capacity[0].volume[0]","volume").
+parent("root.frame[0].bag[1].capacity[0].volume[0]","root.frame[0].bag[1].capacity[0]").
+isnumeric("root.frame[0].bag[1].capacity[0].volume[0]").
+
+type("root.frame[0].bag[1].capacity[0].weight[0]","weight").
+parent("root.frame[0].bag[1].capacity[0].weight[0]","root.frame[0].bag[1].capacity[0]").
+isnumeric("root.frame[0].bag[1].capacity[0].weight[0]").
+
+type("root.frame[0].bag[0].material[0]","Material").
+parent("root.frame[0].bag[0].material[0]", "root.frame[0].bag[0]").
+feature("root.frame[0].bag[0].material[0]","material").
+
+type("root.frame[0].bag[1].material[0]","Material").
+parent("root.frame[0].bag[1].material[0]", "root.frame[0].bag[1]").
+feature("root.frame[0].bag[1].material[0]","material").
+
+% Instantiated constraints on complete instance tree
+constraint((0,"root")).
+require((0,"root"),"count(root.carrier.bag)+count(root.frame.bag)<=4").
+binary("count(root.carrier.bag)+count(root.frame.bag)<=4","count(root.carrier.bag)+count(root.frame.bag)","<=","4").
+binary("count(root.carrier.bag)+count(root.frame.bag)","count(root.carrier.bag)","+","count(root.frame.bag)").
+function("count(root.carrier.bag)","count","root.carrier.bag").
+function_path("root.carrier.bag","root.carrier[0].bag[0]").
+function_path("root.carrier.bag","root.carrier[0].bag[1]").
+function_path("root.carrier.bag","root.carrier[0].bag[2]").
+function("count(root.frame.bag)","count","root.frame.bag").
+function_path("root.frame.bag","root.frame[0].bag[0]").
+function_path("root.frame.bag","root.frame[0].bag[1]").
+number("4",4).
+
+constraint((1,"root")).
+imply("root.totalWeight[0]","root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)").
+binary("root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)","root.frontWheel[0].weight[0]","+","root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)").
+binary("root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)","root.rearWheel[0].weight[0]","+","sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)").
+binary("sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)","sum(root.carrier.bag.capacity.weight)","+","sum(root.frame.bag.capacity.weight)").
+function("sum(root.carrier.bag.capacity.weight)","sum","root.carrier.bag.capacity.weight").
+function_path("root.carrier.bag.capacity.weight","root.carrier[0].bag[0].capacity[0].weight[0]").
+function_path("root.carrier.bag.capacity.weight","root.carrier[0].bag[1].capacity[0].weight[0]").
+function_path("root.carrier.bag.capacity.weight","root.carrier[0].bag[2].capacity[0].weight[0]").
+function("sum(root.frame.bag.capacity.weight)","sum","root.frame.bag.capacity.weight").
+function_path("root.frame.bag.capacity.weight","root.frame[0].bag[0].capacity[0].weight[0]").
+function_path("root.frame.bag.capacity.weight","root.frame[0].bag[1].capacity[0].weight[0]").
+
+constraint((2,"root")).
+require((2,"root"),"root.totalWeight[0]<=root.maxWeight[0]*1000").
+binary("root.totalWeight[0]<=root.maxWeight[0]*1000","root.totalWeight[0]","<=","root.maxWeight[0]*1000").
+binary("root.maxWeight[0]*1000","root.maxWeight[0]","*","1000").
+number("1000",1000).
+
+constraint((3,"root")).
+imply("root.totalVolume[0]","sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)").
+binary("sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)","sum(root.carrier.bag.capacity.volume)","+","sum(root.frame.bag.capacity.volume)").
+function("sum(root.carrier.bag.capacity.volume)","sum","root.carrier.bag.capacity.volume").
+function_path("root.carrier.bag.capacity.volume","root.carrier[0].bag[0].capacity[0].volume[0]").
+function_path("root.carrier.bag.capacity.volume","root.carrier[0].bag[1].capacity[0].volume[0]").
+function_path("root.carrier.bag.capacity.volume","root.carrier[0].bag[2].capacity[0].volume[0]").
+function("sum(root.frame.bag.capacity.volume)","sum","root.frame.bag.capacity.volume").
+function_path("root.frame.bag.capacity.volume","root.frame[0].bag[0].capacity[0].volume[0]").
+function_path("root.frame.bag.capacity.volume","root.frame[0].bag[1].capacity[0].volume[0]").
+
+constraint((4,"root")).
+require((4,"root"),"root.totalVolume[0]>=root.requestedVolume[0]").
+binary("root.totalVolume[0]>=root.requestedVolume[0]","root.totalVolume[0]",">=","root.requestedVolume[0]").
+
+constraint((5,"root")).
+condition(5).
+condition((5,"root"),"root.color[0]=Red").
+binary("root.color[0]=Red","root.color[0]","=","Red").
+constant("Red").
+require((5,"root"),"root.frontWheel[0].size[0]=20").
+binary("root.frontWheel[0].size[0]=20","root.frontWheel[0].size[0]","=","20").
+number("20",20).
+
+constraint((6,"root.carrier[0].bag[0]")).
+condition(6).
+condition((6,"root.carrier[0].bag[0]"),"root.carrier[0].bag[0].material[0]=Leather").
+binary("root.carrier[0].bag[0].material[0]=Leather","root.carrier[0].bag[0].material[0]","=","Leather").
+require((6,"root.carrier[0].bag[0]"),"root.carrier[0].bag[0].capacity[0]=B10").
+binary("root.carrier[0].bag[0].capacity[0]=B10","root.carrier[0].bag[0].capacity[0]","=","B10").
+constant("Leather").
+constant("B10").
+
+constraint((6,"root.carrier[0].bag[1]")).
+condition((6,"root.carrier[0].bag[1]"),"root.carrier[0].bag[1].material[0]=Leather").
+binary("root.carrier[0].bag[1].material[0]=Leather","root.carrier[0].bag[1].material[0]","=","Leather").
+require((6,"root.carrier[0].bag[1]"),"root.carrier[0].bag[1].capacity[0]=B10").
+binary("root.carrier[0].bag[1].capacity[0]=B10","root.carrier[0].bag[1].capacity[0]","=","B10").
+
+constraint((6,"root.carrier[0].bag[2]")).
+condition((6,"root.carrier[0].bag[2]"),"root.carrier[0].bag[2].material[0]=Leather").
+binary("root.carrier[0].bag[2].material[0]=Leather","root.carrier[0].bag[2].material[0]","=","Leather").
+require((6,"root.carrier[0].bag[2]"),"root.carrier[0].bag[2].capacity[0]=B10").
+binary("root.carrier[0].bag[2].capacity[0]=B10","root.carrier[0].bag[2].capacity[0]","=","B10").
+
+constraint((6,"root.frame[0].bag[0]")).
+condition((6,"root.frame[0].bag[0]"),"root.frame[0].bag[0].material[0]=Leather").
+binary("root.frame[0].bag[0].material[0]=Leather","root.frame[0].bag[0].material[0]","=","Leather").
+require((6,"root.frame[0].bag[0]"),"root.frame[0].bag[0].capacity[0]=B10").
+binary("root.frame[0].bag[0].capacity[0]=B10","root.frame[0].bag[0].capacity[0]","=","B10").
+
+constraint((6,"root.frame[0].bag[1]")).
+condition((6,"root.frame[0].bag[1]"),"root.frame[0].bag[1].material[0]=Leather").
+binary("root.frame[0].bag[1].material[0]=Leather","root.frame[0].bag[1].material[0]","=","Leather").
+require((6,"root.frame[0].bag[1]"),"root.frame[0].bag[1].capacity[0]=B10").
+binary("root.frame[0].bag[1].capacity[0]=B10","root.frame[0].bag[1].capacity[0]","=","B10").

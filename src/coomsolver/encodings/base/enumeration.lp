@@ -14,7 +14,7 @@ included(X) :- enumeration(T), type(X,T), parent(X,P), included(P).
 % Exactly one value if variable has been included
 :- enumeration(T), type(X,T), included(X), not { val(X,_) } = 1.
 
-% Attribute variables are included when their enumeration variables are included.
+% Attribute variables are included when their enumeration variables are included (can only have enumeration as parent)
 included(X) :- enumeration(T), type(X',T), included(X'), parent(X,X').
 
 % Derive associated attribute values
