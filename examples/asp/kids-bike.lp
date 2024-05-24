@@ -1,8 +1,9 @@
-structure(":root").
-feature(":root",color,"Color",1,1).
-feature(":root",wheelSupport,"bool",1,1).
-feature(":root",frontWheel,"Wheel",1,1).
-feature(":root",rearWheel,"Wheel",1,1).
+% Original "COOM" fact format describing the structure of the model
+structure("product").
+feature("product","color","Color",1,1).
+feature("product","wheelSupport","bool",1,1).
+feature("product","frontWheel","Wheel",1,1).
+feature("product","rearWheel","Wheel",1,1).
 
 enumeration("Color").
 option("Color", "Red").
@@ -11,34 +12,57 @@ option("Color", "Yellow").
 option("Color", "Blue").
 
 enumeration("Wheel").
-attribute("Wheel",size,"num").
+attribute("Wheel","size","num").
 option("Wheel", "W14").
-attr_value("Wheel","W14",size,14).
+attribute_value("Wheel","W14","size",14).
 option("Wheel", "W16").
-attr_value("Wheel","W16",size,16).
+attribute_value("Wheel","W16","size",16).
 option("Wheel", "W18").
-attr_value("Wheel","W18",size,18).
+attribute_value("Wheel","W18","size",18).
 option("Wheel", "W20").
-attr_value("Wheel","W20",size,20).
+attribute_value("Wheel","W20","size",20).
 
-behavior(0).
-context(0,":root").
-condition(0,"color=Yellow").
-binary(":root","color=Yellow","color","=","Yellow").
-path("color",0,color).
+% Complete generated instance tree
+type("root","product").
+
+type("root.color[0]","Color").
+parent("root.color[0]", "root").
+feature("root.color[0]","color").
+
+type("root.frontWheel[0]","Wheel").
+parent("root.frontWheel[0]", "root").
+feature("root.frontWheel[0]","frontWheel").
+
+type("root.frontWheel[0].size[0]","size").
+parent("root.frontWheel[0].size[0]","root.frontWheel[0]").
+isnumeric("root.frontWheel[0].size[0]").
+
+type("root.rearWheel[0]","Wheel").
+parent("root.rearWheel[0]", "root").
+feature("root.rearWheel[0]","rearWheel").
+
+type("root.rearWheel[0].size[0]","size").
+parent("root.rearWheel[0].size[0]","root.rearWheel[0]").
+isnumeric("root.rearWheel[0].size[0]").
+
+type("root.wheelSupport[0]","bool").
+parent("root.wheelSupport[0]", "root").
+feature("root.wheelSupport[0]","wheelSupport").
+
+% Instantiated constraints on complete instance tree
+constraint((0,"root")).
+condition(0).
+condition((0,"root"),"root.color[0]=Yellow").
+binary("root.color[0]=Yellow","root.color[0]","=","Yellow").
 constant("Yellow").
-require(0,"frontWheel.size>16").
-binary(":root","frontWheel.size>16","frontWheel.size",">","16").
-path("frontWheel.size",0,frontWheel).
-path("frontWheel.size",1,size).
+require((0,"root"),"root.frontWheel[0].size[0]>16").
+binary("root.frontWheel[0].size[0]>16","root.frontWheel[0].size[0]",">","16").
 number("16",16).
 
-behavior(1).
-context(1,":root").
-combinations(1,0,"wheelSupport").
-combinations(1,1,"rearWheel").
-path("wheelSupport",0,wheelSupport).
-path("rearWheel",0,rearWheel).
+
+constraint((1,"root")).
+combinations((1,"root"),0,0,"root.wheelSupport[0]").
+combinations((1,"root"),0,1,"root.rearWheel[0]").
 allow(1,(0,0),"True").
 allow(1,(1,0),"W14").
 allow(1,(1,0),"W16").
@@ -46,11 +70,7 @@ allow(1,(0,1),"False").
 allow(1,(1,1),"W18").
 allow(1,(1,1),"W20").
 
-behavior(2).
-context(2,":root").
-require(2,"frontWheel.size=rearWheel.size").
-binary(":root","frontWheel.size=rearWheel.size","frontWheel.size","=","rearWheel.size").
-path("frontWheel.size",0,frontWheel).
-path("frontWheel.size",1,size).
-path("rearWheel.size",0,rearWheel).
-path("rearWheel.size",1,size).
+
+constraint((2,"root")).
+require((2,"root"),"root.frontWheel[0].size[0]=root.rearWheel[0].size[0]").
+binary("root.frontWheel[0].size[0]=root.rearWheel[0].size[0]","root.frontWheel[0].size[0]","=","root.rearWheel[0].size[0]").

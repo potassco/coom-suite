@@ -1,6 +1,6 @@
 product {
 	        Color   color
-    0..1    Basket  basket
+	0..1    Basket  basket
             Saddle  saddle
 	        Wheel   frontWheel
 	        Wheel   rearWheel

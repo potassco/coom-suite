@@ -15,8 +15,8 @@ dependencies = [
     "clingo==5.7.*",
     "importlib_resources",
     "clintest>=0.2.0",
-    "clingcon >= 5.2.1, == 5.2.*",                         # requirement for fclingo
-    "fclingo@git+https://github.com/potassco/fclingo.git",
+    "clingcon >= 5.2.1, == 5.2.*",                                                                  # requirement for fclingo
+    "fclingo@git+https://github.com/potassco/fclingo.git@abed038abffff7146f1c2d14332638dafdade92d",
 ]
 license = { file = "LICENSE" }
 dynamic = ["version"]
@@ -55,7 +55,7 @@ max-line-length = 120
 
 [tool.pylint.design]
 max-args = 10
-max-attributes = 7
+max-attributes = 8
 max-bool-expr = 5
 max-branches = 12
 max-locals = 30

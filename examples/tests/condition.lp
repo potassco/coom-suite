@@ -1,18 +1,18 @@
-structure(":root").
-feature(":root",wheel,"Wheel",1,1).
-feature(":root",wheelSupport,"bool",1,1).
+coom_structure("product").
+coom_feature("product","wheel","Wheel",1,1).
+coom_feature("product","wheelSupport","bool",1,1).
 
-enumeration("Wheel").
-option("Wheel", "Small").
-option("Wheel", "Large").
+coom_enumeration("Wheel").
+coom_option("Wheel", "Small").
+coom_option("Wheel", "Large").
 
-behavior(0).
-context(0,":root").
-condition(0,"wheelSupport=True").
-binary(":root","wheelSupport=True","wheelSupport","=","True").
-path("wheelSupport",0,wheelSupport).
-constant("True").
-require(0,"Wheel=Small").
-binary(":root","Wheel=Small","Wheel","=","Small").
-path("Wheel",0,wheel).
-constant("Small").
+coom_behavior(0).
+coom_context(0,"product").
+coom_condition(0,"wheelSupport=True").
+coom_binary("wheelSupport=True","wheelSupport","=","True").
+coom_path("wheelSupport",0,"wheelSupport").
+coom_constant("True").
+coom_require(0,"Wheel=Small").
+coom_binary("Wheel=Small","Wheel","=","Small").
+coom_path("Wheel",0,"wheel").
+coom_constant("Small").

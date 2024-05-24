@@ -1,5 +1,11 @@
 # Fact format of instances
-The instances are generated automatically by parsing a COOM file. We describe here the ASP fact format used for the translation.
+The instances are generated automatically by parsing a COOM file.
+We describe here the ASP fact format used for the translation.
+We prefix every predicate by `coom_` to make distinguish the predicates here
+from the processed predicates used later in the encoding.
+
+
+TODO: Add prefix
 
 ## Building up a product domain
 
@@ -7,7 +13,7 @@ The instances are generated automatically by parsing a COOM file. We describe he
 A COOM product can be made up of a hierarchical component structure.
 The building blocks of the product can be defined by the predicate `structure/1`.
 
-> **Note:** Every product has at least the `structure(":root")` predicate at the top of the hierarchy.
+> **Note:** Every product has at least the `structure("")` predicate at the top of the hierarchy.
 
 ```prolog
 structure(Name).
@@ -18,7 +24,7 @@ Parameters:
 
 Examples:
 ```prolog
-structure(":root").
+structure("").
 structure("Carrier").
 ```
 
@@ -44,8 +50,8 @@ Numeric features are accompanied by a `range/4` predicate.
 
 Examples:
 ```prolog
-feature(":root","totalWeight","num",1,1).
-feature(":root","rearWheel","Wheel",1,1).
+feature("","totalWeight","num",1,1).
+feature("","rearWheel","Wheel",1,1).
 feature("Carrier","bags","Bag",0,3).
 feature("Frame","bags","Bag",2,2).
 ```
@@ -66,10 +72,10 @@ Parameters:
 
 Examples:
 ```prolog
-range(":root","totalWeight",#inf,#sup).
-range(":root","maxWeight",1,100).
-range(":root","totalVolume",0,200).
-range(":root","requestedVolume",0,200).
+range("","totalWeight",#inf,#sup).
+range("","maxWeight",1,100).
+range("","totalVolume",0,200).
+range("","requestedVolume",0,200).
 ```
 > **Note:** When no range is specified in COOM the translation makes use of the
 clingo built-in `#inf` and `#sup` operators.
@@ -80,7 +86,7 @@ Enumerations represent features with a finite domain of predefined choices.
 The predicate `enumeration/1` declares an enumeration field and
 is always accompanied at least by `option/2` predicates specifying the possible choices.
 Optionally, enumerations can also contain attributes such that each option comes along with a fixed set of values.
-These are specified by predicates `attribute/3` and `attr_value/4`.
+These are specified by predicates `attribute/3` and `attribute_value/4`.
 
 
 ```prolog
@@ -136,7 +142,7 @@ attribute("Capacity","weight","num").
 Assigns an attribute value to an enumeration option.
 
 ```prolog
-attr_value(NameOfEnumeration,NameOfOption,NameOfAttribute,AttributeValue).
+attribute_value(NameOfEnumeration,NameOfOption,NameOfAttribute,AttributeValue).
 ```
 
 Parameters:
@@ -147,14 +153,14 @@ Parameters:
 
 Examples:
 ```prolog
-attr_value("Capacity","B10","volume",10).
-attr_value("Capacity","B10","weight",100).
-attr_value("Capacity","B20","volume",20).
-attr_value("Capacity","B20","weight",250).
-attr_value("Capacity","B50","volume",50).
-attr_value("Capacity","B50","weight",600).
-attr_value("Capacity","B100","volume",100).
-attr_value("Capacity","B100","weight",1200).
+attribute_value("Capacity","B10","volume",10).
+attribute_value("Capacity","B10","weight",100).
+attribute_value("Capacity","B20","volume",20).
+attribute_value("Capacity","B20","weight",250).
+attribute_value("Capacity","B50","volume",50).
+attribute_value("Capacity","B50","weight",600).
+attribute_value("Capacity","B100","volume",100).
+attribute_value("Capacity","B100","weight",1200).
 ```
 
 ## Constraints
@@ -173,8 +179,8 @@ Parameters:
 
 Examples:
 ```prolog
-behavior((":root",0)).
-behavior((":root",1)).
+behavior(("",0)).
+behavior(("",1)).
 behavior(("Bag",7)).
 ```
 
@@ -198,10 +204,10 @@ Parameters:
 
 Examples:
 ```prolog
-require((":root",0),"count(carrier.bags)+count(frame.bags)<=4").
-require((":root",2),"totalWeight<=maxWeight").
-require((":root",4),"totalVolume>=requestedVolume").
-require((":root",6),"frontWheel.size=20").
+require(("",0),"count(carrier.bags)+count(frame.bags)<=4").
+require(("",2),"totalWeight<=maxWeight").
+require(("",4),"totalVolume>=requestedVolume").
+require(("",6),"frontWheel.size=20").
 ```
 
 
@@ -222,8 +228,8 @@ Parameters:
 
 Examples:
 ```prolog
-condition((":root",6),"color=Red").
-condition((":root",0),"color=Yellow").
+condition(("",6),"color=Red").
+condition(("",0),"color=Yellow").
 ```
 
 
@@ -242,8 +248,8 @@ Parameters:
 
 Examples:
 ```prolog
-imply((":root",1),"totalWeight","frontWheel.weight+rearWheel.weight").
-imply((":root",3),"totalVolume","sum(carrier.bags.capacity.volume)+sum(frame.bags.capacity.volume)").
+imply(("",1),"totalWeight","frontWheel.weight+rearWheel.weight").
+imply(("",3),"totalVolume","sum(carrier.bags.capacity.volume)+sum(frame.bags.capacity.volume)").
 ```
 
 ### Combinations
@@ -262,8 +268,8 @@ Parameters:
 
 Examples:
 ```prolog
-combinations((":root",1),0,"wheelSupport").
-combinations((":root",1),1,"rearWheel").
+combinations(("",1),0,"wheelSupport").
+combinations(("",1),1,"rearWheel").
 ```
 
 > **Note:** Longer paths can be formed in COOM by concatenating paths with a dot ('.').
@@ -286,12 +292,12 @@ Parameters:
 
 Examples:
 ```prolog
-allow((":root",1),(0,0),"True").
-allow((":root",1),(1,0),"W14").
-allow((":root",1),(1,0),"W16").
-allow((":root",1),(0,1),"False").
-allow((":root",1),(1,1),"W18").
-allow((":root",1),(1,1),"W20").
+allow(("",1),(0,0),"True").
+allow(("",1),(1,0),"W14").
+allow(("",1),(1,0),"W16").
+allow(("",1),(0,1),"False").
+allow(("",1),(1,1),"W18").
+allow(("",1),(1,1),"W20").
 ```
 
 ### Unary
@@ -318,10 +324,10 @@ Parameters:
 
 Examples:
 ```prolog
-binary(":root","color=Red","color","=","Red").
-binary(":root","frontWheel.size=20","frontWheel.size","=","20").
-binary(":root","count(carrier.bags)+count(frame.bags)<=4","count(carrier.bags)+count(frame.bags)","<=","4").
-binary(":root","count(carrier.bags)+count(frame.bags)","count(carrier.bags)","+","count(frame.bags)").
+binary("","color=Red","color","=","Red").
+binary("","frontWheel.size=20","frontWheel.size","=","20").
+binary("","count(carrier.bags)+count(frame.bags)<=4","count(carrier.bags)+count(frame.bags)","<=","4").
+binary("","count(carrier.bags)+count(frame.bags)","count(carrier.bags)","+","count(frame.bags)").
 binary("Bag","material=Leather","material","=","Leather").
 ```
 
@@ -344,10 +350,10 @@ Parameters:
 
 Examples:
 ```prolog
-function(":root","count(carrier.bags)","count","carrier.bags").
-function(":root","count(frame.bags)","count","frame.bags").
-function(":root","sum(carrier.bags.capacity.weight)","sum","carrier.bags.capacity.weight").
-function(":root","sum(frame.bags.capacity.weight)","sum","frame.bags.capacity.weight").
+function("","count(carrier.bags)","count","carrier.bags").
+function("","count(frame.bags)","count","frame.bags").
+function("","sum(carrier.bags.capacity.weight)","sum","carrier.bags.capacity.weight").
+function("","sum(frame.bags.capacity.weight)","sum","frame.bags.capacity.weight").
 ```
 
 ### Path expressions

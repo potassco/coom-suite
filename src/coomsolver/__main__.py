@@ -36,7 +36,7 @@ def main():
         with TemporaryDirectory() as temp_dir:
             output_lp_file = convert_instance(args.input, temp_dir)
             clingo_main(
-                COOMApp(solver=args.solver, profile=args.profile, output=args.output),
+                COOMApp(solver=args.solver, profile=args.profile, output=args.output, show=args.show),
                 [output_lp_file] + unknown_args,
             )
 
