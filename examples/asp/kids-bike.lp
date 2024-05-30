@@ -1,26 +1,39 @@
-% Original "COOM" fact format describing the structure of the model
-structure("product").
-feature("product","color","Color",1,1).
-feature("product","wheelSupport","bool",1,1).
-feature("product","frontWheel","Wheel",1,1).
-feature("product","rearWheel","Wheel",1,1).
+% Structure of the model
+part("product").
+% cardinality("product","color",1,1).
+% cardinality("product","wheelSupport",1,1).
+% cardinality("product","frontWheel",1,1).
+% cardinality("product","rearWheel",1,1).
+% Or use multiplicity? And one atom for each range?
+% cardinality("frontWheel","size",1,1).
+% cardinality("rearWheel","size",1,1).
 
-enumeration("Color").
-option("Color", "Red").
-option("Color", "Green").
-option("Color", "Yellow").
-option("Color", "Blue").
+% feature("product","color","Color",1,1).
+% feature("product","wheelSupport","bool",1,1).
+% feature("product","frontWheel","Wheel",1,1).
+% feature("product","rearWheel","Wheel",1,1).
 
-enumeration("Wheel").
-attribute("Wheel","size","num").
-option("Wheel", "W14").
-attribute_value("Wheel","W14","size",14).
-option("Wheel", "W16").
-attribute_value("Wheel","W16","size",16).
-option("Wheel", "W18").
-attribute_value("Wheel","W18","size",18).
-option("Wheel", "W20").
-attribute_value("Wheel","W20","size",20).
+attribute("Color","discrete").
+domain("Color","Red").
+domain("Color","Green").
+domain("Color","Yellow").
+domain("Color","Blue").
+
+attribute("Wheel","discrete").
+domain("Wheel","W14").
+% attribute("Wheel","W14","size",14).
+domain("Wheel","W16").
+% attribute("Wheel","W16","size",16).
+domain("Wheel","W18").
+% attribute("Wheel","W18","size",18).
+domain("Wheel","W20").
+% attribute("Wheel","W20","size",20).
+
+attribute("size","numeric").
+domain("size",14).
+domain("size",16).
+domain("size",18).
+domain("size",20).
 
 % Complete generated instance tree
 type("root","product").
@@ -61,8 +74,8 @@ number("16",16).
 
 
 constraint((1,"root")).
-combinations((1,"root"),0,0,"root.wheelSupport[0]").
-combinations((1,"root"),0,1,"root.rearWheel[0]").
+column((1,"root"),0,0,"root.wheelSupport[0]").
+column((1,"root"),0,1,"root.rearWheel[0]").
 allow(1,(0,0),"True").
 allow(1,(1,0),"W14").
 allow(1,(1,0),"W16").
@@ -74,3 +87,21 @@ allow(1,(1,1),"W20").
 constraint((2,"root")).
 require((2,"root"),"root.frontWheel[0].size[0]=root.rearWheel[0].size[0]").
 binary("root.frontWheel[0].size[0]=root.rearWheel[0].size[0]","root.frontWheel[0].size[0]","=","root.rearWheel[0].size[0]").
+
+
+constraint(("Wheel.size","root.frontWheel[0]")).
+column(("Wheel.size","root.frontWheel[0]"),0,0,"root.frontWheel[0]").
+column(("Wheel.size","root.frontWheel[0]"),0,1,"root.frontWheel[0].size[0]").
+
+constraint(("Wheel.size","root.rearWheel[0]")).
+column(("Wheel.size","root.rearWheel[0]"),0,0,"root.rearWheel[0]").
+column(("Wheel.size","root.rearWheel[0]"),0,1,"root.rearWheel[0].size[0]").
+
+allow("Wheel.size",(0,0),"W14").
+allow("Wheel.size",(1,0),14).
+allow("Wheel.size",(0,1),"W16").
+allow("Wheel.size",(1,1),16).
+allow("Wheel.size",(0,2),"W18").
+allow("Wheel.size",(1,2),18).
+allow("Wheel.size",(0,3),"W20").
+allow("Wheel.size",(1,3),20).

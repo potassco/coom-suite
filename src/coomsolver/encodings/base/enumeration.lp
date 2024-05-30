@@ -1,29 +1,31 @@
 % Always include root instance
-included("root").
+include("root").
 % Enumeration variables are always included when its parents are included
-included(X) :- enumeration(T), type(X,T), parent(X,P), included(P).
+include(X) :- type(X,T), parent(X,P), include(P), attribute(T,_).
 % Attribute variables are included when their enumeration variables are included (can only have enumeration as parent)
-included(X) :- enumeration(T), type(X',T), included(X'), parent(X,X').
+% include(X) :- type(X',T), include(X'), parent(X,X').
 
 % % Generate enumeration values
-% { val(X,O) : type(X,T), enumeration(T), option(T,O) } 1.
+% { value(X,O) : type(X,T), enumeration(T), option(T,O) } 1.
 
 % % No value if variable has not been included
-% % Can be made general as structures do not have val/2
-% :- type(X,T), val(X,_),  not included(X).
+% % Can be made general as structures do not have value/2
+% :- type(X,T), value(X,_),  not include(X).
 
 % % Exactly one value if variable has been included
-% :- enumeration(T), type(X,T), included(X), not { val(X,_) } = 1.
+% :- enumeration(T), type(X,T), include(X), not { value(X,_) } = 1.
 
 % More readable
-1 { val(X,O) : type(X,T), enumeration(T), option(T,O) } 1 :- included(X).
+{ value(X,O) : domain(T,O) } = 1 :- include(X), type(X,T), attribute(T,"discrete").
+
+{ value(X,O) : domain(T,O) } = 1 :- include(X), type(X,T), attribute(T,"numeric"). % TODO: Separate for fclingo or how?
 
 
-% Derive associated attribute values
-attribute_aux(X,V) :- attribute_value(T,O,N,V),
-                      type(X,N), parent(X,X'), type(X',T),
-                      val(X',O).
+% % Derive associated attribute values
+% attribute_aux(X,V) :- attribute(T,O,N,V),
+%                       type(X,N), parent(X,X'), type(X',T),
+%                       include(X), value(X',O).
 
 % Show statements
 #show .
-#show val(X,V) : val(X,V), type(X,T), enumeration(T).
+#show value(X,V) : value(X,V), type(X,T), attribute(T,_).
