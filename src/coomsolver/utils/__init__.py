@@ -52,9 +52,9 @@ def format_sym_coom(s: Symbol) -> str:
     """
     Formats output symbols to a more readable COOM format.
     """
-    if s.name == "included":
+    if s.name == "include":
         return s.arguments[0].string.removeprefix("root.")
-    if s.name == "val":
+    if s.name == "value":
         path = s.arguments[0].string.removeprefix("root.")
         value = s.arguments[1]
         return f"{path} = {value}"

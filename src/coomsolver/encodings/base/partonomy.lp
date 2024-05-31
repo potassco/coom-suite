@@ -1,7 +1,7 @@
 % Generate structure object inclusion
-% { include(X) : type(X,T), structure(T) }.
 { include(X) : type(X,T), part(T) }.
-% Always include minimal number of objects
+
+% Always include minimal number of objects (no optimizations)
 % include(X) :- feature(C,_,T,Min,_), type(X,T), index(X,I), I < Min,
 %                parent(X,P), include(P), type(P,C).
 

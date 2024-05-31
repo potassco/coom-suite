@@ -2,11 +2,11 @@
 cardinality("product","totalWeight",1,1).
 range("product","totalWeight",1,10000).
 cardinality("product","maxWeight",1,1).
-range("product","maxWeight",10,10).
+range("product","maxWeight",1,10).
 cardinality("product","totalVolume",1,1).
 range("product","totalVolume",0,200).
 cardinality("product","requestedVolume",1,1).
-range("product","requestedVolume",200,200).
+range("product","requestedVolume",0,200).
 cardinality("product","frontWheel",1,1).
 cardinality("product","rearWheel",1,1).
 cardinality("product","frame",1,1).
@@ -23,6 +23,7 @@ part("Bag").
 cardinality("Bag","capacity",1,1).
 cardinality("Bag","material",1,1).
 
+% Attributes of the model
 attribute("Capacity","discrete").
 domain("Capacity", "B10").
 domain("Capacity", "B20").
@@ -73,7 +74,7 @@ domain("Color", "Green").
 domain("Color", "Yellow").
 domain("Color", "Blue").
 
-% Complete generated instance tree
+% Complete instance tree
 type("root","product").
 
 type("root.totalWeight[0]","num").
@@ -235,7 +236,7 @@ type("root.frame[0].bag[1].material[0]","Material").
 parent("root.frame[0].bag[1].material[0]", "root.frame[0].bag[1]").
 name("root.frame[0].bag[1].material[0]","material").
 
-% Instantiated constraints on complete instance tree
+% Instantiated constraints
 constraint((0,"root")).
 require((0,"root"),"count(root.carrier.bag)+count(root.frame.bag)<=4").
 binary("count(root.carrier.bag)+count(root.frame.bag)<=4","count(root.carrier.bag)+count(root.frame.bag)","<=","4").
