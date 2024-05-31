@@ -241,12 +241,12 @@ require((0,"root"),"count(root.carrier.bag)+count(root.frame.bag)<=4").
 binary("count(root.carrier.bag)+count(root.frame.bag)<=4","count(root.carrier.bag)+count(root.frame.bag)","<=","4").
 binary("count(root.carrier.bag)+count(root.frame.bag)","count(root.carrier.bag)","+","count(root.frame.bag)").
 function("count(root.carrier.bag)","count","root.carrier.bag").
-function_path("root.carrier.bag","root.carrier[0].bag[0]").
-function_path("root.carrier.bag","root.carrier[0].bag[1]").
-function_path("root.carrier.bag","root.carrier[0].bag[2]").
+path("root.carrier.bag","root.carrier[0].bag[0]").
+path("root.carrier.bag","root.carrier[0].bag[1]").
+path("root.carrier.bag","root.carrier[0].bag[2]").
 function("count(root.frame.bag)","count","root.frame.bag").
-function_path("root.frame.bag","root.frame[0].bag[0]").
-function_path("root.frame.bag","root.frame[0].bag[1]").
+path("root.frame.bag","root.frame[0].bag[0]").
+path("root.frame.bag","root.frame[0].bag[1]").
 number("4",4).
 
 constraint((1,"root")).
@@ -255,12 +255,12 @@ binary("root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrie
 binary("root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)","root.rearWheel[0].weight[0]","+","sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)").
 binary("sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)","sum(root.carrier.bag.capacity.weight)","+","sum(root.frame.bag.capacity.weight)").
 function("sum(root.carrier.bag.capacity.weight)","sum","root.carrier.bag.capacity.weight").
-function_path("root.carrier.bag.capacity.weight","root.carrier[0].bag[0].capacity[0].weight[0]").
-function_path("root.carrier.bag.capacity.weight","root.carrier[0].bag[1].capacity[0].weight[0]").
-function_path("root.carrier.bag.capacity.weight","root.carrier[0].bag[2].capacity[0].weight[0]").
+path("root.carrier.bag.capacity.weight","root.carrier[0].bag[0].capacity[0].weight[0]").
+path("root.carrier.bag.capacity.weight","root.carrier[0].bag[1].capacity[0].weight[0]").
+path("root.carrier.bag.capacity.weight","root.carrier[0].bag[2].capacity[0].weight[0]").
 function("sum(root.frame.bag.capacity.weight)","sum","root.frame.bag.capacity.weight").
-function_path("root.frame.bag.capacity.weight","root.frame[0].bag[0].capacity[0].weight[0]").
-function_path("root.frame.bag.capacity.weight","root.frame[0].bag[1].capacity[0].weight[0]").
+path("root.frame.bag.capacity.weight","root.frame[0].bag[0].capacity[0].weight[0]").
+path("root.frame.bag.capacity.weight","root.frame[0].bag[1].capacity[0].weight[0]").
 
 constraint((2,"root")).
 require((2,"root"),"root.totalWeight[0]<=root.maxWeight[0]*1000").
@@ -272,12 +272,12 @@ constraint((3,"root")).
 imply("root.totalVolume[0]","sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)").
 binary("sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)","sum(root.carrier.bag.capacity.volume)","+","sum(root.frame.bag.capacity.volume)").
 function("sum(root.carrier.bag.capacity.volume)","sum","root.carrier.bag.capacity.volume").
-function_path("root.carrier.bag.capacity.volume","root.carrier[0].bag[0].capacity[0].volume[0]").
-function_path("root.carrier.bag.capacity.volume","root.carrier[0].bag[1].capacity[0].volume[0]").
-function_path("root.carrier.bag.capacity.volume","root.carrier[0].bag[2].capacity[0].volume[0]").
+path("root.carrier.bag.capacity.volume","root.carrier[0].bag[0].capacity[0].volume[0]").
+path("root.carrier.bag.capacity.volume","root.carrier[0].bag[1].capacity[0].volume[0]").
+path("root.carrier.bag.capacity.volume","root.carrier[0].bag[2].capacity[0].volume[0]").
 function("sum(root.frame.bag.capacity.volume)","sum","root.frame.bag.capacity.volume").
-function_path("root.frame.bag.capacity.volume","root.frame[0].bag[0].capacity[0].volume[0]").
-function_path("root.frame.bag.capacity.volume","root.frame[0].bag[1].capacity[0].volume[0]").
+path("root.frame.bag.capacity.volume","root.frame[0].bag[0].capacity[0].volume[0]").
+path("root.frame.bag.capacity.volume","root.frame[0].bag[1].capacity[0].volume[0]").
 
 constraint((4,"root")).
 require((4,"root"),"root.totalVolume[0]>=root.requestedVolume[0]").

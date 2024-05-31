@@ -21,5 +21,5 @@
 #defined number/2.
 
 #defined function/3.
-#defined function_path/2.
+#defined path/2.
 #defined imply/2.
