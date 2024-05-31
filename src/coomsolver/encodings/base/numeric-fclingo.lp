@@ -1,18 +1,18 @@
 % Derive range for each numeric feature variable
-range(X,Min,Max) :- feature(C,F,"num",_,_), range(C,F,Min,Max),
-                    type(X,"num"), feature(X,F), parent(X,P), type(P,C).
+range(X,Min,Max) :- range(C,N,Min,Max),
+                    type(X,"num"), name(X,N), parent(X,P), type(P,C).
 
 % Numeric variables are always included when its parents are included
-included(X) :- type(X,"num"), parent(X,P), included(P).
+include(X) :- type(X,"num"), parent(X,P), include(P).
 
 % Assign a value to a numeric feature
-&in{Min..Max} =: X :- type(X,"num"), range(X,Min,Max), included(X).
+&in{Min..Max} =: X :- type(X,"num"), range(X,Min,Max), include(X).
 
 % Evaluate functions (aggregates)
-&sus{ 1,X : function_path(P,X), included(X) } =: F :- function(F,"count",P).
-&sus{   X : function_path(P,X), included(X) } =: F :- function(F,"sum",  P).
-&min{   X : function_path(P,X), included(X) } =: F :- function(F,"min",  P).
-&max{   X : function_path(P,X), included(X) } =: F :- function(F,"max",  P).
+&sus{ 1,X : path(P,X), include(X) } =: F :- function(F,"count",P).
+&sus{   X : path(P,X), include(X) } =: F :- function(F,"sum",  P).
+&min{   X : path(P,X), include(X) } =: F :- function(F,"min",  P).
+&max{   X : path(P,X), include(X) } =: F :- function(F,"max",  P).
 
 % Arithmetics
 &sus{ XL;  XR } =: F :- binary(F,XL,"+",XR).
@@ -25,7 +25,7 @@ included(X) :- type(X,"num"), parent(X,P), included(P).
 % TODO: Add more arithmetics (division and power)
 
 % Imply statements
-&sus{ F } =: X :- imply(X,F), included(X).
+&sus{ F } =: X :- imply(X,F), include(X).
 
 % Show statement for numeric values
-&show { X : type(X,"num"), included(X) }.
+&show { X : type(X,"num"), include(X) }.

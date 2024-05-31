@@ -33,9 +33,9 @@ class TestSanityChecks(TestCase):
 
         program_enum_attr = """
         coom_enumeration("a").
-        coom_attribute("a",b,"num").
+        coom_attribute("a","b","num").
         coom_option("a", "a1").
-        coom_attribute_value("a","a1",b,1)."""
+        coom_attribute_value("a","a1","b",1)."""
         run_test(deepcopy(TEST_EMPTY), program=program_enum_attr, profile="core")
 
     def test_no_feature(self) -> None:
