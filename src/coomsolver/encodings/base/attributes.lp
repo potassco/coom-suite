@@ -1,9 +1,9 @@
 % Always include root instance
 include("root").
-% Enumeration variables are always included when its parents are included
+
+% Attribute variables are always included when its parents are included
 include(X) :- type(X,T), parent(X,P), include(P), attribute(T,_).
-% Attribute variables are included when their enumeration variables are included (can only have enumeration as parent)
-% include(X) :- type(X',T), include(X'), parent(X,X').
+
 
 % % Generate enumeration values
 % { value(X,O) : type(X,T), enumeration(T), option(T,O) } 1.
@@ -19,12 +19,6 @@ include(X) :- type(X,T), parent(X,P), include(P), attribute(T,_).
 { value(X,O) : domain(T,O) } = 1 :- include(X), type(X,T), attribute(T,"discrete").
 
 { value(X,O) : domain(T,O) } = 1 :- include(X), type(X,T), attribute(T,"numeric"). % TODO: Separate for fclingo or how?
-
-
-% % Derive associated attribute values
-% attribute_aux(X,V) :- attribute(T,O,N,V),
-%                       type(X,N), parent(X,X'), type(X',T),
-%                       include(X), value(X',O).
 
 % Show statements
 #show .
