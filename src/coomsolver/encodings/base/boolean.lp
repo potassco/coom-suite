@@ -1,4 +1,4 @@
-% Always include boolean enumeration
-enumeration("bool").
-option("bool", "True").
-option("bool", "False").
+% Always include boolean
+attribute("bool","discrete").
+domain("bool", "True").
+domain("bool", "False").

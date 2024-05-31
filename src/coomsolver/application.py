@@ -25,7 +25,7 @@ log = get_logger("main")
 
 def _get_valuation(model: Model) -> List[Symbol]:
     return [
-        Function("val", assignment.arguments)
+        Function("value", assignment.arguments)
         for assignment in model.symbols(theory=True)
         if assignment.name == CSP
         and len(assignment.arguments) == 2

@@ -1,146 +1,148 @@
-% Original "COOM" fact format describing the structure of the model
-structure("product").
-feature("product","color","Color",1,1).
-feature("product","basket","Basket",0,1).
-feature("product","saddle","Saddle",1,1).
-feature("product","frontWheel","Wheel",1,1).
-feature("product","rearWheel","Wheel",1,1).
-feature("product","carrier","Carrier",1,1).
+% Partonomy of the model
+cardinality("product","color",1,1).
+cardinality("product","basket",0,1).
+cardinality("product","saddle",1,1).
+cardinality("product","frontWheel",1,1).
+cardinality("product","rearWheel",1,1).
+cardinality("product","carrier",1,1).
 
-structure("Basket").
-feature("Basket","position","Position",1,1).
-feature("Basket","color","Color",1,1).
+part("Basket").
+cardinality("Basket","position",1,1).
+cardinality("Basket","color",1,1).
 
-structure("Carrier").
-feature("Carrier","bag","Bag",0,2).
+part("Carrier").
+cardinality("Carrier","bag",0,2).
 
-structure("Bag").
-feature("Bag","capacity","Capacity",1,1).
-feature("Bag","material","Material",1,1).
+part("Bag").
+cardinality("Bag","capacity",1,1).
+cardinality("Bag","material",1,1).
 
-enumeration("Color").
-option("Color", "Silver").
-option("Color", "White").
-option("Color", "Black").
-option("Color", "Blue").
+% Attributes of the model
+attribute("Color","discrete").
+domain("Color", "Silver").
+domain("Color", "White").
+domain("Color", "Black").
+domain("Color", "Blue").
 
-enumeration("Position").
-option("Position", "Front").
-option("Position", "Back").
+attribute("Position","discrete").
+domain("Position", "Front").
+domain("Position", "Back").
 
-enumeration("Saddle").
-option("Saddle", "Standard").
-option("Saddle", "Comfort").
-option("Saddle", "Vintage").
+attribute("Saddle","discrete").
+domain("Saddle", "Standard").
+domain("Saddle", "Comfort").
+domain("Saddle", "Vintage").
 
-enumeration("Wheel").
-attribute("Wheel","size","num").
-option("Wheel", "W26").
-attribute_value("Wheel","W26","size",26).
-option("Wheel", "W27").
-attribute_value("Wheel","W27","size",27).
-option("Wheel", "W28").
-attribute_value("Wheel","W28","size",28).
-option("Wheel", "W29").
-attribute_value("Wheel","W29","size",29).
+attribute("Wheel","discrete").
+domain("Wheel", "W26").
+domain("Wheel", "W27").
+domain("Wheel", "W28").
+domain("Wheel", "W29").
 
-enumeration("Capacity").
-attribute("Capacity","volume","num").
-option("Capacity", "B10").
-attribute_value("Capacity","B10","volume",10).
-option("Capacity", "B20").
-attribute_value("Capacity","B20","volume",20).
-option("Capacity", "B50").
-attribute_value("Capacity","B50","volume",50).
-option("Capacity", "B100").
-attribute_value("Capacity","B100","volume",100).
+attribute("Wheel.size","numeric").
+domain("Wheel.size",26).
+domain("Wheel.size",27).
+domain("Wheel.size",28).
+domain("Wheel.size",29).
 
-enumeration("Material").
-option("Material", "Cotton").
-option("Material", "Leather").
-option("Material", "Polyester").
+attribute("Capacity","discrete").
+domain("Capacity", "B10").
+domain("Capacity", "B20").
+domain("Capacity", "B50").
+domain("Capacity", "B100").
 
-% Complete generated instance tree
+attribute("Capacity.volume","numeric").
+domain("Capacity.volume",10).
+domain("Capacity.volume",20).
+domain("Capacity.volume",50).
+domain("Capacity.volume",100).
+
+attribute("Material","discrete").
+domain("Material", "Cotton").
+domain("Material", "Leather").
+domain("Material", "Polyester").
+
+% Complete instance tree
 type("root","product").
 
 type("root.carrier[0]","Carrier").
 index("root.carrier[0]",0).
 parent("root.carrier[0]", "root").
-feature("root.carrier[0]","carrier").
+name("root.carrier[0]","carrier").
 
 type("root.basket[0]","Basket").
 index("root.basket[0]",0).
 parent("root.basket[0]", "root").
-feature("root.basket[0]","basket").
+name("root.basket[0]","basket").
 
 type("root.carrier[0].bag[0]","Bag").
 index("root.carrier[0].bag[0]",0).
 parent("root.carrier[0].bag[0]", "root.carrier[0]").
-feature("root.carrier[0].bag[0]","bag").
+name("root.carrier[0].bag[0]","bag").
 
 type("root.carrier[0].bag[1]","Bag").
 index("root.carrier[0].bag[1]",1).
 parent("root.carrier[0].bag[1]", "root.carrier[0]").
-feature("root.carrier[0].bag[1]","bag").
+name("root.carrier[0].bag[1]","bag").
 
 type("root.color[0]","Color").
 parent("root.color[0]", "root").
-feature("root.color[0]","color").
+name("root.color[0]","color").
 
 type("root.saddle[0]","Saddle").
 parent("root.saddle[0]", "root").
-feature("root.saddle[0]","saddle").
+name("root.saddle[0]","saddle").
 
 type("root.frontWheel[0]","Wheel").
 parent("root.frontWheel[0]", "root").
-feature("root.frontWheel[0]","frontWheel").
+name("root.frontWheel[0]","frontWheel").
 
-type("root.frontWheel[0].size[0]","size").
+type("root.frontWheel[0].size[0]","Wheel.size").
 parent("root.frontWheel[0].size[0]","root.frontWheel[0]").
 isnumeric("root.frontWheel[0].size[0]").
 
 type("root.rearWheel[0]","Wheel").
 parent("root.rearWheel[0]", "root").
-feature("root.rearWheel[0]","rearWheel").
+name("root.rearWheel[0]","rearWheel").
 
-type("root.rearWheel[0].size[0]","size").
+type("root.rearWheel[0].size[0]","Wheel.size").
 parent("root.rearWheel[0].size[0]","root.rearWheel[0]").
 isnumeric("root.rearWheel[0].size[0]").
 
 type("root.basket[0].root.color[0]","Color").
 parent("root.basket[0].root.color[0]","root.basket[0]").
-feature("root.basket[0].root.color[0]","color").
+name("root.basket[0].root.color[0]","color").
 
 type("root.basket[0].position[0]","Position").
 parent("root.basket[0].position[0]","root.basket[0]").
-feature("root.basket[0].position[0]","position").
+name("root.basket[0].position[0]","position").
 
 type("root.carrier[0].bag[0].capacity[0]","Capacity").
 parent("root.carrier[0].bag[0].capacity[0]", "root.carrier[0].bag[0]").
-feature("root.carrier[0].bag[0].capacity[0]","capacity").
+name("root.carrier[0].bag[0].capacity[0]","capacity").
 
-type("root.carrier[0].bag[0].capacity[0].volume[0]","volume").
+type("root.carrier[0].bag[0].capacity[0].volume[0]","Capacity.volume").
 parent("root.carrier[0].bag[0].capacity[0].volume[0]","root.carrier[0].bag[0].capacity[0]").
 isnumeric("root.carrier[0].bag[0].capacity[0].volume[0]").
 
 type("root.carrier[0].bag[1].capacity[0]","Capacity").
 parent("root.carrier[0].bag[1].capacity[0]", "root.carrier[0].bag[1]").
-feature("root.carrier[0].bag[1].capacity[0]","capacity").
+name("root.carrier[0].bag[1].capacity[0]","capacity").
 
-type("root.carrier[0].bag[1].capacity[0].volume[0]","volume").
+type("root.carrier[0].bag[1].capacity[0].volume[0]","Capacity.volume").
 parent("root.carrier[0].bag[1].capacity[0].volume[0]","root.carrier[0].bag[1].capacity[0]").
 isnumeric("root.carrier[0].bag[1].capacity[0].volume[0]").
 
 type("root.carrier[0].bag[0].material[0]","Material").
 parent("root.carrier[0].bag[0].material[0]", "root.carrier[0].bag[0]").
-feature("root.carrier[0].bag[0].material[0]","material").
+name("root.carrier[0].bag[0].material[0]","material").
 
 type("root.carrier[0].bag[1].material[0]","Material").
 parent("root.carrier[0].bag[1].material[0]", "root.carrier[0].bag[1]").
-feature("root.carrier[0].bag[1].material[0]","material").
+name("root.carrier[0].bag[1].material[0]","material").
 
 
-% Instantiated constraints on complete instance tree
+% Instantiated constraints
 constraint((0,"root")).
 require((0,"root"),"root.color[0]=root.basket[0].root.color[0]").
 binary("root.color[0]=root.basket[0].root.color[0]","root.color[0]","=","root.basket[0].root.color[0]").
@@ -195,12 +197,12 @@ binary("root.frontWheel[0].size[0]=root.rearWheel[0].size[0]","root.frontWheel[0
 
 
 constraint((5,"root.carrier[0].bag[0]")).
-combinations((5,"root.carrier[0].bag[0]"),0,0,"root.carrier[0].bag[0].material[0]").
-combinations((5,"root.carrier[0].bag[0]"),0,1,"root.carrier[0].bag[0].capacity[0]").
+column((5,"root.carrier[0].bag[0]"),0,0,"root.carrier[0].bag[0].material[0]").
+column((5,"root.carrier[0].bag[0]"),0,1,"root.carrier[0].bag[0].capacity[0]").
 
 constraint((5,"root.carrier[0].bag[1]")).
-combinations((5,"root.carrier[0].bag[1]"),0,0,"root.carrier[0].bag[1].material[0]").
-combinations((5,"root.carrier[0].bag[1]"),0,1,"root.carrier[0].bag[1].capacity[0]").
+column((5,"root.carrier[0].bag[1]"),0,0,"root.carrier[0].bag[1].material[0]").
+column((5,"root.carrier[0].bag[1]"),0,1,"root.carrier[0].bag[1].capacity[0]").
 
 allow(5,(0,0),"Leather").
 allow(5,(1,0),"B10").
@@ -211,3 +213,39 @@ allow(5,(0,2),"Polyester").
 allow(5,(1,2),"B20").
 allow(5,(1,2),"B50").
 allow(5,(1,2),"B100").
+
+% Attribute constraints
+constraint(("Wheel","root.frontWheel[0]")).
+column(("Wheel","root.frontWheel[0]"),0,0,"root.frontWheel[0]").
+column(("Wheel","root.frontWheel[0]"),0,1,"root.frontWheel[0].size[0]").
+
+constraint(("Wheel","root.rearWheel[0]")).
+column(("Wheel","root.rearWheel[0]"),0,0,"root.rearWheel[0]").
+column(("Wheel","root.rearWheel[0]"),0,1,"root.rearWheel[0].size[0]").
+
+allow("Wheel",(0,0),"W26").
+allow("Wheel",(1,0),26).
+allow("Wheel",(0,1),"W27").
+allow("Wheel",(1,1),27).
+allow("Wheel",(0,2),"W28").
+allow("Wheel",(1,2),28).
+allow("Wheel",(0,3),"W29").
+allow("Wheel",(1,3),29).
+
+
+constraint(("Capacity","root.carrier[0].bag[0]")).
+column(("Capacity","root.carrier[0].bag[0]"),0,0,"root.carrier[0].bag[0].capacity[0]").
+column(("Capacity","root.carrier[0].bag[0]"),0,1,"root.carrier[0].bag[0].capacity[0].volume[0]").
+
+constraint(("Capacity","root.carrier[0].bag[1]")).
+column(("Capacity","root.carrier[0].bag[1]"),0,0,"root.carrier[0].bag[1].capacity[0]").
+column(("Capacity","root.carrier[0].bag[1]"),0,1,"root.carrier[0].bag[1].capacity[0].volume[0]").
+
+allow("Capacity",(0,0),"B10").
+allow("Capacity",(1,0),10).
+allow("Capacity",(0,1),"B20").
+allow("Capacity",(1,1),20).
+allow("Capacity",(0,2),"B50").
+allow("Capacity",(1,2),50).
+allow("Capacity",(0,3),"B100").
+allow("Capacity",(1,3),100).

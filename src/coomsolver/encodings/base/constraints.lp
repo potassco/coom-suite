@@ -1,40 +1,40 @@
 % Constraints cannot be unsatisfied
-:- constraint(C), unsat(C,_).
+:- constraint(C), unsatisfied(C,_).
 
 % Require without condition
 % Require must not be false to be satisfied (can be undefined)
-unsat(C,B) :- not condition(I), require(C,B), C = (I,_),
-                                -sat(B).
+unsatisfied(C,B) :- not condition(I), require(C,B), C = (I,_),
+                    -satisfied(B).
 
 % Require with condition
 % Condition has to be true to become active (must not be undefined)
-unsat(C,(BC,BR)) :- condition(C,BC), require(C,BR),
-                    sat(BC),         -sat(BR).
+unsatisfied(C,(BC,BR)) :- condition(C,BC), require(C,BR),
+                          satisfied(BC),   -satisfied(BR).
 
 % Combinations Table (only for allow)
 % Table constraint is satisfied if a row is satisfied
-unsat(C,ID) :- combinations(C,ID,_,_), not hit_row(C,ID), def(C,ID).
+unsatisfied(C,ID) :- column(C,ID,_,_), not hit_row(C,ID), defined(C,ID).
 
 % Satisfaction of binary relations
-def(F) :- binary(F,X1,_,X2), val(X1,_), val(X2,_).
+defined(F) :- binary(F,X1,_,X2), value(X1,_), value(X2,_).
 
-sat(F) :- binary(F,X1,"=", X2), V1 = V2,  val(X1,V1), val(X2,V2).
-sat(F) :- binary(F,X1,"!=",X2), V1 != V2, val(X1,V1), val(X2,V2).
-sat(F) :- binary(F,X1,">", X2), V1 > V2,  val(X1,V1), val(X2,V2).
-sat(F) :- binary(F,X1,">=",X2), V1 >= V2, val(X1,V1), val(X2,V2).
-sat(F) :- binary(F,X1,"<", X2), V1 < V2,  val(X1,V1), val(X2,V2).
-sat(F) :- binary(F,X1,"<=",X2), V1 <= V2, val(X1,V1), val(X2,V2).
+satisfied(F) :- binary(F,X1,"=", X2), V1 = V2,  value(X1,V1), value(X2,V2).
+satisfied(F) :- binary(F,X1,"!=",X2), V1 != V2, value(X1,V1), value(X2,V2).
+satisfied(F) :- binary(F,X1,">", X2), V1 > V2,  value(X1,V1), value(X2,V2).
+satisfied(F) :- binary(F,X1,">=",X2), V1 >= V2, value(X1,V1), value(X2,V2).
+satisfied(F) :- binary(F,X1,"<", X2), V1 < V2,  value(X1,V1), value(X2,V2).
+satisfied(F) :- binary(F,X1,"<=",X2), V1 <= V2, value(X1,V1), value(X2,V2).
 
 % Strong negation of binary satisfaction if formula is defined and not satisfied
--sat(F) :- binary(F,_,_,_), def(F), not sat(F).
+-satisfied(F) :- binary(F,_,_,_), defined(F), not satisfied(F).
 
 %%% Check combinations
-hit_cell(C,ID,(Col,Row)) :- allow(Idx,(Col,Row),V), combinations(C,ID,Col,X), val(X,V), C=(Idx,_).
+hit_cell(C,ID,(Col,Row)) :- allow(Idx,(Col,Row),V), column(C,ID,Col,X), value(X,V), C=(Idx,_).
 
-hit_row(C,ID) :- allow(Idx,(_,Row),_), combinations(C,ID,_,_), C=(Idx,_),
-                 0 = #sum{ 1,Col: allow(Idx,(Col,Row),_);
+hit_row(C,ID) :- allow(Idx,(_,Row),_), column(C,ID,_,_), C=(Idx,_),
+                 0 = #sum{ 1,Col : allow(Idx,(Col,Row),_);
                           -1,Col': hit_cell(C,ID,(Col',Row)) }.
 
-def(C,ID,Col) :- combinations(C,ID,Col,X), val(X,_).
-def(C,ID)     :- combinations(C,ID,_,_), 0 = #sum{ 1, Col: combinations(C,ID,Col,_);
-                                                  -1, Col: def(C,ID,Col)}.
+defined(C,ID,Col) :- column(C,ID,Col,X), value(X,_).
+defined(C,ID)     :- column(C,ID,_,_), 0 = #sum{ 1, Col: column(C,ID,Col,_);
+                                                -1, Col: defined(C,ID,Col)}.

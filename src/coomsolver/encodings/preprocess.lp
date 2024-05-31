@@ -85,15 +85,39 @@ coom_option("bool", "False").
 
 
 %%% Output atoms
+% Attributes of the model (enumerations in COOM)
+attribute(T,"discrete") :- coom_enumeration(T).
+domain(T,O) :- coom_option(T,O).
 
-% Structure, enumeration and attribute instances
+attribute(@join(T,A),"numeric")  :- coom_attribute(T,A,"num").
+attribute(@join(T,A),"discrete") :- coom_attribute(T,A,"str").
+domain(@join(T,A),O) :- coom_attribute_value(T,_,A,O).
+
+% Table constraint guarantees that correct values are assigned to enumeration attributes
+attribute_constraint((T,X)) :- coom_attribute(T,_,_), type(X,T).
+attribute_constraint_column(T,Col+1,A) :- coom_attribute(T,A,_), Col = #count{ A' : coom_attribute(T,A',_), A' < A }.
+
+constraint(C) :- attribute_constraint(C).
+column((T,X),0,0,X)   :- attribute_constraint((T,X)).
+column((T,P),0,Col,X) :- attribute_constraint((T,P)), parent(X,P), name(X,A), attribute_constraint_column(T,Col,A).
+
+allow(T,(0,I),O)     :- attribute_constraint((T,_)), coom_option(T,O), I = #count{ O' : coom_option(T,O'), O' < O}.
+allow(T,(Col,Row),V) :- attribute_constraint((T,_)), allow(T,(0,Row),O), coom_attribute_value(T,O,A,V), attribute_constraint_column(T,Col,A).
+
+
+#show attribute/2.
+#show domain/2.
+
+% Instances (of structures, enumerations and attributes in COOM)
 type("root","product") :- coom_structure("product").
 
-type(@dotpath(X),T)    :- type_aux(X,T).
-index(@dotpath(X),Idx) :- type_aux(X,T), coom_structure(T), X=((_,(_,Idx))).
+type(@dotpath(X),T)             :- type_aux(X,T), not coom_attribute(_,T,_).
+type(@dotpath(X),@join(T,A))    :- type_aux(X,A),     coom_attribute(T,A,_), type_aux(P,T), X=(_,(P,_)).
+
+index(@dotpath(X),Idx)          :- type_aux(X,T), coom_structure(T), X=((_,(_,Idx))).
 
 parent(@dotpath(X),@dotpath(P)) :- type_aux(X,_), X=(_,(P,_)).
-feature(@dotpath(X),F)          :- type_aux(X,_), X=(F,(_,_)).
+name(@dotpath(X),N)             :- type_aux(X,_), X=(N,(_,_)).
 
 isnumeric(@dotpath((A,(X,0))))  :- type_aux((A,(X,0)),A),
                                    coom_attribute_value(T,_,A,_),
@@ -102,7 +126,7 @@ isnumeric(@dotpath((A,(X,0))))  :- type_aux((A,(X,0)),A),
 #show type/2.
 #show index/2.
 #show parent/2.
-#show feature/2.
+#show name/2.
 #show isnumeric/1.
 
 % Constraints
@@ -113,48 +137,42 @@ condition((C,@dotpath(X)),G) :- coom_condition(C,F), binary(X,F,G).
 condition(C)                 :- coom_condition(C,_).
 binary(G,L,Op,R) :- binary(_,_,G,L,Op,R).
 
-combinations((C,@dotpath(X)),ID,Col,@dotpath(X')) :- coom_combinations(C,Col,P),
-                                                     path_to(X,P,X'), in_tuple(CT,X'), tuple_order((C,X),CT,ID).
+column((C,@dotpath(X)),ID,Col,@dotpath(X')) :- coom_combinations(C,Col,P),
+                                               path_to(X,P,X'), in_tuple(CT,X'), tuple_order((C,X),CT,ID).
+allow(C,XY,V)           :- coom_allow(C,XY,V).
 
 function(@function(T,C,P),T,@join(C,P)) :- function(C,_,T,P).
 
-function_path(@join(C,P),@dotpath(X)) :- function_path(C,P,X).
+path(@join(C,P),@dotpath(X)) :- function_path(C,P,X).
 
 imply(X',G) :- imply(X,X',F), binary(X,F,G).
 
+constant(C)             :- coom_constant(C).
+number(C,N)             :- coom_number(C,N).
 
 #show constraint/1.
 #show require/2.
 #show condition/2.
 #show condition/1.
 #show binary/4.
-#show combinations/4.
-#show function/3.
-#show function_path/2.
-#show imply/2.
-
-% Pass through facts from COOM fact format
-feature(C,N,T,Min,Max)  :- coom_feature(C,N,T,Min,Max).
-range(C,N,Min,Max)      :- coom_range(C,N,Min,Max).
-structure(T)            :- coom_structure(T).
-enumeration(T)          :- coom_enumeration(T).
-option(T,O)             :- coom_option(T,O).
-attribute(T,O,A)        :- coom_attribute(T,O,A).
-attribute_value(T,O,A,V):- coom_attribute_value(T,O,A,V).
-allow(C,XY,V)           :- coom_allow(C,XY,V).
-constant(C)             :- coom_constant(C).
-number(C,N)             :- coom_number(C,N).
-
-#show feature/5.
-#show range/4.
-#show structure/1.
-#show enumeration/1.
-#show option/2.
-#show attribute/3.
-#show attribute_value/4.
+#show column/4.
 #show allow/3.
+#show function/3.
+#show path/2.
+#show imply/2.
 #show constant/1.
 #show number/2.
+
+% Partonomy of the model and numeric variables
+part(T)                 :- coom_structure(T).
+cardinality(C,N,Min,Max):- coom_feature(C,N,_,Min,Max).
+range(C,N,Min,Max)      :- coom_range(C,N,Min,Max).
+
+#show part/1.
+#show cardinality/4.
+#show range/4.
+
+
 
 % Python helper functions
 #script (python)

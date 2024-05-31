@@ -1,5 +1,5 @@
 #include "boolean.lp".
 
-% Auxiliary val/2 atoms for constants and numbers.
-val(Path,Path)      :- constant(Path).
-&in{N..N} =: Path   :- number(Path,N).
+% Auxiliary values for constants and numbers.
+value(Path,Path)  :- constant(Path).
+&in{N..N} =: Path :- number(Path,N).
