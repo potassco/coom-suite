@@ -1,32 +1,33 @@
 % Constraints cannot be unsatisfied
 :- constraint(C), unsatisfied(C,_).
 
-% Require without condition
-% Require must not be false to be satisfied (can be undefined)
-unsatisfied(C,B) :- not condition(I), require(C,B), C = (I,_),
-                    -satisfied(B).
+:- constraint(C,F), defined(F), not satisfied(F).
 
-% Require with condition
-% Condition has to be true to become active (must not be undefined)
-unsatisfied(C,(BC,BR)) :- condition(C,BC), require(C,BR),
-                          satisfied(BC),   -satisfied(BR).
+% Satisfaction of unary/binary relations
+satisfied(F) :- unary(F,"!",F'), not satisfied(F').
+
+satisfied(F) :- binary(F,XL,"||",XR), satisfied(XL).
+satisfied(F) :- binary(F,XL,"||",XR), satisfied(XR).
+satisfied(F) :- binary(F,XL,"&&",XR), satisfied(XL), satisfied(XR).
+
+satisfied(F) :- binary(F,XL,"=", XR), VL =  VR, value(XL,VL), value(XR,VR).
+satisfied(F) :- binary(F,XL,"!=",XR), VL != VR, value(XL,VL), value(XR,VR).
+satisfied(F) :- binary(F,XL,">", XR), VL >  VR, value(XL,VL), value(XR,VR).
+satisfied(F) :- binary(F,XL,">=",XR), VL >= VR, value(XL,VL), value(XR,VR).
+satisfied(F) :- binary(F,XL,"<", XR), VL <  VR, value(XL,VL), value(XR,VR).
+satisfied(F) :- binary(F,XL,"<=",XR), VL <= VR, value(XL,VL), value(XR,VR).
+
+defined(F) :- binary(F,XL,_,XR), value(XL,_), value(XR,_).
+defined(F) :- binary(F,XL,_,XR), defined(XL), defined(XR).
+defined(F) :- unary(F,_,F'), defined(F').
+
+% Strong negation of binary satisfaction if formula is defined and not satisfied
+% -satisfied(F) :- binary(F,_,_,_), defined(F), not satisfied(F).
+
 
 % Combinations Table (only for allow)
 % Table constraint is satisfied if a row is satisfied
 unsatisfied(C,ID) :- column(C,ID,_,_), not hit_row(C,ID), defined(C,ID).
-
-% Satisfaction of binary relations
-defined(F) :- binary(F,X1,_,X2), value(X1,_), value(X2,_).
-
-satisfied(F) :- binary(F,X1,"=", X2), V1 = V2,  value(X1,V1), value(X2,V2).
-satisfied(F) :- binary(F,X1,"!=",X2), V1 != V2, value(X1,V1), value(X2,V2).
-satisfied(F) :- binary(F,X1,">", X2), V1 > V2,  value(X1,V1), value(X2,V2).
-satisfied(F) :- binary(F,X1,">=",X2), V1 >= V2, value(X1,V1), value(X2,V2).
-satisfied(F) :- binary(F,X1,"<", X2), V1 < V2,  value(X1,V1), value(X2,V2).
-satisfied(F) :- binary(F,X1,"<=",X2), V1 <= V2, value(X1,V1), value(X2,V2).
-
-% Strong negation of binary satisfaction if formula is defined and not satisfied
--satisfied(F) :- binary(F,_,_,_), defined(F), not satisfied(F).
 
 %%% Check combinations
 hit_cell(C,ID,(Col,Row)) :- allow(Idx,(Col,Row),V), column(C,ID,Col,X), value(X,V), C=(Idx,_).

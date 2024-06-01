@@ -142,7 +142,6 @@ column((C,@dotpath(X)),ID,Col,@dotpath(X')) :- coom_combinations(C,Col,P),
 allow(C,XY,V)           :- coom_allow(C,XY,V).
 
 function(@function(T,C,P),T,@join(C,P)) :- function(C,_,T,P).
-
 path(@join(C,P),@dotpath(X)) :- function_path(C,P,X).
 
 imply(X',G) :- imply(X,X',F), binary(X,F,G).

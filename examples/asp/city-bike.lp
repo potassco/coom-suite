@@ -143,56 +143,53 @@ name("root.carrier[0].bag[1].material[0]","material").
 
 
 % Instantiated constraints
-constraint((0,"root")).
-require((0,"root"),"root.color[0]=root.basket[0].root.color[0]").
+constraint(0,"root.color[0]=root.basket[0].root.color[0]").
 binary("root.color[0]=root.basket[0].root.color[0]","root.color[0]","=","root.basket[0].root.color[0]").
 
 
-constraint((1,"root")).
-condition(1).
-condition((1,"root"),"root.basket[0].position[0]=Front").
+
+constraint(1,"!root.basket[0].position[0]=Front||root.frontWheel[0].size[0]<29").
+binary("!root.basket[0].position[0]=Front||root.frontWheel[0].size[0]<29","!root.basket[0].position[0]=Front","||","root.frontWheel[0].size[0]<29").
+unary("!root.basket[0].position[0]=Front","!","root.basket[0].position[0]=Front").
 binary("root.basket[0].position[0]=Front","root.basket[0].position[0]","=","Front").
 constant("Front").
-require((1,"root"),"root.frontWheel[0].size[0]<29").
 binary("root.frontWheel[0].size[0]<29","root.frontWheel[0].size[0]","<","29").
 number("29",29).
 
 
-constraint((2,"root")).
-condition(2).
-condition((2,"root"),"root.carrier[0].bag[0].capacity[0].volume[0]=100").
+constraint(2,"!root.carrier[0].bag[0].capacity[0].volume[0]=100||root.rearWheel[0].size[0]>=28").
+binary("!root.carrier[0].bag[0].capacity[0].volume[0]=100||root.rearWheel[0].size[0]>=28","!root.carrier[0].bag[0].capacity[0].volume[0]=100","||","root.rearWheel[0].size[0]>=28").
+unary("!root.carrier[0].bag[0].capacity[0].volume[0]=100","!","root.carrier[0].bag[0].capacity[0].volume[0]=100").
 binary("root.carrier[0].bag[0].capacity[0].volume[0]=100","root.carrier[0].bag[0].capacity[0].volume[0]","=","100").
-require((2,"root"),"root.rearWheel[0].size[0]>=28").
 binary("root.rearWheel[0].size[0]>=28","root.rearWheel[0].size[0]",">=","28").
 
-
-condition((2,"root"),"root.carrier[0].bag[1].capacity[0].volume[0]=100").
+constraint(2,"!root.carrier[0].bag[1].capacity[0].volume[0]=100||root.rearWheel[0].size[0]>=28").
+binary("!root.carrier[0].bag[1].capacity[0].volume[0]=100||root.rearWheel[0].size[0]>=28","!root.carrier[0].bag[1].capacity[0].volume[0]=100","||","root.rearWheel[0].size[0]>=28").
+unary("!root.carrier[0].bag[1].capacity[0].volume[0]=100","!","root.carrier[0].bag[1].capacity[0].volume[0]=100").
 binary("root.carrier[0].bag[1].capacity[0].volume[0]=100","root.carrier[0].bag[1].capacity[0].volume[0]","=","100").
-require((2,"root"),"root.rearWheel[0].size[0]>=28").
 binary("root.rearWheel[0].size[0]>=28","root.rearWheel[0].size[0]",">=","28").
 
 number("100",100).
 number("28",28).
 
 
-constraint((3,"root")).
-condition(3).
-condition((3,"root"),"root.saddle[0]=Vintage").
+constraint(3,"!root.saddle[0]=Vintage||root.carrier[0].bag[0].material[0]=Leather").
+binary("!root.saddle[0]=Vintage||root.carrier[0].bag[0].material[0]=Leather","!root.saddle[0]=Vintage","||","root.carrier[0].bag[0].material[0]=Leather").
+unary("!root.saddle[0]=Vintage","!","root.saddle[0]=Vintage").
 binary("root.saddle[0]=Vintage","root.saddle[0]","=","Vintage").
-require((3,"root"),"root.carrier[0].bag[0].material[0]=Leather").
 binary("root.carrier[0].bag[0].material[0]=Leather","root.carrier[0].bag[0].material[0]","=","Leather").
 
-condition((3,"root"),"root.saddle[0]=Vintage").
+constraint(3,"!root.saddle[0]=Vintage||root.carrier[0].bag[1].material[0]=Leather").
+binary("!root.saddle[0]=Vintage||root.carrier[0].bag[1].material[0]=Leather","!root.saddle[0]=Vintage","||","root.carrier[0].bag[1].material[0]=Leather").
+unary("!root.saddle[0]=Vintage","!","root.saddle[0]=Vintage").
 binary("root.saddle[0]=Vintage","root.saddle[0]","=","Vintage").
-require((3,"root"),"root.carrier[0].bag[1].material[0]=Leather").
 binary("root.carrier[0].bag[1].material[0]=Leather","root.carrier[0].bag[1].material[0]","=","Leather").
 
 constant("Vintage").
 constant("Leather").
 
 
-constraint((4,"root")).
-require((4,"root"),"root.frontWheel[0].size[0]=root.rearWheel[0].size[0]").
+constraint(4,"root.frontWheel[0].size[0]=root.rearWheel[0].size[0]").
 binary("root.frontWheel[0].size[0]=root.rearWheel[0].size[0]","root.frontWheel[0].size[0]","=","root.rearWheel[0].size[0]").
 
 

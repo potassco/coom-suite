@@ -45,15 +45,13 @@ parent("root.wheelSupport[0]", "root").
 feature("root.wheelSupport[0]","wheelSupport").
 
 % Instantiated constraints
-constraint((0,"root")).
-condition(0).
-condition((0,"root"),"root.color[0]=Yellow").
+constraint(0,"!root.color[0]=Yellow||root.frontWheel[0].size[0]>16").
+binary("!root.color[0]=Yellow||root.frontWheel[0].size[0]>16","!root.color[0]=Yellow","||","root.frontWheel[0].size[0]>16").
+unary("!root.color[0]=Yellow","!","root.color[0]=Yellow").
 binary("root.color[0]=Yellow","root.color[0]","=","Yellow").
 constant("Yellow").
-require((0,"root"),"root.frontWheel[0].size[0]>16").
 binary("root.frontWheel[0].size[0]>16","root.frontWheel[0].size[0]",">","16").
 number("16",16).
-
 
 constraint((1,"root")).
 column((1,"root"),0,0,"root.wheelSupport[0]").
@@ -65,9 +63,16 @@ allow(1,(0,1),"False").
 allow(1,(1,1),"W18").
 allow(1,(1,1),"W20").
 
+% binary("(root.wheelSupport[0]=True&&(root.rearWheel[0]=W14||root.rearWheel[0]=W16))||(root.wheelSupport[0]=False&&(root.rearWheel[0]=W18||root.rearWheel[0]=W20))","(root.wheelSupport[0]=True&&(root.rearWheel[0]=W14||root.rearWheel[0]=W16))","||","(root.wheelSupport[0]=False&&(root.rearWheel[0]=W18||root.rearWheel[0]=W20))").
+% unary("(root.wheelSupport[0]=True&&(root.rearWheel[0]=W14||root.rearWheel[0]=W16))","()","root.wheelSupport[0]=True&&(root.rearWheel[0]=W14||root.rearWheel[0]=W16)").
+% binary("root.wheelSupport[0]=True&&(root.rearWheel[0]=W14||root.rearWheel[0]=W16)","root.wheelSupport[0]=True","&&","(root.rearWheel[0]=W14||root.rearWheel[0]=W16)").
+% unary("(root.rearWheel[0]=W14||root.rearWheel[0]=W16)","()","root.rearWheel[0]=W14||root.rearWheel[0]=W16").
+% binary("root.rearWheel[0]=W14||root.rearWheel[0]=W16","root.rearWheel[0]=W14","||","root.rearWheel[0]=W16").
+% binary("root.rearWheel[0]=W14","root.rearWheel[0]","=","W14")
 
-constraint((2,"root")).
-require((2,"root"),"root.frontWheel[0].size[0]=root.rearWheel[0].size[0]").
+% unary("(root.wheelSupport[0]=False&&(root.rearWheel[0]=W18||root.rearWheel[0]=W20))","()","root.wheelSupport[0]=False&&(root.rearWheel[0]=W18||root.rearWheel[0]=W20)")
+
+constraint(2,"root.frontWheel[0].size[0]=root.rearWheel[0].size[0]").
 binary("root.frontWheel[0].size[0]=root.rearWheel[0].size[0]","root.frontWheel[0].size[0]","=","root.rearWheel[0].size[0]").
 
 % Attribute constraints
