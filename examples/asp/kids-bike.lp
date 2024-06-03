@@ -12,37 +12,40 @@ domain("Wheel","W18").
 domain("Wheel","W20").
 
 attribute("Wheel.size","numeric").
-domain("Wheel.size",14).
-domain("Wheel.size",16).
-domain("Wheel.size",18).
-domain("Wheel.size",20).
+range("Wheel.size",14,20).
+% domain("Wheel.size",14).
+% domain("Wheel.size",16).
+% domain("Wheel.size",18).
+% domain("Wheel.size",20).
 
 % Complete instance tree
 type("root","product").
 
 type("root.color[0]","Color").
 parent("root.color[0]", "root").
-feature("root.color[0]","color").
+name("root.color[0]","color").
 
 type("root.frontWheel[0]","Wheel").
 parent("root.frontWheel[0]", "root").
-feature("root.frontWheel[0]","frontWheel").
+name("root.frontWheel[0]","frontWheel").
 
 type("root.frontWheel[0].size[0]","Wheel.size").
 parent("root.frontWheel[0].size[0]","root.frontWheel[0]").
-isnumeric("root.frontWheel[0].size[0]").
+name("root.frontWheel[0].size[0]","size").
+% isnumeric("root.frontWheel[0].size[0]").
 
 type("root.rearWheel[0]","Wheel").
 parent("root.rearWheel[0]", "root").
-feature("root.rearWheel[0]","rearWheel").
+name("root.rearWheel[0]","rearWheel").
 
 type("root.rearWheel[0].size[0]","Wheel.size").
 parent("root.rearWheel[0].size[0]","root.rearWheel[0]").
-isnumeric("root.rearWheel[0].size[0]").
+name("root.rearWheel[0].size[0]","size").
+% isnumeric("root.rearWheel[0].size[0]").
 
 type("root.wheelSupport[0]","bool").
 parent("root.wheelSupport[0]", "root").
-feature("root.wheelSupport[0]","wheelSupport").
+name("root.wheelSupport[0]","wheelSupport").
 
 % Instantiated constraints
 constraint(0,"!root.color[0]=Yellow||root.frontWheel[0].size[0]>16").

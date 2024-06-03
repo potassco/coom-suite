@@ -1,3 +1,9 @@
+% Always include root instance
+include("root").
+
+% Attribute variables are always included when its parents are included
+include(X) :- type(X,T), parent(X,P), include(P), attribute(T,_).
+
 % Generate structure object inclusion
 { include(X) : type(X,T), part(T) }.
 

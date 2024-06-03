@@ -40,10 +40,11 @@ domain("Wheel", "W28").
 domain("Wheel", "W29").
 
 attribute("Wheel.size","numeric").
-domain("Wheel.size",26).
-domain("Wheel.size",27).
-domain("Wheel.size",28).
-domain("Wheel.size",29).
+range("Wheel.size",26,29).
+% domain("Wheel.size",26).
+% domain("Wheel.size",27).
+% domain("Wheel.size",28).
+% domain("Wheel.size",29).
 
 attribute("Capacity","discrete").
 domain("Capacity", "B10").
@@ -52,10 +53,11 @@ domain("Capacity", "B50").
 domain("Capacity", "B100").
 
 attribute("Capacity.volume","numeric").
-domain("Capacity.volume",10).
-domain("Capacity.volume",20).
-domain("Capacity.volume",50).
-domain("Capacity.volume",100).
+range("Capacity.volume",10,100).
+% domain("Capacity.volume",10).
+% domain("Capacity.volume",20).
+% domain("Capacity.volume",50).
+% domain("Capacity.volume",100).
 
 attribute("Material","discrete").
 domain("Material", "Cotton").
@@ -99,7 +101,8 @@ name("root.frontWheel[0]","frontWheel").
 
 type("root.frontWheel[0].size[0]","Wheel.size").
 parent("root.frontWheel[0].size[0]","root.frontWheel[0]").
-isnumeric("root.frontWheel[0].size[0]").
+name("root.frontWheel[0].size[0]","size").
+% isnumeric("root.frontWheel[0].size[0]").
 
 type("root.rearWheel[0]","Wheel").
 parent("root.rearWheel[0]", "root").
@@ -107,7 +110,8 @@ name("root.rearWheel[0]","rearWheel").
 
 type("root.rearWheel[0].size[0]","Wheel.size").
 parent("root.rearWheel[0].size[0]","root.rearWheel[0]").
-isnumeric("root.rearWheel[0].size[0]").
+name("root.rearWheel[0].size[0]","size").
+% isnumeric("root.rearWheel[0].size[0]").
 
 type("root.basket[0].root.color[0]","Color").
 parent("root.basket[0].root.color[0]","root.basket[0]").
@@ -123,7 +127,8 @@ name("root.carrier[0].bag[0].capacity[0]","capacity").
 
 type("root.carrier[0].bag[0].capacity[0].volume[0]","Capacity.volume").
 parent("root.carrier[0].bag[0].capacity[0].volume[0]","root.carrier[0].bag[0].capacity[0]").
-isnumeric("root.carrier[0].bag[0].capacity[0].volume[0]").
+name("root.carrier[0].bag[0].capacity[0].volume[0]","volume").
+% isnumeric("root.carrier[0].bag[0].capacity[0].volume[0]").
 
 type("root.carrier[0].bag[1].capacity[0]","Capacity").
 parent("root.carrier[0].bag[1].capacity[0]", "root.carrier[0].bag[1]").
@@ -131,7 +136,8 @@ name("root.carrier[0].bag[1].capacity[0]","capacity").
 
 type("root.carrier[0].bag[1].capacity[0].volume[0]","Capacity.volume").
 parent("root.carrier[0].bag[1].capacity[0].volume[0]","root.carrier[0].bag[1].capacity[0]").
-isnumeric("root.carrier[0].bag[1].capacity[0].volume[0]").
+name("root.carrier[0].bag[1].capacity[0].volume[0]","volume").
+% isnumeric("root.carrier[0].bag[1].capacity[0].volume[0]").
 
 type("root.carrier[0].bag[0].material[0]","Material").
 parent("root.carrier[0].bag[0].material[0]", "root.carrier[0].bag[0]").
@@ -145,7 +151,6 @@ name("root.carrier[0].bag[1].material[0]","material").
 % Instantiated constraints
 constraint(0,"root.color[0]=root.basket[0].root.color[0]").
 binary("root.color[0]=root.basket[0].root.color[0]","root.color[0]","=","root.basket[0].root.color[0]").
-
 
 
 constraint(1,"!root.basket[0].position[0]=Front||root.frontWheel[0].size[0]<29").

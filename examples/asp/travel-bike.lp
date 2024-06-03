@@ -1,12 +1,8 @@
 % Partonomy of the model
 cardinality("product","totalWeight",1,1).
-range("product","totalWeight",1,10000).
 cardinality("product","maxWeight",1,1).
-range("product","maxWeight",1,10).
 cardinality("product","totalVolume",1,1).
-range("product","totalVolume",0,200).
 cardinality("product","requestedVolume",1,1).
-range("product","requestedVolume",0,200).
 cardinality("product","frontWheel",1,1).
 cardinality("product","rearWheel",1,1).
 cardinality("product","frame",1,1).
@@ -24,6 +20,18 @@ cardinality("Bag","capacity",1,1).
 cardinality("Bag","material",1,1).
 
 % Attributes of the model
+attribute("product.totalWeight","numeric").
+range("product.totalWeight",1,10000).
+
+attribute("product.maxWeight","numeric").
+range("product.maxWeight",10,10).
+
+attribute("product.totalVolume","numeric").
+range("product.totalVolume",0,200).
+
+attribute("product.requestedVolume","numeric").
+range("product.requestedVolume",200,200).
+
 attribute("Capacity","discrete").
 domain("Capacity", "B10").
 domain("Capacity", "B20").
@@ -31,16 +39,18 @@ domain("Capacity", "B50").
 domain("Capacity", "B100").
 
 attribute("Capacity.volume","numeric").
-domain("Capacity.volume",10).
-domain("Capacity.volume",20).
-domain("Capacity.volume",50).
-domain("Capacity.volume",100).
+range("Capacity.volume",10,100).
+% domain("Capacity.volume",10).
+% domain("Capacity.volume",20).
+% domain("Capacity.volume",50).
+% domain("Capacity.volume",100).
 
 attribute("Capacity.weight","numeric").
-domain("Capacity.weight",100).
-domain("Capacity.weight",250).
-domain("Capacity.weight",600).
-domain("Capacity.weight",1200).
+range("Capacity.numeric",100,1200).
+% domain("Capacity.weight",100).
+% domain("Capacity.weight",250).
+% domain("Capacity.weight",600).
+% domain("Capacity.weight",1200).
 
 attribute("Material","discrete").
 domain("Material", "Cotton").
@@ -55,18 +65,20 @@ domain("Wheel", "W26").
 domain("Wheel", "W28").
 
 attribute("Wheel.size","numeric").
-domain("Wheel.size",20).
-domain("Wheel.size",22).
-domain("Wheel.size",24).
-domain("Wheel.size",26).
-domain("Wheel.size",28).
+range("Wheel.size",20,28).
+% domain("Wheel.size",20).
+% domain("Wheel.size",22).
+% domain("Wheel.size",24).
+% domain("Wheel.size",26).
+% domain("Wheel.size",28).
 
 attribute("Wheel.weight","numeric").
-domain("Wheel.weight",650).
-domain("Wheel.weight",700).
-domain("Wheel.weight",800).
-domain("Wheel.weight",900).
-domain("Wheel.weight",1000).
+range("Wheel.weight",650,1000).
+% domain("Wheel.weight",650).
+% domain("Wheel.weight",700).
+% domain("Wheel.weight",800).
+% domain("Wheel.weight",900).
+% domain("Wheel.weight",1000).
 
 attribute("Color","discrete").
 domain("Color", "Red").
@@ -77,19 +89,19 @@ domain("Color", "Blue").
 % Complete instance tree
 type("root","product").
 
-type("root.totalWeight[0]","num").
+type("root.totalWeight[0]","product.totalWeight").
 parent("root.totalWeight[0]","root").
 name("root.totalWeight[0]","totalWeight").
 
-type("root.maxWeight[0]","num").
+type("root.maxWeight[0]","product.maxWeight").
 parent("root.maxWeight[0]","root").
 name("root.maxWeight[0]","maxWeight").
 
-type("root.totalVolume[0]","num").
+type("root.totalVolume[0]","product.totalVolume").
 parent("root.totalVolume[0]","root").
 name("root.totalVolume[0]","totalVolume").
 
-type("root.requestedVolume[0]","num").
+type("root.requestedVolume[0]","product.requestedVolume").
 parent("root.requestedVolume[0]","root").
 name("root.requestedVolume[0]","requestedVolume").
 
@@ -134,11 +146,13 @@ name("root.frontWheel[0]","frontWheel").
 
 type("root.frontWheel[0].size[0]","Wheel.size").
 parent("root.frontWheel[0].size[0]","root.frontWheel[0]").
-isnumeric("root.frontWheel[0].size[0]").
+name("root.frontWheel[0].size[0]","size").
+% isnumeric("root.frontWheel[0].size[0]").
 
 type("root.frontWheel[0].weight[0]","Wheel.weight").
 parent("root.frontWheel[0].weight[0]","root.frontWheel[0]").
-isnumeric("root.frontWheel[0].weight[0]").
+name("root.frontWheel[0].weight[0]","weight").
+% isnumeric("root.frontWheel[0].weight[0]").
 
 type("root.rearWheel[0]","Wheel").
 parent("root.rearWheel[0]", "root").
@@ -146,11 +160,13 @@ name("root.rearWheel[0]","rearWheel").
 
 type("root.rearWheel[0].size[0]","Wheel.size").
 parent("root.rearWheel[0].size[0]","root.rearWheel[0]").
-isnumeric("root.rearWheel[0].size[0]").
+name("root.rearWheel[0].size[0]","size").
+% isnumeric("root.rearWheel[0].size[0]").
 
 type("root.rearWheel[0].weight[0]","Wheel.weight").
 parent("root.rearWheel[0].weight[0]","root.rearWheel[0]").
-isnumeric("root.rearWheel[0].weight[0]").
+name("root.rearWheel[0].weight[0]","weight").
+% isnumeric("root.rearWheel[0].weight[0]").
 
 type("root.color[0]","Color").
 parent("root.color[0]", "root").
@@ -237,8 +253,8 @@ parent("root.frame[0].bag[1].material[0]", "root.frame[0].bag[1]").
 name("root.frame[0].bag[1].material[0]","material").
 
 % Instantiated constraints
-constraint((0,"root")).
-require((0,"root"),"count(root.carrier.bag)+count(root.frame.bag)<=4").
+constraint(0,"count(root.carrier.bag)+count(root.frame.bag)<=4").
+% require((0,"root"),"count(root.carrier.bag)+count(root.frame.bag)<=4").
 binary("count(root.carrier.bag)+count(root.frame.bag)<=4","count(root.carrier.bag)+count(root.frame.bag)","<=","4").
 binary("count(root.carrier.bag)+count(root.frame.bag)","count(root.carrier.bag)","+","count(root.frame.bag)").
 function("count(root.carrier.bag)","count","root.carrier.bag").
@@ -250,8 +266,9 @@ path("root.frame.bag","root.frame[0].bag[0]").
 path("root.frame.bag","root.frame[0].bag[1]").
 number("4",4).
 
-constraint((1,"root")).
-imply("root.totalWeight[0]","root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)").
+constraint(1,"root.totalWeight[0]=root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)").
+% imply("root.totalWeight[0]","root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)").
+binary("root.totalWeight[0]=root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)","root.totalWeight[0]","=","root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)").
 binary("root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)","root.frontWheel[0].weight[0]","+","root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)").
 binary("root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)","root.rearWheel[0].weight[0]","+","sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)").
 binary("sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)","sum(root.carrier.bag.capacity.weight)","+","sum(root.frame.bag.capacity.weight)").
@@ -263,14 +280,15 @@ function("sum(root.frame.bag.capacity.weight)","sum","root.frame.bag.capacity.we
 path("root.frame.bag.capacity.weight","root.frame[0].bag[0].capacity[0].weight[0]").
 path("root.frame.bag.capacity.weight","root.frame[0].bag[1].capacity[0].weight[0]").
 
-constraint((2,"root")).
-require((2,"root"),"root.totalWeight[0]<=root.maxWeight[0]*1000").
+constraint(2,"root.totalWeight[0]<=root.maxWeight[0]*1000").
+% require((2,"root"),"root.totalWeight[0]<=root.maxWeight[0]*1000").
 binary("root.totalWeight[0]<=root.maxWeight[0]*1000","root.totalWeight[0]","<=","root.maxWeight[0]*1000").
 binary("root.maxWeight[0]*1000","root.maxWeight[0]","*","1000").
 number("1000",1000).
 
-constraint((3,"root")).
-imply("root.totalVolume[0]","sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)").
+constraint(3,"root.totalVolume[0]=sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)").
+% imply("root.totalVolume[0]","sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)").
+binary("root.totalVolume[0]=sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)","root.totalVolume[0]","=","sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)").
 binary("sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)","sum(root.carrier.bag.capacity.volume)","+","sum(root.frame.bag.capacity.volume)").
 function("sum(root.carrier.bag.capacity.volume)","sum","root.carrier.bag.capacity.volume").
 path("root.carrier.bag.capacity.volume","root.carrier[0].bag[0].capacity[0].volume[0]").
@@ -280,50 +298,62 @@ function("sum(root.frame.bag.capacity.volume)","sum","root.frame.bag.capacity.vo
 path("root.frame.bag.capacity.volume","root.frame[0].bag[0].capacity[0].volume[0]").
 path("root.frame.bag.capacity.volume","root.frame[0].bag[1].capacity[0].volume[0]").
 
-constraint((4,"root")).
-require((4,"root"),"root.totalVolume[0]>=root.requestedVolume[0]").
+constraint(4,"root.totalVolume[0]>=root.requestedVolume[0]").
+% require((4,"root"),"root.totalVolume[0]>=root.requestedVolume[0]").
 binary("root.totalVolume[0]>=root.requestedVolume[0]","root.totalVolume[0]",">=","root.requestedVolume[0]").
 
-constraint((5,"root")).
-condition(5).
-condition((5,"root"),"root.color[0]=Red").
+constraint(5,"!root.color[0]=Red||root.frontWheel[0].size[0]=20").
+binary("!root.color[0]=Red||root.frontWheel[0].size[0]=20","!root.color[0]=Red","||","root.frontWheel[0].size[0]=20").
+unary("!root.color[0]=Red","!","root.color[0]=Red").
+% condition(5).
+% condition((5,"root"),"root.color[0]=Red").
 binary("root.color[0]=Red","root.color[0]","=","Red").
 constant("Red").
-require((5,"root"),"root.frontWheel[0].size[0]=20").
+% require((5,"root"),"root.frontWheel[0].size[0]=20").
 binary("root.frontWheel[0].size[0]=20","root.frontWheel[0].size[0]","=","20").
 number("20",20).
 
-constraint((6,"root.carrier[0].bag[0]")).
-condition(6).
-condition((6,"root.carrier[0].bag[0]"),"root.carrier[0].bag[0].material[0]=Leather").
+constraint(6,"!root.carrier[0].bag[0].material[0]=Leather||root.carrier[0].bag[0].capacity[0]=B10").
+binary("!root.carrier[0].bag[0].material[0]=Leather||root.carrier[0].bag[0].capacity[0]=B10","!root.carrier[0].bag[0].material[0]=Leather","||","root.carrier[0].bag[0].capacity[0]=B10").
+unary("!root.carrier[0].bag[0].material[0]=Leather","!","root.carrier[0].bag[0].material[0]=Leather").
+% condition(6).
+% condition((6,"root.carrier[0].bag[0]"),"root.carrier[0].bag[0].material[0]=Leather").
 binary("root.carrier[0].bag[0].material[0]=Leather","root.carrier[0].bag[0].material[0]","=","Leather").
-require((6,"root.carrier[0].bag[0]"),"root.carrier[0].bag[0].capacity[0]=B10").
+% require((6,"root.carrier[0].bag[0]"),"root.carrier[0].bag[0].capacity[0]=B10").
 binary("root.carrier[0].bag[0].capacity[0]=B10","root.carrier[0].bag[0].capacity[0]","=","B10").
 constant("Leather").
 constant("B10").
 
-constraint((6,"root.carrier[0].bag[1]")).
-condition((6,"root.carrier[0].bag[1]"),"root.carrier[0].bag[1].material[0]=Leather").
+constraint(6,"!root.carrier[0].bag[1].material[0]=Leather||root.carrier[0].bag[1].capacity[0]=B10").
+binary("!root.carrier[0].bag[1].material[0]=Leather||root.carrier[0].bag[1].capacity[0]=B10","!root.carrier[0].bag[1].material[0]=Leather","||","root.carrier[0].bag[1].capacity[0]=B10").
+unary("!root.carrier[0].bag[1].material[0]=Leather","!","root.carrier[0].bag[1].material[0]=Leather").
+% condition((6,"root.carrier[0].bag[1]"),"root.carrier[0].bag[1].material[0]=Leather").
 binary("root.carrier[0].bag[1].material[0]=Leather","root.carrier[0].bag[1].material[0]","=","Leather").
-require((6,"root.carrier[0].bag[1]"),"root.carrier[0].bag[1].capacity[0]=B10").
+% require((6,"root.carrier[0].bag[1]"),"root.carrier[0].bag[1].capacity[0]=B10").
 binary("root.carrier[0].bag[1].capacity[0]=B10","root.carrier[0].bag[1].capacity[0]","=","B10").
 
-constraint((6,"root.carrier[0].bag[2]")).
-condition((6,"root.carrier[0].bag[2]"),"root.carrier[0].bag[2].material[0]=Leather").
+constraint(6,"!root.carrier[0].bag[2].material[0]=Leather||root.carrier[0].bag[2].capacity[0]=B10").
+binary("!root.carrier[0].bag[2].material[0]=Leather||root.carrier[0].bag[2].capacity[0]=B10","!root.carrier[0].bag[2].material[0]=Leather","||","root.carrier[0].bag[2].capacity[0]=B10").
+unary("!root.carrier[0].bag[2].material[0]=Leather","!","root.carrier[0].bag[2].material[0]=Leather").
+% condition((6,"root.carrier[0].bag[2]"),"root.carrier[0].bag[2].material[0]=Leather").
 binary("root.carrier[0].bag[2].material[0]=Leather","root.carrier[0].bag[2].material[0]","=","Leather").
-require((6,"root.carrier[0].bag[2]"),"root.carrier[0].bag[2].capacity[0]=B10").
+% require((6,"root.carrier[0].bag[2]"),"root.carrier[0].bag[2].capacity[0]=B10").
 binary("root.carrier[0].bag[2].capacity[0]=B10","root.carrier[0].bag[2].capacity[0]","=","B10").
 
-constraint((6,"root.frame[0].bag[0]")).
-condition((6,"root.frame[0].bag[0]"),"root.frame[0].bag[0].material[0]=Leather").
+constraint(6,"!root.frame[0].bag[0].material[0]=Leather||root.frame[0].bag[0].capacity[0]=B10").
+binary("!root.frame[0].bag[0].material[0]=Leather||root.frame[0].bag[0].capacity[0]=B10","!root.frame[0].bag[0].material[0]=Leather","||","root.frame[0].bag[0].capacity[0]=B10").
+unary("!root.frame[0].bag[0].material[0]=Leather","!","root.frame[0].bag[0].material[0]=Leather").
+% condition((6,"root.frame[0].bag[0]"),"root.frame[0].bag[0].material[0]=Leather").
 binary("root.frame[0].bag[0].material[0]=Leather","root.frame[0].bag[0].material[0]","=","Leather").
-require((6,"root.frame[0].bag[0]"),"root.frame[0].bag[0].capacity[0]=B10").
+% require((6,"root.frame[0].bag[0]"),"root.frame[0].bag[0].capacity[0]=B10").
 binary("root.frame[0].bag[0].capacity[0]=B10","root.frame[0].bag[0].capacity[0]","=","B10").
 
-constraint((6,"root.frame[0].bag[1]")).
-condition((6,"root.frame[0].bag[1]"),"root.frame[0].bag[1].material[0]=Leather").
+constraint(6,"!root.frame[0].bag[1].material[0]=Leather||root.frame[0].bag[1].capacity[0]=B10").
+binary("!root.frame[0].bag[1].material[0]=Leather||root.frame[0].bag[1].capacity[0]=B10","!root.frame[0].bag[1].material[0]=Leather","||","root.frame[0].bag[1].capacity[0]=B10").
+unary("!root.frame[0].bag[1].material[0]=Leather","!","root.frame[0].bag[1].material[0]=Leather").
+% condition((6,"root.frame[0].bag[1]"),"root.frame[0].bag[1].material[0]=Leather").
 binary("root.frame[0].bag[1].material[0]=Leather","root.frame[0].bag[1].material[0]","=","Leather").
-require((6,"root.frame[0].bag[1]"),"root.frame[0].bag[1].capacity[0]=B10").
+% require((6,"root.frame[0].bag[1]"),"root.frame[0].bag[1].capacity[0]=B10").
 binary("root.frame[0].bag[1].capacity[0]=B10","root.frame[0].bag[1].capacity[0]","=","B10").
 
 
