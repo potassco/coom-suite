@@ -1,8 +1,6 @@
 % Table constraints (only for allow)
-% Table constraint is satisfied if a row is satisfied
-unsatisfied(C,ID) :- column(C,ID,_,_), not hit_row(C,ID), defined(C,ID).
 
-%%% Check combinations
+% Check combinations
 hit_cell(C,ID,(Col,Row)) :- allow(Idx,(Col,Row),V), column(C,ID,Col,X), value(X,V), C=(Idx,_).
 
 hit_row(C,ID) :- allow(Idx,(_,Row),_), column(C,ID,_,_), C=(Idx,_),

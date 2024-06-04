@@ -119,9 +119,9 @@ index(@dotpath(X),Idx)          :- type_aux(X,T), coom_structure(T), X=((_,(_,Id
 parent(@dotpath(X),@dotpath(P)) :- type_aux(X,_), X=(_,(P,_)).
 name(@dotpath(X),N)             :- type_aux(X,_), X=(N,(_,_)).
 
-isnumeric(@dotpath((A,(X,0))))  :- type_aux((A,(X,0)),A),
-                                   coom_attribute_value(T,_,A,_),
-                                   coom_attribute(T,A,"num").
+% isnumeric(@dotpath((A,(X,0))))  :- type_aux((A,(X,0)),A),
+%                                    coom_attribute_value(T,_,A,_),
+%                                    coom_attribute(T,A,"num").
 
 #show type/2.
 #show index/2.
@@ -137,10 +137,12 @@ condition((C,@dotpath(X)),G) :- coom_condition(C,F), binary(X,F,G).
 condition(C)                 :- coom_condition(C,_).
 binary(G,L,Op,R) :- binary(_,_,G,L,Op,R).
 
+% Table constraints
 column((C,@dotpath(X)),ID,Col,@dotpath(X')) :- coom_combinations(C,Col,P),
                                                path_to(X,P,X'), in_tuple(CT,X'), tuple_order((C,X),CT,ID).
 allow(C,XY,V)           :- coom_allow(C,XY,V).
 
+% Functions
 function(@function(T,C,P),T,@join(C,P)) :- function(C,_,T,P).
 path(@join(C,P),@dotpath(X)) :- function_path(C,P,X).
 
@@ -163,13 +165,13 @@ number(C,N)             :- coom_number(C,N).
 #show number/2.
 
 % Partonomy of the model and numeric variables
-part(T)                 :- coom_structure(T).
-cardinality(C,N,Min,Max):- coom_feature(C,N,_,Min,Max).
-range(C,N,Min,Max)      :- coom_range(C,N,Min,Max).
+part(T)                   :- coom_structure(T).
+cardinality(C,N,Min,Max)  :- coom_feature(C,N,_,Min,Max).
+range(@join(C,N),Min,Max) :- coom_range(C,N,Min,Max).
 
 #show part/1.
 #show cardinality/4.
-#show range/4.
+#show range/3.
 
 
 

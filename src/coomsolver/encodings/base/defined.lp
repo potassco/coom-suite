@@ -1,13 +1,13 @@
+#defined type/1.
 #defined part/1.
-#defined cardinality/4.
-#defined attribute/2.
-#defined range/3.
+#defined discrete/1.
 #defined domain/2.
+#defined integer/1.
+#defined range/3.
 
 #defined type/2.
-#defined index/2.
+% #defined index/2.
 #defined parent/2.
-#defined name/2.
 
 #defined constraint/1.
 #defined constraint/2.
