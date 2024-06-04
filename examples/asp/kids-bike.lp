@@ -1,17 +1,22 @@
+% Types of the model
+type("Color").
+type("Wheel").
+type("Wheel.size").
+
 % Attributes of the model
-attribute("Color","discrete").
+discrete("Color").
 domain("Color","Red").
 domain("Color","Green").
 domain("Color","Yellow").
 domain("Color","Blue").
 
-attribute("Wheel","discrete").
+discrete("Wheel").
 domain("Wheel","W14").
 domain("Wheel","W16").
 domain("Wheel","W18").
 domain("Wheel","W20").
 
-attribute("Wheel.size","numeric").
+integer("Wheel.size").
 range("Wheel.size",14,20).
 % domain("Wheel.size",14).
 % domain("Wheel.size",16).
@@ -22,30 +27,34 @@ range("Wheel.size",14,20).
 type("root","product").
 
 type("root.color[0]","Color").
-parent("root.color[0]", "root").
-name("root.color[0]","color").
+parent("root.color[0]","root").
+index("root.color[0]",0).
+% name("root.color[0]","color").
 
 type("root.frontWheel[0]","Wheel").
-parent("root.frontWheel[0]", "root").
-name("root.frontWheel[0]","frontWheel").
+parent("root.frontWheel[0]","root").
+index("root.frontWheel[0]",0).
+% name("root.frontWheel[0]","frontWheel").
 
 type("root.frontWheel[0].size[0]","Wheel.size").
 parent("root.frontWheel[0].size[0]","root.frontWheel[0]").
-name("root.frontWheel[0].size[0]","size").
-% isnumeric("root.frontWheel[0].size[0]").
+index("root.frontWheel[0].size[0]",0).
+% name("root.frontWheel[0].size[0]","size").
 
 type("root.rearWheel[0]","Wheel").
-parent("root.rearWheel[0]", "root").
-name("root.rearWheel[0]","rearWheel").
+parent("root.rearWheel[0]","root").
+index("root.rearWheel[0]",0).
+% name("root.rearWheel[0]","rearWheel").
 
 type("root.rearWheel[0].size[0]","Wheel.size").
 parent("root.rearWheel[0].size[0]","root.rearWheel[0]").
-name("root.rearWheel[0].size[0]","size").
-% isnumeric("root.rearWheel[0].size[0]").
+index("root.rearWheel[0].size[0]",0).
+% name("root.rearWheel[0].size[0]","size").
 
 type("root.wheelSupport[0]","bool").
 parent("root.wheelSupport[0]", "root").
-name("root.wheelSupport[0]","wheelSupport").
+index("root.wheelSupport[0]",0).
+% name("root.wheelSupport[0]","wheelSupport").
 
 % Instantiated constraints
 constraint(0,"!root.color[0]=Yellow||root.frontWheel[0].size[0]>16").
@@ -95,3 +104,62 @@ allow("Wheel",(0,2),"W18").
 allow("Wheel",(1,2),18).
 allow("Wheel",(0,3),"W20").
 allow("Wheel",(1,3),20).
+
+% Cardinality constraints
+% only need to check for min, not possible to exceed max as all possible objects are instantiated before
+% cardinality("product","color",1).
+% cardinality("product","wheelSupport",1).
+% cardinality("product","frontWheel",1).
+% cardinality("product","rearWheel",1).
+% cardinality("Wheel","size",1).
+
+
+cardinality("root","root.color",1).
+path("root.color","root.color[0]").
+
+cardinality("root","root.wheelSupport",1).
+path("root.wheelSupport","root.wheelSupport[0]").
+
+cardinality("root","root.frontWheel",1).
+path("root.frontWheel","root.frontWheel[0]").
+
+cardinality("root.frontWheel[0]","root.frontWheel[0].size",1).
+path("root.frontWheel[0].size","root.frontWheel[0].size[0]").
+
+cardinality("root","root.rearWheel",1).
+path("root.rearWheel","root.rearWheel[0]").
+
+cardinality("root.rearWheel[0]","root.rearWheel[0].size",1).
+path("root.rearWheel[0].size","root.rearWheel[0].size[0]").
+
+
+% constraint("Cardinality","count(root.color)>=1").
+% binary("count(root.color)>=1","count(root.color)",">=","1").
+% function("count(root.color)","count","root.color").
+% path("root.color","root.color[0]").
+% number("1",1).
+
+% constraint("Cardinality","count(root.wheelSupport)>=1").
+% binary("count(root.wheelSupport)>=1","count(root.wheelSupport)",">=","1").
+% function("count(root.wheelSupport)","count","root.wheelSupport").
+% path("root.wheelSupport","root.wheelSupport[0]").
+
+% constraint("Cardinality","count(root.frontWheel)>=1").
+% binary("count(root.frontWheel)>=1","count(root.frontWheel)",">=","1").
+% function("count(root.frontWheel)","count","root.frontWheel").
+% path("root.frontWheel","root.frontWheel[0]").
+
+% constraint("Cardinality","count(root.rearWheel)>=1").
+% binary("count(root.rearWheel)>=1","count(root.rearWheel)",">=","1").
+% function("count(root.rearWheel)","count","root.rearWheel").
+% path("root.rearWheel","root.rearWheel[0]").
+
+% constraint("Cardinality","count(root.frontWheel[0].size)>=1").
+% binary("count(root.frontWheel[0].size)>=1","count(root.frontWheel[0].size)",">=","1").
+% function("count(root.frontWheel[0].size)","count","root.frontWheel[0].size").
+% path("root.frontWheel[0].size","root.frontWheel[0].size[0]").
+
+% constraint("Cardinality","count(root.rearWheel[0].size)>=1").
+% binary("count(root.rearWheel[0].size)>=1","count(root.rearWheel[0].size)",">=","1").
+% function("count(root.rearWheel[0].size)","count","root.rearWheel[0].size").
+% path("root.rearWheel[0].size","root.rearWheel[0].size[0]").
