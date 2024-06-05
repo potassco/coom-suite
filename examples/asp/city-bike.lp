@@ -1,16 +1,5 @@
-% Types of the model (really needed?)
-type("Color").
-type("Basket").
-type("Position").
-type("Saddle").
-type("Wheel").
-type("Wheel.size").
-type("Carrier").
-type("Bag").
-type("Capacity").
-type("Capacity.volume").
-type("Material").
-
+% Parts of the model
+part("root").
 part("Basket").
 part("Carrier").
 part("Bag").
@@ -68,92 +57,74 @@ type("root","product").
 type("root.carrier[0]","Carrier").
 index("root.carrier[0]",0).
 parent("root.carrier[0]", "root").
-% name("root.carrier[0]","carrier").
 
 type("root.basket[0]","Basket").
 index("root.basket[0]",0).
 parent("root.basket[0]", "root").
-% name("root.basket[0]","basket").
 
 type("root.carrier[0].bag[0]","Bag").
 index("root.carrier[0].bag[0]",0).
 parent("root.carrier[0].bag[0]", "root.carrier[0]").
-% name("root.carrier[0].bag[0]","bag").
 
 type("root.carrier[0].bag[1]","Bag").
 index("root.carrier[0].bag[1]",1).
 parent("root.carrier[0].bag[1]", "root.carrier[0]").
-% name("root.carrier[0].bag[1]","bag").
 
 type("root.color[0]","Color").
 index("root.color[0]",0).
 parent("root.color[0]", "root").
-% name("root.color[0]","color").
 
 type("root.saddle[0]","Saddle").
 index("root.saddle[0]",0).
 parent("root.saddle[0]", "root").
-% name("root.saddle[0]","saddle").
 
 type("root.frontWheel[0]","Wheel").
 index("root.frontWheel[0]",0).
 parent("root.frontWheel[0]", "root").
-% name("root.frontWheel[0]","frontWheel").
 
 type("root.frontWheel[0].size[0]","Wheel.size").
 index("root.frontWheel[0].size[0]",0).
 parent("root.frontWheel[0].size[0]","root.frontWheel[0]").
-% name("root.frontWheel[0].size[0]","size").
 
 type("root.rearWheel[0]","Wheel").
 index("root.rearWheel[0]",0).
 parent("root.rearWheel[0]", "root").
-% name("root.rearWheel[0]","rearWheel").
 
 type("root.rearWheel[0].size[0]","Wheel.size").
 index("root.rearWheel[0].size[0]",0).
 parent("root.rearWheel[0].size[0]","root.rearWheel[0]").
-% name("root.rearWheel[0].size[0]","size").
 
 type("root.basket[0].color[0]","Color").
 index("root.basket[0].color[0]",0).
 parent("root.basket[0].color[0]","root.basket[0]").
-% name("root.basket[0].color[0]","color").
 
 type("root.basket[0].position[0]","Position").
 index("root.basket[0].position[0]",0).
 parent("root.basket[0].position[0]","root.basket[0]").
-% name("root.basket[0].position[0]","position").
 
 type("root.carrier[0].bag[0].capacity[0]","Capacity").
 index("root.carrier[0].bag[0].capacity[0]",0).
 parent("root.carrier[0].bag[0].capacity[0]", "root.carrier[0].bag[0]").
-% name("root.carrier[0].bag[0].capacity[0]","capacity").
 
 type("root.carrier[0].bag[0].capacity[0].volume[0]","Capacity.volume").
 index("root.carrier[0].bag[0].capacity[0].volume[0]",0).
 parent("root.carrier[0].bag[0].capacity[0].volume[0]","root.carrier[0].bag[0].capacity[0]").
-% name("root.carrier[0].bag[0].capacity[0].volume[0]","volume").
 
 type("root.carrier[0].bag[1].capacity[0]","Capacity").
 index("root.carrier[0].bag[1].capacity[0]",0).
 parent("root.carrier[0].bag[1].capacity[0]", "root.carrier[0].bag[1]").
-% name("root.carrier[0].bag[1].capacity[0]","capacity").
 
 type("root.carrier[0].bag[1].capacity[0].volume[0]","Capacity.volume").
 index("root.carrier[0].bag[1].capacity[0].volume[0]",0).
 parent("root.carrier[0].bag[1].capacity[0].volume[0]","root.carrier[0].bag[1].capacity[0]").
-% name("root.carrier[0].bag[1].capacity[0].volume[0]","volume").
 
 type("root.carrier[0].bag[0].material[0]","Material").
 index("root.carrier[0].bag[0].material[0]",0).
 parent("root.carrier[0].bag[0].material[0]", "root.carrier[0].bag[0]").
-% name("root.carrier[0].bag[0].material[0]","material").
 
 type("root.carrier[0].bag[1].material[0]","Material").
 index("root.carrier[0].bag[1].material[0]",0).
 parent("root.carrier[0].bag[1].material[0]", "root.carrier[0].bag[1]").
-% name("root.carrier[0].bag[1].material[0]","material").
 
 
 % Instantiated constraints

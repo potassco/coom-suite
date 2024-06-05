@@ -1,20 +1,5 @@
-% Types of the model
-type("product.totalWeight").
-type("product.maxWeight").
-type("product.totalVolume").
-type("product.requestedVolume").
-type("Capacity.volume").
-type("Capacity.weight").
-type("Wheel.size").
-type("Wheel.weight").
-type("Capacity").
-type("Material").
-type("Wheel").
-type("Color").
-type("Carrier").
-type("Frame").
-type("Bag").
-
+% Parts of the model
+part("root").
 part("Carrier").
 part("Frame").
 part("Bag").
@@ -92,97 +77,78 @@ type("root","product").
 type("root.totalWeight[0]","product.totalWeight").
 index("root.totalWeight[0]",0).
 parent("root.totalWeight[0]","root").
-% name("root.totalWeight[0]","totalWeight").
 
 type("root.maxWeight[0]","product.maxWeight").
 index("root.maxWeight[0]",0).
 parent("root.maxWeight[0]","root").
-% name("root.maxWeight[0]","maxWeight").
 
 type("root.totalVolume[0]","product.totalVolume").
 index("root.totalVolume[0]",0).
 parent("root.totalVolume[0]","root").
-% name("root.totalVolume[0]","totalVolume").
 
 type("root.requestedVolume[0]","product.requestedVolume").
 index("root.requestedVolume[0]",0).
 parent("root.requestedVolume[0]","root").
-% name("root.requestedVolume[0]","requestedVolume").
 
 type("root.carrier[0]","Carrier").
 index("root.carrier[0]",0).
 parent("root.carrier[0]", "root").
-% name("root.carrier[0]","carrier").
 
 type("root.frame[0]","Frame").
 index("root.frame[0]",0).
 parent("root.frame[0]", "root").
-% name("root.frame[0]","frame").
 
 type("root.carrier[0].bag[0]","Bag").
 index("root.carrier[0].bag[0]",0).
 parent("root.carrier[0].bag[0]", "root.carrier[0]").
-% name("root.carrier[0].bag[0]","bag").
 
 type("root.carrier[0].bag[1]","Bag").
 index("root.carrier[0].bag[1]",1).
 parent("root.carrier[0].bag[1]", "root.carrier[0]").
-% name("root.carrier[0].bag[1]","bag").
 
 type("root.carrier[0].bag[2]","Bag").
 index("root.carrier[0].bag[2]",2).
 parent("root.carrier[0].bag[2]", "root.carrier[0]").
-% name("root.carrier[0].bag[2]","bag").
 
 type("root.frame[0].bag[0]","Bag").
 index("root.frame[0].bag[0]",0).
 parent("root.frame[0].bag[0]", "root.frame[0]").
-% name("root.frame[0].bag[0]","bag").
 
 type("root.frame[0].bag[1]","Bag").
 index("root.frame[0].bag[1]",1).
 parent("root.frame[0].bag[1]", "root.frame[0]").
-% name("root.frame[0].bag[1]","bag").
 
 type("root.frontWheel[0]","Wheel").
 index("root.frontWheel[0]",0).
 parent("root.frontWheel[0]", "root").
-% name("root.frontWheel[0]","frontWheel").
 
 type("root.frontWheel[0].size[0]","Wheel.size").
 index("root.frontWheel[0].size[0]",0).
 parent("root.frontWheel[0].size[0]","root.frontWheel[0]").
-% name("root.frontWheel[0].size[0]","size").
 
 type("root.frontWheel[0].weight[0]","Wheel.weight").
 index("root.frontWheel[0].weight[0]",0).
 parent("root.frontWheel[0].weight[0]","root.frontWheel[0]").
-% name("root.frontWheel[0].weight[0]","weight").
 
 type("root.rearWheel[0]","Wheel").
 index("root.rearWheel[0]",0).
 parent("root.rearWheel[0]", "root").
-% name("root.rearWheel[0]","rearWheel").
 
 type("root.rearWheel[0].size[0]","Wheel.size").
 index("root.rearWheel[0].size[0]",0).
 parent("root.rearWheel[0].size[0]","root.rearWheel[0]").
-% name("root.rearWheel[0].size[0]","size").
 
 type("root.rearWheel[0].weight[0]","Wheel.weight").
 index("root.rearWheel[0].weight[0]",0).
 parent("root.rearWheel[0].weight[0]","root.rearWheel[0]").
-% name("root.rearWheel[0].weight[0]","weight").
 
 type("root.color[0]","Color").
 index("root.color[0]",0).
 parent("root.color[0]", "root").
-% name("root.color[0]","color").
 
 type("root.carrier[0].bag[0].capacity[0]","Capacity").
 index("root.carrier[0].bag[0].capacity[0]",0).
 parent("root.carrier[0].bag[0].capacity[0]", "root.carrier[0].bag[0]").
-% name("root.carrier[0].bag[0].capacity[0]","capacity").
 
 type("root.carrier[0].bag[0].capacity[0].volume[0]","Capacity.volume").
 index("root.carrier[0].bag[0].capacity[0].volume[0]",0).
@@ -195,7 +161,6 @@ parent("root.carrier[0].bag[0].capacity[0].weight[0]","root.carrier[0].bag[0].ca
 type("root.carrier[0].bag[1].capacity[0]","Capacity").
 index("root.carrier[0].bag[1].capacity[0]",0).
 parent("root.carrier[0].bag[1].capacity[0]", "root.carrier[0].bag[1]").
-% name("root.carrier[0].bag[1].capacity[0]","capacity").
 
 type("root.carrier[0].bag[1].capacity[0].volume[0]","Capacity.volume").
 index("root.carrier[0].bag[1].capacity[0].volume[0]",0).
@@ -208,7 +173,6 @@ parent("root.carrier[0].bag[1].capacity[0].weight[0]","root.carrier[0].bag[1].ca
 type("root.carrier[0].bag[2].capacity[0]","Capacity").
 index("root.carrier[0].bag[2].capacity[0]",0).
 parent("root.carrier[0].bag[2].capacity[0]", "root.carrier[0].bag[2]").
-% name("root.carrier[0].bag[2].capacity[0]","capacity").
 
 type("root.carrier[0].bag[2].capacity[0].volume[0]","Capacity.volume").
 index("root.carrier[0].bag[2].capacity[0].volume[0]",0).
@@ -221,22 +185,18 @@ parent("root.carrier[0].bag[2].capacity[0].weight[0]","root.carrier[0].bag[2].ca
 type("root.carrier[0].bag[0].material[0]","Material").
 index("root.carrier[0].bag[0].material[0]",0).
 parent("root.carrier[0].bag[0].material[0]", "root.carrier[0].bag[0]").
-% name("root.carrier[0].bag[0].material[0]","material").
 
 type("root.carrier[0].bag[1].material[0]","Material").
 index("root.carrier[0].bag[1].material[0]",0).
 parent("root.carrier[0].bag[1].material[0]", "root.carrier[0].bag[1]").
-% name("root.carrier[0].bag[1].material[0]","material").
 
 type("root.carrier[0].bag[2].material[0]","Material").
 index("root.carrier[0].bag[2].material[0]",0).
 parent("root.carrier[0].bag[2].material[0]", "root.carrier[0].bag[2]").
-% name("root.carrier[0].bag[2].material[0]","material").
 
 type("root.frame[0].bag[0].capacity[0]","Capacity").
 index("root.frame[0].bag[0].capacity[0]",0).
 parent("root.frame[0].bag[0].capacity[0]", "root.frame[0].bag[0]").
-% name("root.frame[0].bag[0].capacity[0]","capacity").
 
 type("root.frame[0].bag[0].capacity[0].volume[0]","Capacity.volume").
 index("root.frame[0].bag[0].capacity[0].volume[0]",0).
@@ -249,7 +209,6 @@ parent("root.frame[0].bag[0].capacity[0].weight[0]","root.frame[0].bag[0].capaci
 type("root.frame[0].bag[1].capacity[0]","Capacity").
 index("root.frame[0].bag[1].capacity[0]",0).
 parent("root.frame[0].bag[1].capacity[0]", "root.frame[0].bag[1]").
-% name("root.frame[0].bag[1].capacity[0]","capacity").
 
 type("root.frame[0].bag[1].capacity[0].volume[0]","Capacity.volume").
 index("root.frame[0].bag[1].capacity[0].volume[0]",0).
@@ -262,16 +221,13 @@ parent("root.frame[0].bag[1].capacity[0].weight[0]","root.frame[0].bag[1].capaci
 type("root.frame[0].bag[0].material[0]","Material").
 index("root.frame[0].bag[0].material[0]",0).
 parent("root.frame[0].bag[0].material[0]", "root.frame[0].bag[0]").
-% name("root.frame[0].bag[0].material[0]","material").
 
 type("root.frame[0].bag[1].material[0]","Material").
 index("root.frame[0].bag[1].material[0]",0).
 parent("root.frame[0].bag[1].material[0]", "root.frame[0].bag[1]").
-% name("root.frame[0].bag[1].material[0]","material").
 
 % Instantiated constraints
 constraint(0,"count(root.carrier.bag)+count(root.frame.bag)<=4").
-% require((0,"root"),"count(root.carrier.bag)+count(root.frame.bag)<=4").
 binary("count(root.carrier.bag)+count(root.frame.bag)<=4","count(root.carrier.bag)+count(root.frame.bag)","<=","4").
 binary("count(root.carrier.bag)+count(root.frame.bag)","count(root.carrier.bag)","+","count(root.frame.bag)").
 function("count(root.carrier.bag)","count","root.carrier.bag").
@@ -298,7 +254,6 @@ path("root.frame.bag.capacity.weight","root.frame[0].bag[0].capacity[0].weight[0
 path("root.frame.bag.capacity.weight","root.frame[0].bag[1].capacity[0].weight[0]").
 
 constraint(2,"root.totalWeight[0]<=root.maxWeight[0]*1000").
-% require((2,"root"),"root.totalWeight[0]<=root.maxWeight[0]*1000").
 binary("root.totalWeight[0]<=root.maxWeight[0]*1000","root.totalWeight[0]","<=","root.maxWeight[0]*1000").
 binary("root.maxWeight[0]*1000","root.maxWeight[0]","*","1000").
 number("1000",1000).
@@ -316,27 +271,20 @@ path("root.frame.bag.capacity.volume","root.frame[0].bag[0].capacity[0].volume[0
 path("root.frame.bag.capacity.volume","root.frame[0].bag[1].capacity[0].volume[0]").
 
 constraint(4,"root.totalVolume[0]>=root.requestedVolume[0]").
-% require((4,"root"),"root.totalVolume[0]>=root.requestedVolume[0]").
 binary("root.totalVolume[0]>=root.requestedVolume[0]","root.totalVolume[0]",">=","root.requestedVolume[0]").
 
 constraint(5,"!root.color[0]=Red||root.frontWheel[0].size[0]=20").
 binary("!root.color[0]=Red||root.frontWheel[0].size[0]=20","!root.color[0]=Red","||","root.frontWheel[0].size[0]=20").
 unary("!root.color[0]=Red","!","root.color[0]=Red").
-% condition(5).
-% condition((5,"root"),"root.color[0]=Red").
 binary("root.color[0]=Red","root.color[0]","=","Red").
 constant("Red").
-% require((5,"root"),"root.frontWheel[0].size[0]=20").
 binary("root.frontWheel[0].size[0]=20","root.frontWheel[0].size[0]","=","20").
 number("20",20).
 
 constraint(6,"!root.carrier[0].bag[0].material[0]=Leather||root.carrier[0].bag[0].capacity[0]=B10").
 binary("!root.carrier[0].bag[0].material[0]=Leather||root.carrier[0].bag[0].capacity[0]=B10","!root.carrier[0].bag[0].material[0]=Leather","||","root.carrier[0].bag[0].capacity[0]=B10").
 unary("!root.carrier[0].bag[0].material[0]=Leather","!","root.carrier[0].bag[0].material[0]=Leather").
-% condition(6).
-% condition((6,"root.carrier[0].bag[0]"),"root.carrier[0].bag[0].material[0]=Leather").
 binary("root.carrier[0].bag[0].material[0]=Leather","root.carrier[0].bag[0].material[0]","=","Leather").
-% require((6,"root.carrier[0].bag[0]"),"root.carrier[0].bag[0].capacity[0]=B10").
 binary("root.carrier[0].bag[0].capacity[0]=B10","root.carrier[0].bag[0].capacity[0]","=","B10").
 constant("Leather").
 constant("B10").
@@ -344,33 +292,25 @@ constant("B10").
 constraint(6,"!root.carrier[0].bag[1].material[0]=Leather||root.carrier[0].bag[1].capacity[0]=B10").
 binary("!root.carrier[0].bag[1].material[0]=Leather||root.carrier[0].bag[1].capacity[0]=B10","!root.carrier[0].bag[1].material[0]=Leather","||","root.carrier[0].bag[1].capacity[0]=B10").
 unary("!root.carrier[0].bag[1].material[0]=Leather","!","root.carrier[0].bag[1].material[0]=Leather").
-% condition((6,"root.carrier[0].bag[1]"),"root.carrier[0].bag[1].material[0]=Leather").
 binary("root.carrier[0].bag[1].material[0]=Leather","root.carrier[0].bag[1].material[0]","=","Leather").
-% require((6,"root.carrier[0].bag[1]"),"root.carrier[0].bag[1].capacity[0]=B10").
 binary("root.carrier[0].bag[1].capacity[0]=B10","root.carrier[0].bag[1].capacity[0]","=","B10").
 
 constraint(6,"!root.carrier[0].bag[2].material[0]=Leather||root.carrier[0].bag[2].capacity[0]=B10").
 binary("!root.carrier[0].bag[2].material[0]=Leather||root.carrier[0].bag[2].capacity[0]=B10","!root.carrier[0].bag[2].material[0]=Leather","||","root.carrier[0].bag[2].capacity[0]=B10").
 unary("!root.carrier[0].bag[2].material[0]=Leather","!","root.carrier[0].bag[2].material[0]=Leather").
-% condition((6,"root.carrier[0].bag[2]"),"root.carrier[0].bag[2].material[0]=Leather").
 binary("root.carrier[0].bag[2].material[0]=Leather","root.carrier[0].bag[2].material[0]","=","Leather").
-% require((6,"root.carrier[0].bag[2]"),"root.carrier[0].bag[2].capacity[0]=B10").
 binary("root.carrier[0].bag[2].capacity[0]=B10","root.carrier[0].bag[2].capacity[0]","=","B10").
 
 constraint(6,"!root.frame[0].bag[0].material[0]=Leather||root.frame[0].bag[0].capacity[0]=B10").
 binary("!root.frame[0].bag[0].material[0]=Leather||root.frame[0].bag[0].capacity[0]=B10","!root.frame[0].bag[0].material[0]=Leather","||","root.frame[0].bag[0].capacity[0]=B10").
 unary("!root.frame[0].bag[0].material[0]=Leather","!","root.frame[0].bag[0].material[0]=Leather").
-% condition((6,"root.frame[0].bag[0]"),"root.frame[0].bag[0].material[0]=Leather").
 binary("root.frame[0].bag[0].material[0]=Leather","root.frame[0].bag[0].material[0]","=","Leather").
-% require((6,"root.frame[0].bag[0]"),"root.frame[0].bag[0].capacity[0]=B10").
 binary("root.frame[0].bag[0].capacity[0]=B10","root.frame[0].bag[0].capacity[0]","=","B10").
 
 constraint(6,"!root.frame[0].bag[1].material[0]=Leather||root.frame[0].bag[1].capacity[0]=B10").
 binary("!root.frame[0].bag[1].material[0]=Leather||root.frame[0].bag[1].capacity[0]=B10","!root.frame[0].bag[1].material[0]=Leather","||","root.frame[0].bag[1].capacity[0]=B10").
 unary("!root.frame[0].bag[1].material[0]=Leather","!","root.frame[0].bag[1].material[0]=Leather").
-% condition((6,"root.frame[0].bag[1]"),"root.frame[0].bag[1].material[0]=Leather").
 binary("root.frame[0].bag[1].material[0]=Leather","root.frame[0].bag[1].material[0]","=","Leather").
-% require((6,"root.frame[0].bag[1]"),"root.frame[0].bag[1].capacity[0]=B10").
 binary("root.frame[0].bag[1].capacity[0]=B10","root.frame[0].bag[1].capacity[0]","=","B10").
 
 

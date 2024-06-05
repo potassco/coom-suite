@@ -165,6 +165,8 @@ class COOMApp(Application):
         pre_ctl = Control(message_limit=0)
         for f in input_files:
             pre_ctl.load(f)
+        if self._solver == "clingo":
+            pre_ctl.add("base", [], "discrete.")
         pre_ctl.ground()
         with pre_ctl.solve(yield_=True) as handle:
             facts = [str(s) + "." for s in handle.model().symbols(shown=True)]

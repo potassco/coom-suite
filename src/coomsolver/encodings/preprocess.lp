@@ -109,13 +109,12 @@ range(@join(T,A),Min,Max) :- coom_attribute(T,A,"num"), not discrete,
                              Min = #min { V: coom_attribute_value(T,_,A,V) },
                              Max = #max { V: coom_attribute_value(T,_,A,V) }.
 
+% Temporary fix: For clingo huge ranges might might grounding to large, translate numeric attributes to discrete attributes
 discrete(@join(T,A)) :- coom_attribute(T,A,"num"), discrete.
 domain(@join(T,A),V) :- coom_attribute_value(T,_,A,V), coom_attribute(T,A,"num"), discrete.
 
 integer(@join(Ctx,N))       :- coom_feature(Ctx,N,"num",_,_).
 range(@join(Ctx,N),Min,Max) :- coom_feature(Ctx,N,"num",_,_), coom_range(Ctx,N,Min,Max).
-
-discrete.
 
 #show discrete/1.
 #show domain/2.

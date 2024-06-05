@@ -1,7 +1,5 @@
-% Types of the model (really needed?)
-type("Color").
-type("Wheel").
-type("Wheel.size").
+% Parts of the model
+part("root").
 
 % Attributes of the model
 discrete("Color").
@@ -29,32 +27,26 @@ type("root","product").
 type("root.color[0]","Color").
 parent("root.color[0]","root").
 index("root.color[0]",0).
-% name("root.color[0]","color").
 
 type("root.frontWheel[0]","Wheel").
 parent("root.frontWheel[0]","root").
 index("root.frontWheel[0]",0).
-% name("root.frontWheel[0]","frontWheel").
 
 type("root.frontWheel[0].size[0]","Wheel.size").
 parent("root.frontWheel[0].size[0]","root.frontWheel[0]").
 index("root.frontWheel[0].size[0]",0).
-% name("root.frontWheel[0].size[0]","size").
 
 type("root.rearWheel[0]","Wheel").
 parent("root.rearWheel[0]","root").
 index("root.rearWheel[0]",0).
-% name("root.rearWheel[0]","rearWheel").
 
 type("root.rearWheel[0].size[0]","Wheel.size").
 parent("root.rearWheel[0].size[0]","root.rearWheel[0]").
 index("root.rearWheel[0].size[0]",0).
-% name("root.rearWheel[0].size[0]","size").
 
 type("root.wheelSupport[0]","bool").
 parent("root.wheelSupport[0]", "root").
 index("root.wheelSupport[0]",0).
-% name("root.wheelSupport[0]","wheelSupport").
 
 % Instantiated constraints
 constraint(0,"!root.color[0]=Yellow||root.frontWheel[0].size[0]>16").
