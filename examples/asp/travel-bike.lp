@@ -153,13 +153,11 @@ type("root.frontWheel[0].size[0]","Wheel.size").
 index("root.frontWheel[0].size[0]",0).
 parent("root.frontWheel[0].size[0]","root.frontWheel[0]").
 % name("root.frontWheel[0].size[0]","size").
-% % isnumeric("root.frontWheel[0].size[0]").
 
 type("root.frontWheel[0].weight[0]","Wheel.weight").
 index("root.frontWheel[0].weight[0]",0).
 parent("root.frontWheel[0].weight[0]","root.frontWheel[0]").
 % name("root.frontWheel[0].weight[0]","weight").
-% % isnumeric("root.frontWheel[0].weight[0]").
 
 type("root.rearWheel[0]","Wheel").
 index("root.rearWheel[0]",0).
@@ -170,13 +168,11 @@ type("root.rearWheel[0].size[0]","Wheel.size").
 index("root.rearWheel[0].size[0]",0).
 parent("root.rearWheel[0].size[0]","root.rearWheel[0]").
 % name("root.rearWheel[0].size[0]","size").
-% % isnumeric("root.rearWheel[0].size[0]").
 
 type("root.rearWheel[0].weight[0]","Wheel.weight").
 index("root.rearWheel[0].weight[0]",0).
 parent("root.rearWheel[0].weight[0]","root.rearWheel[0]").
 % name("root.rearWheel[0].weight[0]","weight").
-% % isnumeric("root.rearWheel[0].weight[0]").
 
 type("root.color[0]","Color").
 index("root.color[0]",0).
@@ -191,12 +187,10 @@ parent("root.carrier[0].bag[0].capacity[0]", "root.carrier[0].bag[0]").
 type("root.carrier[0].bag[0].capacity[0].volume[0]","Capacity.volume").
 index("root.carrier[0].bag[0].capacity[0].volume[0]",0).
 parent("root.carrier[0].bag[0].capacity[0].volume[0]","root.carrier[0].bag[0].capacity[0]").
-% isnumeric("root.carrier[0].bag[0].capacity[0].volume[0]").
 
 type("root.carrier[0].bag[0].capacity[0].weight[0]","Capacity.weight").
 index("root.carrier[0].bag[0].capacity[0].weight[0]",0).
 parent("root.carrier[0].bag[0].capacity[0].weight[0]","root.carrier[0].bag[0].capacity[0]").
-% isnumeric("root.carrier[0].bag[0].capacity[0].weight[0]").
 
 type("root.carrier[0].bag[1].capacity[0]","Capacity").
 index("root.carrier[0].bag[1].capacity[0]",0).
@@ -206,12 +200,10 @@ parent("root.carrier[0].bag[1].capacity[0]", "root.carrier[0].bag[1]").
 type("root.carrier[0].bag[1].capacity[0].volume[0]","Capacity.volume").
 index("root.carrier[0].bag[1].capacity[0].volume[0]",0).
 parent("root.carrier[0].bag[1].capacity[0].volume[0]","root.carrier[0].bag[1].capacity[0]").
-% isnumeric("root.carrier[0].bag[1].capacity[0].volume[0]").
 
 type("root.carrier[0].bag[1].capacity[0].weight[0]","Capacity.weight").
 index("root.carrier[0].bag[1].capacity[0].weight[0]",0).
 parent("root.carrier[0].bag[1].capacity[0].weight[0]","root.carrier[0].bag[1].capacity[0]").
-% isnumeric("root.carrier[0].bag[1].capacity[0].weight[0]").
 
 type("root.carrier[0].bag[2].capacity[0]","Capacity").
 index("root.carrier[0].bag[2].capacity[0]",0).
@@ -221,12 +213,10 @@ parent("root.carrier[0].bag[2].capacity[0]", "root.carrier[0].bag[2]").
 type("root.carrier[0].bag[2].capacity[0].volume[0]","Capacity.volume").
 index("root.carrier[0].bag[2].capacity[0].volume[0]",0).
 parent("root.carrier[0].bag[2].capacity[0].volume[0]","root.carrier[0].bag[2].capacity[0]").
-% isnumeric("root.carrier[0].bag[2].capacity[0].volume[0]").
 
 type("root.carrier[0].bag[2].capacity[0].weight[0]","Capacity.weight").
 index("root.carrier[0].bag[2].capacity[0].weight[0]",0).
 parent("root.carrier[0].bag[2].capacity[0].weight[0]","root.carrier[0].bag[2].capacity[0]").
-% isnumeric("root.carrier[0].bag[2].capacity[0].weight[0]").
 
 type("root.carrier[0].bag[0].material[0]","Material").
 index("root.carrier[0].bag[0].material[0]",0).
@@ -251,12 +241,10 @@ parent("root.frame[0].bag[0].capacity[0]", "root.frame[0].bag[0]").
 type("root.frame[0].bag[0].capacity[0].volume[0]","Capacity.volume").
 index("root.frame[0].bag[0].capacity[0].volume[0]",0).
 parent("root.frame[0].bag[0].capacity[0].volume[0]","root.frame[0].bag[0].capacity[0]").
-% isnumeric("root.frame[0].bag[0].capacity[0].volume[0]").
 
 type("root.frame[0].bag[0].capacity[0].weight[0]","Capacity.weight").
 index("root.frame[0].bag[0].capacity[0].weight[0]",0).
 parent("root.frame[0].bag[0].capacity[0].weight[0]","root.frame[0].bag[0].capacity[0]").
-% isnumeric("root.frame[0].bag[0].capacity[0].weight[0]").
 
 type("root.frame[0].bag[1].capacity[0]","Capacity").
 index("root.frame[0].bag[1].capacity[0]",0).
@@ -266,12 +254,10 @@ parent("root.frame[0].bag[1].capacity[0]", "root.frame[0].bag[1]").
 type("root.frame[0].bag[1].capacity[0].volume[0]","Capacity.volume").
 index("root.frame[0].bag[1].capacity[0].volume[0]",0).
 parent("root.frame[0].bag[1].capacity[0].volume[0]","root.frame[0].bag[1].capacity[0]").
-% isnumeric("root.frame[0].bag[1].capacity[0].volume[0]").
 
 type("root.frame[0].bag[1].capacity[0].weight[0]","Capacity.weight").
 index("root.frame[0].bag[1].capacity[0].weight[0]",0).
 parent("root.frame[0].bag[1].capacity[0].weight[0]","root.frame[0].bag[1].capacity[0]").
-% isnumeric("root.frame[0].bag[1].capacity[0].weight[0]").
 
 type("root.frame[0].bag[0].material[0]","Material").
 index("root.frame[0].bag[0].material[0]",0).
@@ -389,12 +375,12 @@ binary("root.frame[0].bag[1].capacity[0]=B10","root.frame[0].bag[1].capacity[0]"
 
 
 % Attribute constraints
-constraint(("Wheel","root.frontWheel[0]")).
+table(("Wheel","root.frontWheel[0]")).
 column(("Wheel","root.frontWheel[0]"),0,0,"root.frontWheel[0]").
 column(("Wheel","root.frontWheel[0]"),0,1,"root.frontWheel[0].size[0]").
 column(("Wheel","root.frontWheel[0]"),0,2,"root.frontWheel[0].weight[0]").
 
-constraint(("Wheel","root.rearWheel[0]")).
+table(("Wheel","root.rearWheel[0]")).
 column(("Wheel","root.rearWheel[0]"),0,0,"root.rearWheel[0]").
 column(("Wheel","root.rearWheel[0]"),0,1,"root.rearWheel[0].size[0]").
 column(("Wheel","root.rearWheel[0]"),0,2,"root.rearWheel[0].weight[0]").
@@ -416,27 +402,27 @@ allow("Wheel",(1,4),28).
 allow("Wheel",(2,4),1000).
 
 
-constraint(("Capacity","root.carrier[0].bag[0]")).
+table(("Capacity","root.carrier[0].bag[0]")).
 column(("Capacity","root.carrier[0].bag[0]"),0,0,"root.carrier[0].bag[0].capacity[0]").
 column(("Capacity","root.carrier[0].bag[0]"),0,1,"root.carrier[0].bag[0].capacity[0].volume[0]").
 column(("Capacity","root.carrier[0].bag[0]"),0,2,"root.carrier[0].bag[0].capacity[0].weight[0]").
 
-constraint(("Capacity","root.carrier[0].bag[1]")).
+table(("Capacity","root.carrier[0].bag[1]")).
 column(("Capacity","root.carrier[0].bag[1]"),0,0,"root.carrier[0].bag[1].capacity[0]").
 column(("Capacity","root.carrier[0].bag[1]"),0,1,"root.carrier[0].bag[1].capacity[0].volume[0]").
 column(("Capacity","root.carrier[0].bag[1]"),0,2,"root.carrier[0].bag[1].capacity[0].weight[0]").
 
-constraint(("Capacity","root.carrier[0].bag[2]")).
+table(("Capacity","root.carrier[0].bag[2]")).
 column(("Capacity","root.carrier[0].bag[2]"),0,0,"root.carrier[0].bag[2].capacity[0]").
 column(("Capacity","root.carrier[0].bag[2]"),0,1,"root.carrier[0].bag[2].capacity[0].volume[0]").
 column(("Capacity","root.carrier[0].bag[2]"),0,2,"root.carrier[0].bag[2].capacity[0].weight[0]").
 
-constraint(("Capacity","root.frame[0].bag[0]")).
+table(("Capacity","root.frame[0].bag[0]")).
 column(("Capacity","root.frame[0].bag[0]"),0,0,"root.frame[0].bag[0].capacity[0]").
 column(("Capacity","root.frame[0].bag[0]"),0,1,"root.frame[0].bag[0].capacity[0].volume[0]").
 column(("Capacity","root.frame[0].bag[0]"),0,2,"root.frame[0].bag[0].capacity[0].weight[0]").
 
-constraint(("Capacity","root.frame[0].bag[1]")).
+table(("Capacity","root.frame[0].bag[1]")).
 column(("Capacity","root.frame[0].bag[1]"),0,0,"root.frame[0].bag[1].capacity[0]").
 column(("Capacity","root.frame[0].bag[1]"),0,1,"root.frame[0].bag[1].capacity[0].volume[0]").
 column(("Capacity","root.frame[0].bag[1]"),0,2,"root.frame[0].bag[1].capacity[0].weight[0]").

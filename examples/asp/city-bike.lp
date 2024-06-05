@@ -1,4 +1,4 @@
-% Types of the model
+% Types of the model (really needed?)
 type("Color").
 type("Basket").
 type("Position").
@@ -206,11 +206,11 @@ constraint(4,"root.frontWheel[0].size[0]=root.rearWheel[0].size[0]").
 binary("root.frontWheel[0].size[0]=root.rearWheel[0].size[0]","root.frontWheel[0].size[0]","=","root.rearWheel[0].size[0]").
 
 
-constraint((5,"root.carrier[0].bag[0]")).
+table((5,"root.carrier[0].bag[0]")).
 column((5,"root.carrier[0].bag[0]"),0,0,"root.carrier[0].bag[0].material[0]").
 column((5,"root.carrier[0].bag[0]"),0,1,"root.carrier[0].bag[0].capacity[0]").
 
-constraint((5,"root.carrier[0].bag[1]")).
+table((5,"root.carrier[0].bag[1]")).
 column((5,"root.carrier[0].bag[1]"),0,0,"root.carrier[0].bag[1].material[0]").
 column((5,"root.carrier[0].bag[1]"),0,1,"root.carrier[0].bag[1].capacity[0]").
 
@@ -225,11 +225,11 @@ allow(5,(1,2),"B50").
 allow(5,(1,2),"B100").
 
 % Attribute constraints
-constraint(("Wheel","root.frontWheel[0]")).
+table(("Wheel","root.frontWheel[0]")).
 column(("Wheel","root.frontWheel[0]"),0,0,"root.frontWheel[0]").
 column(("Wheel","root.frontWheel[0]"),0,1,"root.frontWheel[0].size[0]").
 
-constraint(("Wheel","root.rearWheel[0]")).
+table(("Wheel","root.rearWheel[0]")).
 column(("Wheel","root.rearWheel[0]"),0,0,"root.rearWheel[0]").
 column(("Wheel","root.rearWheel[0]"),0,1,"root.rearWheel[0].size[0]").
 
@@ -243,11 +243,11 @@ allow("Wheel",(0,3),"W29").
 allow("Wheel",(1,3),29).
 
 
-constraint(("Capacity","root.carrier[0].bag[0]")).
+table(("Capacity","root.carrier[0].bag[0]")).
 column(("Capacity","root.carrier[0].bag[0]"),0,0,"root.carrier[0].bag[0].capacity[0]").
 column(("Capacity","root.carrier[0].bag[0]"),0,1,"root.carrier[0].bag[0].capacity[0].volume[0]").
 
-constraint(("Capacity","root.carrier[0].bag[1]")).
+table(("Capacity","root.carrier[0].bag[1]")).
 column(("Capacity","root.carrier[0].bag[1]"),0,0,"root.carrier[0].bag[1].capacity[0]").
 column(("Capacity","root.carrier[0].bag[1]"),0,1,"root.carrier[0].bag[1].capacity[0].volume[0]").
 

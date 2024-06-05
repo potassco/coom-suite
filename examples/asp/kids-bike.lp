@@ -1,4 +1,4 @@
-% Types of the model
+% Types of the model (really needed?)
 type("Color").
 type("Wheel").
 type("Wheel.size").
@@ -65,7 +65,7 @@ constant("Yellow").
 binary("root.frontWheel[0].size[0]>16","root.frontWheel[0].size[0]",">","16").
 number("16",16).
 
-constraint((1,"root")).
+table((1,"root")).
 column((1,"root"),0,0,"root.wheelSupport[0]").
 column((1,"root"),0,1,"root.rearWheel[0]").
 allow(1,(0,0),"True").
@@ -88,11 +88,11 @@ constraint(2,"root.frontWheel[0].size[0]=root.rearWheel[0].size[0]").
 binary("root.frontWheel[0].size[0]=root.rearWheel[0].size[0]","root.frontWheel[0].size[0]","=","root.rearWheel[0].size[0]").
 
 % Attribute constraints
-constraint(("Wheel","root.frontWheel[0]")).
+table(("Wheel","root.frontWheel[0]")).
 column(("Wheel","root.frontWheel[0]"),0,0,"root.frontWheel[0]").
 column(("Wheel","root.frontWheel[0]"),0,1,"root.frontWheel[0].size[0]").
 
-constraint(("Wheel","root.rearWheel[0]")).
+table(("Wheel","root.rearWheel[0]")).
 column(("Wheel","root.rearWheel[0]"),0,0,"root.rearWheel[0]").
 column(("Wheel","root.rearWheel[0]"),0,1,"root.rearWheel[0].size[0]").
 
@@ -107,13 +107,6 @@ allow("Wheel",(1,3),20).
 
 % Cardinality constraints
 % only need to check for min, not possible to exceed max as all possible objects are instantiated before
-% cardinality("product","color",1).
-% cardinality("product","wheelSupport",1).
-% cardinality("product","frontWheel",1).
-% cardinality("product","rearWheel",1).
-% cardinality("Wheel","size",1).
-
-
 cardinality("root","root.color",1).
 path("root.color","root.color[0]").
 
