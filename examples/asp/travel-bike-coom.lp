@@ -9,8 +9,8 @@ coom_feature("product","requestedVolume","num",1,1).
 coom_range("product","requestedVolume",200,200).
 coom_feature("product","frontWheel","Wheel",1,1).
 coom_feature("product","rearWheel","Wheel",1,1).
-coom_feature("product","frame","Frame",1,1).
 coom_feature("product","carrier","Carrier",1,1).
+coom_feature("product","frame","Frame",1,1).
 coom_feature("product","color","Color",1,1).
 
 coom_structure("Carrier").
@@ -84,7 +84,7 @@ coom_number("4",4).
 
 coom_behavior(1).
 coom_context(1,"product").
-coom_imply("product","totalWeight","frontWheel.weight+rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
+coom_imply(1,"totalWeight","frontWheel.weight+rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
 coom_path("totalWeight",0,"totalWeight").
 coom_binary("frontWheel.weight+rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)","frontWheel.weight","+","rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
 coom_binary("rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)","rearWheel.weight","+","sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
@@ -115,7 +115,7 @@ coom_number("1000",1000).
 
 coom_behavior(3).
 coom_context(3,"product").
-coom_imply("product","totalVolume","sum(carrier.bag.capacity.volume)+sum(frame.bag.capacity.volume)").
+coom_imply(3,"totalVolume","sum(carrier.bag.capacity.volume)+sum(frame.bag.capacity.volume)").
 coom_path("totalVolume",0,"totalVolume").
 coom_binary("sum(carrier.bag.capacity.volume)+sum(frame.bag.capacity.volume)","sum(carrier.bag.capacity.volume)","+","sum(frame.bag.capacity.volume)").
 coom_function("product","sum(carrier.bag.capacity.volume)","sum","carrier.bag.capacity.volume").
