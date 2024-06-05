@@ -1,7 +1,3 @@
-% #include "clingo-core.lp".
-% #include "base/partonomy.lp".
-% #include "base/numeric.lp".
-
 #include "base/defined.lp".
 #include "base/auxiliary.lp".
 

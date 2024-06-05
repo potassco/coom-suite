@@ -44,7 +44,7 @@ class TestClingoCore(TestCase):
                             "files" (List[str] or "program" (str)
         """
         test, program, files = unpack_test(test_name)
-        run_test(test, files=files, program=program, ctl_args=["0"], solver="clingo", profile="core")
+        run_test(test, files=files, program=program, ctl_args=["0"], solver="clingo")
 
     def test_require(self) -> None:
         """
@@ -97,7 +97,7 @@ class TestFclingoCore(TestCase):
                             "ftest" (Optional[clintest.Test]): A clintest for fclingo
         """
         test, program, files = unpack_test(test_name, fclingo=True)
-        run_test(test, files=files, program=program, ctl_args=["0"], solver="fclingo", profile="core")
+        run_test(test, files=files, program=program, ctl_args=["0"], solver="fclingo")
 
     def test_require(self) -> None:
         """
@@ -149,7 +149,7 @@ class TestClingoPartonomy(TestCase):
                             "files" (List[str] or "program" (str)
         """
         test, program, files = unpack_test(test_name)
-        run_test(test, files=files, program=program, ctl_args=["0"], solver="clingo", profile="partonomy")
+        run_test(test, files=files, program=program, ctl_args=["0"], solver="clingo")
 
     def test_structure(self) -> None:
         """
@@ -196,7 +196,7 @@ class TestFclingoPartonomy(TestCase):
                             "files" (List[str] or "program" (str)
         """
         test, program, files = unpack_test(test_name, fclingo=True)
-        run_test(test, files=files, program=program, ctl_args=["0"], solver="fclingo", profile="partonomy")
+        run_test(test, files=files, program=program, ctl_args=["0"], solver="fclingo")
 
     def test_structure(self) -> None:
         """
