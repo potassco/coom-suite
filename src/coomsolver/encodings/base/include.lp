@@ -29,4 +29,4 @@ include("root").
 %    not Min<=N<=Max, N = #count { X : include(X), parent(X,P), feature(X,F) }.
 
 
-#show include(X) : include(X), type(X,T), part(T).
+#show include(X) : include(X), type(X,T), part(T), X != "root".

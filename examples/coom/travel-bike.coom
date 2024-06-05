@@ -5,7 +5,7 @@ product {
 	num .#/l	200-200   requestedVolume
 	Wheel			    frontWheel
 	Wheel			    rearWheel
-    Carrier			    carrier
+	Carrier			    carrier
 	Frame			    frame
 	Color				color
 }
