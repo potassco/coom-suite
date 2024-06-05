@@ -47,6 +47,17 @@ binary(X,F,@binary(XL,Op,XR),XL,Op,XR) :- coom_binary(F,L,Op,R),
                                           type_aux(X,C), path_to(X,L,XL), path_to(X,R,XR).
 binary(X,F,G)  :- binary(X,F,G,_,_,_).
 
+% Default binaries for arithmetics if one side is undefined
+% TODO: Does this always give desired behavior?
+binary(X,F,XL) :- coom_binary(F,L,"+",R),
+                  binary_context(F,C),
+                  type_aux(X,C), path_to(X,L,XL), not path_to(X,R,_).
+
+binary(X,F,XR) :- coom_binary(F,L,"+",R),
+                  binary_context(F,C),
+                  type_aux(X,C), not path_to(X,L,_), path_to(X,R,XR).
+
+
 % Instantiate functions
 function(X,F,T,P) :- coom_function(C,F,T,P), type_aux(X,C).
 
