@@ -35,7 +35,7 @@ class ASPUserInputVisitor(UserInputVisitor):
     def visitSet_value(self, ctx: UserInputParser.Set_valueContext):
         path = self.context + ctx.path().getText()
         value = ctx.formula_atom().getText()
-        self.output_asp.append(f'val("{path}",{value}).')
+        self.output_asp.append(f'user_value("root.{path}",{value}).')
         super().visitSet_value(ctx)
 
     def visitAdd_instance(self, ctx: UserInputParser.Add_instanceContext):
@@ -43,7 +43,7 @@ class ASPUserInputVisitor(UserInputVisitor):
         INT = ctx.INTEGER()
         num_instance = int(INT.getText()) if INT is not None else 1
         for i in range(num_instance):
-            self.output_asp.append(f'user_instance("{path}[{i}]").')
+            self.output_asp.append(f'user_include("root.{path}[{i}]").')
         super().visitAdd_instance(ctx)
 
 

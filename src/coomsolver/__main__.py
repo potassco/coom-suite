@@ -30,16 +30,16 @@ def main():
 
     if args.command == "convert":
         output_model_lp_file = convert_instance(args.input, "model", args.output)
+        log.info("ASP model file saved in %s", output_model_lp_file)
         if args.user_input:
             output_user_lp_file = convert_instance(args.user_input, "user_input", args.output)
-        log.info("ASP model file saved in %s", output_model_lp_file)
-        log.info("ASP user input file saved in %s", output_user_lp_file)
+            log.info("ASP user input file saved in %s", output_user_lp_file)
     elif args.command == "solve":
         log.info("Converting and solving COOM file %s", args.input)
         with TemporaryDirectory() as temp_dir:
             output_model_lp_file = convert_instance(args.input, "model", temp_dir)
             if args.user_input:
-                output_user_lp_file = convert_instance(args.user_input, "user_input", args.output)
+                output_user_lp_file = convert_instance(args.user_input, "user_input", temp_dir)
             clingo_main(
                 COOMApp(solver=args.solver, output=args.output, show=args.show),
                 [output_model_lp_file, output_user_lp_file] + unknown_args,

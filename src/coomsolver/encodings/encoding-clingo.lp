@@ -4,3 +4,5 @@
 #include "base/include.lp".
 #include "base/attributes.lp".
 #include "base/constraints.lp".
+
+#include "base/user.lp".
