@@ -31,7 +31,7 @@ range("Capacity.volume",10,100).
 % domain("Capacity.volume",100).
 
 integer("Capacity.weight").
-range("Capacity.numeric",100,1200).
+range("Capacity.weight",100,1200).
 % domain("Capacity.weight",100).
 % domain("Capacity.weight",250).
 % domain("Capacity.weight",600).

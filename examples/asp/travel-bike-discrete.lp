@@ -1,4 +1,5 @@
 % Parts of the model
+part("root").
 part("Carrier").
 part("Frame").
 part("Bag").
@@ -30,7 +31,7 @@ domain("Capacity.volume",50).
 domain("Capacity.volume",100).
 
 discrete("Capacity.weight").
-% range("Capacity.numeric",100,1200).
+% range("Capacity.weight",100,1200).
 domain("Capacity.weight",100).
 domain("Capacity.weight",250).
 domain("Capacity.weight",600).

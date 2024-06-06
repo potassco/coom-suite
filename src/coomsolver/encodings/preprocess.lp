@@ -70,8 +70,8 @@ path_to(X,N,@dotpath(X')) :- coom_feature(Ctx,N,_,_,_), type_aux(X,Ctx), type_au
 path_to(X,A,@dotpath(X')) :- coom_attribute(T,A,_),     type_aux(X,T),   type_aux(X',_), X' =(A,(X,_)).
 
 % Instantiate conditional requirements
-condreq(C,G,G') :- coom_condition(C,F), binary(_,F,G),
-                   coom_require(C,F'),  binary(_,F',G').
+conditional_requirement(C,G,G') :- coom_context(C,Ctx), coom_condition(C,F), binary(X,F,G),
+                                   type_aux(X,Ctx),     coom_require(C,F'),  binary(X,F',G').
 
 % Instantiate combination tables
 table(C,X) :- coom_combinations(C,_,_), coom_context(C,Ctx), type_aux(X,Ctx).
@@ -112,6 +112,7 @@ coom_option("bool", "False").
 discrete(T) :- coom_enumeration(T).
 domain(T,V) :- coom_option(T,V).
 
+% Enumeration attributes
 discrete(@join(T,A)) :- coom_attribute(T,A,"str").
 domain(@join(T,A),V) :- coom_attribute_value(T,_,A,V), coom_attribute(T,A,"str").
 
@@ -120,10 +121,11 @@ range(@join(T,A),Min,Max) :- coom_attribute(T,A,"num"), not discrete,
                              Min = #min { V: coom_attribute_value(T,_,A,V) },
                              Max = #max { V: coom_attribute_value(T,_,A,V) }.
 
-% Temporary fix: For clingo huge ranges might might grounding to large, translate numeric attributes to discrete attributes
+% Temporary fix: For clingo, huge ranges might make grounding to large, translate numeric attributes to discrete attributes
 discrete(@join(T,A)) :- coom_attribute(T,A,"num"), discrete.
 domain(@join(T,A),V) :- coom_attribute_value(T,_,A,V), coom_attribute(T,A,"num"), discrete.
 
+% Numeric features
 integer(@join(Ctx,N))       :- coom_feature(Ctx,N,"num",_,_).
 range(@join(Ctx,N),Min,Max) :- coom_feature(Ctx,N,"num",_,_), coom_range(Ctx,N,Min,Max).
 
@@ -138,6 +140,7 @@ type("root","product") :- coom_structure("product").
 
 type(@dotpath(X),T)             :- type_aux(X,T), not coom_attribute(_,T,_).
 type(@dotpath(X),@join(T,A))    :- type_aux(X,A),     coom_attribute(T,A,_), type_aux(P,T), X=(_,(P,_)).
+
 index(@dotpath(X),Idx)          :- type_aux(X,T), X=((_,(_,Idx))).
 parent(@dotpath(X),@dotpath(P)) :- type_aux(X,_), X=(_,(P,_)).
 
@@ -149,9 +152,9 @@ parent(@dotpath(X),@dotpath(P)) :- type_aux(X,_), X=(_,(P,_)).
 % Formulas
 constraint(C,G) :- coom_require(C,F), binary(_,F,G), not coom_condition(C,_).
 
-constraint(C,@implication(Con,Req))              :- condreq(C,Con,Req).
-binary(@implication(Con,Req),@neg(Con),"||",Req) :- condreq(_,Con,Req).
-unary(@neg(Con),"!",Con)                   :- condreq(_,Con,Req).
+constraint(C,@implication(Con,Req))              :- conditional_requirement(C,Con,Req).
+binary(@implication(Con,Req),@neg(Con),"||",Req) :- conditional_requirement(_,Con,Req).
+unary(@neg(Con),"!",Con)                         :- conditional_requirement(_,Con,Req).
 
 binary(G,L,Op,R) :- binary(_,_,G,L,Op,R).
 
@@ -163,7 +166,7 @@ binary(G,L,Op,R) :- binary(_,_,G,L,Op,R).
 table((C,@dotpath(X))) :- table(C,X).
 column((C,@dotpath(X)),ID,Col,@dotpath(X')) :- coom_combinations(C,Col,P),
                                                path_to(X,P,X'), in_tuple(CT,X'), tuple_order((C,X),CT,ID).
-allow(C,XY,V)           :- coom_allow(C,XY,V).
+allow(C,XY,V) :- coom_allow(C,XY,V).
 
 #show table/1.
 #show column/4.
@@ -184,7 +187,7 @@ binary(@binary(X',"=",G),X',"=",G) :- imply(C,X',G).
 
 % Functions
 function(@function(T,X,P),T,@join(X,P)) :- function(X,_,T,P).
-path(@join(X,P),X') :- function(X,_,_,P), path_to(X,P,X').
+path(@join(X,P),X')                     :- function(X,_,_,P), path_to(X,P,X').
 
 #show function/3.
 #show path/2.
@@ -193,14 +196,14 @@ path(@join(X,P),X') :- function(X,_,_,P), path_to(X,P,X').
 part(T) :- coom_structure(T).
 
 cardinality(@dotpath(X),@join(X,N),Min) :- cardinality_aux(X,N,Min).
-path(@join(X,N),X') :- cardinality_aux(X,N,_), path_to(X,N,X').
+path(@join(X,N),X')                     :- cardinality_aux(X,N,_), path_to(X,N,X').
 
 #show part/1.
 #show cardinality/3.
 
 % Constants and numbers
-constant(C)             :- coom_constant(C).
-number(C,N)             :- coom_number(C,N).
+constant(C) :- coom_constant(C).
+number(C,N) :- coom_number(C,N).
 
 #show constant/1.
 #show number/2.
