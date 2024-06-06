@@ -3,13 +3,12 @@ Basic functions to run tests.
 """
 
 import tempfile
+from copy import deepcopy
 from os.path import join
-from typing import Callable, List, Optional, Sequence, Set, Union
+from typing import Any, Callable, List, Optional, Sequence
 
 from antlr4 import InputStream
-from clingo import Application, Control, Symbol
-from clingo.solving import Model
-from clintest.assertion import Contains, SupersetOf
+from clingo import Application, Control
 from clintest.solver import Solver
 from clintest.test import Test
 
@@ -22,7 +21,32 @@ def parse_coom(coom_input: str) -> List[str]:
     Helper function for testing the COOM to ASP parser.
     """
     input_stream = InputStream(coom_input)
-    return run_antlr4_visitor(input_stream, grammar="model")
+    asp_facts = run_antlr4_visitor(input_stream, grammar="model")
+    return [a for a in asp_facts if a != ""]
+
+
+def run_test(
+    test: Test,
+    files: Optional[List[str]] = None,
+    program: Optional[str] = None,
+    ctl_args: Optional[List[str]] = None,
+    **kwargs: Any,
+) -> None:
+    """Creates a solver and runs a clintest test.
+
+    Args:
+        test (clintest.test.Test): The clintest test
+        files (Optional[List[str]], optional): List of files saved in examples/tests
+        program (Optional[str], optional): A clingo program. Defaults to ""
+        ctl_args (Optional[List[str]], optional): List of arguments for clingo.Control. Defaults to [].
+    """
+    coom_app = COOMApp("coom", istest=True, **kwargs)
+    file_paths = [join("examples", "tests", f) for f in files] if files else None
+    ctl_args = [] if ctl_args is None else ctl_args
+    solver = AppSolver(application=coom_app, files=file_paths, program=program, arguments=["0"])
+    test_copy = deepcopy(test)
+    solver.solve(test_copy)
+    test_copy.assert_()
 
 
 def compose(on_app: Callable, on_test: Callable) -> Callable:  # type: ignore
@@ -40,70 +64,6 @@ def compose(on_app: Callable, on_test: Callable) -> Callable:  # type: ignore
         on_test(*args)
 
     return f
-
-
-class SupersetOfTheory(SupersetOf):
-    """
-    A clintest SupersetOf assertion that can also check theory atoms.
-
-    Args:
-        symbol (Symbol): A clingo symbol.
-        check_theory (bool): Whether to include theory atoms in the check
-    """
-
-    def __init__(self, symbols: Set[Union[Symbol, str]], check_theory: bool = False) -> None:
-        super().__init__(symbols)
-        self.__symbols = self._SupersetOf__symbols  # type: ignore # pylint: disable=no-member
-        self.__check_theory = check_theory
-
-    def holds_for(self, model: Model) -> bool:
-        if self.__check_theory:
-            return set(model.symbols(shown=True, theory=True)).issuperset(self.__symbols)
-        return super().holds_for(model)
-
-
-class ContainsTheory(Contains):
-    """
-    A clintest Contains assertion that can also check theory atoms.
-
-    Args:
-        symbol (Symbol): A clingo symbol.
-        check_theory (bool): Whether to include theory atoms in the check
-    """
-
-    def __init__(self, symbol: Union[Symbol, str], check_theory: bool = False) -> None:
-        super().__init__(symbol)
-        self.__symbol = self._Contains__symbol  # type: ignore # pylint: disable=no-member
-        self.__check_theory = check_theory
-
-    def holds_for(self, model: Model) -> bool:
-        if self.__check_theory:
-            return self.__symbol in model.symbols(shown=True, theory=True)
-        return super().holds_for(model)
-
-
-def run_test(
-    test: Test,
-    files: Optional[List[str]] = None,
-    program: Optional[str] = None,
-    ctl_args: Optional[List[str]] = None,
-    **kwargs: str,
-) -> None:
-    """Creates a solver and runs a clintest test.
-
-    Args:
-        test (clintest.Test): The clintest test
-        files (Optional[List[str]], optional): List of files saved in examples/tests
-        program (Optional[str], optional): A clingo program. Defaults to ""
-        ctl_args (Optional[List[str]], optional): List of arguments for clingo.Control. Defaults to [].
-    """
-    coom_app = COOMApp("coom", **kwargs)
-    file_paths = [join("examples", "tests", f) for f in files] if files else None
-    ctl_args = [] if ctl_args is None else ctl_args
-    solver = AppSolver(application=coom_app, files=file_paths, program=program, arguments=["0"])
-
-    solver.solve(test)
-    test.assert_()
 
 
 class MockControl:

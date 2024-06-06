@@ -1,21 +1,21 @@
 product {
     num .#/g	1-10000 totalWeight
-	num .#/kg	1-10    maxWeight
+	num .#/kg	10-10    maxWeight
 	num .#/l	0-200   totalVolume
-	num .#/l	0-200   requestedVolume
+	num .#/l	200-200   requestedVolume
 	Wheel			    frontWheel
 	Wheel			    rearWheel
-	Frame			    frame
 	Carrier			    carrier
+	Frame			    frame
 	Color				color
 }
 
 structure Carrier {
-	0..3 Bag	        bags
+	0..3 Bag	        bag
 }
 
 structure Frame {
-	0..2 Bag  	        bags
+	0..2 Bag  	        bag
 }
 
 structure Bag {
@@ -58,15 +58,15 @@ enumeration Color {
 }
 
 behavior {
-    require count(carrier.bags) + count(frame.bags) <= 4
+    require count(carrier.bag) + count(frame.bag) <= 4
 
 	imply totalWeight = frontWheel.weight + rearWheel.weight
-						+ sum(carrier.bags.capacity.weight)
-						+ sum(frame.bags.capacity.weight)
+						+ sum(carrier.bag.capacity.weight)
+						+ sum(frame.bag.capacity.weight)
 
 	require totalWeight <= maxWeight * 1000
 
-	imply totalVolume = sum(carrier.bags.capacity.volume) + sum(frame.bags.capacity.volume)
+	imply totalVolume = sum(carrier.bag.capacity.volume) + sum(frame.bag.capacity.volume)
 
 	require totalVolume >= requestedVolume
 

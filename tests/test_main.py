@@ -39,8 +39,7 @@ class TestMain(TestCase):
         """
         Test the COOM output formatting.
         """
-        self.assertEqual(format_sym_coom(parse_term('instance((), ":root")')), "")
-        self.assertEqual(format_sym_coom(parse_term('instance((carrier, ((), 0)), "Carrier")')), "carrier[0]")
-        self.assertEqual(format_sym_coom(parse_term('val((color, ((), 0)), "Blue")')), 'color[0] = "Blue"')
-        self.assertEqual(format_sym_coom(parse_term("val((size, ((wheel, ((), 0)), 0)), 27)")), "wheel[0].size[0] = 27")
-        self.assertRaises(ValueError, format_sym_coom, parse_term("structure(5)"))
+        self.assertEqual(format_sym_coom(parse_term('include("carrier[0]")')), "carrier[0]")
+        self.assertEqual(format_sym_coom(parse_term('value("color[0]", "Blue")')), 'color[0] = "Blue"')
+        self.assertEqual(format_sym_coom(parse_term('value("wheel[0].size[0]", 27)')), "wheel[0].size[0] = 27")
+        self.assertRaises(ValueError, format_sym_coom, parse_term('instance("")'))

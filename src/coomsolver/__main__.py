@@ -18,7 +18,7 @@ def main():
     Run the main function.
     """
     parser = get_parser()
-    args = parser.parse_args()
+    args, unknown_args = parser.parse_known_args()
     configure_logging(sys.stderr, args.log, sys.stderr.isatty())
 
     log = get_logger("main")
@@ -36,16 +36,13 @@ def main():
         log.info("ASP user input file saved in %s", output_user_lp_file)
     elif args.command == "solve":
         log.info("Converting and solving COOM file %s", args.input)
-        options = []
-        if args.models is not None:
-            options.append(str(args.models))
         with TemporaryDirectory() as temp_dir:
             output_model_lp_file = convert_instance(args.input, "model", temp_dir)
             if args.user_input:
                 output_user_lp_file = convert_instance(args.user_input, "user_input", args.output)
             clingo_main(
-                COOMApp(solver=args.solver, profile=args.profile, output=args.output),
-                [output_model_lp_file, output_user_lp_file] + options,
+                COOMApp(solver=args.solver, output=args.output, show=args.show),
+                [output_model_lp_file, output_user_lp_file] + unknown_args,
             )
 
 
