@@ -13,7 +13,6 @@ from .utils.logging import get_logger
 log = get_logger("main")
 
 SOLVERS = ["clingo", "fclingo"]
-COOM_PROFILES = ["core", "partonomy", "numeric", "all"]
 
 
 def convert_instance(coom_file: str, output_dir: Optional[str] = None) -> str:  # nocoverage
@@ -33,5 +32,6 @@ def convert_instance(coom_file: str, output_dir: Optional[str] = None) -> str:  
 
     with open(output_lp_file, "w", encoding="utf8") as f:
         f.write("\n".join(asp_instance))
+        f.write("\n")
     log.info("ASP file saved in %s", output_lp_file)
     return output_lp_file

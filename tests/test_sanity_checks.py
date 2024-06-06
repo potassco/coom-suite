@@ -21,7 +21,7 @@ class TestSanityChecks(TestCase):
         Test solving an empty product (root structure).
         """
         program = 'structure("product").'
-        run_test(deepcopy(TEST_EMPTY), program=program, profile="core")
+        run_test(deepcopy(TEST_EMPTY), program=program)
 
     def test_no_product(self) -> None:
         """
@@ -29,14 +29,14 @@ class TestSanityChecks(TestCase):
         """
 
         program_feature = 'feature("product","a","b",1,1).'
-        run_test(deepcopy(TEST_EMPTY), program=program_feature, profile="core")
+        run_test(deepcopy(TEST_EMPTY), program=program_feature)
 
         program_enum_attr = """
         coom_enumeration("a").
         coom_attribute("a","b","num").
         coom_option("a", "a1").
         coom_attribute_value("a","a1","b",1)."""
-        run_test(deepcopy(TEST_EMPTY), program=program_enum_attr, profile="core")
+        run_test(deepcopy(TEST_EMPTY), program=program_enum_attr)
 
     def test_no_feature(self) -> None:
         """
@@ -47,7 +47,7 @@ class TestSanityChecks(TestCase):
         coom_enumeration("a").
         coom_option("a","a1").
         coom_option("a","a2")."""
-        run_test(deepcopy(TEST_EMPTY), program=program_no_feature, profile="core")
+        run_test(deepcopy(TEST_EMPTY), program=program_no_feature)
 
     def test_undef(self) -> None:
         """
@@ -61,7 +61,7 @@ class TestSanityChecks(TestCase):
         coom_binary("color=Silver","color","=","Silver").
         coom_path("color",0,"color").
         coom_constant("Silver")."""
-        run_test(deepcopy(TEST_EMPTY), program=program_require, profile="core")
+        run_test(deepcopy(TEST_EMPTY), program=program_require)
 
         program_condition = """
         coom_structure("product").
@@ -75,7 +75,7 @@ class TestSanityChecks(TestCase):
         coom_binary("size=Big","size","=","Big").
         coom_path("size",0,"size").
         coom_constant("Big")."""
-        run_test(deepcopy(TEST_EMPTY), program=program_condition, profile="core")
+        run_test(deepcopy(TEST_EMPTY), program=program_condition)
 
     def test_empty_combinations(self) -> None:
         """
@@ -91,4 +91,4 @@ class TestSanityChecks(TestCase):
         coom_context(0,"product").
         coom_combinations(0,0,"a").
         coom_path("a",0,"a")."""
-        run_test(deepcopy(TEST_UNSAT), program=program, profile="core")
+        run_test(deepcopy(TEST_UNSAT), program=program)

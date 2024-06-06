@@ -268,7 +268,7 @@ class TestCOOMParser(TestCase):
             [
                 "behavior(0).",
                 'context(0,"product").',
-                'imply("product","a","b").',
+                'imply(0,"a","b").',
                 'path("a",0,"a").',
                 'path("b",0,"b").',
             ],

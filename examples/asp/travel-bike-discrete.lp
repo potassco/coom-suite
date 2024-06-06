@@ -23,19 +23,19 @@ domain("Capacity", "B20").
 domain("Capacity", "B50").
 domain("Capacity", "B100").
 
-integer("Capacity.volume").
-range("Capacity.volume",10,100).
-% domain("Capacity.volume",10).
-% domain("Capacity.volume",20).
-% domain("Capacity.volume",50).
-% domain("Capacity.volume",100).
+discrete("Capacity.volume").
+% range("Capacity.volume",10,100).
+domain("Capacity.volume",10).
+domain("Capacity.volume",20).
+domain("Capacity.volume",50).
+domain("Capacity.volume",100).
 
-integer("Capacity.weight").
-range("Capacity.weight",100,1200).
-% domain("Capacity.weight",100).
-% domain("Capacity.weight",250).
-% domain("Capacity.weight",600).
-% domain("Capacity.weight",1200).
+discrete("Capacity.weight").
+% range("Capacity.weight",100,1200).
+domain("Capacity.weight",100).
+domain("Capacity.weight",250).
+domain("Capacity.weight",600).
+domain("Capacity.weight",1200).
 
 discrete("Material").
 domain("Material", "Cotton").
@@ -49,21 +49,21 @@ domain("Wheel", "W24").
 domain("Wheel", "W26").
 domain("Wheel", "W28").
 
-integer("Wheel.size").
-range("Wheel.size",20,28).
-% domain("Wheel.size",20).
-% domain("Wheel.size",22).
-% domain("Wheel.size",24).
-% domain("Wheel.size",26).
-% domain("Wheel.size",28).
+discrete("Wheel.size").
+% range("Wheel.size",20,28).
+domain("Wheel.size",20).
+domain("Wheel.size",22).
+domain("Wheel.size",24).
+domain("Wheel.size",26).
+domain("Wheel.size",28).
 
-integer("Wheel.weight").
-range("Wheel.weight",650,1000).
-% domain("Wheel.weight",650).
-% domain("Wheel.weight",700).
-% domain("Wheel.weight",800).
-% domain("Wheel.weight",900).
-% domain("Wheel.weight",1000).
+discrete("Wheel.weight").
+% range("Wheel.weight",650,1000).
+domain("Wheel.weight",650).
+domain("Wheel.weight",700).
+domain("Wheel.weight",800).
+domain("Wheel.weight",900).
+domain("Wheel.weight",1000).
 
 discrete("Color").
 domain("Color", "Red").

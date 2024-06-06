@@ -56,7 +56,6 @@ class COOMApp(Application):
     """
 
     _solver: str
-    _profile: str
     _output: str
     _show: bool
     _istest: bool
@@ -70,7 +69,6 @@ class COOMApp(Application):
         self,
         log_level: str = "",
         solver: str = "",
-        profile: str = "",
         output: str = "",
         show: bool = False,
         istest: bool = False,
@@ -79,7 +77,6 @@ class COOMApp(Application):
         Create application.
         """
         self._solver = "clingo" if solver == "" else solver
-        self._profile = profile
         self._output = "asp" if output == "" else output
         self._show = show
         self._istest = istest
@@ -165,6 +162,8 @@ class COOMApp(Application):
         pre_ctl = Control(message_limit=0)
         for f in input_files:
             pre_ctl.load(f)
+        if self._solver == "clingo":
+            pre_ctl.add("base", [], "discrete.")
         pre_ctl.ground()
         with pre_ctl.solve(yield_=True) as handle:
             facts = [str(s) + "." for s in handle.model().symbols(shown=True)]
@@ -179,7 +178,7 @@ class COOMApp(Application):
         if self._show:
             print("\n".join(processed_facts))  # nocoverage
         else:
-            encoding = get_encoding(f"{self._solver}-{self._profile}.lp")
+            encoding = get_encoding(f"encoding-{self._solver}.lp")
             facts = "".join(processed_facts)
             if self._solver == "clingo":
 

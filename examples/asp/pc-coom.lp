@@ -102,7 +102,7 @@ coom_range("Application","price",50,50).
 
 coom_behavior(0).
 coom_context(0,"product").
-coom_imply("product","price","sum(hdunit.price)+motherboard.price+sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)").
+coom_imply(0,"price","sum(hdunit.price)+motherboard.price+sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)").
 coom_path("price",0,"price").
 coom_binary("sum(hdunit.price)+motherboard.price+sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)","sum(hdunit.price)","+","motherboard.price+sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)").
 coom_binary("motherboard.price+sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)","motherboard.price","+","sum(motherboard.cpu.price)+os.price+sum(screen.price)+sum(applications.price)").
@@ -212,9 +212,9 @@ coom_constant("CPUD").
 
 coom_behavior(7).
 coom_context(7,"HDUnit").
-coom_imply("HDUnit","price","sum(hdisk.price)+sum(hdcontroller.price)").
+coom_imply(7,"price","sum(hdisk.price)+sum(hdcontroller.price)").
 coom_path("price",0,"price").
-coom_binary("HDUnit","sum(hdisk.price)+sum(hdcontroller.price)","sum(hdisk.price)","+","sum(hdcontroller.price)").
+coom_binary("sum(hdisk.price)+sum(hdcontroller.price)","sum(hdisk.price)","+","sum(hdcontroller.price)").
 coom_function("HDUnit","sum(hdisk.price)","sum","hdisk.price").
 coom_path("hdisk.price",0,"hdisk").
 coom_path("hdisk.price",1,"price").
@@ -224,7 +224,7 @@ coom_path("hdcontroller.price",1,"price").
 
 coom_behavior(8).
 coom_context(8,"Motherboard").
-coom_imply("Motherboard","price","mbtype.price").
+coom_imply(8,"price","mbtype.price").
 coom_path("price",0,"price").
 coom_path("mbtype.price",0,"mbtype").
 coom_path("mbtype.price",1,"price").
@@ -232,21 +232,21 @@ coom_path("mbtype.price",1,"price").
 coom_behavior(9).
 coom_context(9,"Motherboard").
 coom_condition(9,"mbtype=MBSilver").
-coom_binary("Motherboard","mbtype=MBSilver","mbtype","=","MBSilver").
+coom_binary("mbtype=MBSilver","mbtype","=","MBSilver").
 coom_path("mbtype",0,"mbtype").
 coom_constant("MBSilver").
 coom_require(9,"cpu!=CPUD").
-coom_binary("Motherboard","cpu!=CPUD","cpu","!=","CPUD").
+coom_binary("cpu!=CPUD","cpu","!=","CPUD").
 coom_path("cpu",0,"cpu").
 coom_constant("CPUD").
 
 coom_behavior(10).
 coom_context(10,"Motherboard").
 coom_condition(10,"mbtype=MBDiamond").
-coom_binary("Motherboard","mbtype=MBDiamond","mbtype","=","MBDiamond").
+coom_binary("mbtype=MBDiamond","mbtype","=","MBDiamond").
 coom_path("mbtype",0,"mbtype").
 coom_constant("MBDiamond").
 coom_require(10,"cpu!=CPUS").
-coom_binary("Motherboard","cpu!=CPUS","cpu","!=","CPUS").
+coom_binary("cpu!=CPUS","cpu","!=","CPUS").
 coom_path("cpu",0,"cpu").
 coom_constant("CPUS").
