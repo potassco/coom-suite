@@ -1,7 +1,7 @@
 product {
          Usage                  usage
          Efficiency             efficiency
-         num            0-2500  maxPrice
+         num            2500-2500  maxPrice
          num            0-2500  price
          bool                   internetConn
     1..2 HDUnit                 hdunit
