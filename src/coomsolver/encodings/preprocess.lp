@@ -150,9 +150,9 @@ parent(@dotpath(X),@dotpath(P)) :- type_aux(X,_), X=(_,(P,_)).
 
 %%% Constraints
 % Formulas
-constraint(C,G) :- coom_require(C,F), binary(_,F,G), not coom_condition(C,_).
+constraint((C,G),"boolean") :- coom_require(C,F), binary(_,F,G), not coom_condition(C,_).
 
-constraint(C,@implication(Con,Req))              :- conditional_requirement(C,Con,Req).
+constraint((C,@implication(Con,Req)),"boolean")  :- conditional_requirement(C,Con,Req).
 binary(@implication(Con,Req),@neg(Con),"||",Req) :- conditional_requirement(_,Con,Req).
 unary(@neg(Con),"!",Con)                         :- conditional_requirement(_,Con,Req).
 
@@ -163,18 +163,17 @@ binary(G,L,Op,R) :- binary(_,_,G,L,Op,R).
 #show unary/3.
 
 % Table constraints
-table((C,@dotpath(X))) :- table(C,X).
+constraint((C,@dotpath(X)),"table") :- table(C,X).
 column((C,@dotpath(X)),ID,Col,@dotpath(X')) :- coom_combinations(C,Col,P),
                                                path_to(X,P,X'), in_tuple(CT,X'), tuple_order((C,X),CT,ID).
 allow(C,XY,V) :- coom_allow(C,XY,V).
 
-#show table/1.
 #show column/4.
 #show allow/3.
 
 % Attribute constraints
 % table constraint guarantees that correct values are assigned to enumeration attributes
-table(C) :- attribute_constraint(C).
+constraint(C,"table") :- attribute_constraint(C).
 column((T,X),0,0,X)   :- attribute_constraint((T,X)).
 column((T,P),0,Col,X) :- attribute_constraint((T,P)), parent(X,P), type(X,@join(T,A)), attribute_constraint_column(T,Col,A).
 
@@ -182,12 +181,12 @@ allow(T,(0,I),O)     :- attribute_constraint((T,_)), coom_option(T,O), I = #coun
 allow(T,(Col,Row),V) :- attribute_constraint((T,_)), allow(T,(0,Row),O), coom_attribute_value(T,O,A,V), attribute_constraint_column(T,Col,A).
 
 % Imply statements
-constraint(C,@binary(X',"=",G))    :- imply(C,X',G).
-binary(@binary(X',"=",G),X',"=",G) :- imply(C,X',G).
+constraint((C,@binary(X',"=",G)),"boolean") :- imply(C,X',G).
+binary(@binary(X',"=",G),X',"=",G)          :- imply(C,X',G).
 
 % Functions
 function(@function(T,X,P),T,@join(X,P)) :- function(X,_,T,P).
-path(@join(X,P),X')                     :- function(X,_,_,P), path_to(X,P,X').
+path(X',@join(X,P))                     :- function(X,_,_,P), path_to(X,P,X').
 
 #show function/3.
 #show path/2.
@@ -195,11 +194,10 @@ path(@join(X,P),X')                     :- function(X,_,_,P), path_to(X,P,X').
 % Partonomy and cardinality constraints
 part(T) :- coom_structure(T).
 
-cardinality(@dotpath(X),@join(X,N),Min) :- cardinality_aux(X,N,Min).
-path(@join(X,N),X')                     :- cardinality_aux(X,N,_), path_to(X,N,X').
+constraint((@join(X,N),Min),"lowerbound") :- cardinality_aux(X,N,Min).
+path(X',@join(X,N))                       :- cardinality_aux(X,N,_), path_to(X,N,X').
 
 #show part/1.
-#show cardinality/3.
 
 % Constants and numbers
 constant(C) :- coom_constant(C).

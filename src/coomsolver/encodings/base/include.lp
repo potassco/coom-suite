@@ -5,18 +5,18 @@ include("root").
 % include(X) :- type(X,T), parent(X,P), include(P), attribute(T,_).
 
 % Generate structure object inclusion
-{ include(X) : type(X,T) }.
+{ include(X) : type(X,_) }.
 
 % Always include minimal number of objects (no optimizations)
 % include(X) :- feature(C,_,T,Min,_), type(X,T), index(X,I), I < Min,
 %                parent(X,P), include(P), type(P,C).
 
 % Do not include an object if their parent is not included
-:- include(X), type(X,_), parent(X,P), not include(P).
+:- include(X), parent(X,P), not include(P).
 
 % Indices in ascending order
-:- cardinality(_,P,_),    include(X),  path(P,X),  index(X, I), I > 0,
-                      not include(X'), path(P,X'), index(X',I-1).
+:-  include(X),  path(X, P), index(X, I), I > 0,
+not include(X'), path(X',P), index(X',I-1).
 % :-  include(X),  type(X, T), name(X, N), index(X, I), I > 0,
 % not include(X'), type(X',T), name(X',N), index(X',I-1).
 
