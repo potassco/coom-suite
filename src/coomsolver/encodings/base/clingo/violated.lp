@@ -4,8 +4,8 @@
 % A formula is violated if it is defined and not satisfied
 violated(C,F) :- constraint((C,F),"boolean"), defined(F), not satisfied(F).
 
-% A table constraint is violated if a tuple of paths is defined but does not satisfy any of the rows
-violated(C,ID) :- constraint(C,"table"), defined(C,ID), not hit_row(C,ID).
+% A table constraint is violated if all its columns are defined but none of its rows is satisfied
+violated(C,ID) :- constraint(C,"table"), defined(C,ID), not satisfied(C,ID).
 
 % A lower bound (cardinality) constraint is violated if less than the minimum number of objects are included
 % (objects are included in ascending order of indices)
