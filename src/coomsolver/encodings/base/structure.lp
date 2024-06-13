@@ -1,7 +1,7 @@
-% Always include root instance
+% Always include root object
 include("root").
 
-% Generate structure object inclusion
+% Generate include predicates for objects
 { include(X) : type(X,_) }.
 
 % Always include minimal number of objects (no optimizations currently)
