@@ -1,0 +1,30 @@
+product {
+    num .#/l	0-200   totalVolume
+    num .#/l	200-200   requestedVolume
+    Carrier			    carrier
+    Frame			    frame
+}
+
+structure Carrier {
+    0..3 Bag	        bag
+}
+
+structure Frame {
+    0..2 Bag  	        bag
+}
+
+enumeration Bag {
+    attribute num/l volume
+
+    B20  = ( 20,  250)
+    B50  = ( 50,  600)
+    B100 = (100, 1200)
+}
+
+behavior {
+    require count(carrier.bag) + count(frame.bag) <= 4
+
+    imply totalVolume = sum(carrier.bag.volume) + sum(frame.bag.volume)
+
+    require totalVolume >= requestedVolume
+}
