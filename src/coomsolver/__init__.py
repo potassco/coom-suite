@@ -15,7 +15,7 @@ log = get_logger("main")
 SOLVERS = ["clingo", "fclingo"]
 
 
-def convert_instance(coom_file: str, output_dir: Optional[str] = None) -> str:  # nocoverage
+def convert_instance(coom_file: str, grammar: str, output_dir: Optional[str] = None) -> str:  # nocoverage
     """
     Converts a COOM instance into ASP
     Args:
@@ -27,10 +27,15 @@ def convert_instance(coom_file: str, output_dir: Optional[str] = None) -> str:  
     output_lp_file = join(output_dir, filename)
 
     input_stream = FileStream(coom_file, encoding="utf-8")
-    asp_instance = run_antlr4_visitor(input_stream)
+    asp_instance = run_antlr4_visitor(input_stream, grammar=grammar)
     asp_instance = [f"coom_{a}" if a != "" else a for a in asp_instance]
 
     with open(output_lp_file, "w", encoding="utf8") as f:
+        if grammar == "model":
+            f.write("%%% COOM model\n")
+        elif grammar == "user_input":
+            f.write("%%% User Input\n")
+
         f.write("\n".join(asp_instance))
         f.write("\n")
     log.info("ASP file saved in %s", output_lp_file)
