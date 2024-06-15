@@ -91,19 +91,19 @@ allow("Wheel",(1,3),20).
 % Cardinality constraints
 % only need to check for min, not possible to exceed max as all possible objects are instantiated before
 constraint(("root.color",1),"lowerbound").
-path("root.color[0]","root.color").
+path("root.color","root.color[0]").
 
 constraint(("root.wheelSupport",1),"lowerbound").
-path("root.wheelSupport[0]","root.wheelSupport").
+path("root.wheelSupport","root.wheelSupport[0]").
 
 constraint(("root.frontWheel",1),"lowerbound").
-path("root.frontWheel[0]","root.frontWheel").
+path("root.frontWheel","root.frontWheel[0]").
 
 constraint(("root.frontWheel[0].size",1),"lowerbound").
-path("root.frontWheel[0].size[0]","root.frontWheel[0].size").
+path("root.frontWheel[0].size","root.frontWheel[0].size[0]").
 
 constraint(("root.rearWheel",1),"lowerbound").
-path("root.rearWheel[0]","root.rearWheel").
+path("root.rearWheel","root.rearWheel[0]").
 
 constraint(("root.rearWheel[0].size",1),"lowerbound").
-path("root.rearWheel[0].size[0]","root.rearWheel[0].size").
+path("root.rearWheel[0].size","root.rearWheel[0].size[0]").

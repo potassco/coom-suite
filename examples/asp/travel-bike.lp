@@ -231,12 +231,12 @@ constraint((0,"count(root.carrier.bag)+count(root.frame.bag)<=4"),"boolean").
 binary("count(root.carrier.bag)+count(root.frame.bag)<=4","count(root.carrier.bag)+count(root.frame.bag)","<=","4").
 binary("count(root.carrier.bag)+count(root.frame.bag)","count(root.carrier.bag)","+","count(root.frame.bag)").
 function("count(root.carrier.bag)","count","root.carrier.bag").
-path("root.carrier[0].bag[0]","root.carrier.bag").
-path("root.carrier[0].bag[1]","root.carrier.bag").
-path("root.carrier[0].bag[2]","root.carrier.bag").
+path("root.carrier.bag","root.carrier[0].bag[0]").
+path("root.carrier.bag","root.carrier[0].bag[1]").
+path("root.carrier.bag","root.carrier[0].bag[2]").
 function("count(root.frame.bag)","count","root.frame.bag").
-path("root.frame[0].bag[0]","root.frame.bag").
-path("root.frame[0].bag[1]","root.frame.bag").
+path("root.frame.bag","root.frame[0].bag[0]").
+path("root.frame.bag","root.frame[0].bag[1]").
 number("4",4).
 
 constraint((1,"root.totalWeight[0]=root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)"),"boolean").
@@ -245,12 +245,12 @@ binary("root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrie
 binary("root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)","root.rearWheel[0].weight[0]","+","sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)").
 binary("sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)","sum(root.carrier.bag.capacity.weight)","+","sum(root.frame.bag.capacity.weight)").
 function("sum(root.carrier.bag.capacity.weight)","sum","root.carrier.bag.capacity.weight").
-path("root.carrier[0].bag[0].capacity[0].weight[0]","root.carrier.bag.capacity.weight").
-path("root.carrier[0].bag[1].capacity[0].weight[0]","root.carrier.bag.capacity.weight").
-path("root.carrier[0].bag[2].capacity[0].weight[0]","root.carrier.bag.capacity.weight").
+path("root.carrier.bag.capacity.weight","root.carrier[0].bag[0].capacity[0].weight[0]").
+path("root.carrier.bag.capacity.weight","root.carrier[0].bag[1].capacity[0].weight[0]").
+path("root.carrier.bag.capacity.weight","root.carrier[0].bag[2].capacity[0].weight[0]").
 function("sum(root.frame.bag.capacity.weight)","sum","root.frame.bag.capacity.weight").
-path("root.frame[0].bag[0].capacity[0].weight[0]","root.frame.bag.capacity.weight").
-path("root.frame[0].bag[1].capacity[0].weight[0]","root.frame.bag.capacity.weight").
+path("root.frame.bag.capacity.weight","root.frame[0].bag[0].capacity[0].weight[0]").
+path("root.frame.bag.capacity.weight","root.frame[0].bag[1].capacity[0].weight[0]").
 
 constraint((2,"root.totalWeight[0]<=root.maxWeight[0]*1000"),"boolean").
 binary("root.totalWeight[0]<=root.maxWeight[0]*1000","root.totalWeight[0]","<=","root.maxWeight[0]*1000").
@@ -261,12 +261,12 @@ constraint((3,"root.totalVolume[0]=sum(root.carrier.bag.capacity.volume)+sum(roo
 binary("root.totalVolume[0]=sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)","root.totalVolume[0]","=","sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)").
 binary("sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)","sum(root.carrier.bag.capacity.volume)","+","sum(root.frame.bag.capacity.volume)").
 function("sum(root.carrier.bag.capacity.volume)","sum","root.carrier.bag.capacity.volume").
-path("root.carrier[0].bag[0].capacity[0].volume[0]","root.carrier.bag.capacity.volume").
-path("root.carrier[0].bag[1].capacity[0].volume[0]","root.carrier.bag.capacity.volume").
-path("root.carrier[0].bag[2].capacity[0].volume[0]","root.carrier.bag.capacity.volume").
+path("root.carrier.bag.capacity.volume","root.carrier[0].bag[0].capacity[0].volume[0]").
+path("root.carrier.bag.capacity.volume","root.carrier[0].bag[1].capacity[0].volume[0]").
+path("root.carrier.bag.capacity.volume","root.carrier[0].bag[2].capacity[0].volume[0]").
 function("sum(root.frame.bag.capacity.volume)","sum","root.frame.bag.capacity.volume").
-path("root.frame[0].bag[0].capacity[0].volume[0]","root.frame.bag.capacity.volume").
-path("root.frame[0].bag[1].capacity[0].volume[0]","root.frame.bag.capacity.volume").
+path("root.frame.bag.capacity.volume","root.frame[0].bag[0].capacity[0].volume[0]").
+path("root.frame.bag.capacity.volume","root.frame[0].bag[1].capacity[0].volume[0]").
 
 constraint((4,"root.totalVolume[0]>=root.requestedVolume[0]"),"boolean").
 binary("root.totalVolume[0]>=root.requestedVolume[0]","root.totalVolume[0]",">=","root.requestedVolume[0]").
@@ -381,111 +381,111 @@ allow("Capacity",(2,3),1200).
 % Cardinality constraints
 % only need to check for min, not possible to exceed max as all possible objects are instantiated before
 constraint(("root.totalWeight",1),"lowerbound").
-path("root.totalWeight[0]","root.totalWeight").
+path("root.totalWeight","root.totalWeight[0]").
 
 constraint(("root.maxWeight",1),"lowerbound").
-path("root.maxWeight[0]","root.maxWeight").
+path("root.maxWeight","root.maxWeight[0]").
 
 constraint(("root.totalVolume",1),"lowerbound").
-path("root.totalVolume[0]","root.totalVolume").
+path("root.totalVolume","root.totalVolume[0]").
 
 constraint(("root.requestedVolume",1),"lowerbound").
-path("root.requestedVolume[0]","root.requestedVolume").
+path("root.requestedVolume","root.requestedVolume[0]").
 
 constraint(("root.frontWheel",1),"lowerbound").
-path("root.frontWheel[0]","root.frontWheel").
+path("root.frontWheel","root.frontWheel[0]").
 
 constraint(("root.frontWheel[0].size",1),"lowerbound").
-path("root.frontWheel[0].size[0]","root.frontWheel[0].size").
+path("root.frontWheel[0].size","root.frontWheel[0].size[0]").
 
 constraint(("root.frontWheel[0].weight",1),"lowerbound").
-path("root.frontWheel[0].weight[0]","root.frontWheel[0].weight").
+path("root.frontWheel[0].weight","root.frontWheel[0].weight[0]").
 
 constraint(("root.rearWheel",1),"lowerbound").
-path("root.rearWheel[0]","root.rearWheel").
+path("root.rearWheel","root.rearWheel[0]").
 
 constraint(("root.rearWheel[0].size",1),"lowerbound").
-path("root.rearWheel[0].size[0]","root.rearWheel[0].size").
+path("root.rearWheel[0].size","root.rearWheel[0].size[0]").
 
 constraint(("root.rearWheel[0].weight",1),"lowerbound").
-path("root.rearWheel[0].weight[0]","root.rearWheel[0].weight").
+path("root.rearWheel[0].weight","root.rearWheel[0].weight[0]").
 
 constraint(("root.carrier",1),"lowerbound").
-path("root.carrier[0]","root.carrier").
+path("root.carrier","root.carrier[0]").
 
 constraint(("root.frame",1),"lowerbound").
-path("root.frame[0]","root.frame").
+path("root.frame","root.frame[0]").
 
 constraint(("root.color",1),"lowerbound").
-path("root.color[0]","root.color").
+path("root.color","root.color[0]").
 
 
 constraint(("root.carrier[0].bag",0),"lowerbound").
-path("root.carrier[0].bag[0]","root.carrier[0].bag").
-path("root.carrier[0].bag[1]","root.carrier[0].bag").
-path("root.carrier[0].bag[2]","root.carrier[0].bag").
+path("root.carrier[0].bag","root.carrier[0].bag[0]").
+path("root.carrier[0].bag","root.carrier[0].bag[1]").
+path("root.carrier[0].bag","root.carrier[0].bag[2]").
 
 constraint(("root.carrier[0].bag[0].capacity",1),"lowerbound").
-path("root.carrier[0].bag[0].capacity[0]","root.carrier[0].bag[0].capacity").
+path("root.carrier[0].bag[0].capacity","root.carrier[0].bag[0].capacity[0]").
 
 constraint(("root.carrier[0].bag[0].capacity[0].volume",1),"lowerbound").
-path("root.carrier[0].bag[0].capacity[0].volume[0]","root.carrier[0].bag[0].capacity[0].volume").
+path("root.carrier[0].bag[0].capacity[0].volume","root.carrier[0].bag[0].capacity[0].volume[0]").
 
 constraint(("root.carrier[0].bag[0].capacity[0].weight",1),"lowerbound").
-path("root.carrier[0].bag[0].capacity[0].weight[0]","root.carrier[0].bag[0].capacity[0].weight").
+path("root.carrier[0].bag[0].capacity[0].weight","root.carrier[0].bag[0].capacity[0].weight[0]").
 
 constraint(("root.carrier[0].bag[0].material",1),"lowerbound").
-path("root.carrier[0].bag[0].material[0]","root.carrier[0].bag[0].material").
+path("root.carrier[0].bag[0].material","root.carrier[0].bag[0].material[0]").
 
 constraint(("root.carrier[0].bag[1].capacity",1),"lowerbound").
-path("root.carrier[0].bag[1].capacity[0]","root.carrier[0].bag[1].capacity").
+path("root.carrier[0].bag[1].capacity","root.carrier[0].bag[1].capacity[0]").
 
 constraint(("root.carrier[0].bag[1].capacity[0].volume",1),"lowerbound").
-path("root.carrier[0].bag[1].capacity[0].volume[0]","root.carrier[0].bag[1].capacity[0].volume").
+path("root.carrier[0].bag[1].capacity[0].volume","root.carrier[0].bag[1].capacity[0].volume[0]").
 
 constraint(("root.carrier[0].bag[1].capacity[0].weight",1),"lowerbound").
-path("root.carrier[0].bag[1].capacity[0].weight[0]","root.carrier[0].bag[1].capacity[0].weight").
+path("root.carrier[0].bag[1].capacity[0].weight","root.carrier[0].bag[1].capacity[0].weight[0]").
 
 constraint(("root.carrier[0].bag[1].material",1),"lowerbound").
-path("root.carrier[0].bag[1].material[0]","root.carrier[0].bag[1].material").
+path("root.carrier[0].bag[1].material","root.carrier[0].bag[1].material[0]").
 
 constraint(("root.carrier[0].bag[2].capacity",1),"lowerbound").
-path("root.carrier[0].bag[2].capacity[0]","root.carrier[0].bag[2].capacity").
+path("root.carrier[0].bag[2].capacity","root.carrier[0].bag[2].capacity[0]").
 
 constraint(("root.carrier[0].bag[2].capacity[0].volume",1),"lowerbound").
-path("root.carrier[0].bag[2].capacity[0].volume[0]","root.carrier[0].bag[2].capacity[0].volume").
+path("root.carrier[0].bag[2].capacity[0].volume","root.carrier[0].bag[2].capacity[0].volume[0]").
 
 constraint(("root.carrier[0].bag[2].capacity[0].weight",1),"lowerbound").
-path("root.carrier[0].bag[2].capacity[0].weight[0]","root.carrier[0].bag[2].capacity[0].weight").
+path("root.carrier[0].bag[2].capacity[0].weight","root.carrier[0].bag[2].capacity[0].weight[0]").
 
 constraint(("root.carrier[0].bag[2].material",1),"lowerbound").
-path("root.carrier[0].bag[2].material[0]","root.carrier[0].bag[2].material").
+path("root.carrier[0].bag[2].material","root.carrier[0].bag[2].material[0]").
 
 
 constraint(("root.frame[0].bag",0),"lowerbound").
-path("root.frame[0].bag[0]","root.frame[0].bag").
-path("root.frame[0].bag[1]","root.frame[0].bag").
+path("root.frame[0].bag","root.frame[0].bag[0]").
+path("root.frame[0].bag","root.frame[0].bag[1]").
 
 constraint(("root.frame[0].bag[0].capacity",1),"lowerbound").
-path("root.frame[0].bag[0].capacity[0]","root.frame[0].bag[0].capacity").
+path("root.frame[0].bag[0].capacity","root.frame[0].bag[0].capacity[0]").
 
 constraint(("root.frame[0].bag[0].capacity[0].volume",1),"lowerbound").
-path("root.frame[0].bag[0].capacity[0].volume[0]","root.frame[0].bag[0].capacity[0].volume").
+path("root.frame[0].bag[0].capacity[0].volume","root.frame[0].bag[0].capacity[0].volume[0]").
 
 constraint(("root.frame[0].bag[0].capacity[0].weight",1),"lowerbound").
-path("root.frame[0].bag[0].capacity[0].weight[0]","root.frame[0].bag[0].capacity[0].weight").
+path("root.frame[0].bag[0].capacity[0].weight","root.frame[0].bag[0].capacity[0].weight[0]").
 
 constraint(("root.frame[0].bag[0].material",1),"lowerbound").
-path("root.frame[0].bag[0].material[0]","root.frame[0].bag[0].material").
+path("root.frame[0].bag[0].material","root.frame[0].bag[0].material[0]").
 
 constraint(("root.frame[0].bag[1].capacity",1),"lowerbound").
-path("root.frame[0].bag[1].capacity[0]","root.frame[0].bag[1].capacity").
+path("root.frame[0].bag[1].capacity","root.frame[0].bag[1].capacity[0]").
 
 constraint(("root.frame[0].bag[1].capacity[0].volume",1),"lowerbound").
-path("root.frame[0].bag[1].capacity[0].volume[0]","root.frame[0].bag[1].capacity[0].volume").
+path("root.frame[0].bag[1].capacity[0].volume","root.frame[0].bag[1].capacity[0].volume[0]").
 
 constraint(("root.frame[0].bag[1].capacity[0].weight",1),"lowerbound").
-path("root.frame[0].bag[1].capacity[0].weight[0]","root.frame[0].bag[1].capacity[0].weight").
+path("root.frame[0].bag[1].capacity[0].weight","root.frame[0].bag[1].capacity[0].weight[0]").
 
 constraint(("root.frame[0].bag[1].material",1),"lowerbound").
-path("root.frame[0].bag[1].material[0]","root.frame[0].bag[1].material").
+path("root.frame[0].bag[1].material","root.frame[0].bag[1].material[0]").
