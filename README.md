@@ -1,4 +1,4 @@
-# coomsolver
+# coomsuite
 
 ## Installation
 
@@ -13,7 +13,7 @@ pip install .
 Run the following for basic usage information:
 
 ```bash
-coomsolver -h
+coomsuite -h
 ```
 
 ## Name ideas

@@ -1,4 +1,4 @@
-# coomsolver
+# coomsuite
 
 An example project template.
 

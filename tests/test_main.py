@@ -7,9 +7,9 @@ from unittest import TestCase
 
 from clingo.symbol import parse_term
 
-from coomsolver.utils import format_sym_coom, logging
-from coomsolver.utils.logging import configure_logging, get_logger
-from coomsolver.utils.parser import get_parser
+from coomsuite.utils import format_sym_coom, logging
+from coomsuite.utils.logging import configure_logging, get_logger
+from coomsuite.utils.parser import get_parser
 
 
 class TestMain(TestCase):
