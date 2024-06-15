@@ -16,16 +16,6 @@ Run the following for basic usage information:
 coomsuite -h
 ```
 
-## Name ideas
-
-- coomsuite (favorite)
-- coompiler
-- coompressor
-- coom2asp
-- coomutils
-- coomgo
-- coolingo
-
 ## Development
 
 To improve code quality, we use [nox] to run linters, type checkers, unit
