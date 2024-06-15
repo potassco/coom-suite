@@ -7,7 +7,7 @@ from argparse import ArgumentParser
 from textwrap import dedent
 from typing import Any, Optional, cast
 
-from coomsolver import SOLVERS
+from coomsuite import SOLVERS
 
 from . import logging
 
@@ -18,7 +18,7 @@ if sys.version_info[1] < 8:
 else:
     from importlib import metadata  # nocoverage
 
-VERSION = metadata.version("coomsolver")
+VERSION = metadata.version("coomsuite")
 
 
 def get_parser() -> ArgumentParser:
@@ -26,10 +26,10 @@ def get_parser() -> ArgumentParser:
     Return the parser for command line options.
     """
     parser = ArgumentParser(
-        prog="coomsolver",
+        prog="coomsuite",
         description=dedent(
             """\
-            coomsolver
+            coomsuite
             filldescription
             """
         ),

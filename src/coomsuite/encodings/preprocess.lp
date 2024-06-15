@@ -186,7 +186,7 @@ binary(@binary(X',"=",G),X',"=",G)          :- imply(C,X',G).
 
 % Functions
 function(@function(T,X,P),T,@join(X,P)) :- function(X,_,T,P).
-path(X',@join(X,P))                     :- function(X,_,_,P), path_to(X,P,X').
+path(@join(X,P),X')                     :- function(X,_,_,P), path_to(X,P,X').
 
 #show function/3.
 #show path/2.
@@ -195,7 +195,7 @@ path(X',@join(X,P))                     :- function(X,_,_,P), path_to(X,P,X').
 part(T) :- coom_structure(T).
 
 constraint((@join(X,N),Min),"lowerbound") :- cardinality_aux(X,N,Min).
-path(X',@join(X,N))                       :- cardinality_aux(X,N,_), path_to(X,N,X').
+path(@join(X,N),X')                       :- cardinality_aux(X,N,_), path_to(X,N,X').
 
 #show part/1.
 

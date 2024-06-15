@@ -12,8 +12,8 @@ from clingo import Application, Control, Model
 from clintest.solver import Solver
 from clintest.test import Test
 
-from coomsolver.application import COOMApp
-from coomsolver.utils import run_antlr4_visitor
+from coomsuite.application import COOMApp
+from coomsuite.utils import run_antlr4_visitor
 
 
 def parse_coom(coom_input: str) -> List[str]:

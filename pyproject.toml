@@ -3,7 +3,7 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "coomsolver"
+name = "coomsuite"
 authors = [
     { name = "Nicolas Rühling", email = "nicolas.ruehling@uni-potsdam.de" },
 ]
@@ -23,7 +23,7 @@ dynamic = ["version"]
 readme = "README.md"
 
 [project.urls]
-Hompage = "https://github.com/krr-up/coom-solver.git/"
+Hompage = "https://github.com/krr-up/coom-suite.git/"
 
 [project.optional-dependencies]
 format = ["black", "isort", "autoflake"]
@@ -31,10 +31,10 @@ lint_pylint = ["pylint"]
 typecheck = ["types-setuptools", "mypy"]
 test = ["coverage[toml]"]
 doc = ["sphinx", "furo", "nbsphinx", "sphinx_copybutton", "myst-parser"]
-dev = ["coomsolver[test,typecheck,lint_pylint]"]
+dev = ["coomsuite[test,typecheck,lint_pylint]"]
 
 [project.scripts]
-coomsolver = "coomsolver.__main__:main"
+coomsuite = "coomsuite.__main__:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -80,11 +80,11 @@ good-names = ["_"]
 ignore = ["coom_grammar"]
 
 [tool.coverage.run]
-source = ["coomsolver", "tests"]
-omit = ["*/coomsolver/__main__.py", "*/coom_grammar/*", "*/tests/__init__.py"]
+source = ["coomsuite", "tests"]
+omit = ["*/coomsuite/__main__.py", "*/coom_grammar/*", "*/tests/__init__.py"]
 
 [tool.coverage.report]
 exclude_lines = ["assert", "nocoverage"]
 
 [tool.mypy]
-exclude = ['coom_grammar', '/coomsolver/__main__.py']
+exclude = ['coom_grammar', '/coomsuite/__main__.py']

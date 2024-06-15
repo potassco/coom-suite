@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for considering a contribution to coomsolver. ❤️
+Thanks for considering a contribution to coomsuite. ❤️
 
 ## How to get help or discuss possible contributions
 
@@ -12,7 +12,7 @@ To avoid duplicating issues, please search our [issue tracker][issues] and our
 
 ## How to make a contribution
 
-- Fork the [coomsolver][project_url] repository and create a branch for your
+- Fork the [coomsuite][project_url] repository and create a branch for your
   changes.
 - Submit a pull request to the master branch with your changes.
 - Respond to feedback on your pull request.
@@ -24,8 +24,8 @@ When contributing to this project, you agree that you have authored 100% of the
 content, that you have the necessary rights to the content and that the content
 you contribute may be provided under the project license.
 
-[issues]: https://github.com/krr-up/coom-solver.git/issues/
+[issues]: https://github.com/krr-up/coom-suite.git/issues/
 [mailing_list]: https://sourceforge.net/p/potassco/mailman/potassco-users/
-[new_issue]: https://github.com/krr-up/coom-solver.git/issues/new/
-[project_url]: https://github.com/krr-up/coom-solver.git/
+[new_issue]: https://github.com/krr-up/coom-suite.git/issues/new/
+[project_url]: https://github.com/krr-up/coom-suite.git/
 [subscribe]: https://sourceforge.net/projects/potassco/lists/potassco-users/

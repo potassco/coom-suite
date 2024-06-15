@@ -1,5 +1,5 @@
 """
-The coomsolver project.
+The coomsuite project.
 """
 
 from os.path import basename, join, splitext

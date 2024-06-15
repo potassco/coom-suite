@@ -8,7 +8,7 @@ from typing import List
 from antlr4 import CommonTokenStream, InputStream
 from clingo import Symbol
 
-from coomsolver.utils.parse_coom import ASPVisitor
+from coomsuite.utils.parse_coom import ASPVisitor
 
 from .coom_grammar.ModelLexer import ModelLexer
 from .coom_grammar.ModelParser import ModelParser
@@ -25,7 +25,7 @@ def get_encoding(file_name: str) -> str:  # nocoverage
     Returns:
         str: The string for the path to the ASP encoding
     """
-    with as_file(files("coomsolver") / "encodings" / file_name) as file:
+    with as_file(files("coomsuite") / "encodings" / file_name) as file:
         return str(file)
 
 
