@@ -1,7 +1,7 @@
 #defined type/1.
 #defined part/1.
 #defined cardinality/3.
-#defined path/2.
+#defined set/2.
 
 #defined discrete/1.
 #defined domain/2.

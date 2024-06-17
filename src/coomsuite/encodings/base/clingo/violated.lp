@@ -17,4 +17,4 @@ defined(C,ID)   :- column(C,ID,_,_), not undefined(C,ID).
 % A lower bound (cardinality) constraint is violated if less than the minimum number of objects are included
 % (objects are included in ascending order of indices)
 % (maximum does not need to be checked)
-violated(X',P) :- constraint((P,Min),"lowerbound"), path(P,X), index(X,Min-1), not include(X), parent(X,X'), include(X').
+violated(X',P) :- constraint((P,Min),"lowerbound"), set(P,X), index(X,Min-1), not include(X), parent(X,X'), include(X').
