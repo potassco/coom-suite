@@ -12,7 +12,7 @@ include("root").
 :- include(X), parent(X,P), not include(P).
 
 % Indices in ascending order
-:-  include(X),  path(P,X ), index(X, I), I > 0,
-not include(X'), path(P,X'), index(X',I-1).
+:-  include(X),  set(P,X ), index(X, I), I > 0,
+not include(X'), set(P,X'), index(X',I-1), constraint((P,_),_).
 
 #show include(X) : include(X), type(X,T), part(T), X != "root".

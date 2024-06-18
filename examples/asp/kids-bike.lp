@@ -21,6 +21,10 @@ range("Wheel.size",14,20).
 % domain("Wheel.size",18).
 % domain("Wheel.size",20).
 
+discrete("bool").
+domain("bool", "True").
+domain("bool", "False").
+
 % Complete instance tree
 type("root","product").
 
@@ -91,19 +95,19 @@ allow("Wheel",(1,3),20).
 % Cardinality constraints
 % only need to check for min, not possible to exceed max as all possible objects are instantiated before
 constraint(("root.color",1),"lowerbound").
-path("root.color","root.color[0]").
+set("root.color","root.color[0]").
 
 constraint(("root.wheelSupport",1),"lowerbound").
-path("root.wheelSupport","root.wheelSupport[0]").
+set("root.wheelSupport","root.wheelSupport[0]").
 
 constraint(("root.frontWheel",1),"lowerbound").
-path("root.frontWheel","root.frontWheel[0]").
+set("root.frontWheel","root.frontWheel[0]").
 
 constraint(("root.frontWheel[0].size",1),"lowerbound").
-path("root.frontWheel[0].size","root.frontWheel[0].size[0]").
+set("root.frontWheel[0].size","root.frontWheel[0].size[0]").
 
 constraint(("root.rearWheel",1),"lowerbound").
-path("root.rearWheel","root.rearWheel[0]").
+set("root.rearWheel","root.rearWheel[0]").
 
 constraint(("root.rearWheel[0].size",1),"lowerbound").
-path("root.rearWheel[0].size","root.rearWheel[0].size[0]").
+set("root.rearWheel[0].size","root.rearWheel[0].size[0]").

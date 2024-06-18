@@ -10,11 +10,6 @@
 % Auxiliary values for (non-numeric) constants
 value(P,P) :- constant(P).
 
-% Always include boolean attribute
-discrete("bool").
-domain("bool", "True").
-domain("bool", "False").
-
 % Show statements
 #show .
 #show value(X,V) : value(X,V), type(X,T), discrete(T).

@@ -91,7 +91,8 @@ in_tuple(CT,CT',X)      :- in_tuple(CT,(X,CT'),_).
 in_tuple(CT,X)          :- in_tuple(CT,_,X).
 
 % Instantiate imply statements
-imply(C,X',G) :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), binary(X,F,G).
+imply(C,X',G)                :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), binary(X,F,G).
+imply(C,X',@function(T,X,P')) :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), function(X,F,T,P').
 
 % Instantiate attribute constraints
 attribute_constraint((T,X)) :- coom_attribute(T,_,_), type(X,T).
@@ -186,16 +187,16 @@ binary(@binary(X',"=",G),X',"=",G)          :- imply(C,X',G).
 
 % Functions
 function(@function(T,X,P),T,@join(X,P)) :- function(X,_,T,P).
-path(@join(X,P),X')                     :- function(X,_,_,P), path_to(X,P,X').
+set(@join(X,P),X')                     :- function(X,_,_,P), path_to(X,P,X').
 
 #show function/3.
-#show path/2.
+#show set/2.
 
 % Partonomy and cardinality constraints
 part(T) :- coom_structure(T).
 
 constraint((@join(X,N),Min),"lowerbound") :- cardinality_aux(X,N,Min).
-path(@join(X,N),X')                       :- cardinality_aux(X,N,_), path_to(X,N,X').
+set(@join(X,N),X')                       :- cardinality_aux(X,N,_), path_to(X,N,X').
 
 #show part/1.
 

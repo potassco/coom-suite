@@ -235,53 +235,53 @@ allow("Capacity",(1,3),100).
 % Cardinality constraints
 % only need to check for min, not possible to exceed max as all possible objects are instantiated before
 constraint(("root.color",1),"lowerbound").
-path("root.color","root.color[0]").
+set("root.color","root.color[0]").
 
 constraint(("root.basket",0),"lowerbound").
-path("root.basket","root.basket[0]").
+set("root.basket","root.basket[0]").
 
 constraint(("root.saddle",1),"lowerbound").
-path("root.saddle","root.saddle[0]").
+set("root.saddle","root.saddle[0]").
 
 constraint(("root.frontWheel",1),"lowerbound").
-path("root.frontWheel","root.frontWheel[0]").
+set("root.frontWheel","root.frontWheel[0]").
 
 constraint(("root.frontWheel[0].size",1),"lowerbound").
-path("root.frontWheel[0].size","root.frontWheel[0].size[0]").
+set("root.frontWheel[0].size","root.frontWheel[0].size[0]").
 
 constraint(("root.rearWheel",1),"lowerbound").
-path("root.rearWheel","root.rearWheel[0]").
+set("root.rearWheel","root.rearWheel[0]").
 
 constraint(("root.rearWheel[0].size",1),"lowerbound").
-path("root.rearWheel[0].size","root.rearWheel[0].size[0]").
+set("root.rearWheel[0].size","root.rearWheel[0].size[0]").
 
 constraint(("root.carrier",1),"lowerbound").
-path("root.carrier","root.carrier[0]").
+set("root.carrier","root.carrier[0]").
 
 constraint(("root.basket[0].position",1),"lowerbound").
-path("root.basket[0].position","root.basket[0].position[0]").
+set("root.basket[0].position","root.basket[0].position[0]").
 
 constraint(("root.basket[0].color",1),"lowerbound").
-path("root.basket[0].color","root.basket[0].color[0]").
+set("root.basket[0].color","root.basket[0].color[0]").
 
 constraint(("root.carrier[0].bag",0),"lowerbound").
-path("root.carrier[0].bag","root.carrier[0].bag[0]").
-path("root.carrier[0].bag","root.carrier[0].bag[1]").
+set("root.carrier[0].bag","root.carrier[0].bag[0]").
+set("root.carrier[0].bag","root.carrier[0].bag[1]").
 
 constraint(("root.carrier[0].bag[0].capacity",1),"lowerbound").
-path("root.carrier[0].bag[0].capacity","root.carrier[0].bag[0].capacity[0]").
+set("root.carrier[0].bag[0].capacity","root.carrier[0].bag[0].capacity[0]").
 
 constraint(("root.carrier[0].bag[0].capacity[0].volume",1),"lowerbound").
-path("root.carrier[0].bag[0].capacity[0].volume","root.carrier[0].bag[0].capacity[0].volume[0]").
+set("root.carrier[0].bag[0].capacity[0].volume","root.carrier[0].bag[0].capacity[0].volume[0]").
 
 constraint(("root.carrier[0].bag[0].material",1),"lowerbound").
-path("root.carrier[0].bag[0].material","root.carrier[0].bag[0].material[0]").
+set("root.carrier[0].bag[0].material","root.carrier[0].bag[0].material[0]").
 
 constraint(("root.carrier[0].bag[1].capacity",1),"lowerbound").
-path("root.carrier[0].bag[1].capacity","root.carrier[0].bag[1].capacity[0]").
+set("root.carrier[0].bag[1].capacity","root.carrier[0].bag[1].capacity[0]").
 
 constraint(("root.carrier[0].bag[1].capacity[0].volume",1),"lowerbound").
-path("root.carrier[0].bag[1].capacity[0].volume","root.carrier[0].bag[1].capacity[0].volume[0]").
+set("root.carrier[0].bag[1].capacity[0].volume","root.carrier[0].bag[1].capacity[0].volume[0]").
 
 constraint(("root.carrier[0].bag[1].material",1),"lowerbound").
-path("root.carrier[0].bag[1].material","root.carrier[0].bag[1].material[0]").
+set("root.carrier[0].bag[1].material","root.carrier[0].bag[1].material[0]").
