@@ -1,0 +1,56 @@
+product {
+    num 0-200 length
+    num 0-200 width
+    num 0-100 height
+    num 0-40000 area
+    // num 0-800000 volume
+
+    Color color
+    Material material
+    1..1 Lid lid
+}
+
+enumeration Color {
+    Blue
+    Green
+    Red
+    Yellow
+    White
+    Natural
+}
+
+enumeration Material {
+    attribute num thickness
+
+    Paper       = ( 2 )
+    Aluminium   = ( 1 )
+    Wood        = ( 5 )
+}
+
+structure Lid {
+    // num 0-200 length
+    // num 0-200 width
+    num 20-20 height
+
+    // Color color // has to be the same as box always
+    Material material
+}
+
+behavior {
+    // imply area = length * width
+
+    // imply volume = area * height
+
+    require length >= width
+
+    require height > lid.height
+
+    combinations    (material   color)
+    allow           ( Aluminium Natural )
+    allow           ( Wood      Natural )
+    allow           ( Paper     (Blue, Green, Red, Yellow, White, Natural) )
+    // allow           ( Paper     -*- )
+
+    condition lid.material != Paper
+    require lid.material = material
+}
