@@ -91,7 +91,8 @@ in_tuple(CT,CT',X)      :- in_tuple(CT,(X,CT'),_).
 in_tuple(CT,X)          :- in_tuple(CT,_,X).
 
 % Instantiate imply statements
-imply(C,X',G) :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), binary(X,F,G).
+imply(C,X',G)                :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), binary(X,F,G).
+imply(C,X',@function(T,X,P')) :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), function(X,F,T,P').
 
 % Instantiate attribute constraints
 attribute_constraint((T,X)) :- coom_attribute(T,_,_), type(X,T).
