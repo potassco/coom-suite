@@ -211,6 +211,26 @@ class TestCOOMParser(TestCase):
 
         self.assertEqual(
             parse_coom(
+                """behavior {
+                            combinations  (color	 size)
+                            allow         (Red       -*-)
+                            allow         (Yellow    S)}"""
+            ),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'combinations(0,0,"color").',
+                'combinations(0,1,"size").',
+                'path("color",0,"color").',
+                'path("size",0,"size").',
+                'allow(0,(0,0),"Red").',
+                'allow(0,(0,1),"Yellow").',
+                'allow(0,(1,1),"S").',
+            ],
+        )
+
+        self.assertEqual(
+            parse_coom(
                 """behavior Bike {
                             combinations  (wheelSupport	 rearWheel)
                             allow         (True          (W14, W16))

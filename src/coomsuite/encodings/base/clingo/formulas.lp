@@ -10,6 +10,9 @@ value(F,V) :- function(F,"max",  P), V = #max  { V',X : set(P,X), value(X,V')   
 value(F,VL+VR) :- binary(F,XL,"+",XR), value(XL,VL), value(XR,VR).
 value(F,VL-VR) :- binary(F,XL,"-",XR), value(XL,VL), value(XR,VR).
 value(F,VL*VR) :- binary(F,XL,"*",XR), value(XL,VL), value(XR,VR).
+value(F, V)    :- unary(F,"()",X),     value(X,V).
+value(F, V)    :- unary(F,"+", X),     value(X,V).
+value(F,-V)    :- unary(F,"-", X),     value(X,V).
 % TODO: Add more arithmetics (division and power)
 
 % Default arithmetics

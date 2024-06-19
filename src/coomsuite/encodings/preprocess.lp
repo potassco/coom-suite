@@ -11,18 +11,28 @@ type_aux((A,(X,0)),A) :- type_aux(X,T), coom_enumeration(T), coom_attribute_valu
 
 
 %%% Constraints
-% Get binary context
-binary_context(F,Ctx) :- coom_binary(F,_,_,_), coom_require(C,F),   coom_context(C,Ctx).
-binary_context(F,Ctx) :- coom_binary(F,_,_,_), coom_condition(C,F), coom_context(C,Ctx).
-binary_context(F,Ctx) :- coom_binary(F,_,_,_), coom_imply(C,_,F),   coom_context(C,Ctx).
+% Get formula context
+formula_context(F,Ctx) :- coom_binary(F,_,_,_), coom_require(C,F),   coom_context(C,Ctx).
+formula_context(F,Ctx) :- coom_binary(F,_,_,_), coom_condition(C,F), coom_context(C,Ctx).
+formula_context(F,Ctx) :- coom_binary(F,_,_,_), coom_imply(C,_,F),   coom_context(C,Ctx).
 
-binary_context(L,Ctx)  :- coom_binary(L,_,_,_), coom_binary(F,L,_,_), binary_context(F,Ctx).
-binary_context(R,Ctx)  :- coom_binary(R,_,_,_), coom_binary(F,_,_,R), binary_context(F,Ctx).
+formula_context(F,Ctx) :- coom_unary(F,_,_),    coom_require(C,F),   coom_context(C,Ctx).
+formula_context(F,Ctx) :- coom_unary(F,_,_),    coom_condition(C,F), coom_context(C,Ctx).
+formula_context(F,Ctx) :- coom_unary(F,_,_),    coom_imply(C,_,F),   coom_context(C,Ctx).
 
+formula_context(L,Ctx) :- coom_binary(L,_,_,_), coom_binary(F,L,_,_), formula_context(F,Ctx).
+formula_context(R,Ctx) :- coom_binary(R,_,_,_), coom_binary(F,_,_,R), formula_context(F,Ctx).
+
+formula_context(L,Ctx) :- coom_unary(L,_,_), coom_binary(F,L,_,_), formula_context(F,Ctx).
+formula_context(R,Ctx) :- coom_unary(R,_,_), coom_binary(F,_,_,R), formula_context(F,Ctx).
+
+formula_context(F',Ctx) :- coom_binary(F',_,_,_), coom_unary(F,_,F'), formula_context(F,Ctx).
+formula_context(F',Ctx) :- coom_unary(F',_,_),    coom_unary(F,_,F'), formula_context(F,Ctx).
 
 % Instantiate paths
-path_start(X,P) :- coom_binary(F,P,_,_),     coom_path(P,0,_), type_aux(X,Ctx), binary_context(F,Ctx).
-path_start(X,P) :- coom_binary(F,_,_,P),     coom_path(P,0,_), type_aux(X,Ctx), binary_context(F,Ctx).
+path_start(X,P) :- coom_binary(F,P,_,_),     coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
+path_start(X,P) :- coom_binary(F,_,_,P),     coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
+path_start(X,P) :- coom_unary(F,_,P),        coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
 path_start(X,P) :- coom_combinations(C,_,P), coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
 path_start(X,P) :- coom_function(Ctx,_,_,P), coom_path(P,0,_), type_aux(X,Ctx).
 path_start(X,P) :- coom_imply(C,P,_),        coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
@@ -36,33 +46,39 @@ path_to(X,P,I,X'') :- coom_path(P,I,N),
 path_to(X,P,@dotpath(X')) :- not coom_path(P,I+1,_), path_to(X,P,I,X').
 
 % Constants and numbers
-path_to(X,P,P) :- coom_binary(F,_,_,P), coom_constant(P), binary_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_binary(F,P,_,_), coom_constant(P), binary_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_binary(F,_,_,P), coom_number(P,_), binary_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_binary(F,P,_,_), coom_number(P,_), binary_context(F,T), type_aux(X,T).
+path_to(X,P,P) :- coom_binary(F,_,_,P), coom_constant(P), formula_context(F,T), type_aux(X,T).
+path_to(X,P,P) :- coom_binary(F,P,_,_), coom_constant(P), formula_context(F,T), type_aux(X,T).
+path_to(X,P,P) :- coom_binary(F,_,_,P), coom_number(P,_), formula_context(F,T), type_aux(X,T).
+path_to(X,P,P) :- coom_binary(F,P,_,_), coom_number(P,_), formula_context(F,T), type_aux(X,T).
 
-% Instantiate binaries
+% Instantiate binaries and unaries
 binary(X,F,@binary(XL,Op,XR),XL,Op,XR) :- coom_binary(F,L,Op,R),
-                                          binary_context(F,C),
+                                          formula_context(F,C),
                                           type_aux(X,C), path_to(X,L,XL), path_to(X,R,XR).
-binary(X,F,G)  :- binary(X,F,G,_,_,_).
+
+unary(X,F,@unary(X',Op),Op,X') :- coom_unary(F,Op,F'),
+                                  formula_context(F,C),
+                                  type_aux(X,C), path_to(X,F',X').
+
+ground_formula(X,F,G)  :- binary(X,F,G,_,_,_).
+ground_formula(X,F,G)  :- unary(X,F,G,_,_).
 
 % Default binaries for arithmetics if one side is undefined
 % TODO: Does this always give desired behavior?
-binary(X,F,XL) :- coom_binary(F,L,"+",R),
-                  binary_context(F,C),
-                  type_aux(X,C), path_to(X,L,XL), not path_to(X,R,_).
+ground_formula(X,F,XL) :- coom_binary(F,L,"+",R),
+                          formula_context(F,C),
+                          type_aux(X,C), path_to(X,L,XL), not path_to(X,R,_).
 
-binary(X,F,XR) :- coom_binary(F,L,"+",R),
-                  binary_context(F,C),
-                  type_aux(X,C), not path_to(X,L,_), path_to(X,R,XR).
+ground_formula(X,F,XR) :- coom_binary(F,L,"+",R),
+                          formula_context(F,C),
+                          type_aux(X,C), not path_to(X,L,_), path_to(X,R,XR).
 
 
 % Instantiate functions
 function(X,F,T,P) :- coom_function(C,F,T,P), type_aux(X,C).
 
-% Auxiliary paths for binaries and functions
-path_to(X,F,G) :- binary(X,F,G).
+% Auxiliary paths for formulas and functions
+path_to(X,F,G) :- ground_formula(X,F,G).
 path_to(X,F,@function(T,X,P)) :- function(X,F,T,P).
 
 % Auxiliary paths for cardinalities
@@ -70,8 +86,8 @@ path_to(X,N,@dotpath(X')) :- coom_feature(Ctx,N,_,_,_), type_aux(X,Ctx), type_au
 path_to(X,A,@dotpath(X')) :- coom_attribute(T,A,_),     type_aux(X,T),   type_aux(X',_), X' =(A,(X,_)).
 
 % Instantiate conditional requirements
-conditional_requirement(C,G,G') :- coom_context(C,Ctx), coom_condition(C,F), binary(X,F,G),
-                                   type_aux(X,Ctx),     coom_require(C,F'),  binary(X,F',G').
+conditional_requirement(C,G,G') :- coom_context(C,Ctx), coom_condition(C,F), ground_formula(X,F,G),
+                                   type_aux(X,Ctx),     coom_require(C,F'),  ground_formula(X,F',G').
 
 % Instantiate combination tables
 table(C,X) :- coom_combinations(C,_,_), coom_context(C,Ctx), type_aux(X,Ctx).
@@ -91,7 +107,7 @@ in_tuple(CT,CT',X)      :- in_tuple(CT,(X,CT'),_).
 in_tuple(CT,X)          :- in_tuple(CT,_,X).
 
 % Instantiate imply statements
-imply(C,X',G)                :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), binary(X,F,G).
+imply(C,X',G)                 :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), ground_formula(X,F,G).
 imply(C,X',@function(T,X,P')) :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), function(X,F,T,P').
 
 % Instantiate attribute constraints
@@ -151,13 +167,14 @@ parent(@dotpath(X),@dotpath(P)) :- type_aux(X,_), X=(_,(P,_)).
 
 %%% Constraints
 % Formulas
-constraint((C,G),"boolean") :- coom_require(C,F), binary(_,F,G), not coom_condition(C,_).
+constraint((C,G),"boolean") :- coom_require(C,F), ground_formula(_,F,G), not coom_condition(C,_).
 
 constraint((C,@implication(Con,Req)),"boolean")  :- conditional_requirement(C,Con,Req).
 binary(@implication(Con,Req),@neg(Con),"||",Req) :- conditional_requirement(_,Con,Req).
 unary(@neg(Con),"!",Con)                         :- conditional_requirement(_,Con,Req).
 
 binary(G,L,Op,R) :- binary(_,_,G,L,Op,R).
+unary(G,Op,F)    :- unary(_,_,G,Op,F).
 
 #show constraint/2.
 #show binary/4.
@@ -230,6 +247,12 @@ def unpack(p, l):
 
 def binary(l,op,r):
     return String(f"{l.string}{op.string}{r.string}")
+
+def unary(f,op):
+    if op.string == "()":
+        return String(f"({f.string})")
+    else:
+        return String(f"{op.string}{f.string}")
 
 def join(p1,p2):
     context = dotpath(p1).string
