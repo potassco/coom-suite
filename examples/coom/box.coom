@@ -1,13 +1,18 @@
+// Box example
+// Taken from Andreas Falkner's slides
+// adapted from Blumöhr et al.: Variant Configuration with SAP
+// does not work with fclingo as there is multiplication between two variables
+
 product {
-    num 0-200 length
-    num 0-200 width
-    num 0-100 height
-    num 0-40000 area
-    // num 0-800000 volume
+    num 0-20        length
+    num 0-20        width
+    num 0-20        height
+    num 0-400       area
+    num 0-8000      volume
 
     Color color
     Material material
-    1..1 Lid lid
+    0..1 Lid lid
 }
 
 enumeration Color {
@@ -28,29 +33,54 @@ enumeration Material {
 }
 
 structure Lid {
-    // num 0-200 length
-    // num 0-200 width
-    num 20-20 height
+    num 0-20 length
+    num 0-20 width
+    num 10-10 height
 
     // Color color // has to be the same as box always
     Material material
 }
 
 behavior {
-    // imply area = length * width
-
-    // imply volume = area * height
-
+    explanation "Length of box has to be greater of equal than its width."
     require length >= width
 
+    explanation "Height of the box has to be greater than the height of the lid."
     require height > lid.height
 
+    explanation "Aluminium and wood only possible with natural color"
     combinations    (material   color)
     allow           ( Aluminium Natural )
     allow           ( Wood      Natural )
-    allow           ( Paper     (Blue, Green, Red, Yellow, White, Natural) )
-    // allow           ( Paper     -*- )
+    allow           ( Paper     -*- )
 
+    explanation "Lid has to have same material as box except paper lid is always allowed."
     condition lid.material != Paper
     require lid.material = material
+
+    explanation "Lid has to fit on box."
+    require lid.width > width
+
+    explanation "Lid has to fit on box."
+    require lid.length > length
+
+    explanation "Lid has to have tight fit on box."
+    require lid.width < width + 3
+
+    explanation "Lid has to have tight fit on box."
+    require lid.length < length + 3
 }
+
+// imply statements
+behavior {
+    imply area = length * width
+
+    imply volume = area * height
+}
+
+// User requirements (becomes very slow when added here, instead of restricting the range)
+// behavior {
+//     require volume > 5000
+
+//     require volume < 5050
+// }
