@@ -1,0 +1,64 @@
+// Olympic bus example
+// Taken from Andreas' Falkner slides
+// Adapted from Yang & Dong, Journal of Intelligent Manufacturing, 2013
+
+product {
+    0..80   Seat        seat
+    0..4    DVDPlayer   dvdPlayer
+    0..80   Display     display
+            BusType     type
+    num     0-2000      totalPowerConsumption
+    num     0-80        seatCount
+
+}
+
+structure Seat {
+            Lamp    lamp
+}
+
+enumeration DVDPlayer {
+    attribute num powerConsumption
+
+    Player = ( 50)
+}
+
+enumeration BusType { Standard Tourist }
+
+enumeration Lamp {
+    attribute num powerConsumption
+
+    ReadingLamp = ( 25 )
+}
+
+enumeration Display {
+    attribute num powerConsumption
+
+    LCDDisplay = ( 15 )
+}
+
+behavior {
+    explanation "In tourist busses every seat needs to have a display."
+    condition type = Tourist
+    require seatCount = count(display)
+
+    explanation "If there is at least one display, at least on DVD player is required."
+    condition count(display) > 0
+    require count(dvdPlayer) > 0
+
+    explanation "If there are more than twenty displays, at least two DVD players are required."
+    condition count(display) > 20
+    require count(dvdPlayer) > 1
+
+    imply totalPowerConsumption = sum(dvdPlayer.powerConsumption) + sum(seat.lamp.powerConsumption) + sum(display.powerConsumption)
+
+    imply seatCount = count(seat)
+}
+
+// User requirements
+behavior {
+    // require count(display) < 5
+
+    require seatCount > 30
+
+    require type = Tourist
+}
