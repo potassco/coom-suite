@@ -1,0 +1,58 @@
+// Metro wagon example
+// Falkner et al.: Solver Requirements for Interactive Configuration (2020)
+
+product {
+    num 10-20       length
+    num 50-200      num_passengers
+    num 0-200       standing_room
+
+    0..1    HandRail    handrail
+    0..80   Seat        seat
+}
+
+enumeration HandRail { Standard Premium}
+
+structure HandRail {}
+
+structure Seat {
+    SeatType    type
+    Color       color
+}
+
+enumeration SeatType { Standard Premium Special}
+enumeration Color { Blue Red White }
+
+behavior {
+    explanation "If there is standing room, a handrail is required."
+    condition standing_room > 0 require count(handrail) = 1
+
+    explanation "Max. 4 seats per meter length and one seat occupies the space of three standing passengers."
+    require count(seat) * 3 + standing_room <= 12 * length
+
+    explanation "Standard type cannot be mixed with premium."
+    combinations    ( seat.type     handrail )
+    allow           ( Standard      Standard )
+    allow           ( Premium       Premium  )
+    allow           ( Special       -*-      )
+
+    explanation "The number of passengers is equal to the number of seats plus standing room."
+    require num_passengers = count(seat) + standing_room
+}
+
+behavior Seat {
+    explanation "Seats of type Special must be red."
+    condition type = Special
+    require color = Red
+}
+
+// // Defaults (not implemented currently)
+// behavior {
+//     default type = Standard
+
+//     default type = Blue
+
+//     default handrail.type = Standard
+
+//     explanation "All seats have to have the same color (except special seats)"
+//     default seat.color = seat.color
+// }

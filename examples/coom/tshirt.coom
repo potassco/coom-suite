@@ -1,0 +1,37 @@
+// T-shirt example
+// Provided by denkbares GmbH
+// Adapted from A. Haag and L. Haag: Further Empowering Variant Tables for Mass Customization (2019)
+
+product {
+    Color   color
+    Size    size
+    Theme   theme
+}
+
+enumeration Color { Red Yellow Blue White Black }
+
+enumeration Size { S M L XL XXL }
+
+enumeration Theme { None T1 T2 T3 }
+
+
+behavior {
+    explanation "Red shirts in XXL are rare and thus not offered."
+	require ! (color = Red && size = XXL)
+
+    explanation "Size S in black only without theme."
+    condition size = S && color = Black
+	require theme = None
+
+    explanation "Theme 1 is not readable with yellow and red."
+	combinations (  color                   theme           )
+	allow		 (	(Blue, White, Black)    -*-	            )
+	allow		 ( 	(Red, Yellow )          (None, T2, T3)  )
+
+    explanation "The combination of theme 3 in white and S is not produible anymore."
+    require ! (color = White && size = S && theme = T3)
+
+    explanation "Blue shirts always use theme 1."
+    condition color = Blue
+	require theme = T1
+}

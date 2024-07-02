@@ -1,3 +1,6 @@
+// PC example
+// Taken from Felfernig et al.: Knowledge-based Configuration: From Research to Business Cases. Elsevier (2014).
+
 product {
          Usage                  usage
          Efficiency             efficiency
@@ -89,7 +92,7 @@ structure Application {
 }
 
 behavior {
-    imply price = sum(hdunit.price) + motherboard.price + sum(motherboard.cpu.price)
+    require price = sum(hdunit.price) + motherboard.price + sum(motherboard.cpu.price)
                   + os.price + sum(screen.price) + sum(applications.price)
 
     require price <= maxPrice
@@ -112,11 +115,11 @@ behavior {
 }
 
 behavior HDUnit {
-    imply price = sum(hdisk.price) + sum(hdcontroller.price)
+    require price = sum(hdisk.price) + sum(hdcontroller.price)
 }
 
 behavior Motherboard {
-    imply price = mbtype.price
+    require price = mbtype.price
 
     condition mbtype = MBSilver
     require   cpu  != CPUD

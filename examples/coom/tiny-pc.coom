@@ -1,0 +1,31 @@
+// Tiny PC example
+// Provided by Andreas Falkner
+
+product {
+    Usage       usage
+    Efficiency  efficiency
+    CPU         cpu
+}
+
+enumeration Usage {
+    Internet
+    Scientific
+    Multimedia
+}
+
+structure CPU {
+    Clockrate clockrate
+}
+
+enumeration Clockrate {
+    Slow
+    Medium
+    Fast
+}
+
+behavior {
+    condition usage = Scientific
+    require cpu.clockrate = Fast
+
+    require ! (usage = Multimedia && cpu.clockrate = Slow)
+}

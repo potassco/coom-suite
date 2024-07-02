@@ -1,3 +1,7 @@
+// Simplified Travel Bike example
+// Provided by denkbares GmbH
+// see Baumeister et al.: Towards Industrial-scale Product Configuration (2024). To appear.
+
 product {
     num .#/l	0-200   totalVolume
     num .#/l	200-200   requestedVolume
@@ -24,7 +28,7 @@ enumeration Bag {
 behavior {
     require count(carrier.bag) + count(frame.bag) <= 4
 
-    imply totalVolume = sum(carrier.bag.volume) + sum(frame.bag.volume)
+    require totalVolume = sum(carrier.bag.volume) + sum(frame.bag.volume)
 
     require totalVolume >= requestedVolume
 }

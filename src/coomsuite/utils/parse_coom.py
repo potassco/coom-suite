@@ -153,6 +153,8 @@ class ASPVisitor(ModelVisitor):
             if "," in values:
                 values = values[1:-1]
             for v in values.split(","):
+                if v == "-*-":  # Wildcard operator for combinations table
+                    continue
                 self.output_asp.append(f'{row_type}({self.constraint_idx},({col_idx},{self.row_idx}),"{v}").')
         self.print_path = False
         super().visitCombination_row(ctx)
