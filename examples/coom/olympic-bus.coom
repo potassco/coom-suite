@@ -1,6 +1,6 @@
 // Olympic bus example
-// Taken from Andreas Falkner's slides
-// Adapted from Yang & Dong, Journal of Intelligent Manufacturing, 2013
+// Provided by Andreas Falkner
+// Adapted from Yang & Dong, Journal of Intelligent Manufacturing (2013)
 
 product {
     0..80   Seat        seat
@@ -49,9 +49,9 @@ behavior {
     condition count(display) > 20
     require count(dvdPlayer) > 1
 
-    imply totalPowerConsumption = sum(dvdPlayer.powerConsumption) + sum(seat.lamp.powerConsumption) + sum(display.powerConsumption)
+    require totalPowerConsumption = sum(dvdPlayer.powerConsumption) + sum(seat.lamp.powerConsumption) + sum(display.powerConsumption)
 
-    imply seatCount = count(seat)
+    require seatCount = count(seat)
 }
 
 // User requirements

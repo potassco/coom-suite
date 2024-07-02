@@ -1,3 +1,7 @@
+// T-shirt example
+// Provided by denkbares GmbH
+// Adapted from A. Haag and L. Haag: Further Empowering Variant Tables for Mass Customization (2019)
+
 product {
     Color   color
     Size    size

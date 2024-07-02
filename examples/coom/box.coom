@@ -1,7 +1,9 @@
 // Box example
-// Taken from Andreas Falkner's slides
+// Provided by Andreas Falkner
 // adapted from Blumöhr et al.: Variant Configuration with SAP
-// does not work with fclingo as there is multiplication between two variables
+
+// If using area and volume features, the example does not work with fclingo
+// as there is a (non-linear) multiplication between two variables.
 
 product {
     num 0-20        length
@@ -71,16 +73,17 @@ behavior {
     require lid.length < length + 3
 }
 
-// imply statements
+// Area and volume calculations
 behavior {
-    imply area = length * width
+    require area = length * width
 
-    imply volume = area * height
+    require volume = area * height
 }
 
-// User requirements (becomes very slow when added here, instead of restricting the range)
-// behavior {
-//     require volume > 5000
+// User requirements (becomes very slow when added as a range, instead of restricting the range)
+// Very fast when using "="
+behavior {
+    require volume = 5040
 
-//     require volume < 5050
-// }
+    // require volume <= 5040
+}

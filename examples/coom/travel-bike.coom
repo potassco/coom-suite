@@ -1,3 +1,7 @@
+// Travel Bike example
+// Provided by denkbares GmbH
+// see Baumeister et al.: Towards Industrial-scale Product Configuration (2024). To appear.
+
 product {
     num .#/g	1-10000 totalWeight
 	num .#/kg	10-10    maxWeight
@@ -60,13 +64,13 @@ enumeration Color {
 behavior {
     require count(carrier.bag) + count(frame.bag) <= 4
 
-	imply totalWeight = frontWheel.weight + rearWheel.weight
+	require totalWeight = frontWheel.weight + rearWheel.weight
 						+ sum(carrier.bag.capacity.weight)
 						+ sum(frame.bag.capacity.weight)
 
 	require totalWeight <= maxWeight * 1000
 
-	imply totalVolume = sum(carrier.bag.capacity.volume) + sum(frame.bag.capacity.volume)
+	require totalVolume = sum(carrier.bag.capacity.volume) + sum(frame.bag.capacity.volume)
 
 	require totalVolume >= requestedVolume
 
