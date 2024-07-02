@@ -13,6 +13,7 @@ from clingo.script import enable_python
 from clingo.symbol import Function, SymbolType
 from fclingo.__main__ import CSP, DEF, MAX_INT, MIN_INT
 from fclingo.__main__ import AppConfig as FclingoConfig
+from fclingo.__main__ import Statistic
 from fclingo.parsing import THEORY, HeadBodyTransformer
 from fclingo.translator import AUX, Translator
 
@@ -199,14 +200,13 @@ class COOMApp(Application):
                     hbt = HeadBodyTransformer()
 
                     parse_files([encoding], lambda ast: bld.add(hbt.visit(ast)))
-
                     pos = Position("<string>", 1, 1)
                     loc = Location(pos, pos)
                     for rule in hbt.rules_to_add:
                         bld.add(Rule(loc, rule[0], rule[1]))  # nocoverage # Not sure when this is needed
 
                 control.ground([("base", [])])
-                translator = Translator(control, self.config)
+                translator = Translator(control, self.config, Statistic())
                 translator.translate(control.theory_atoms)
 
                 self._propagator.prepare(control)
