@@ -23,8 +23,7 @@ def convert_instance(coom_file: str, outdir: Optional[str] = None) -> str:  # no
         output_dir (str, optional): Name of the output directory, by default the same of coom_file is used
     """
     input_stream = FileStream(coom_file, encoding="utf-8")
-    asp_instance = [f"coom_{a}" if a != "" else a for a in run_antlr4_visitor(input_stream)]
-    asp_instance = "\n".join(asp_instance)
+    asp_instance = "\n".join([f"coom_{a}" if a != "" else a for a in run_antlr4_visitor(input_stream)])
 
     if outdir is not None:
         filename = splitext(basename(coom_file))[0] + "-coom.lp"
