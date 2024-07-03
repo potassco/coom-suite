@@ -67,13 +67,16 @@ def get_parser() -> ArgumentParser:
     parser_convert.add_argument(
         "input",
         type=str,
-        help="Input the COOM file corresponding to the instance.",
+        help="""
+        Input the COOM file corresponding to the instance. Converted instance is printed to console by default.
+        Specify output directory with '--output' to save .""",
     )
     parser_convert.add_argument(
         "--output",
         "-o",
         type=str,
-        help="Path to output directory. Same directory as input by default.",
+        default=None,
+        help="Path to output directory. (Optional)",
     )
 
     # -------------
