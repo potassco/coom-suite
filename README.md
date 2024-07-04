@@ -30,9 +30,7 @@ We define the following three COOM language fragments:
 - **COOM Core** corresponds to a simple Constraint Satisfaction Problem (CSP).
   It mainly consists of table and Boolean constraints over discrete attributes
   and all variables are defined.
-
 - **COOM\[P\]** adds partonomies and cardinalities on top of **COOM Core**.
-
 - **COOM\[X\]** adds numeric variables and calculations (arithmetic expressions
   and aggregate functions) on top of **COOM\[P\]**.
 
@@ -40,18 +38,21 @@ We define the following three COOM language fragments:
 
 #### Examples
 
-A range of (product) configuration examples encoded in COOM can be found in
-`examples/coom/`. We highlight here only the *Bike* collection, containing
-three examples in increasing complexity that correspond to the three COOM
-language fragments defined above: the Kids, City and Travel Bike.
+The COOM Suite contains a range of (product) configuration examples encoded in
+the COOM language. They can be found in the [`examples/coom`](examples/coom)
+directory. We highlight here only the *Bike* collection, containing three
+examples in increasing complexity that correspond to the three COOM language
+fragments defined above: the [Kids](examples/coom/kids-bike.coom),
+[City](examples/coom/city-bike.coom), and
+[Travel](examples/coom/travel-bike.coom) Bike.
 
-The corresponding (serialized and refined) facts to these examples can be found
-in `examples/asp/`
+We also provide the corresponding (serialized and refined) facts to these
+examples under [`examples/asp`](examples/asp).
 
 #### Benchmarks
 
 The COOM suite includes four scalable benchmark sets. More information can be
-found in the README of the `benchmarks` directory.
+found in the [`benchmarks`](benchmarks) directory.
 
 ### Convert COOM to facts
 
@@ -99,7 +100,27 @@ coomsuite solve examples/coom/kids-bike.coom 0 -q
 
 ### Extending the workbench
 
-TODO
+#### Customizing the parser
+
+To get started have a look at the
+[COOM grammar](src/coomsuite/utils/coom_grammar/Model.g4).
+
+You can customize the conversion by modifying the
+[ASP Visitor](src/coomsuite/utils/parse_coom.py).
+
+More information on the Python target of ANTLR v4 can be found
+[here](https://github.com/antlr/antlr4/blob/master/doc/python-target.md).
+
+#### Add encodings
+
+The encodings are stored in
+[`src/coomsuite/encodings/`](src/coomsuite/encodings/).
+
+Loading of the encodings is handled with clingo's
+[Application class](https://potassco.org/clingo/python-api/5.7/clingo/application.html).
+Modify [this line](src/coomsuite/application.py#L182) to insert your own
+encoding. Note that you might also have to disable/modify the preprocessing
+encoding [here](<(src/coomsuite/application.py#L159)>).
 
 ## Development
 
