@@ -1,6 +1,6 @@
 // City Bike example
 // Provided by denkbares GmbH
-// see Baumeister et al.: Towards Industrial-scale Product Configuration (2024). To appear.
+// see Baumeister et al.: Towards Industrial-scale Product Configuration (2024).
 
 product {
 	        Color   color

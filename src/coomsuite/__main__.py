@@ -29,8 +29,10 @@ def main():
     # log.error("error")
 
     if args.command == "convert":
-        output_lp_file = convert_instance(args.input, args.output)
-        log.info("ASP file saved in %s", output_lp_file)
+        asp_instance = convert_instance(args.input, args.output)
+        if args.output is None:
+            print(asp_instance)
+
     elif args.command == "solve":
         log.info("Converting and solving COOM file %s", args.input)
         with TemporaryDirectory() as temp_dir:
