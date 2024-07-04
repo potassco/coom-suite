@@ -1,0 +1,4 @@
+benchmarks/city-bike-fleet/instances filter=lfs diff=lfs merge=lfs -text
+benchmarks/restaurant/instances filter=lfs diff=lfs merge=lfs -text
+benchmarks/travel-bike-fleet/instances filter=lfs diff=lfs merge=lfs -text
+benchmarks/core/instances filter=lfs diff=lfs merge=lfs -text
