@@ -179,7 +179,7 @@ class COOMApp(Application):
         if self._show:
             print("\n".join(processed_facts))  # nocoverage
         else:
-            encoding = get_encoding(f"encoding-{self._solver}.lp")
+            encoding = get_encoding(f"encoding-base-{self._solver}.lp")
             facts = "".join(processed_facts)
             if self._solver == "clingo":
 
