@@ -16,7 +16,7 @@ dependencies = [
     "importlib_resources",
     "clintest>=0.2.0",
     "clingcon >= 5.2.1, == 5.2.*",                                                                  # requirement for fclingo
-    "fclingo@git+https://github.com/potassco/fclingo.git@cf40dde9fccc37a12d9dea487b348da5cfb67c0d",
+    "fclingo@git+https://github.com/potassco/fclingo.git@6f4d7efc92bfac18465e2c95c4ef9ac99ef470b5",
 ]
 license = { file = "LICENSE" }
 dynamic = ["version"]
