@@ -50,3 +50,7 @@ Everything from **COOM[P]** plus
         - fclingo only supports linear calculations (no multiplication of two variables)
 
 
+
+## Future work
+- Open cardinalities
+- Open numeric intervals
