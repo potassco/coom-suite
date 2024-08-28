@@ -1,4 +1,4 @@
-# Fact format of instances
+# Fact format of instances (outdated)
 The instances are generated automatically by parsing a COOM file.
 We describe here the ASP fact format used for the translation.
 We prefix every predicate by `coom_` to make distinguish the predicates here
