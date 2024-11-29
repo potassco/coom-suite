@@ -171,6 +171,13 @@ class COOMApp(Application):
 
         return facts
 
+    def check_user_input(self, facts: str):
+        user_input_ctl = Control(message_limit=0)
+        user_input_ctl.load(get_encoding("user-check.lp"))
+        user_input_ctl.add("".join(facts))
+        user_input_ctl.ground()
+        return user_input_ctl.solve()
+
     def main(self, control: Control, files: Sequence[str]) -> None:
         """
         Main function ran on call.
@@ -179,35 +186,38 @@ class COOMApp(Application):
         if self._show:
             print("\n".join(processed_facts))  # nocoverage
         else:
-            encoding = get_encoding(f"encoding-base-{self._solver}.lp")
-            facts = "".join(processed_facts)
-            if self._solver == "clingo":
+            if self.check_user_input(processed_facts).unsatisfiable:
+                raise ValueError("User input not valid.")
+            else:
+                encoding = get_encoding(f"encoding-base-{self._solver}.lp")
+                facts = "".join(processed_facts)
+                if self._solver == "clingo":
 
-                control.load(encoding)
-                control.add(facts)
+                    control.load(encoding)
+                    control.add(facts)
 
-                control.ground()
-                control.solve()
-            elif self._solver == "fclingo":
-                self._propagator.register(control)
-                self._propagator.configure("max-int", str(self.config.max_int))
-                self._propagator.configure("min-int", str(self.config.min_int))
+                    control.ground()
+                    control.solve()
+                elif self._solver == "fclingo":
+                    self._propagator.register(control)
+                    self._propagator.configure("max-int", str(self.config.max_int))
+                    self._propagator.configure("min-int", str(self.config.min_int))
 
-                control.add("base", [], facts)
-                control.add("base", [], THEORY)
+                    control.add("base", [], facts)
+                    control.add("base", [], THEORY)
 
-                with ProgramBuilder(control) as bld:
-                    hbt = HeadBodyTransformer()
+                    with ProgramBuilder(control) as bld:
+                        hbt = HeadBodyTransformer()
 
-                    parse_files([encoding], lambda ast: bld.add(hbt.visit(ast)))
-                    pos = Position("<string>", 1, 1)
-                    loc = Location(pos, pos)
-                    for rule in hbt.rules_to_add:
-                        bld.add(Rule(loc, rule[0], rule[1]))  # nocoverage # Not sure when this is needed
+                        parse_files([encoding], lambda ast: bld.add(hbt.visit(ast)))
+                        pos = Position("<string>", 1, 1)
+                        loc = Location(pos, pos)
+                        for rule in hbt.rules_to_add:
+                            bld.add(Rule(loc, rule[0], rule[1]))  # nocoverage # Not sure when this is needed
 
-                control.ground([("base", [])])
-                translator = Translator(control, self.config, Statistic())
-                translator.translate(control.theory_atoms)
+                    control.ground([("base", [])])
+                    translator = Translator(control, self.config, Statistic())
+                    translator.translate(control.theory_atoms)
 
-                self._propagator.prepare(control)
-                control.solve(on_model=self.on_model, on_statistics=self._propagator.on_statistics)
+                    self._propagator.prepare(control)
+                    control.solve(on_model=self.on_model, on_statistics=self._propagator.on_statistics)

@@ -24,3 +24,6 @@
 #defined number/2.
 
 #defined function/3.
+
+#defined user_include/1.
+#defined user_value/2.
