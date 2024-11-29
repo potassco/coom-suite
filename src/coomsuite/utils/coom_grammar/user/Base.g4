@@ -19,90 +19,23 @@ def wasNewline(self):
     return False
 }
 
-constant: floating | name | 'true' | 'false';
 floating:
 	'-'? (FLOATING | INTEGER | '\u221e'); // == infinity symbol
-//integer: '-'? INTEGER ;
-
 // define path expressions
 path: path_item ('.' path_item)*;
 path_item: name ('[' path_index ('..' path_index)? ']')?;
 path_index: INTEGER | ('last' ('-' INTEGER)?);
 
-name: NAME | FUNCTION | KEYWORD;
+name: NAME; // | FUNCTION | KEYWORD;
 stmt_end: ';' | {self.wasNewline()};
 
-compare:
-	'<'
-	| '<='
-	| '≤'
-	| '>'
-	| '>='
-	| '≥'
-	| '='
-	| '=='
-	| '!='
-	| '≠'
-	| '⊇'
-	| 'contains';
-
-// define lexical tokens
-FUNCTION:
-	'count'
-	| 'min'
-	| 'max'
-	| 'sum'
-	| 'delta'
-	| 'pow'
-	| 'sqrt'
-	| 'ceil'
-	| 'floor'
-	| 'round'
-	| 'mod'
-	| 'log'
-	| 'ln'
-	| TRIGONOMETRIC;
-TRIGONOMETRIC:
-	'sin'
-	| 'asin'
-	| 'sinh'
-	| 'cos'
-	| 'acos'
-	| 'cosh'
-	| 'tan'
-	| 'atan'
-	| 'tanh';
-BEHAVIOR: 'behavior';
-CONDITION: 'condition';
-IMPLY: 'imply';
-REQUIRE: 'require';
-DEFAULT: 'default';
-KEYWORD:
-	'last'
-	| 'true'
-	| 'false'
-	| CONDITION
-	| 'valid'
-	| 'from'
-	| 'to'
-	| 'product'
-	| 'structure'
-	| 'enumeration'
-	| BEHAVIOR
-	| DEFAULT
-	| IMPLY
-	| REQUIRE
-	| 'combinations'
-	| 'allow'
-	| 'forbid'
-	| 'readwrite'
-	| 'readonly'
-	| 'hide'
-	| 'attribute'
-	| 'reference'
-	| 'static';
-
 NAME: (ALPHA ALPHANUMERIC*) | QUOTED_SINGLE | QUOTED_DOUBLE;
+
+formula_atom:
+	atom_true = 'true'
+	| atom_false = 'false'
+	| atom_num = floating
+	| atom_path = path;
 
 fragment ALPHANUMERIC: ALPHA | DIGIT;
 fragment ALPHA:
@@ -119,9 +52,6 @@ fragment HEX: [0-9a-fA-F];
 
 INTEGER: DIGIT+;
 FLOATING: DIGIT+ ('.' DIGIT+)?;
-TIMES: INTEGER 'x';
-
-HASHES: '#'+;
 
 // skip whitespaces, but get the newlines in a spearate channel
 

@@ -31,10 +31,6 @@ class UserInputVisitor(ParseTreeVisitor):
     def visitAdd_instance(self, ctx: UserInputParser.Add_instanceContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by UserInputParser#constant.
-    def visitConstant(self, ctx: UserInputParser.ConstantContext):
-        return self.visitChildren(ctx)
-
     # Visit a parse tree produced by UserInputParser#floating.
     def visitFloating(self, ctx: UserInputParser.FloatingContext):
         return self.visitChildren(ctx)
@@ -57,42 +53,6 @@ class UserInputVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by UserInputParser#stmt_end.
     def visitStmt_end(self, ctx: UserInputParser.Stmt_endContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by UserInputParser#compare.
-    def visitCompare(self, ctx: UserInputParser.CompareContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by UserInputParser#formula.
-    def visitFormula(self, ctx: UserInputParser.FormulaContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by UserInputParser#formula_add.
-    def visitFormula_add(self, ctx: UserInputParser.Formula_addContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by UserInputParser#formula_sub.
-    def visitFormula_sub(self, ctx: UserInputParser.Formula_subContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by UserInputParser#formula_mul.
-    def visitFormula_mul(self, ctx: UserInputParser.Formula_mulContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by UserInputParser#formula_div.
-    def visitFormula_div(self, ctx: UserInputParser.Formula_divContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by UserInputParser#formula_pow.
-    def visitFormula_pow(self, ctx: UserInputParser.Formula_powContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by UserInputParser#formula_sign.
-    def visitFormula_sign(self, ctx: UserInputParser.Formula_signContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by UserInputParser#formula_func.
-    def visitFormula_func(self, ctx: UserInputParser.Formula_funcContext):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by UserInputParser#formula_atom.

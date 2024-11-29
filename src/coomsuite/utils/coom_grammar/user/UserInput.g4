@@ -3,7 +3,7 @@
  */
 
 grammar UserInput;
-import Base, Formula;
+import Base;
 
 user_input: (input_block | input_operation)* EOF;
 

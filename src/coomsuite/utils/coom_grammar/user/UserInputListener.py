@@ -50,14 +50,6 @@ class UserInputListener(ParseTreeListener):
     def exitAdd_instance(self, ctx: UserInputParser.Add_instanceContext):
         pass
 
-    # Enter a parse tree produced by UserInputParser#constant.
-    def enterConstant(self, ctx: UserInputParser.ConstantContext):
-        pass
-
-    # Exit a parse tree produced by UserInputParser#constant.
-    def exitConstant(self, ctx: UserInputParser.ConstantContext):
-        pass
-
     # Enter a parse tree produced by UserInputParser#floating.
     def enterFloating(self, ctx: UserInputParser.FloatingContext):
         pass
@@ -104,78 +96,6 @@ class UserInputListener(ParseTreeListener):
 
     # Exit a parse tree produced by UserInputParser#stmt_end.
     def exitStmt_end(self, ctx: UserInputParser.Stmt_endContext):
-        pass
-
-    # Enter a parse tree produced by UserInputParser#compare.
-    def enterCompare(self, ctx: UserInputParser.CompareContext):
-        pass
-
-    # Exit a parse tree produced by UserInputParser#compare.
-    def exitCompare(self, ctx: UserInputParser.CompareContext):
-        pass
-
-    # Enter a parse tree produced by UserInputParser#formula.
-    def enterFormula(self, ctx: UserInputParser.FormulaContext):
-        pass
-
-    # Exit a parse tree produced by UserInputParser#formula.
-    def exitFormula(self, ctx: UserInputParser.FormulaContext):
-        pass
-
-    # Enter a parse tree produced by UserInputParser#formula_add.
-    def enterFormula_add(self, ctx: UserInputParser.Formula_addContext):
-        pass
-
-    # Exit a parse tree produced by UserInputParser#formula_add.
-    def exitFormula_add(self, ctx: UserInputParser.Formula_addContext):
-        pass
-
-    # Enter a parse tree produced by UserInputParser#formula_sub.
-    def enterFormula_sub(self, ctx: UserInputParser.Formula_subContext):
-        pass
-
-    # Exit a parse tree produced by UserInputParser#formula_sub.
-    def exitFormula_sub(self, ctx: UserInputParser.Formula_subContext):
-        pass
-
-    # Enter a parse tree produced by UserInputParser#formula_mul.
-    def enterFormula_mul(self, ctx: UserInputParser.Formula_mulContext):
-        pass
-
-    # Exit a parse tree produced by UserInputParser#formula_mul.
-    def exitFormula_mul(self, ctx: UserInputParser.Formula_mulContext):
-        pass
-
-    # Enter a parse tree produced by UserInputParser#formula_div.
-    def enterFormula_div(self, ctx: UserInputParser.Formula_divContext):
-        pass
-
-    # Exit a parse tree produced by UserInputParser#formula_div.
-    def exitFormula_div(self, ctx: UserInputParser.Formula_divContext):
-        pass
-
-    # Enter a parse tree produced by UserInputParser#formula_pow.
-    def enterFormula_pow(self, ctx: UserInputParser.Formula_powContext):
-        pass
-
-    # Exit a parse tree produced by UserInputParser#formula_pow.
-    def exitFormula_pow(self, ctx: UserInputParser.Formula_powContext):
-        pass
-
-    # Enter a parse tree produced by UserInputParser#formula_sign.
-    def enterFormula_sign(self, ctx: UserInputParser.Formula_signContext):
-        pass
-
-    # Exit a parse tree produced by UserInputParser#formula_sign.
-    def exitFormula_sign(self, ctx: UserInputParser.Formula_signContext):
-        pass
-
-    # Enter a parse tree produced by UserInputParser#formula_func.
-    def enterFormula_func(self, ctx: UserInputParser.Formula_funcContext):
-        pass
-
-    # Exit a parse tree produced by UserInputParser#formula_func.
-    def exitFormula_func(self, ctx: UserInputParser.Formula_funcContext):
         pass
 
     # Enter a parse tree produced by UserInputParser#formula_atom.
