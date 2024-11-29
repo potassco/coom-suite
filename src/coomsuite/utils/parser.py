@@ -29,8 +29,8 @@ def get_parser() -> ArgumentParser:
         prog="coomsuite",
         description=dedent(
             """\
-            coomsuite
-            filldescription
+            The COOM suite is a package providing functionality
+            to parse and solve product configuration problems specified in COOM.
             """
         ),
     )
