@@ -43,10 +43,12 @@ def main():
     elif args.command == "solve":
         log.info("Converting and solving COOM file %s", args.input)
         with TemporaryDirectory() as temp_dir:
-            options = [
-                convert_instance(args.input, "model", temp_dir),
-                convert_instance(args.user_input, "user", temp_dir) if args.user_input else "",
-            ] + unknown_args
+            options = (
+                [convert_instance(args.input, "model", temp_dir)]
+                + ([convert_instance(args.user_input, "user", temp_dir)] if args.user_input else [])
+                + unknown_args
+            )
+
             if args.show:
                 options.append("--outf=3")
 
