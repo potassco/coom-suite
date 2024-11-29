@@ -68,7 +68,7 @@ def get_parser() -> ArgumentParser:
         "input",
         type=str,
         help="""
-        Input the COOM file corresponding to the instance. Converted instance is printed to console by default.
+        Input the COOM model file corresponding to the instance. Converted instance is printed to console by default.
         Specify output directory with '--output' to save .""",
     )
     parser_convert.add_argument(
@@ -79,6 +79,7 @@ def get_parser() -> ArgumentParser:
         help="Path to output directory. (Optional)",
     )
 
+    parser_convert.add_argument("--user-input", "-u", type=str, help="Input the COOM user input.")
     # -------------
     # Solve parser
     # -------------
@@ -89,8 +90,10 @@ def get_parser() -> ArgumentParser:
     parser_solve.add_argument(
         "input",
         type=str,
-        help="Path to the COOM file to solve",
+        help="Path to the COOM model file to solve",
     )
+    parser_solve.add_argument("--user_input", "-u", type=str, help="Input the COOM user input.")
+
     parser_solve.add_argument("--solver", "-s", type=str, help="Set solver", choices=SOLVERS, default="clingo")
 
     parser_solve.add_argument(

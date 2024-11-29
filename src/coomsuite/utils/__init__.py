@@ -8,10 +8,10 @@ from typing import List
 from antlr4 import CommonTokenStream, InputStream
 from clingo import Symbol
 
-from coomsuite.utils.parse_coom import ASPVisitor
+from coomsuite.utils.parse_coom import ASPModelVisitor
 
-from .coom_grammar.ModelLexer import ModelLexer
-from .coom_grammar.ModelParser import ModelParser
+from .coom_grammar.modelModelLexer import ModelLexer
+from .coom_grammar.modelModelParser import ModelParser
 
 # mypy: allow-untyped-calls
 
@@ -43,7 +43,7 @@ def run_antlr4_visitor(coom_input_stream: InputStream) -> List[str]:
     stream = CommonTokenStream(lexer)
     parser = ModelParser(stream)
     tree = parser.root()
-    visitor = ASPVisitor()
+    visitor = ASPModelVisitor()
     visitor.visitRoot(tree)
     return visitor.output_asp
 
