@@ -10,11 +10,11 @@ in a visitor style fashion and outputs ASP facts.
 # mypy: ignore-errors
 from typing import List, Optional
 
-from .coom_grammar.ModelParser import ModelParser
-from .coom_grammar.ModelVisitor import ModelVisitor
+from .coom_grammar.model.ModelParser import ModelParser
+from .coom_grammar.model.ModelVisitor import ModelVisitor
 
 
-class ASPVisitor(ModelVisitor):
+class ASPModelVisitor(ModelVisitor):
     """
     Custom visitor of the COOM Parser.
     Generates a list of ASP facts as strings.

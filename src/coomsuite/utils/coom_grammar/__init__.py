@@ -1,3 +1,3 @@
 """
-COOM model files
+COOM grammar files
 """
