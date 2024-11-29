@@ -10,6 +10,7 @@ from clingo import Control, Model, Symbol
 from clingo.application import Application, ApplicationOptions, Flag
 from clingo.ast import Location, Position, ProgramBuilder, Rule, parse_files
 from clingo.script import enable_python
+from clingo.solving import SolveResult
 from clingo.symbol import Function, SymbolType
 from fclingo.__main__ import CSP, DEF, MAX_INT, MIN_INT
 from fclingo.__main__ import AppConfig as FclingoConfig
@@ -171,7 +172,10 @@ class COOMApp(Application):
 
         return facts
 
-    def check_user_input(self, facts: str):
+    def check_user_input(self, facts: list[str]) -> SolveResult:
+        """
+        Checks if the user input is valid and returns a clingo.SolveResult
+        """
         user_input_ctl = Control(message_limit=0)
         user_input_ctl.load(get_encoding("user-check.lp"))
         user_input_ctl.add("".join(facts))
@@ -188,36 +192,36 @@ class COOMApp(Application):
         else:
             if self.check_user_input(processed_facts).unsatisfiable:
                 raise ValueError("User input not valid.")
-            else:
-                encoding = get_encoding(f"encoding-base-{self._solver}.lp")
-                facts = "".join(processed_facts)
-                if self._solver == "clingo":
 
-                    control.load(encoding)
-                    control.add(facts)
+            encoding = get_encoding(f"encoding-base-{self._solver}.lp")
+            facts = "".join(processed_facts)
+            if self._solver == "clingo":
 
-                    control.ground()
-                    control.solve()
-                elif self._solver == "fclingo":
-                    self._propagator.register(control)
-                    self._propagator.configure("max-int", str(self.config.max_int))
-                    self._propagator.configure("min-int", str(self.config.min_int))
+                control.load(encoding)
+                control.add(facts)
 
-                    control.add("base", [], facts)
-                    control.add("base", [], THEORY)
+                control.ground()
+                control.solve()
+            elif self._solver == "fclingo":
+                self._propagator.register(control)
+                self._propagator.configure("max-int", str(self.config.max_int))
+                self._propagator.configure("min-int", str(self.config.min_int))
 
-                    with ProgramBuilder(control) as bld:
-                        hbt = HeadBodyTransformer()
+                control.add("base", [], facts)
+                control.add("base", [], THEORY)
 
-                        parse_files([encoding], lambda ast: bld.add(hbt.visit(ast)))
-                        pos = Position("<string>", 1, 1)
-                        loc = Location(pos, pos)
-                        for rule in hbt.rules_to_add:
-                            bld.add(Rule(loc, rule[0], rule[1]))  # nocoverage # Not sure when this is needed
+                with ProgramBuilder(control) as bld:
+                    hbt = HeadBodyTransformer()
 
-                    control.ground([("base", [])])
-                    translator = Translator(control, self.config, Statistic())
-                    translator.translate(control.theory_atoms)
+                    parse_files([encoding], lambda ast: bld.add(hbt.visit(ast)))
+                    pos = Position("<string>", 1, 1)
+                    loc = Location(pos, pos)
+                    for rule in hbt.rules_to_add:
+                        bld.add(Rule(loc, rule[0], rule[1]))  # nocoverage # Not sure when this is needed
 
-                    self._propagator.prepare(control)
-                    control.solve(on_model=self.on_model, on_statistics=self._propagator.on_statistics)
+                control.ground([("base", [])])
+                translator = Translator(control, self.config, Statistic())
+                translator.translate(control.theory_atoms)
+
+                self._propagator.prepare(control)
+                control.solve(on_model=self.on_model, on_statistics=self._propagator.on_statistics)
