@@ -92,7 +92,7 @@ def get_parser() -> ArgumentParser:
         type=str,
         help="Path to the COOM model file to solve",
     )
-    parser_solve.add_argument("--user_input", "-u", type=str, help="Input the COOM user input.")
+    parser_solve.add_argument("--user-input", "-u", type=str, help="Input the COOM user input.")
 
     parser_solve.add_argument("--solver", "-s", type=str, help="Set solver", choices=SOLVERS, default="clingo")
 
