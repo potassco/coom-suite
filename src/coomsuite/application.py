@@ -172,6 +172,25 @@ class COOMApp(Application):
 
         return facts
 
+    def parse_unsat(self, unsat: Symbol) -> str:
+        type = unsat.arguments[0].string
+        info = unsat.arguments[1]
+
+        if type == "not exists":
+            variable = info.string
+            msg = f"Variable {variable} does not exists in the model."
+        elif type == "not part":
+            variable = info.string
+            msg = f"Variable {variable} cannot be added."
+        elif type == "not attribute":
+            variable = info.string
+            msg = f"No value can be set for variable {variable}."
+        elif type == "outside domain":
+            variable = info.arguments[0].string
+            value = info.arguments[1].string
+            msg = f"Value '{value}' is not in domain of variable {variable}."
+        return msg
+
     def check_user_input(self, facts: list[str]) -> SolveResult:
         """
         Checks if the user input is valid and returns a clingo.SolveResult
@@ -180,7 +199,9 @@ class COOMApp(Application):
         user_input_ctl.load(get_encoding("user-check.lp"))
         user_input_ctl.add("".join(facts))
         user_input_ctl.ground()
-        return user_input_ctl.solve()
+        with user_input_ctl.solve(yield_=True) as handle:
+            unsat = [self.parse_unsat(s) for s in handle.model().symbols(shown=True)]
+        return unsat
 
     def main(self, control: Control, files: Sequence[str]) -> None:
         """
@@ -190,8 +211,10 @@ class COOMApp(Application):
         if self._show:
             print("\n".join(processed_facts))  # nocoverage
         else:
-            if self.check_user_input(processed_facts).unsatisfiable:
-                raise ValueError("User input not valid.")
+            user_input_check = self.check_user_input(processed_facts)
+            if user_input_check != []:
+                error_msg = "User input not valid.\n" + "\n".join(user_input_check)
+                raise ValueError(error_msg)
 
             encoding = get_encoding(f"encoding-base-{self._solver}.lp")
             facts = "".join(processed_facts)
