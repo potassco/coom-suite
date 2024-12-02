@@ -223,8 +223,38 @@ TESTS: dict[str, dict[str, AnyType]] = {
         coom_feature("Carrier","bag","Bag",0,2).
         coom_structure("Bag").""",
     },
+    "require_with_partonomy": {
+        "test": Assert(All(), Contains('value("root.basket[0].color[0]","Red")')),
+        "files": ["require_with_partonomy.lp"],
+    },
+    "require_multiple_instances": {
+        "test": Assert(
+            All(), SupersetOf({'value("root.wheel[0].size[0]","W28")', 'value("root.wheel[1].size[0]","W28")'})
+        ),
+        "files": ["require_multiple_instances.lp"],
+    },
+    "require_with_partonomy2": {
+        "test": Assert(
+            All(), SupersetOf({'value("root.bag[0].color[0]","Red")', 'value("root.bag[1].color[0]","Red")'})
+        ),
+        "files": ["require_with_partonomy2.lp"],
+    },
+    "require_with_partonomy_multiple_instances": {
+        "test": Assert(
+            All(),
+            SupersetOf(
+                {
+                    'value("root.compartment[0].bag[0].color[0]","Red")',
+                    'value("root.compartment[0].bag[1].color[0]","Red")',
+                    'value("root.compartment[1].bag[0].color[0]","Red")',
+                    'value("root.compartment[1].bag[1].color[0]","Red")',
+                }
+            ),
+        ),
+        "files": ["require_with_partonomy_multiple_instances.lp"],
+    },
     "set_discrete": {
-        "test": AndTest(Assert(Exact(1), True_()), Assert(Any(), Contains('value("root.color[0]","Yellow")'))),
+        "test": AndTest(Assert(Exact(1), True_()), Assert(All(), Contains('value("root.color[0]","Yellow")'))),
         "program": """
             coom_structure("product").
             coom_feature("product","color","Color",1,1).
@@ -234,7 +264,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
             coom_user_value("root.color[0]","Yellow").""",
     },
     "set_num": {
-        "test": AndTest(Assert(Exact(1), True_()), Assert(Any(), Contains('value("root.size[0]",5)'))),
+        "test": AndTest(Assert(Exact(1), True_()), Assert(All(), Contains('value("root.size[0]",5)'))),
         "program": """
             coom_structure("product").
             coom_feature("product","size","num",1,1).
@@ -244,7 +274,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
     "add": {
         "test": AndTest(
             Assert(Exact(2), True_()),
-            Assert(Any(), Contains('include("root.bag[0]")')),
+            Assert(All(), Contains('include("root.bag[0]")')),
             Assert(Exact(1), Contains('include("root.bag[1]")')),
         ),
         "program": """
@@ -257,8 +287,8 @@ TESTS: dict[str, dict[str, AnyType]] = {
     "add2": {
         "test": AndTest(
             Assert(Exact(1), True_()),
-            Assert(Any(), Contains('include("root.bag[0]")')),
-            Assert(Any(), Contains('include("root.bag[1]")')),
+            Assert(All(), Contains('include("root.bag[0]")')),
+            Assert(All(), Contains('include("root.bag[1]")')),
         ),
         "program": """
             coom_structure("product").
