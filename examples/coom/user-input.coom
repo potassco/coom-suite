@@ -1,0 +1,4 @@
+
+set color[0] = "Yellow"
+// add basket
+add 2 carrier[0].bag

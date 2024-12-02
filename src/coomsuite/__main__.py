@@ -29,14 +29,26 @@ def main():
     # log.error("error")
 
     if args.command == "convert":
-        asp_instance = convert_instance(args.input, args.output)
+        asp_instance = convert_instance(args.input, "model", args.output)
+
+        if args.user_input:
+            output_user_lp_file = convert_instance(args.user_input, "user", args.output)
+
         if args.output is None:
             print(asp_instance)
+            if args.user_input:
+                print("")
+                print(output_user_lp_file)
 
     elif args.command == "solve":
         log.info("Converting and solving COOM file %s", args.input)
         with TemporaryDirectory() as temp_dir:
-            options = [convert_instance(args.input, temp_dir)] + unknown_args
+            options = (
+                [convert_instance(args.input, "model", temp_dir)]
+                + ([convert_instance(args.user_input, "user", temp_dir)] if args.user_input else [])
+                + unknown_args
+            )
+
             if args.show:
                 options.append("--outf=3")
 

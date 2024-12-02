@@ -8,10 +8,12 @@ from typing import List
 from antlr4 import CommonTokenStream, InputStream
 from clingo import Symbol
 
-from coomsuite.utils.parse_coom import ASPVisitor
+from coomsuite.utils.parse_coom import ASPModelVisitor, ASPUserInputVisitor
 
-from .coom_grammar.ModelLexer import ModelLexer
-from .coom_grammar.ModelParser import ModelParser
+from .coom_grammar.model.ModelLexer import ModelLexer
+from .coom_grammar.model.ModelParser import ModelParser
+from .coom_grammar.user.UserInputLexer import UserInputLexer
+from .coom_grammar.user.UserInputParser import UserInputParser
 
 # mypy: allow-untyped-calls
 
@@ -29,7 +31,7 @@ def get_encoding(file_name: str) -> str:  # nocoverage
         return str(file)
 
 
-def run_antlr4_visitor(coom_input_stream: InputStream) -> List[str]:
+def run_antlr4_visitor(coom_input_stream: InputStream, grammar: str) -> List[str]:
     """Runs the ANTLR4 Visitor.
 
     Args:
@@ -39,12 +41,20 @@ def run_antlr4_visitor(coom_input_stream: InputStream) -> List[str]:
         List[str]: The converted ASP instance
 
     """
-    lexer = ModelLexer(coom_input_stream)
-    stream = CommonTokenStream(lexer)
-    parser = ModelParser(stream)
-    tree = parser.root()
-    visitor = ASPVisitor()
-    visitor.visitRoot(tree)
+    if grammar == "model":
+        lexer = ModelLexer(coom_input_stream)
+        stream = CommonTokenStream(lexer)
+        parser = ModelParser(stream)
+        tree = parser.root()
+        visitor = ASPModelVisitor()
+        visitor.visitRoot(tree)
+    elif grammar == "user":
+        lexer = UserInputLexer(coom_input_stream)
+        stream = CommonTokenStream(lexer)
+        parser = UserInputParser(stream)
+        tree = parser.user_input()
+        visitor = ASPUserInputVisitor()
+        visitor.visitUser_input(tree)
     return visitor.output_asp
 
 

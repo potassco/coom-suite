@@ -36,12 +36,6 @@ class TestClingoCore(TestCase):
     def run_test(self, test_name: str) -> None:
         """
         Runs a clintest test with the clingo COOM core encoding.
-
-        Args:
-            test (dict): The clintest test as a dictionary.
-                         Should contain keys:
-                            "test" (clintest.Test)
-                            "files" (List[str] or "program" (str)
         """
         test, program, files = unpack_test(test_name)
         run_test(test, files=files, program=program, ctl_args=["0"], solver="clingo")
@@ -87,14 +81,8 @@ class TestFclingoCore(TestCase):
     """
 
     def run_test(self, test_name: str) -> None:
-        """Runs a clintest test with the fclingo COOM core encoding.
-
-        Args:
-            test (dict): The clintest test as a dictionary.
-                         Should contain keys:
-                            "test" (clintest.Test)
-                            "files" (List[str] or "program" (str)
-                            "ftest" (Optional[clintest.Test]): A clintest for fclingo
+        """
+        Runs a clintest test with the fclingo COOM core encoding.
         """
         test, program, files = unpack_test(test_name, fclingo=True)
         run_test(test, files=files, program=program, ctl_args=["0"], solver="fclingo")
@@ -140,13 +128,8 @@ class TestClingoPartonomy(TestCase):
     """
 
     def run_test(self, test_name: str) -> None:
-        """Runs a clintest test with the clingo COOM partonomy encoding.
-
-        Args:
-            test (dict): The clintest test as a dictionary.
-                         Should contain keys:
-                            "test" (clintest.Test)
-                            "files" (List[str] or "program" (str)
+        """
+        Runs a clintest test with the clingo COOM partonomy encoding.
         """
         test, program, files = unpack_test(test_name)
         run_test(test, files=files, program=program, ctl_args=["0"], solver="clingo")
@@ -187,13 +170,8 @@ class TestFclingoPartonomy(TestCase):
     """
 
     def run_test(self, test_name: str) -> None:
-        """Runs a clintest test with the fclingo COOM partonomy encoding.
-
-        Args:
-            test (dict): The clintest test as a dictionary.
-                         Should contain keys:
-                            "test" (clintest.Test)
-                            "files" (List[str] or "program" (str)
+        """
+        Runs a clintest test with the fclingo COOM partonomy encoding.
         """
         test, program, files = unpack_test(test_name, fclingo=True)
         run_test(test, files=files, program=program, ctl_args=["0"], solver="fclingo")
@@ -206,3 +184,54 @@ class TestFclingoPartonomy(TestCase):
         self.run_test("structure_optional")
         self.run_test("structure_nested")
         self.run_test("structure_nested_optional")
+
+
+class TestUserInput(TestCase):
+    """
+    Test cases for COOM user input.
+    """
+
+    def run_test(self, test_name: str) -> None:
+        """
+        Runs a clintest test with the COOM user input.
+        """
+        test, program, files = unpack_test(test_name)
+        run_test(test, files=files, program=program, ctl_args=["0"])
+
+    def user_check(self, test: str, expected_msg: str) -> None:
+        """
+        Runs a test checking the user input for validity.
+        """
+        with self.assertRaises(ValueError) as ctx:
+            self.run_test(test)
+        self.assertEqual(str(ctx.exception), expected_msg)
+
+    def test_set(self) -> None:
+        """
+        Test setting a value by the user.
+        """
+        self.run_test("set_discrete")
+        self.run_test("set_num")
+
+    def test_add(self) -> None:
+        """
+        Test adding an object by the user.
+        """
+        self.run_test("add")
+        self.run_test("add2")
+
+    def test_checks(self) -> None:
+        """
+        Test checks for invalid user input
+        """
+        self.user_check("set_invalid_variable", "User input not valid.\nVariable root.color[0] is not valid.")
+        self.user_check("add_invalid_variable", "User input not valid.\nVariable root.basket[0] is not valid.")
+        self.user_check("set_invalid_type", "User input not valid.\nNo value can be set for variable root.basket[0].")
+        self.user_check("add_invalid_type", "User input not valid.\nVariable root.basket[0] cannot be added.")
+        self.user_check(
+            "set_invalid_value_discrete",
+            "User input not valid.\nValue 'Yellow' is not in domain of variable root.color[0].",
+        )
+        self.user_check(
+            "set_invalid_value_num", "User input not valid.\nValue '11' is not in domain of variable root.size[0]."
+        )

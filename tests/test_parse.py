@@ -7,9 +7,46 @@ from unittest import TestCase
 from . import parse_coom
 
 
-class TestCOOMParser(TestCase):
+class TestCOOMUserParser(TestCase):
     """
-    Test cases for COOM to ASP parser.
+    Test cases for COOM User input to ASP parser.
+    """
+
+    def test_set(self) -> None:
+        """
+        Test parsing the 'set' keyword
+        used for setting values.
+        """
+        self.assertEqual(parse_coom('set color[0] = "Red"', grammar="user"), ['user_value("root.color[0]","Red").'])
+        self.assertEqual(
+            parse_coom("set frontWheel[0].size[0] = 23", grammar="user"),
+            ['user_value("root.frontWheel[0].size[0]",23).'],
+        )
+
+    def test_add(self) -> None:
+        """
+        Test parsing the 'add' keyword
+        used for adding instances of objects.
+        """
+        self.assertEqual(parse_coom("add basket", grammar="user"), ['user_include("root.basket[0]").'])
+        self.assertEqual(
+            parse_coom("add 2 wheels", grammar="user"),
+            ['user_include("root.wheels[0]").', 'user_include("root.wheels[1]").'],
+        )
+
+    def test_blockinput(self) -> None:
+        """
+        Test parsing a user input block.
+        """
+        self.assertEqual(
+            parse_coom('blockinput basket[0] {set color[0] = "Yellow"}', grammar="user"),
+            ['user_value("root.basket[0].color[0]","Yellow").'],
+        )
+
+
+class TestCOOMModelParser(TestCase):
+    """
+    Test cases for COOM Model to ASP parser.
     """
 
     def test_product(self) -> None:

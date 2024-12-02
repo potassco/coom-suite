@@ -223,4 +223,96 @@ TESTS: dict[str, dict[str, AnyType]] = {
         coom_feature("Carrier","bag","Bag",0,2).
         coom_structure("Bag").""",
     },
+    "set_discrete": {
+        "test": AndTest(Assert(Exact(1), True_()), Assert(Any(), Contains('value("root.color[0]","Yellow")'))),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","color","Color",1,1).
+            coom_enumeration("Color").
+            coom_option("Color","Red").
+            coom_option("Color","Yellow").
+            coom_user_value("root.color[0]","Yellow").""",
+    },
+    "set_num": {
+        "test": AndTest(Assert(Exact(1), True_()), Assert(Any(), Contains('value("root.size[0]",5)'))),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","size","num",1,1).
+            coom_range("product","size",1,10).
+            coom_user_value("root.size[0]",5).""",
+    },
+    "add": {
+        "test": AndTest(
+            Assert(Exact(2), True_()),
+            Assert(Any(), Contains('include("root.bag[0]")')),
+            Assert(Exact(1), Contains('include("root.bag[1]")')),
+        ),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","bag","Bag",0,2).
+            coom_structure("Bag").
+
+            coom_user_include("root.bag[0]").""",
+    },
+    "add2": {
+        "test": AndTest(
+            Assert(Exact(1), True_()),
+            Assert(Any(), Contains('include("root.bag[0]")')),
+            Assert(Any(), Contains('include("root.bag[1]")')),
+        ),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","bag","Bag",0,2).
+            coom_structure("Bag").
+
+            coom_user_include("root.bag[0]").
+            coom_user_include("root.bag[1]").""",
+    },
+    "set_invalid_variable": {
+        "test": True_,
+        "program": """
+            coom_user_value("root.color[0]","Yellow").""",
+    },
+    "add_invalid_variable": {
+        "test": True_,
+        "program": """
+            coom_user_include("root.basket[0]").""",
+    },
+    "set_invalid_type": {
+        "test": True_,
+        "program": """
+            coom_structure("product").
+            coom_feature("product","basket","Basket",1,1).
+            coom_structure("Basket").
+
+            coom_user_value("root.basket[0]","Yellow").""",
+    },
+    "add_invalid_type": {
+        "test": True_,
+        "program": """
+            coom_structure("product").
+            coom_feature("product","basket","Basket",1,1).
+            coom_enumeration("Basket").
+
+            coom_user_include("root.basket[0]").""",
+    },
+    "set_invalid_value_discrete": {
+        "test": True_,
+        "program": """
+            coom_structure("product").
+            coom_feature("product","color","Color",1,1).
+            coom_enumeration("Color").
+            coom_option("Color","Red").
+
+            coom_user_value("root.color[0]","Yellow").""",
+    },
+    "set_invalid_value_num": {
+        "test": True_,
+        "program": """
+            coom_structure("product").
+            coom_feature("product","size","num",1,1).
+            coom_range("product","size",1,10).
+
+            coom_user_value("root.size[0]",11).""",
+    },
 }

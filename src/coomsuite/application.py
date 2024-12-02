@@ -171,6 +171,45 @@ class COOMApp(Application):
 
         return facts
 
+    def parse_user_input_unsat(self, unsat: Symbol) -> str:
+        """
+        Parses the unsat/2 predicates of the user input check
+        """
+        unsat_type = unsat.arguments[0].string
+        info = unsat.arguments[1]
+
+        if unsat_type == "not exists":
+            variable = info.string
+            msg = f"Variable {variable} is not valid."
+        elif unsat_type == "not part":
+            variable = info.string
+            msg = f"Variable {variable} cannot be added."
+        elif unsat_type == "not attribute":
+            variable = info.string
+            msg = f"No value can be set for variable {variable}."
+        elif unsat_type == "outside domain":
+            variable = info.arguments[0].string
+            if str(info.arguments[1].type) == "SymbolType.Number":
+                value = str(info.arguments[1].number)
+            else:
+                value = info.arguments[1].string
+            msg = f"Value '{value}' is not in domain of variable {variable}."
+        else:
+            raise ValueError(f"Unknown unsat type: {unsat_type}")  # nocoverage
+        return msg
+
+    def check_user_input(self, facts: list[str]) -> list[str]:
+        """
+        Checks if the user input is valid and returns a clingo.SolveResult
+        """
+        user_input_ctl = Control(message_limit=0)
+        user_input_ctl.load(get_encoding("user-check.lp"))
+        user_input_ctl.add("".join(facts))
+        user_input_ctl.ground()
+        with user_input_ctl.solve(yield_=True) as handle:
+            unsat = [self.parse_user_input_unsat(s) for s in handle.model().symbols(shown=True)]
+        return unsat
+
     def main(self, control: Control, files: Sequence[str]) -> None:
         """
         Main function ran on call.
@@ -179,6 +218,11 @@ class COOMApp(Application):
         if self._show:
             print("\n".join(processed_facts))  # nocoverage
         else:
+            user_input_check = self.check_user_input(processed_facts)
+            if user_input_check != []:
+                error_msg = "User input not valid.\n" + "\n".join(user_input_check)
+                raise ValueError(error_msg)
+
             encoding = get_encoding(f"encoding-base-{self._solver}.lp")
             facts = "".join(processed_facts)
             if self._solver == "clingo":

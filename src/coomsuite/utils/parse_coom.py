@@ -10,11 +10,45 @@ in a visitor style fashion and outputs ASP facts.
 # mypy: ignore-errors
 from typing import List, Optional
 
-from .coom_grammar.ModelParser import ModelParser
-from .coom_grammar.ModelVisitor import ModelVisitor
+from .coom_grammar.model.ModelParser import ModelParser
+from .coom_grammar.model.ModelVisitor import ModelVisitor
+from .coom_grammar.user.UserInputParser import UserInputParser
+from .coom_grammar.user.UserInputVisitor import UserInputVisitor
 
 
-class ASPVisitor(ModelVisitor):
+class ASPUserInputVisitor(UserInputVisitor):
+    """
+    Custom visitor of the COOM Parser.
+    Custom visitor of the COOM User Input Parser.
+    Generates a list of ASP facts as strings.
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.context: str = ""
+        self.output_asp: List[str] = []
+
+    def visitInput_block(self, ctx: UserInputParser.Input_blockContext):
+        self.context = ctx.path().getText() + "."
+        super().visitInput_block(ctx)
+        self.context = ""
+
+    def visitSet_value(self, ctx: UserInputParser.Set_valueContext):
+        path = self.context + ctx.path().getText()
+        value = ctx.formula_atom().getText()
+        self.output_asp.append(f'user_value("root.{path}",{value}).')
+        super().visitSet_value(ctx)
+
+    def visitAdd_instance(self, ctx: UserInputParser.Add_instanceContext):
+        path = self.context + ctx.path().getText()
+        INT = ctx.INTEGER()
+        num_instance = int(INT.getText()) if INT is not None else 1
+        for i in range(num_instance):
+            self.output_asp.append(f'user_include("root.{path}[{i}]").')
+        super().visitAdd_instance(ctx)
+
+
+class ASPModelVisitor(ModelVisitor):
     """
     Custom visitor of the COOM Parser.
     Generates a list of ASP facts as strings.

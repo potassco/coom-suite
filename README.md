@@ -122,6 +122,15 @@ Modify [this line](src/coomsuite/application.py#L182) to insert your own
 encoding. Note that you might also have to disable/modify the preprocessing
 encoding [here](<(src/coomsuite/application.py#L159)>).
 
+#### Generate ANTLR4 Python files
+
+From the corresponding folder run (possibly replacing the version number and
+grammar file name)
+
+```
+antlr4 -v 4.9.3 -Dlanguage=Python3 Grammar.g4 -visitor
+```
+
 ## Development
 
 To improve code quality, we use [nox] to run linters, type checkers, unit
