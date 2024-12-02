@@ -190,12 +190,12 @@ class COOMApp(Application):
         elif unsat_type == "outside domain":
             variable = info.arguments[0].string
             if str(info.arguments[1].type) == "SymbolType.Number":
-                value = info.arguments[1].number
+                value = str(info.arguments[1].number)
             else:
                 value = info.arguments[1].string
             msg = f"Value '{value}' is not in domain of variable {variable}."
         else:
-            raise ValueError(f"Unknown unsat type: {unsat_type}")
+            raise ValueError(f"Unknown unsat type: {unsat_type}")  # nocoverage
         return msg
 
     def check_user_input(self, facts: list[str]) -> list[str]:

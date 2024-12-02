@@ -16,7 +16,7 @@ from coomsuite.application import COOMApp
 from coomsuite.utils import run_antlr4_visitor
 
 
-def parse_coom(coom_input: str, grammar="model") -> List[str]:
+def parse_coom(coom_input: str, grammar: str = "model") -> List[str]:
     """
     Helper function for testing the COOM to ASP parser.
     """
