@@ -16,12 +16,12 @@ from coomsuite.application import COOMApp
 from coomsuite.utils import run_antlr4_visitor
 
 
-def parse_coom(coom_input: str) -> List[str]:
+def parse_coom(coom_input: str, grammar="model") -> List[str]:
     """
     Helper function for testing the COOM to ASP parser.
     """
     input_stream = InputStream(coom_input)
-    asp_facts = run_antlr4_visitor(input_stream, grammar="model")
+    asp_facts = run_antlr4_visitor(input_stream, grammar=grammar)
     return [a for a in asp_facts if a != ""]
 
 

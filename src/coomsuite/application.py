@@ -10,7 +10,6 @@ from clingo import Control, Model, Symbol
 from clingo.application import Application, ApplicationOptions, Flag
 from clingo.ast import Location, Position, ProgramBuilder, Rule, parse_files
 from clingo.script import enable_python
-from clingo.solving import SolveResult
 from clingo.symbol import Function, SymbolType
 from fclingo.__main__ import CSP, DEF, MAX_INT, MIN_INT
 from fclingo.__main__ import AppConfig as FclingoConfig
@@ -172,26 +171,34 @@ class COOMApp(Application):
 
         return facts
 
-    def parse_unsat(self, unsat: Symbol) -> str:
-        type = unsat.arguments[0].string
+    def parse_user_input_unsat(self, unsat: Symbol) -> str:
+        """
+        Parses the unsat/2 predicates of the user input check
+        """
+        unsat_type = unsat.arguments[0].string
         info = unsat.arguments[1]
 
-        if type == "not exists":
+        if unsat_type == "not exists":
             variable = info.string
-            msg = f"Variable {variable} does not exists in the model."
-        elif type == "not part":
+            msg = f"Variable {variable} is not valid."
+        elif unsat_type == "not part":
             variable = info.string
             msg = f"Variable {variable} cannot be added."
-        elif type == "not attribute":
+        elif unsat_type == "not attribute":
             variable = info.string
             msg = f"No value can be set for variable {variable}."
-        elif type == "outside domain":
+        elif unsat_type == "outside domain":
             variable = info.arguments[0].string
-            value = info.arguments[1].string
+            if str(info.arguments[1].type) == "SymbolType.Number":
+                value = info.arguments[1].number
+            else:
+                value = info.arguments[1].string
             msg = f"Value '{value}' is not in domain of variable {variable}."
+        else:
+            raise ValueError(f"Unknown unsat type: {unsat_type}")
         return msg
 
-    def check_user_input(self, facts: list[str]) -> SolveResult:
+    def check_user_input(self, facts: list[str]) -> list[str]:
         """
         Checks if the user input is valid and returns a clingo.SolveResult
         """
@@ -200,7 +207,7 @@ class COOMApp(Application):
         user_input_ctl.add("".join(facts))
         user_input_ctl.ground()
         with user_input_ctl.solve(yield_=True) as handle:
-            unsat = [self.parse_unsat(s) for s in handle.model().symbols(shown=True)]
+            unsat = [self.parse_user_input_unsat(s) for s in handle.model().symbols(shown=True)]
         return unsat
 
     def main(self, control: Control, files: Sequence[str]) -> None:
