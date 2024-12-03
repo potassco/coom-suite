@@ -96,11 +96,12 @@ class TestClingoCore(TestCase):
         """
         Test solving combinations constraints with structure involve (clingo).
 
-        Ideas:  - Context is root and points to multiple instance instances, cross-product needed
-                - Context is not root and constraint gets instantiated more than once
+        Ideas:
                 - Context is not root and constraints gets instantiated more than once
                   and points to multiple instances, cross-product needed
         """
+        self.run_test("combination_with_structure")
+        self.run_test("combination_at_part_with_wildcard")
 
 
 class TestFclingoCore(TestCase):

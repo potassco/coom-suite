@@ -13,10 +13,14 @@ from typing import Set, Union
 
 from clingo import Symbol
 from clingo.solving import Model
-from clintest.assertion import Contains, False_, Implies, SubsetOf, SupersetOf, True_
+from clintest.assertion import And, Contains, False_, Implies, Or, SubsetOf, SupersetOf, True_
 from clintest.quantifier import All, Any, Exact
 from clintest.test import And as AndTest
-from clintest.test import Assert
+from clintest.test import Assert, Test
+
+
+class NumModels(Test):  # TODO: Add NumModels test
+    pass
 
 
 class SupersetOfTheory(SupersetOf):
@@ -252,6 +256,62 @@ TESTS: dict[str, dict[str, AnyType]] = {
             ),
         ),
         "files": ["require_with_partonomy_multiple_instances.lp"],
+    },
+    "combination_with_structure": {
+        "test": AndTest(
+            Assert(Exact(8), True_()),
+            Assert(
+                All(),
+                Implies(
+                    Contains('value("root.wheelSupport[0]","True")'),
+                    And(
+                        Or(
+                            Contains('value("root.wheel[0].size[0]","W14")'),
+                            Contains('value("root.wheel[0].size[0]","W16")'),
+                        ),
+                        Or(
+                            Contains('value("root.wheel[1].size[0]","W14")'),
+                            Contains('value("root.wheel[1].size[0]","W16")'),
+                        ),
+                    ),
+                ),
+            ),
+            Assert(
+                All(),
+                Implies(
+                    Contains('value("root.wheelSupport[0]","False")'),
+                    And(
+                        Or(
+                            Contains('value("root.wheel[0].size[0]","W18")'),
+                            Contains('value("root.wheel[0].size[0]","W20")'),
+                        ),
+                        Or(
+                            Contains('value("root.wheel[1].size[0]","W18")'),
+                            Contains('value("root.wheel[1].size[0]","W20")'),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        "files": ["combination_with_structure.lp"],
+    },
+    "combination_at_part_with_wildcard": {
+        "test": AndTest(
+            Assert(Exact(5), True_()),
+            Assert(
+                All(),
+                Implies(
+                    Contains('value("root.wheel[0].size[0]","W30")'),
+                    SupersetOf(
+                        {
+                            'value("root.wheel[0].material[0]","Aluminum")',
+                            'value("root.wheel[1].material[0]","Aluminum")',
+                        }
+                    ),
+                ),
+            ),
+        ),
+        "files": ["combination_at_part_with_wildcard.lp"],
     },
     "set_discrete": {
         "test": AndTest(Assert(Exact(1), True_()), Assert(All(), Contains('value("root.color[0]","Yellow")'))),
