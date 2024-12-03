@@ -95,8 +95,8 @@ coomsuite solve examples/coom/kids-bike.coom 0 -q
 - Note that the direct conversion of COOM into facts is a mere serialization of
   the COOM model. We make use of a preprocessing encoding to translate the
   "serialized" facts into a set of "refined" facts, capturing the essence of a
-  configuration problem. To show the "refined" facts, run with option `--show`.
-  This will print the facts to the console.
+  configuration problem. To show the "refined" facts, run with option
+  `--show-facts`. This will print the facts to the console.
 
 ### Extending the workbench
 
