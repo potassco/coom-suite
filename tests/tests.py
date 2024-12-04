@@ -19,8 +19,11 @@ from clintest.test import And as AndTest
 from clintest.test import Assert, Test
 
 
-class NumModels(Test):  # TODO: Add NumModels test
-    pass
+def NumModels(n: int) -> Test:  # pylint: disable=invalid-name
+    """
+    clintest.Test for checking that a program has a certain number of models
+    """
+    return Assert(Exact(n), True_())
 
 
 class SupersetOfTheory(SupersetOf):
@@ -122,7 +125,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
             Assert(Any(), SupersetOf({'value("root.wheelSupport[0]","False")', 'value("root.wheel[0]","W18")'})),
             Assert(Any(), SupersetOf({'value("root.wheelSupport[0]","True")', 'value("root.wheel[0]","W16")'})),
             Assert(Any(), SupersetOf({'value("root.wheelSupport[0]","True")', 'value("root.wheel[0]","W14")'})),
-            Assert(Exact(4), True_()),
+            NumModels(4),
         ),
         "files": ["combination.lp"],
     },
@@ -131,7 +134,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
             Assert(Exact(1), Contains('value("root.color[0]","Red")')),
             Assert(Exact(1), Contains('value("root.color[0]","Green")')),
             Assert(Exact(1), Contains('value("root.color[0]","Blue")')),
-            Assert(Exact(3), True_()),
+            NumModels(3),
         ),
         "program": """
             coom_structure("product").
@@ -146,7 +149,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
         "test": AndTest(
             Assert(Exact(1), Contains('value("root.boolean[0]","True")')),
             Assert(Exact(1), Contains('value("root.boolean[0]","False")')),
-            Assert(Exact(2), True_()),
+            NumModels(2),
         ),
         "program": """
         coom_structure("product").
@@ -172,7 +175,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
     "structure": {
         "test": AndTest(
             Assert(Exact(1), Contains('include("root.wheel[0]")')),
-            Assert(Exact(1), True_()),
+            NumModels(1),
         ),
         "program": """
         coom_structure("product").
@@ -182,7 +185,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
     "structure_optional": {
         "test": AndTest(
             Assert(Exact(1), Contains('include("root.basket[0]")')),
-            Assert(Exact(2), True_()),
+            NumModels(2),
         ),
         "program": """
         coom_structure("product").
@@ -195,7 +198,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
                 Exact(1),
                 SupersetOf({'include("root.carrier[0]")', 'include("root.carrier[0].bag[0]")'}),
             ),
-            Assert(Exact(1), True_()),
+            NumModels(1),
         ),
         "program": """
         coom_structure("product").
@@ -218,7 +221,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
                     }
                 ),
             ),
-            Assert(Exact(4), True_()),
+            NumModels(4),
         ),
         "program": """
         coom_structure("product").
@@ -259,7 +262,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
     },
     "combination_with_structure": {
         "test": AndTest(
-            Assert(Exact(8), True_()),
+            NumModels(8),
             Assert(
                 All(),
                 Implies(
@@ -297,7 +300,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
     },
     "combination_at_part_with_wildcard": {
         "test": AndTest(
-            Assert(Exact(5), True_()),
+            NumModels(5),
             Assert(
                 All(),
                 Implies(
@@ -315,7 +318,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
     },
     "combination_at_part_multiple_instances": {
         "test": AndTest(
-            Assert(Exact(4), True_()),
+            NumModels(4),
             Assert(
                 All(),
                 Implies(
@@ -368,7 +371,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
         "files": ["combination_at_part_multiple_instances.lp"],
     },
     "set_discrete": {
-        "test": AndTest(Assert(Exact(1), True_()), Assert(All(), Contains('value("root.color[0]","Yellow")'))),
+        "test": AndTest(NumModels(1), Assert(All(), Contains('value("root.color[0]","Yellow")'))),
         "program": """
             coom_structure("product").
             coom_feature("product","color","Color",1,1).
@@ -378,7 +381,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
             coom_user_value("root.color[0]","Yellow").""",
     },
     "set_num": {
-        "test": AndTest(Assert(Exact(1), True_()), Assert(All(), Contains('value("root.size[0]",5)'))),
+        "test": AndTest(NumModels(1), Assert(All(), Contains('value("root.size[0]",5)'))),
         "program": """
             coom_structure("product").
             coom_feature("product","size","num",1,1).
@@ -387,7 +390,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
     },
     "add": {
         "test": AndTest(
-            Assert(Exact(2), True_()),
+            NumModels(2),
             Assert(All(), Contains('include("root.bag[0]")')),
             Assert(Exact(1), Contains('include("root.bag[1]")')),
         ),
@@ -400,7 +403,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
     },
     "add2": {
         "test": AndTest(
-            Assert(Exact(1), True_()),
+            NumModels(1),
             Assert(All(), Contains('include("root.bag[0]")')),
             Assert(All(), Contains('include("root.bag[1]")')),
         ),
@@ -413,17 +416,17 @@ TESTS: dict[str, dict[str, AnyType]] = {
             coom_user_include("root.bag[1]").""",
     },
     "set_invalid_variable": {
-        "test": True_,
+        "test": True_(),
         "program": """
             coom_user_value("root.color[0]","Yellow").""",
     },
     "add_invalid_variable": {
-        "test": True_,
+        "test": True_(),
         "program": """
             coom_user_include("root.basket[0]").""",
     },
     "set_invalid_type": {
-        "test": True_,
+        "test": True_(),
         "program": """
             coom_structure("product").
             coom_feature("product","basket","Basket",1,1).
@@ -432,7 +435,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
             coom_user_value("root.basket[0]","Yellow").""",
     },
     "add_invalid_type": {
-        "test": True_,
+        "test": True_(),
         "program": """
             coom_structure("product").
             coom_feature("product","basket","Basket",1,1).
@@ -441,7 +444,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
             coom_user_include("root.basket[0]").""",
     },
     "set_invalid_value_discrete": {
-        "test": True_,
+        "test": True_(),
         "program": """
             coom_structure("product").
             coom_feature("product","color","Color",1,1).
@@ -451,7 +454,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
             coom_user_value("root.color[0]","Yellow").""",
     },
     "set_invalid_value_num": {
-        "test": True_,
+        "test": True_(),
         "program": """
             coom_structure("product").
             coom_feature("product","size","num",1,1).

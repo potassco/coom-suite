@@ -104,6 +104,11 @@ class TestClingoCore(TestCase):
         self.run_test("combination_at_part_with_wildcard")
         self.run_test("combination_at_part_multiple_instances")
 
+    def test_numeric(self) -> None:
+        """
+        Test numeric language features (clingo).
+        """
+
 
 class TestFclingoCore(TestCase):
     """
@@ -179,14 +184,12 @@ class TestFclingoCore(TestCase):
         """
         self.run_test("combination_with_structure")
         self.run_test("combination_at_part_with_wildcard")
+        self.run_test("combination_at_part_multiple_instances")
 
-
-class TestClingoNumeric(TestCase):
-    pass
-
-
-class TestFclingoNumeric(TestCase):
-    pass
+    def test_numeric(self) -> None:
+        """
+        Test numeric language features (fclingo).
+        """
 
 
 class TestUserInput(TestCase):
