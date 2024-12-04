@@ -13,7 +13,7 @@ from typing import Set, Union
 
 from clingo import Symbol
 from clingo.solving import Model
-from clintest.assertion import And, Contains, False_, Implies, Or, SubsetOf, SupersetOf, True_
+from clintest.assertion import And, Contains, Equals, False_, Implies, Or, SubsetOf, SupersetOf, True_
 from clintest.quantifier import All, Any, Exact
 from clintest.test import And as AndTest
 from clintest.test import Assert, Test
@@ -370,6 +370,71 @@ TESTS: dict[str, dict[str, AnyType]] = {
         ),
         "files": ["combination_at_part_multiple_instances.lp"],
     },
+    "simple_numeric_feature": {
+        "test": AndTest(
+            Assert(Exact(1), Contains('value("root.size[0]",1)')),
+            Assert(Exact(1), Contains('value("root.size[0]",2)')),
+            Assert(Exact(1), Contains('value("root.size[0]",3)')),
+        ),
+        "ftest": AndTest(
+            Assert(Exact(1), ContainsTheory('value("root.size[0]",1)', check_theory=True)),
+            Assert(Exact(1), ContainsTheory('value("root.size[0]",2)', check_theory=True)),
+            Assert(Exact(1), ContainsTheory('value("root.size[0]",3)', check_theory=True)),
+        ),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","size","num",1,1).
+            coom_range("product","size",1,3).""",
+    },
+    "simple_arithmetic_plus": {
+        "test": AndTest(
+            Assert(Exact(1), Equals({'value("root.a[0]",1)', 'value("root.b[0]",3)'})),
+            Assert(Exact(1), Equals({'value("root.a[0]",1)', 'value("root.b[0]",4)'})),
+            Assert(Exact(1), Equals({'value("root.a[0]",2)', 'value("root.b[0]",3)'})),
+        ),
+        "ftest": AndTest(
+            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)', 'value("root.b[0]",3)'}, check_theory=True)),
+            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)', 'value("root.b[0]",4)'}, check_theory=True)),
+            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",2)', 'value("root.b[0]",3)'}, check_theory=True)),
+        ),
+        "files": ["simple_arithmetic_plus.lp"],
+    },
+    "simple_arithmetic_minus": {
+        "test": AndTest(
+            NumModels(1),
+            Assert(Exact(1), Equals({'value("root.a[0]",1)', 'value("root.b[0]",4)'})),
+        ),
+        "ftest": AndTest(
+            NumModels(1),
+            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)', 'value("root.b[0]",4)'}, check_theory=True)),
+        ),
+        "files": ["simple_arithmetic_minus.lp"],
+    },
+    "simple_arithmetic_multiplication": {
+        "test": AndTest(
+            NumModels(1),
+            Assert(Exact(1), Equals({'value("root.a[0]",3)', 'value("root.b[0]",4)'})),
+        ),
+        "files": ["simple_arithmetic_multiplication.lp"],
+    },
+    "simple_arithmetic_plus_default_right": {
+        "test": AndTest(
+            Assert(Exact(1), Equals({'value("root.a[0]",2)'})),
+        ),
+        "ftest": AndTest(
+            Assert(Exact(1), ContainsTheory('value("root.a[0]",2)', check_theory=True)),
+        ),
+        "files": ["simple_arithmetic_plus_default_right.lp"],
+    },
+    "simple_arithmetic_plus_default_left": {
+        "test": AndTest(
+            Assert(Exact(1), Equals({'value("root.b[0]",2)'})),
+        ),
+        "ftest": AndTest(
+            Assert(Exact(1), ContainsTheory('value("root.b[0]",2)', check_theory=True)),
+        ),
+        "files": ["simple_arithmetic_plus_default_left.lp"],
+    },
     "set_discrete": {
         "test": AndTest(NumModels(1), Assert(All(), Contains('value("root.color[0]","Yellow")'))),
         "program": """
@@ -416,17 +481,17 @@ TESTS: dict[str, dict[str, AnyType]] = {
             coom_user_include("root.bag[1]").""",
     },
     "set_invalid_variable": {
-        "test": True_(),
+        "test": True_(),  # Output does not matter, tests whether Exception is raised
         "program": """
             coom_user_value("root.color[0]","Yellow").""",
     },
     "add_invalid_variable": {
-        "test": True_(),
+        "test": True_(),  # Output does not matter, tests whether Exception is raised
         "program": """
             coom_user_include("root.basket[0]").""",
     },
     "set_invalid_type": {
-        "test": True_(),
+        "test": True_(),  # Output does not matter, tests whether Exception is raised
         "program": """
             coom_structure("product").
             coom_feature("product","basket","Basket",1,1).
@@ -435,7 +500,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
             coom_user_value("root.basket[0]","Yellow").""",
     },
     "add_invalid_type": {
-        "test": True_(),
+        "test": True_(),  # Output does not matter, tests whether Exception is raised
         "program": """
             coom_structure("product").
             coom_feature("product","basket","Basket",1,1).
@@ -444,7 +509,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
             coom_user_include("root.basket[0]").""",
     },
     "set_invalid_value_discrete": {
-        "test": True_(),
+        "test": True_(),  # Output does not matter, tests whether Exception is raised
         "program": """
             coom_structure("product").
             coom_feature("product","color","Color",1,1).
@@ -454,7 +519,7 @@ TESTS: dict[str, dict[str, AnyType]] = {
             coom_user_value("root.color[0]","Yellow").""",
     },
     "set_invalid_value_num": {
-        "test": True_(),
+        "test": True_(),  # Output does not matter, tests whether Exception is raised
         "program": """
             coom_structure("product").
             coom_feature("product","size","num",1,1).

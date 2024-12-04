@@ -108,6 +108,12 @@ class TestClingoCore(TestCase):
         """
         Test numeric language features (clingo).
         """
+        self.run_test("simple_numeric_feature")
+        self.run_test("simple_arithmetic_plus")
+        self.run_test("simple_arithmetic_minus")
+        self.run_test("simple_arithmetic_multiplication")
+        self.run_test("simple_arithmetic_plus_default_right")
+        self.run_test("simple_arithmetic_plus_default_left")
 
 
 class TestFclingoCore(TestCase):
@@ -190,6 +196,13 @@ class TestFclingoCore(TestCase):
         """
         Test numeric language features (fclingo).
         """
+        self.run_test("simple_numeric_feature")
+        self.run_test("simple_arithmetic_plus")
+        self.run_test("simple_arithmetic_minus")
+        # No multiplication and division of variables in fclingo
+
+        self.run_test("simple_arithmetic_plus_default_right")
+        self.run_test("simple_arithmetic_plus_default_left")
 
 
 class TestUserInput(TestCase):
