@@ -102,6 +102,7 @@ class TestClingoCore(TestCase):
         """
         self.run_test("combination_with_structure")
         self.run_test("combination_at_part_with_wildcard")
+        self.run_test("combination_at_part_multiple_instances")
 
 
 class TestFclingoCore(TestCase):
@@ -170,13 +171,14 @@ class TestFclingoCore(TestCase):
 
     def test_combinations_with_structure(self) -> None:
         """
-        Test solving combinations constraints with structure involved (fclingo).
+        Test solving combinations constraints with structure involve (fclingo).
 
-        Ideas:  - Context is root and points to multiple instance instances, cross-product needed
-                - Context is not root and constraint gets instantiated more than once
+        Ideas:
                 - Context is not root and constraints gets instantiated more than once
                   and points to multiple instances, cross-product needed
         """
+        self.run_test("combination_with_structure")
+        self.run_test("combination_at_part_with_wildcard")
 
 
 class TestClingoNumeric(TestCase):

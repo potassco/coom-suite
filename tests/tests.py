@@ -313,6 +313,60 @@ TESTS: dict[str, dict[str, AnyType]] = {
         ),
         "files": ["combination_at_part_with_wildcard.lp"],
     },
+    "combination_at_part_multiple_instances": {
+        "test": AndTest(
+            Assert(Exact(4), True_()),
+            Assert(
+                All(),
+                Implies(
+                    Contains('value("root.bike[0].material[0]","Carbon")'),
+                    SupersetOf(
+                        {
+                            'value("root.bike[0].wheel[0]","W28")',
+                            'value("root.bike[0].wheel[1]","W28")',
+                        }
+                    ),
+                ),
+            ),
+            Assert(
+                All(),
+                Implies(
+                    Contains('value("root.bike[0].material[0]","Aluminum")'),
+                    SupersetOf(
+                        {
+                            'value("root.bike[0].wheel[0]","W30")',
+                            'value("root.bike[0].wheel[1]","W30")',
+                        }
+                    ),
+                ),
+            ),
+            Assert(
+                All(),
+                Implies(
+                    Contains('value("root.bike[1].material[0]","Carbon")'),
+                    SupersetOf(
+                        {
+                            'value("root.bike[1].wheel[0]","W28")',
+                            'value("root.bike[1].wheel[1]","W28")',
+                        }
+                    ),
+                ),
+            ),
+            Assert(
+                All(),
+                Implies(
+                    Contains('value("root.bike[1].material[0]","Aluminum")'),
+                    SupersetOf(
+                        {
+                            'value("root.bike[1].wheel[0]","W30")',
+                            'value("root.bike[1].wheel[1]","W30")',
+                        }
+                    ),
+                ),
+            ),
+        ),
+        "files": ["combination_at_part_multiple_instances.lp"],
+    },
     "set_discrete": {
         "test": AndTest(Assert(Exact(1), True_()), Assert(All(), Contains('value("root.color[0]","Yellow")'))),
         "program": """
