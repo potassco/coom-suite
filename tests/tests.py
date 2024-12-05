@@ -435,6 +435,37 @@ TESTS: dict[str, dict[str, AnyType]] = {
         ),
         "files": ["simple_arithmetic_plus_default_left.lp"],
     },
+    "simple_arithmetic_minus_default_right": {
+        "test": AndTest(
+            Assert(Exact(1), Equals({'value("root.a[0]",2)'})),
+        ),
+        "ftest": AndTest(
+            Assert(Exact(1), ContainsTheory('value("root.a[0]",2)', check_theory=True)),
+        ),
+        "files": ["simple_arithmetic_minus_default_right.lp"],
+    },
+    "simple_arithmetic_minus_default_left": {
+        "test": AndTest(
+            Assert(Exact(1), Equals({'value("root.b[0]",2)'})),
+        ),
+        "ftest": AndTest(
+            Assert(Exact(1), ContainsTheory('value("root.b[0]",2)', check_theory=True)),
+        ),
+        "files": ["simple_arithmetic_minus_default_left.lp"],
+    },
+    "parentheses": {
+        "test": AndTest(
+            NumModels(2),
+            Assert(Exact(1), Equals({'value("root.a[0]",1)', 'value("root.b[0]",1)'})),
+            Assert(Exact(1), Equals({'value("root.a[0]",2)', 'value("root.b[0]",2)'})),
+        ),
+        "ftest": AndTest(
+            NumModels(2),
+            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)', 'value("root.b[0]",1)'}, check_theory=True)),
+            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",2)', 'value("root.b[0]",2)'}, check_theory=True)),
+        ),
+        "files": ["parentheses.lp"],
+    },
     "set_discrete": {
         "test": AndTest(NumModels(1), Assert(All(), Contains('value("root.color[0]","Yellow")'))),
         "program": """

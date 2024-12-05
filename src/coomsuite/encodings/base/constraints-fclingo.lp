@@ -1,5 +1,4 @@
 #include "clingo/violated.lp".
-#include "clingo/boolean.lp".
 #include "fclingo/formulas.lp".
 
 % A row of a table is not satisfied if any of its entries is not satisfied.

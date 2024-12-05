@@ -28,7 +28,7 @@ def unpack_test(test_name: str, fclingo: bool = False) -> Tuple[Any, Any, Any]:
     return test, program, files
 
 
-class TestClingoCore(TestCase):
+class TestClingo(TestCase):
     """
     Test cases for the clingo encoding.
     """
@@ -114,9 +114,12 @@ class TestClingoCore(TestCase):
         self.run_test("simple_arithmetic_multiplication")
         self.run_test("simple_arithmetic_plus_default_right")
         self.run_test("simple_arithmetic_plus_default_left")
+        self.run_test("simple_arithmetic_minus_default_right")
+        self.run_test("simple_arithmetic_minus_default_left")
+        self.run_test("parentheses")
 
 
-class TestFclingoCore(TestCase):
+class TestFclingo(TestCase):
     """
     Test cases for the fclingo encoding.
     """
@@ -200,9 +203,11 @@ class TestFclingoCore(TestCase):
         self.run_test("simple_arithmetic_plus")
         self.run_test("simple_arithmetic_minus")
         # No multiplication and division of variables in fclingo
-
         self.run_test("simple_arithmetic_plus_default_right")
         self.run_test("simple_arithmetic_plus_default_left")
+        self.run_test("simple_arithmetic_minus_default_right")
+        self.run_test("simple_arithmetic_minus_default_left")
+        self.run_test("parentheses")
 
 
 class TestUserInput(TestCase):
