@@ -3,7 +3,7 @@ Clingo application class extended to solve COOM configuration problems
 """
 
 import textwrap
-from typing import Callable, List, Optional, Sequence
+from typing import Any, Callable, Dict, List, Optional, Sequence
 
 from clingcon import ClingconTheory
 from clingo import Control, Model, Symbol
@@ -56,9 +56,10 @@ class COOMApp(Application):
     Application class extending clingo.
     """
 
-    _solver: str
-    _output: str
-    _show_facts: bool
+    _options: Dict[str, Any]
+    # _solver: str
+    # _output: str
+    # _show_facts: bool
     _istest: bool
     _log_level: str
     config: FclingoConfig
@@ -69,17 +70,24 @@ class COOMApp(Application):
     def __init__(
         self,
         log_level: str = "",
-        solver: str = "",
-        output: str = "",
-        show_facts: bool = False,
+        options: Dict[str, Any] = {},
+        # solver: str = "",
+        # output: str = "",
+        # show_facts: bool = False,
         istest: bool = False,
     ):
         """
         Create application.
         """
-        self._solver = "clingo" if solver == "" else solver
-        self._output = "asp" if output == "" else output
-        self._show_facts = show_facts
+        self._options = (
+            {"solver": "clingo", "output_format": "asp", "show_facts": False, "preprocess": True}
+            if options == {}
+            else options
+        )
+        # {"solver": pass, "output_format": pass, "show_facts": True, "preprocess": True}
+        # self._solver = "clingo" if solver == "" else solver
+        # self._output = "asp" if output == "" else output
+        # self._show_facts = show_facts
         self._istest = istest
         self._log_level = "WARNING" if log_level == "" else log_level
         self.config = FclingoConfig(MIN_INT, MAX_INT, Flag(False), Flag(False), DEF)
@@ -122,7 +130,7 @@ class COOMApp(Application):
         Args:
             model (Model): clingo Model
         """
-        if self._solver == "fclingo":
+        if self._options["solver"] == "fclingo":
             self._propagator.on_model(model)
 
             if self._istest:
@@ -138,9 +146,9 @@ class COOMApp(Application):
         Print a model on the console.
         """
 
-        if self._solver == "clingo":
+        if self._options["solver"] == "clingo":
             output_symbols = model.symbols(shown=True)
-        elif self._solver == "fclingo":
+        elif self._options["solver"] == "fclingo":
             output_symbols = [
                 atom
                 for atom in model.symbols(shown=True)
@@ -148,7 +156,7 @@ class COOMApp(Application):
             ]
             output_symbols.extend(_get_valuation(model))
 
-        print(_sym_to_prg(output_symbols, self._output))
+        print(_sym_to_prg(output_symbols, self._options["output_format"]))
 
     def preprocess(self, files: List[str]) -> List[str]:
         """
@@ -156,15 +164,16 @@ class COOMApp(Application):
         """
         # pylint: disable=not-context-manager
         input_files = files
-        preprocess = get_encoding("preprocess.lp")
-        input_files.append(preprocess)
-        enable_python()
-
         pre_ctl = Control(message_limit=0)
         for f in input_files:
             pre_ctl.load(f)
-        if self._solver == "clingo":
-            pre_ctl.add("base", [], "discrete.")
+
+        if self._options["preprocess"] or self._options["show_facts"]:
+            enable_python()
+            pre_ctl.load(get_encoding("preprocess.lp"))
+            if self._options["solver"] == "clingo":
+                pre_ctl.add("base", [], "discrete.")
+
         pre_ctl.ground()
         with pre_ctl.solve(yield_=True) as handle:
             facts = [str(s) + "." for s in handle.model().symbols(shown=True)]
@@ -215,7 +224,8 @@ class COOMApp(Application):
         Main function ran on call.
         """
         processed_facts = self.preprocess(list(files))
-        if self._show_facts:
+
+        if self._options["show_facts"]:
             print("\n".join(processed_facts))  # nocoverage
         else:
             user_input_check = self.check_user_input(processed_facts)
@@ -223,16 +233,16 @@ class COOMApp(Application):
                 error_msg = "User input not valid.\n" + "\n".join(user_input_check)
                 raise ValueError(error_msg)
 
-            encoding = get_encoding(f"encoding-base-{self._solver}.lp")
+            encoding = get_encoding(f"encoding-base-{self._options['solver']}.lp")
             facts = "".join(processed_facts)
-            if self._solver == "clingo":
+            if self._options["solver"] == "clingo":
 
                 control.load(encoding)
                 control.add(facts)
 
                 control.ground()
                 control.solve()
-            elif self._solver == "fclingo":
+            elif self._options["solver"] == "fclingo":
                 self._propagator.register(control)
                 self._propagator.configure("max-int", str(self.config.max_int))
                 self._propagator.configure("min-int", str(self.config.min_int))
