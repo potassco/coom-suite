@@ -26,6 +26,26 @@ def NumModels(n: int) -> Test:  # pylint: disable=invalid-name
     return Assert(Exact(n), True_())
 
 
+# class EqualsTheory(Equals):
+#     """
+#     A clintest Equals assertion that can also check theory atoms.
+
+#     Args:
+#         symbol (Symbol): A clingo symbol.
+#         check_theory (bool): Whether to include theory atoms in the check
+#     """
+
+#     def __init__(self, symbols: Set[Union[Symbol, str]], check_theory: bool = False) -> None:
+#         super().__init__(symbols)
+#         self.__symbols = self._Equals__symbols  # type: ignore # pylint: disable=no-member
+#         self.__check_theory = check_theory
+
+#     def holds_for(self, model: Model) -> bool:
+#         if self.__check_theory:
+#             return self.__symbols == set(model.symbols(shown=True, theory=True))
+#         return super().holds_for(model)
+
+
 class SupersetOfTheory(SupersetOf):
     """
     A clintest SupersetOf assertion that can also check theory atoms.
@@ -67,9 +87,238 @@ class ContainsTheory(Contains):
 
 
 TEST_EMPTY = Assert(All(), SubsetOf(set()))
-TEST_UNSAT = Assert(Exact(0), False_)  # type: ignore # falsely views False_ as not of type Assertion
+TEST_UNSAT = Assert(Exact(0), False_())
 
-TESTS: dict[str, dict[str, AnyType]] = {
+TESTS_SOLVE: dict[str, dict[str, AnyType]] = {
+    "empty": {"test": TEST_EMPTY, "program": ""},
+    "formula_undef": {
+        "test": TEST_EMPTY,
+        "program": """
+            type("root","product").
+            part("product").
+            number("5",5).""",
+    },
+    "table_undef": {
+        "test": TEST_EMPTY,
+        "program": """
+            part("product").
+            type("root","product").
+            constraint((0,"root"),"table").
+            column((0,"root"),0,0,"root.a[0]").""",
+    },
+    "empty_table": {
+        "test": TEST_UNSAT,
+        "program": """
+            part("product").
+            type("root","product").
+            type("root.a[0]","A").
+            discrete("A").
+            index("root.a[0]",0).
+            parent("root.a[0]","root").
+            constraint((0,"root"),"table").
+            column((0,"root"),0,0,"root.a[0]").""",
+    },
+    "optional_part": {
+        "test": AndTest(
+            NumModels(2), Assert(Exact(1), SubsetOf(set())), Assert(Exact(1), Equals({'include("root.a[0]")'}))
+        ),
+        "program": """
+            type("root","product").
+            type("root.a[0]","A").
+            index("root.a[0]",0).
+            parent("root.a[0]","root").
+            part("product").
+            part("A").""",
+    },
+    "mandatory_part": {
+        "test": AndTest(NumModels(1), Assert(Exact(1), Equals({'include("root.a[0]")'}))),
+        "program": """
+            type("root","product").
+            type("root.a[0]","A").
+            index("root.a[0]",0).
+            parent("root.a[0]","root").
+            constraint(("root.a",1),"lowerbound").
+            set("root.a","root.a[0]").
+            part("product").
+            part("A").""",
+    },
+    "part_with_cardinality": {
+        "test": AndTest(
+            NumModels(2),
+            Assert(Exact(1), Equals({'include("root.a[0]")'})),
+            Assert(Exact(1), Equals({'include("root.a[0]")', 'include("root.a[1]")'})),
+        ),
+        "program": """
+            type("root","product").
+            type("root.a[0]","A").
+            type("root.a[1]","A").
+            index("root.a[0]",0).
+            index("root.a[1]",1).
+            parent("root.a[0]","root").
+            parent("root.a[1]","root").
+            constraint(("root.a",1),"lowerbound").
+            set("root.a","root.a[0]").
+            set("root.a","root.a[1]").
+            part("product").
+            part("A").""",
+    },
+    "optional_part_with_subpart": {
+        "test": AndTest(
+            NumModels(2),
+            Assert(Exact(1), SubsetOf(set())),
+            Assert(Exact(1), Equals({'include("root.a[0]")', 'include("root.a[0].b[0]")'})),
+        ),
+        "program": """
+            type("root","product").
+            type("root.a[0]","A").
+            type("root.a[0].b[0]","B").
+            index("root.a[0]",0).
+            index("root.a[0].b[0]",0).
+            parent("root.a[0]","root").
+            parent("root.a[0].b[0]","root.a[0]").
+            constraint(("root.a[0].b",1),"lowerbound").
+            set("root.a[0].b","root.a[0].b[0]").
+            part("product").
+            part("A").
+            part("B").""",
+    },
+    "simple_discrete": {
+        "test": AndTest(
+            NumModels(2),
+            Assert(Exact(1), Equals({'value("root.a[0]","A1")'})),
+            Assert(Exact(1), Equals({'value("root.a[0]","A2")'})),
+        ),
+        "program": """
+            type("root","product").
+            type("root.a[0]","A").
+            discrete("A").
+            domain("A","A1").
+            domain("A","A2").
+            index("root.a[0]",0).
+            parent("root.a[0]","root").
+            constraint(("root.a",1),"lowerbound").
+            set("root.a","root.a[0]").
+            part("product").""",
+    },
+    "optional_discrete": {
+        "test": AndTest(
+            NumModels(3),
+            Assert(Exact(1), Equals({})),
+            Assert(Exact(1), Equals({'value("root.a[0]","A1")'})),
+            Assert(Exact(1), Equals({'value("root.a[0]","A2")'})),
+        ),
+        "program": """
+            type("root","product").
+            type("root.a[0]","A").
+            discrete("A").
+            domain("A","A1").
+            domain("A","A2").
+            index("root.a[0]",0).
+            parent("root.a[0]","root").
+            part("product").""",
+    },
+    "multiple_discrete": {
+        "test": AndTest(
+            NumModels(4),
+            Assert(Exact(1), Equals({'value("root.a[0]","A1")', 'value("root.a[1]","A1")'})),
+            Assert(Exact(1), Equals({'value("root.a[0]","A1")', 'value("root.a[1]","A2")'})),
+            Assert(Exact(1), Equals({'value("root.a[0]","A2")', 'value("root.a[1]","A1")'})),
+            Assert(Exact(1), Equals({'value("root.a[0]","A2")', 'value("root.a[1]","A2")'})),
+        ),
+        "program": """
+            type("root","product").
+            type("root.a[0]","A").
+            type("root.a[1]","A").
+            discrete("A").
+            domain("A","A1").
+            domain("A","A2").
+            index("root.a[0]",0).
+            index("root.a[1]",1).
+            parent("root.a[0]","root").
+            parent("root.a[1]","root").
+            constraint(("root.a",2),"lowerbound").
+            set("root.a","root.a[0]").
+            set("root.a","root.a[1]").
+            part("product").""",
+    },
+    "simple_integer": {
+        "test": AndTest(
+            NumModels(2),
+            Assert(Exact(1), Equals({'value("root.a[0]",1)'})),
+            Assert(Exact(1), Equals({'value("root.a[0]",2)'})),
+        ),
+        "ftest": AndTest(
+            NumModels(2),
+            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)'}, check_theory=True)),
+            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",2)'}, check_theory=True)),
+        ),
+        "program": """
+            type("root","product").
+            type("root.a[0]","A").
+            integer("A").
+            range("A",1,2).
+            index("root.a[0]",0).
+            parent("root.a[0]","root").
+            constraint(("root.a",1),"lowerbound").
+            set("root.a","root.a[0]").
+            part("product").""",
+    },
+    "optional_integer": {
+        "test": AndTest(
+            NumModels(3),
+            Assert(Exact(1), Equals({})),
+            Assert(Exact(1), Equals({'value("root.a[0]",1)'})),
+            Assert(Exact(1), Equals({'value("root.a[0]",2)'})),
+        ),
+        "ftest": AndTest(
+            NumModels(3),
+            # Assert(Exact(1), SubsetOf({})), # How to check empty set for fclingo (with regards to output atoms)?
+            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)'}, check_theory=True)),
+            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",2)'}, check_theory=True)),
+        ),
+        "program": """
+            type("root","product").
+            type("root.a[0]","A").
+            integer("A").
+            range("A",1,2).
+            index("root.a[0]",0).
+            parent("root.a[0]","root").
+            part("product").""",
+    },
+    "multiple_integer": {
+        "test": AndTest(
+            NumModels(4),
+            Assert(Exact(1), Equals({'value("root.a[0]",1)', 'value("root.a[1]",1)'})),
+            Assert(Exact(1), Equals({'value("root.a[0]",1)', 'value("root.a[1]",2)'})),
+            Assert(Exact(1), Equals({'value("root.a[0]",2)', 'value("root.a[1]",1)'})),
+            Assert(Exact(1), Equals({'value("root.a[0]",2)', 'value("root.a[1]",2)'})),
+        ),
+        "ftest": AndTest(
+            NumModels(4),
+            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)', 'value("root.a[1]",1)'}, check_theory=True)),
+            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)', 'value("root.a[1]",2)'}, check_theory=True)),
+            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",2)', 'value("root.a[1]",1)'}, check_theory=True)),
+            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",2)', 'value("root.a[1]",2)'}, check_theory=True)),
+        ),
+        "program": """
+            type("root","product").
+            type("root.a[0]","A").
+            type("root.a[1]","A").
+            integer("A").
+            range("A",1,2).
+            index("root.a[0]",0).
+            index("root.a[1]",1).
+            parent("root.a[0]","root").
+            parent("root.a[1]","root").
+            constraint(("root.a",2),"lowerbound").
+            set("root.a","root.a[0]").
+            set("root.a","root.a[1]").
+            part("product").""",
+    },
+}
+
+
+TESTS_PREPROCESS = {
     "require_with_number": {
         "test": Assert(All(), ContainsTheory(('value("root.wheel[0].size[0]",27)'))),
         "ftest": Assert(All(), ContainsTheory('value("root.wheel[0].size[0]",27)', check_theory=True)),
