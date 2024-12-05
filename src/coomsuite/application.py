@@ -58,7 +58,7 @@ class COOMApp(Application):
 
     _solver: str
     _output: str
-    _show: bool
+    _show_facts: bool
     _istest: bool
     _log_level: str
     config: FclingoConfig
@@ -71,7 +71,7 @@ class COOMApp(Application):
         log_level: str = "",
         solver: str = "",
         output: str = "",
-        show: bool = False,
+        show_facts: bool = False,
         istest: bool = False,
     ):
         """
@@ -79,7 +79,7 @@ class COOMApp(Application):
         """
         self._solver = "clingo" if solver == "" else solver
         self._output = "asp" if output == "" else output
-        self._show = show
+        self._show_facts = show_facts
         self._istest = istest
         self._log_level = "WARNING" if log_level == "" else log_level
         self.config = FclingoConfig(MIN_INT, MAX_INT, Flag(False), Flag(False), DEF)
@@ -215,7 +215,7 @@ class COOMApp(Application):
         Main function ran on call.
         """
         processed_facts = self.preprocess(list(files))
-        if self._show:
+        if self._show_facts:
             print("\n".join(processed_facts))  # nocoverage
         else:
             user_input_check = self.check_user_input(processed_facts)

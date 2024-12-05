@@ -49,10 +49,10 @@ def main():
                 + unknown_args
             )
 
-            if args.show:
+            if args.show_facts:
                 options.append("--outf=3")
 
-            clingo_main(COOMApp(solver=args.solver, output=args.output, show=args.show), options)
+            clingo_main(COOMApp(solver=args.solver, output=args.output, show_facts=args.show_facts), options)
 
 
 if __name__ == "__main__":
