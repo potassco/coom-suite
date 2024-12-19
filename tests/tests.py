@@ -91,33 +91,6 @@ TEST_UNSAT = Assert(Exact(0), False_())
 
 TESTS_SOLVE: dict[str, dict[str, AnyType]] = {
     "empty": {"test": TEST_EMPTY, "program": ""},
-    "formula_undef": {
-        "test": TEST_EMPTY,
-        "program": """
-            type("root","product").
-            part("product").
-            number("5",5).""",
-    },
-    "table_undef": {
-        "test": TEST_EMPTY,
-        "program": """
-            part("product").
-            type("root","product").
-            constraint((0,"root"),"table").
-            column((0,"root"),0,0,"root.a[0]").""",
-    },
-    "empty_table": {
-        "test": TEST_UNSAT,
-        "program": """
-            part("product").
-            type("root","product").
-            type("root.a[0]","A").
-            discrete("A").
-            index("root.a[0]",0).
-            parent("root.a[0]","root").
-            constraint((0,"root"),"table").
-            column((0,"root"),0,0,"root.a[0]").""",
-    },
     "optional_part": {
         "test": AndTest(
             NumModels(2), Assert(Exact(1), SubsetOf(set())), Assert(Exact(1), Equals({'include("root.a[0]")'}))
@@ -494,6 +467,87 @@ TESTS_SOLVE: dict[str, dict[str, AnyType]] = {
             constraint((0,"!x"),"boolean").
             unary("!x","!","x").""",
     },
+    "table_discrete": {
+        "test": AndTest(
+            NumModels(4),
+            Assert(Exact(1), Equals({'value("root.x[0]","A1")', 'value("root.y[0]","A2")'})),
+            Assert(Exact(1), Equals({'value("root.x[0]","A1")', 'value("root.y[0]","A3")'})),
+            Assert(Exact(1), Equals({'value("root.x[0]","A2")', 'value("root.y[0]","A1")'})),
+            Assert(Exact(1), Equals({'value("root.x[0]","A3")', 'value("root.y[0]","A2")'})),
+        ),
+        "files": ["table_discrete.lp"],
+    },
+    "table_integer": {
+        "test": AndTest(
+            NumModels(4),
+            Assert(Exact(1), Equals({'value("root.x[0]",1)', 'value("root.y[0]",2)'})),
+            Assert(Exact(1), Equals({'value("root.x[0]",1)', 'value("root.y[0]",3)'})),
+            Assert(Exact(1), Equals({'value("root.x[0]",2)', 'value("root.y[0]",1)'})),
+            Assert(Exact(1), Equals({'value("root.x[0]",3)', 'value("root.y[0]",2)'})),
+        ),
+        "ftest": AndTest(
+            NumModels(4),
+            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]",1)', 'value("root.y[0]",2)'}, check_theory=True)),
+            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]",1)', 'value("root.y[0]",3)'}, check_theory=True)),
+            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]",2)', 'value("root.y[0]",1)'}, check_theory=True)),
+            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]",3)', 'value("root.y[0]",2)'}, check_theory=True)),
+        ),
+        "files": ["table_integer.lp"],
+    },
+    "table_mixed": {
+        "test": AndTest(
+            NumModels(4),
+            Assert(Exact(1), Equals({'value("root.x[0]","A1")', 'value("root.y[0]",2)'})),
+            Assert(Exact(1), Equals({'value("root.x[0]","A1")', 'value("root.y[0]",3)'})),
+            Assert(Exact(1), Equals({'value("root.x[0]","A2")', 'value("root.y[0]",1)'})),
+            Assert(Exact(1), Equals({'value("root.x[0]","A3")', 'value("root.y[0]",2)'})),
+        ),
+        "ftest": AndTest(
+            NumModels(4),
+            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]","A1")', 'value("root.y[0]",2)'}, check_theory=True)),
+            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]","A1")', 'value("root.y[0]",3)'}, check_theory=True)),
+            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]","A2")', 'value("root.y[0]",1)'}, check_theory=True)),
+            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]","A3")', 'value("root.y[0]",2)'}, check_theory=True)),
+        ),
+        "files": ["table_mixed.lp"],
+    },
+    "table_wildcard": {
+        "test": AndTest(
+            NumModels(3),
+            Assert(Exact(1), Equals({'value("root.x[0]","A1")', 'value("root.y[0]","A1")'})),
+            Assert(Exact(1), Equals({'value("root.x[0]","A2")', 'value("root.y[0]","A1")'})),
+            Assert(Exact(1), Equals({'value("root.x[0]","A2")', 'value("root.y[0]","A2")'})),
+        ),
+        "files": ["table_wildcard.lp"],
+    },
+    "table_undef": {
+        "test": AndTest(
+            NumModels(2),
+            Assert(Exact(1), Equals({'value("root.x[0]","A1")'})),
+            Assert(Exact(1), Equals({'value("root.x[0]","A2")'})),
+        ),
+        "files": ["table_undef.lp"],
+    },
+    "table_undef2": {
+        "test": TEST_EMPTY,
+        "program": """
+            part("product").
+            type("root","product").
+            constraint((0,"root"),"table").
+            column((0,"root"),0,0,"root.a[0]").""",
+    },
+    "empty_table": {
+        "test": TEST_UNSAT,
+        "program": """
+            part("product").
+            type("root","product").
+            type("root.a[0]","A").
+            discrete("A").
+            index("root.a[0]",0).
+            parent("root.a[0]","root").
+            constraint((0,"root"),"table").
+            column((0,"root"),0,0,"root.a[0]").""",
+    },
     "plus_sat": {
         "test": TEST_EMPTY,
         "program": """
@@ -576,7 +630,7 @@ TESTS_SOLVE: dict[str, dict[str, AnyType]] = {
             number("1",1).
             number("2",2).""",
     },
-    "plus_default_sat": {
+    "plus_undef_sat": {
         "test": TEST_EMPTY,
         "program": """
             constraint((0,"2=2+x"),"boolean").
@@ -584,7 +638,7 @@ TESTS_SOLVE: dict[str, dict[str, AnyType]] = {
             binary("2+x","2","+","x").
             number("2",2).""",
     },
-    "minus_default_sat": {
+    "minus_undef_sat": {
         "test": TEST_EMPTY,
         "program": """
             constraint((0,"2=2-x"),"boolean").
@@ -592,7 +646,7 @@ TESTS_SOLVE: dict[str, dict[str, AnyType]] = {
             binary("2-x","2","-","x").
             number("2",2).""",
     },
-    "plus_default_unsat": {
+    "plus_undef_unsat": {
         "test": TEST_UNSAT,
         "program": """
             constraint((0,"4=2+x"),"boolean").
@@ -601,7 +655,7 @@ TESTS_SOLVE: dict[str, dict[str, AnyType]] = {
             number("2",2).
             number("4",4).""",
     },
-    "minus_default_unsat": {
+    "minus_undef_unsat": {
         "test": TEST_UNSAT,
         "program": """
             constraint((0,"4=2-x"),"boolean").

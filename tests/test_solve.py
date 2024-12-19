@@ -40,15 +40,6 @@ class TestClingo(TestCase):
         test, program, files = unpack_test(test_name)
         run_test(test, files=files, program=program, ctl_args=["0"], solver="clingo", preprocess="False")
 
-    def test_sanity_checks(self) -> None:
-        """
-        Simply sanity check test cases (clingo).
-        """
-
-        self.run_test("formula_undef")
-        self.run_test("table_undef")
-        self.run_test("empty_table")
-
     def test_structure(self) -> None:
         """
         Test structure generation (clingo).
@@ -106,6 +97,13 @@ class TestClingo(TestCase):
         """
         Test table constraints (clingo).
         """
+        self.run_test("table_discrete")
+        self.run_test("table_wildcard")
+        self.run_test("table_integer")
+        self.run_test("table_mixed")
+        self.run_test("table_undef")
+        self.run_test("table_undef2")
+        self.run_test("empty_table")
 
     def test_arithmetics(self) -> None:
         """
@@ -122,10 +120,10 @@ class TestClingo(TestCase):
         self.run_test("mult_unsat")
         self.run_test("unary_minus_unsat")
 
-        self.run_test("plus_default_sat")
-        self.run_test("minus_default_sat")
-        self.run_test("plus_default_unsat")
-        self.run_test("minus_default_unsat")
+        self.run_test("plus_undef_sat")
+        self.run_test("minus_undef_sat")
+        self.run_test("plus_undef_unsat")
+        self.run_test("minus_undef_unsat")
 
         self.run_test("precedence_sat")
         self.run_test("precedence_par_sat")
@@ -182,15 +180,6 @@ class TestFclingo(TestCase):
         """
         test, program, files = unpack_test(test_name, fclingo=True)
         run_test(test, files=files, program=program, ctl_args=["0"], solver="fclingo", preprocess="False")
-
-    def test_sanity_checks(self) -> None:
-        """
-        Simply sanity check test cases (fclingo).
-        """
-
-        self.run_test("formula_undef")
-        self.run_test("table_undef")
-        self.run_test("empty_table")
 
     def test_structure(self) -> None:
         """
@@ -249,6 +238,13 @@ class TestFclingo(TestCase):
         """
         Test table constraints (fclingo).
         """
+        self.run_test("table_discrete")
+        self.run_test("table_wildcard")
+        self.run_test("table_integer")
+        self.run_test("table_mixed")
+        self.run_test("table_undef")
+        self.run_test("table_undef2")
+        self.run_test("empty_table")
 
     def test_arithmetics(self) -> None:
         """
@@ -263,10 +259,10 @@ class TestFclingo(TestCase):
         self.run_test("minus_unsat")
         self.run_test("unary_minus_unsat")
 
-        self.run_test("plus_default_sat")
-        self.run_test("minus_default_sat")
-        self.run_test("plus_default_unsat")
-        self.run_test("minus_default_unsat")
+        self.run_test("plus_undef_sat")
+        self.run_test("minus_undef_sat")
+        self.run_test("plus_undef_unsat")
+        self.run_test("minus_undef_unsat")
 
         self.run_test("precedence_sat")
         self.run_test("precedence_par_sat")
