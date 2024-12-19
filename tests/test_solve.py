@@ -111,6 +111,26 @@ class TestClingo(TestCase):
         """
         Test arithmetic formulas (clingo).
         """
+        self.run_test("plus_sat")
+        self.run_test("minus_sat")
+        self.run_test("mult_sat")
+        self.run_test("unary_plus_sat")
+        self.run_test("unary_minus_sat")
+
+        self.run_test("plus_unsat")
+        self.run_test("minus_unsat")
+        self.run_test("mult_unsat")
+        self.run_test("unary_minus_unsat")
+
+        self.run_test("plus_default_sat")
+        self.run_test("minus_default_sat")
+        self.run_test("plus_default_unsat")
+        self.run_test("minus_default_unsat")
+
+        self.run_test("precedence_sat")
+        self.run_test("precedence_par_sat")
+        self.run_test("precedence_unsat")
+        self.run_test("precedence_par_unsat")
 
     def test_aggregates(self) -> None:
         """
@@ -230,6 +250,24 @@ class TestFclingo(TestCase):
         """
         Test arithmetic formulas (fclingo).
         """
+        self.run_test("plus_sat")
+        self.run_test("minus_sat")
+        self.run_test("unary_plus_sat")
+        self.run_test("unary_minus_sat")
+
+        self.run_test("plus_unsat")
+        self.run_test("minus_unsat")
+        self.run_test("unary_minus_unsat")
+
+        self.run_test("plus_default_sat")
+        self.run_test("minus_default_sat")
+        self.run_test("plus_default_unsat")
+        self.run_test("minus_default_unsat")
+
+        self.run_test("precedence_sat")
+        self.run_test("precedence_par_sat")
+        self.run_test("precedence_unsat")
+        self.run_test("precedence_par_unsat")
 
     def test_aggregates(self) -> None:
         """

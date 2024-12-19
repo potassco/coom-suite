@@ -494,6 +494,164 @@ TESTS_SOLVE: dict[str, dict[str, AnyType]] = {
             constraint((0,"!x"),"boolean").
             unary("!x","!","x").""",
     },
+    "plus_sat": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"10=5+5"),"boolean").
+            binary("10=5+5","10","=","5+5").
+            binary("5+5","5","+","5").
+            number("5",5).
+            number("10",10).""",
+    },
+    "minus_sat": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"5=10-5"),"boolean").
+            binary("5=10-5","5","=","10-5").
+            binary("10-5","10","-","5").
+            number("5",5).
+            number("10",10).""",
+    },
+    "mult_sat": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"4=2*2"),"boolean").
+            binary("4=2*2","4","=","2*2").
+            binary("2*2","2","*","2").
+            number("2",2).
+            number("4",4).""",
+    },
+    "unary_plus_sat": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"+2=2"),"boolean").
+            binary("+2=2","+2","=","2").
+            unary("+2","+","2").
+            number("2",2).""",
+    },
+    "unary_minus_sat": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"-2=0-2"),"boolean").
+            binary("-2=0-2","-2","=","0-2").
+            binary("0-2","0","-","2").
+            unary("-2","-","2").
+            number("0",0).
+            number("2",2).""",
+    },
+    "plus_unsat": {
+        "test": TEST_UNSAT,
+        "program": """
+            constraint((0,"11=5+5"),"boolean").
+            binary("11=5+5","11","=","5+5").
+            binary("5+5","5","+","5").
+            number("5",5).
+            number("11",11).""",
+    },
+    "minus_unsat": {
+        "test": TEST_UNSAT,
+        "program": """
+            constraint((0,"5=11-5"),"boolean").
+            binary("5=11-5","5","=","11-5").
+            binary("11-5","11","-","5").
+            number("5",5).
+            number("11",11).""",
+    },
+    "mult_unsat": {
+        "test": TEST_UNSAT,
+        "program": """
+            constraint((0,"5=2*2"),"boolean").
+            binary("5=2*2","5","=","2*2").
+            binary("2*2","2","*","2").
+            number("2",2).
+            number("5",5).""",
+    },
+    "unary_minus_unsat": {
+        "test": TEST_UNSAT,
+        "program": """
+            constraint((0,"-2=1-2"),"boolean").
+            binary("-2=1-2","-2","=","1-2").
+            binary("1-2","1","-","2").
+            unary("-2","-","2").
+            number("1",1).
+            number("2",2).""",
+    },
+    "plus_default_sat": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"2=2+x"),"boolean").
+            binary("2=2+x","2","=","2+x").
+            binary("2+x","2","+","x").
+            number("2",2).""",
+    },
+    "minus_default_sat": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"2=2-x"),"boolean").
+            binary("2=2-x","2","=","2-x").
+            binary("2-x","2","-","x").
+            number("2",2).""",
+    },
+    "plus_default_unsat": {
+        "test": TEST_UNSAT,
+        "program": """
+            constraint((0,"4=2+x"),"boolean").
+            binary("4=2+x","4","=","2+x").
+            binary("2+x","2","+","x").
+            number("2",2).
+            number("4",4).""",
+    },
+    "minus_default_unsat": {
+        "test": TEST_UNSAT,
+        "program": """
+            constraint((0,"4=2-x"),"boolean").
+            binary("4=2-x","4","=","2-x").
+            binary("2-x","2","-","x").
+            number("2",2).
+            number("4",4).""",
+    },
+    "precedence_sat": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"2*2+2=6"),"boolean").
+            binary("2*2+2=6","2*2+2","=","6").
+            binary("2*2+2","2*2","+","2").
+            binary("2*2","2","*","2").
+            number("2",2).
+            number("6",6).""",
+    },
+    "precedence_par_sat": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"2*(2+2)=8"),"boolean").
+            binary("2*(2+2)=8","2*(2+2)","=","8").
+            binary("2*(2+2)","2","*","(2+2)").
+            unary("(2+2)","()","2+2").
+            binary("2+2","2","+","2").
+            number("2",2).
+            number("8",8).""",
+    },
+    "precedence_unsat": {
+        "test": TEST_UNSAT,
+        "program": """
+            constraint((0,"2*2+2=8"),"boolean").
+            binary("2*2+2=8","2*2+2","=","8").
+            binary("2*2+2","2*2","+","2").
+            binary("2*2","2","*","2").
+            number("2",2).
+            number("8",8).""",
+    },
+    "precedence_par_unsat": {
+        "test": TEST_UNSAT,
+        "program": """
+            constraint((0,"2*(2+2)=6"),"boolean").
+            binary("2*(2+2)=6","2*(2+2)","=","6").
+            binary("2*(2+2)","2","*","(2+2)").
+            unary("(2+2)","()","2+2").
+            binary("2+2","2","+","2").
+            number("2",2).
+            number("6",6).""",
+    },
     "user_value_discrete": {
         "test": AndTest(
             NumModels(1),
