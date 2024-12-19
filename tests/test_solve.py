@@ -89,13 +89,18 @@ class TestClingo(TestCase):
         self.run_test("ge_unsat")
         self.run_test("geq_unsat")
 
+        self.run_test("par_sat")
         self.run_test("neg_sat")
         self.run_test("or_sat")
         self.run_test("and_sat")
 
+        self.run_test("par_unsat")
         self.run_test("neg_unsat")
         self.run_test("or_unsat")
         self.run_test("and_unsat")
+
+        self.run_test("binary_undef")
+        self.run_test("unary_undef")
 
     def test_table_constraints(self) -> None:
         """
@@ -116,6 +121,30 @@ class TestClingo(TestCase):
         """
         Test user input (clingo)
         """
+
+        def user_check(test: str, expected_msg: str) -> None:
+            """
+            Runs a test checking the user input for validity.
+            """
+            with self.assertRaises(ValueError) as ctx:
+                self.run_test(test)
+            self.assertEqual(str(ctx.exception), expected_msg)
+
+        self.run_test("user_value_discrete")
+        self.run_test("user_value_integer")
+        self.run_test("user_include")
+
+        user_check("set_invalid_variable", "User input not valid.\nVariable root.color[0] is not valid.")
+        user_check("add_invalid_variable", "User input not valid.\nVariable root.basket[0] is not valid.")
+        user_check("set_invalid_type", "User input not valid.\nNo value can be set for variable root.basket[0].")
+        user_check("add_invalid_type", "User input not valid.\nVariable root.basket[0] cannot be added.")
+        user_check(
+            "set_invalid_value_discrete",
+            "User input not valid.\nValue 'Yellow' is not in domain of variable root.color[0].",
+        )
+        user_check(
+            "set_invalid_value_num", "User input not valid.\nValue '11' is not in domain of variable root.size[0]."
+        )
 
 
 class TestFclingo(TestCase):
@@ -165,7 +194,6 @@ class TestFclingo(TestCase):
         """
         Test Boolean constraints (fclingo).
         """
-        # Basic tests
         self.run_test("eq_sat")
         self.run_test("neq_sat")
         self.run_test("le_sat")
@@ -190,7 +218,8 @@ class TestFclingo(TestCase):
         self.run_test("or_unsat")
         self.run_test("and_unsat")
 
-        # Tests with undefined variables
+        self.run_test("binary_undef")
+        self.run_test("unary_undef")
 
     def test_table_constraints(self) -> None:
         """
@@ -211,6 +240,30 @@ class TestFclingo(TestCase):
         """
         Test user input (fclingo)
         """
+
+        def user_check(test: str, expected_msg: str) -> None:
+            """
+            Runs a test checking the user input for validity.
+            """
+            with self.assertRaises(ValueError) as ctx:
+                self.run_test(test)
+            self.assertEqual(str(ctx.exception), expected_msg)
+
+        self.run_test("user_value_discrete")
+        self.run_test("user_value_integer")
+        self.run_test("user_include")
+
+        user_check("set_invalid_variable", "User input not valid.\nVariable root.color[0] is not valid.")
+        user_check("add_invalid_variable", "User input not valid.\nVariable root.basket[0] is not valid.")
+        user_check("set_invalid_type", "User input not valid.\nNo value can be set for variable root.basket[0].")
+        user_check("add_invalid_type", "User input not valid.\nVariable root.basket[0] cannot be added.")
+        user_check(
+            "set_invalid_value_discrete",
+            "User input not valid.\nValue 'Yellow' is not in domain of variable root.color[0].",
+        )
+        user_check(
+            "set_invalid_value_num", "User input not valid.\nValue '11' is not in domain of variable root.size[0]."
+        )
 
 
 # class TestClingo(TestCase):
@@ -409,13 +462,6 @@ class TestFclingo(TestCase):
 #         test, program, files = unpack_test(test_name)
 #         run_test(test, files=files, program=program, ctl_args=["0"])
 
-#     def user_check(self, test: str, expected_msg: str) -> None:
-#         """
-#         Runs a test checking the user input for validity.
-#         """
-#         with self.assertRaises(ValueError) as ctx:
-#             self.run_test(test)
-#         self.assertEqual(str(ctx.exception), expected_msg)
 
 #     def test_set(self) -> None:
 #         """
@@ -430,19 +476,3 @@ class TestFclingo(TestCase):
 #         """
 #         self.run_test("add")
 #         self.run_test("add2")
-
-#     def test_checks(self) -> None:
-#         """
-#         Test checks for invalid user input
-#         """
-#         self.user_check("set_invalid_variable", "User input not valid.\nVariable root.color[0] is not valid.")
-#         self.user_check("add_invalid_variable", "User input not valid.\nVariable root.basket[0] is not valid.")
-#         self.user_check("set_invalid_type", "User input not valid.\nNo value can be set for variable root.basket[0].")
-#         self.user_check("add_invalid_type", "User input not valid.\nVariable root.basket[0] cannot be added.")
-#         self.user_check(
-#             "set_invalid_value_discrete",
-#             "User input not valid.\nValue 'Yellow' is not in domain of variable root.color[0].",
-#         )
-#         self.user_check(
-#             "set_invalid_value_num", "User input not valid.\nValue '11' is not in domain of variable root.size[0]."
-#         )

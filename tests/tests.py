@@ -481,6 +481,123 @@ TESTS_SOLVE: dict[str, dict[str, AnyType]] = {
             number("10",10).
             number("11",11).""",
     },
+    "binary_undef": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"x=5"),"boolean").
+            binary("x=5","x","=","5").
+            number("5",5).""",
+    },
+    "unary_undef": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"!x"),"boolean").
+            unary("!x","!","x").""",
+    },
+    "user_value_discrete": {
+        "test": AndTest(
+            NumModels(1),
+            Assert(Exact(1), Equals({'value("root.a[0]","A1")'})),
+        ),
+        "program": """
+            type("root","product").
+            type("root.a[0]","A").
+            discrete("A").
+            domain("A","A1").
+            domain("A","A2").
+            index("root.a[0]",0).
+            parent("root.a[0]","root").
+            constraint(("root.a",1),"lowerbound").
+            set("root.a","root.a[0]").
+            part("product").
+            user_value("root.a[0]","A1").""",
+    },
+    "user_value_integer": {
+        "test": AndTest(
+            NumModels(1),
+            Assert(Exact(1), Equals({'value("root.a[0]",1)'})),
+            # Assert(Exact(1), Equals({'value("root.a[0]",2)'})),
+        ),
+        "ftest": AndTest(
+            NumModels(1),
+            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)'}, check_theory=True)),
+            # Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",2)'}, check_theory=True)),
+        ),
+        "program": """
+            type("root","product").
+            type("root.a[0]","A").
+            integer("A").
+            range("A",1,2).
+            index("root.a[0]",0).
+            parent("root.a[0]","root").
+            constraint(("root.a",1),"lowerbound").
+            set("root.a","root.a[0]").
+            part("product").
+            user_value("root.a[0]",1).""",
+    },
+    "user_include": {
+        "test": AndTest(NumModels(1), Assert(Exact(1), Equals({'include("root.a[0]")'}))),
+        "program": """
+            type("root","product").
+            type("root.a[0]","A").
+            index("root.a[0]",0).
+            parent("root.a[0]","root").
+            part("product").
+            part("A").
+            user_include("root.a[0]").""",
+    },
+    "set_invalid_variable": {
+        "test": True_(),  # Output does not matter, tests whether Exception is raised
+        "program": """
+            user_value("root.color[0]","Yellow").""",
+    },
+    "add_invalid_variable": {
+        "test": True_(),  # Output does not matter, tests whether Exception is raised
+        "program": """
+            user_include("root.basket[0]").""",
+    },
+    "set_invalid_type": {
+        "test": True_(),  # Output does not matter, tests whether Exception is raised
+        "program": """
+            part("product").
+            part("Basket").
+            type("root.basket[0]","Basket").
+            parent("root.basket[0]","root").
+            index("root.basket[0]",0).
+            user_value("root.basket[0]","Yellow").""",
+    },
+    "add_invalid_type": {
+        "test": True_(),  # Output does not matter, tests whether Exception is raised
+        "program": """
+            part("product").
+            discrete("Basket").
+            type("root.basket[0]","Basket").
+            parent("root.basket[0]","root").
+            index("root.basket[0]",0).
+            user_include("root.basket[0]").""",
+    },
+    "set_invalid_value_discrete": {
+        "test": True_(),  # Output does not matter, tests whether Exception is raised
+        "program": """
+            part("product").
+            discrete("Color").
+            domain("Color","Red").
+            type("root.color[0]","Color").
+            parent("root.color[0]","root").
+            index("root.color[0]",0).
+            user_value("root.color[0]","Yellow").""",
+    },
+    "set_invalid_value_num": {
+        "test": True_(),  # Output does not matter, tests whether Exception is raised
+        "program": """
+            part("product").
+            integer("product.size").
+            range("product.size",1,10).
+            type("root.size[0]","product.size").
+            parent("root.size[0]","root").
+            index("root.size[0]",0).
+            user_value("root.size[0]",11).""",
+    },
 }
 
 
@@ -925,52 +1042,5 @@ TESTS_PREPROCESS = {
 
             coom_user_include("root.bag[0]").
             coom_user_include("root.bag[1]").""",
-    },
-    "set_invalid_variable": {
-        "test": True_(),  # Output does not matter, tests whether Exception is raised
-        "program": """
-            coom_user_value("root.color[0]","Yellow").""",
-    },
-    "add_invalid_variable": {
-        "test": True_(),  # Output does not matter, tests whether Exception is raised
-        "program": """
-            coom_user_include("root.basket[0]").""",
-    },
-    "set_invalid_type": {
-        "test": True_(),  # Output does not matter, tests whether Exception is raised
-        "program": """
-            coom_structure("product").
-            coom_feature("product","basket","Basket",1,1).
-            coom_structure("Basket").
-
-            coom_user_value("root.basket[0]","Yellow").""",
-    },
-    "add_invalid_type": {
-        "test": True_(),  # Output does not matter, tests whether Exception is raised
-        "program": """
-            coom_structure("product").
-            coom_feature("product","basket","Basket",1,1).
-            coom_enumeration("Basket").
-
-            coom_user_include("root.basket[0]").""",
-    },
-    "set_invalid_value_discrete": {
-        "test": True_(),  # Output does not matter, tests whether Exception is raised
-        "program": """
-            coom_structure("product").
-            coom_feature("product","color","Color",1,1).
-            coom_enumeration("Color").
-            coom_option("Color","Red").
-
-            coom_user_value("root.color[0]","Yellow").""",
-    },
-    "set_invalid_value_num": {
-        "test": True_(),  # Output does not matter, tests whether Exception is raised
-        "program": """
-            coom_structure("product").
-            coom_feature("product","size","num",1,1).
-            coom_range("product","size",1,10).
-
-            coom_user_value("root.size[0]",11).""",
     },
 }
