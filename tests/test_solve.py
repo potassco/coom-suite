@@ -71,6 +71,52 @@ class TestClingo(TestCase):
         self.run_test("optional_integer")
         self.run_test("multiple_integer")
 
+    def test_boolean_constraints(self) -> None:
+        """
+        Test Boolean constraints (clingo).
+        """
+        self.run_test("eq_sat")
+        self.run_test("neq_sat")
+        self.run_test("le_sat")
+        self.run_test("leq_sat")
+        self.run_test("ge_sat")
+        self.run_test("geq_sat")
+
+        self.run_test("eq_unsat")
+        self.run_test("neq_unsat")
+        self.run_test("le_unsat")
+        self.run_test("leq_unsat")
+        self.run_test("ge_unsat")
+        self.run_test("geq_unsat")
+
+        self.run_test("neg_sat")
+        self.run_test("or_sat")
+        self.run_test("and_sat")
+
+        self.run_test("neg_unsat")
+        self.run_test("or_unsat")
+        self.run_test("and_unsat")
+
+    def test_table_constraints(self) -> None:
+        """
+        Test table constraints (clingo).
+        """
+
+    def test_arithmetics(self) -> None:
+        """
+        Test arithmetic formulas (clingo).
+        """
+
+    def test_aggregates(self) -> None:
+        """
+        Test aggregation functions (clingo).
+        """
+
+    def test_user_input(self) -> None:
+        """
+        Test user input (clingo)
+        """
+
 
 class TestFclingo(TestCase):
     """
@@ -114,6 +160,57 @@ class TestFclingo(TestCase):
         self.run_test("simple_integer")
         self.run_test("optional_integer")
         self.run_test("multiple_integer")
+
+    def test_boolean_constraints(self) -> None:
+        """
+        Test Boolean constraints (fclingo).
+        """
+        # Basic tests
+        self.run_test("eq_sat")
+        self.run_test("neq_sat")
+        self.run_test("le_sat")
+        self.run_test("leq_sat")
+        self.run_test("ge_sat")
+        self.run_test("geq_sat")
+
+        self.run_test("eq_unsat")
+        self.run_test("neq_unsat")
+        self.run_test("le_unsat")
+        self.run_test("leq_unsat")
+        self.run_test("ge_unsat")
+        self.run_test("geq_unsat")
+
+        self.run_test("par_sat")
+        self.run_test("neg_sat")
+        self.run_test("or_sat")
+        self.run_test("and_sat")
+
+        self.run_test("par_unsat")
+        self.run_test("neg_unsat")
+        self.run_test("or_unsat")
+        self.run_test("and_unsat")
+
+        # Tests with undefined variables
+
+    def test_table_constraints(self) -> None:
+        """
+        Test table constraints (fclingo).
+        """
+
+    def test_arithmetics(self) -> None:
+        """
+        Test arithmetic formulas (fclingo).
+        """
+
+    def test_aggregates(self) -> None:
+        """
+        Test aggregation functions (fclingo).
+        """
+
+    def test_user_input(self) -> None:
+        """
+        Test user input (fclingo)
+        """
 
 
 # class TestClingo(TestCase):

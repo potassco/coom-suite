@@ -315,6 +315,172 @@ TESTS_SOLVE: dict[str, dict[str, AnyType]] = {
             set("root.a","root.a[1]").
             part("product").""",
     },
+    "eq_sat": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"10=10"),"boolean").
+            binary("10=10","10","=","10").
+            number("10",10).""",
+    },
+    "neq_sat": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"10!=11"),"boolean").
+            binary("10!=11","10","!=","11").
+            number("10",10).
+            number("11",11).""",
+    },
+    "le_sat": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"9<10"),"boolean").
+            binary("9<10","9","<","10").
+            number("9",9).
+            number("10",10).""",
+    },
+    "leq_sat": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"10<=10"),"boolean").
+            binary("10<=10","10","<=","10").
+            number("10",10).""",
+    },
+    "ge_sat": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"12>10"),"boolean").
+            binary("12>10","12",">","10").
+            number("10",10).
+            number("12",12).""",
+    },
+    "geq_sat": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"10>=8"),"boolean").
+            binary("10>=8","10",">=","8").
+            number("10",10).
+            number("8",8).""",
+    },
+    "eq_unsat": {
+        "test": TEST_UNSAT,
+        "program": """
+            constraint((0,"10=11"),"boolean").
+            binary("10=11","10","=","11").
+            number("10",10).
+            number("11",11).""",
+    },
+    "neq_unsat": {
+        "test": TEST_UNSAT,
+        "program": """
+            constraint((0,"10!=10"),"boolean").
+            binary("10!=10","10","!=","10").
+            number("10",10).""",
+    },
+    "le_unsat": {
+        "test": TEST_UNSAT,
+        "program": """
+            constraint((0,"10<10"),"boolean").
+            binary("10<10","10","<","10").
+            number("10",10).""",
+    },
+    "leq_unsat": {
+        "test": TEST_UNSAT,
+        "program": """
+            constraint((0,"11<=10"),"boolean").
+            binary("11<=10","11","<=","10").
+            number("10",10).
+            number("11",11).""",
+    },
+    "ge_unsat": {
+        "test": TEST_UNSAT,
+        "program": """
+            constraint((0,"10>10"),"boolean").
+            binary("10>10","10",">","10").
+            number("10",10).""",
+    },
+    "geq_unsat": {
+        "test": TEST_UNSAT,
+        "program": """
+            constraint((0,"10>=11"),"boolean").
+            binary("10>=11","10",">=","11").
+            number("10",10).
+            number("11",11).""",
+    },
+    "neg_sat": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"!10=11"),"boolean").
+            unary("!10=11","!","10=11").
+            binary("10=11","10","=","11").
+            number("10",10).
+            number("11",11).""",
+    },
+    "par_sat": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"(10=10)"),"boolean").
+            unary("(10=10)","()","10=10").
+            binary("10=10","10","=","10").
+            number("10",10).""",
+    },
+    "or_sat": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"10=11||10=10"),"boolean").
+            binary("10=11||10=10","10=11","||","10=10").
+            binary("10=11","10","=","11").
+            binary("10=10","10","=","10").
+            number("10",10).
+            number("11",11).""",
+    },
+    "and_sat": {
+        "test": TEST_EMPTY,
+        "program": """
+            constraint((0,"11=11&&10=10"),"boolean").
+            binary("11=11&&10=10","11=11","&&","10=10").
+            binary("11=11","11","=","11").
+            binary("10=10","10","=","10").
+            number("10",10).
+            number("11",11).""",
+    },
+    "par_unsat": {
+        "test": TEST_UNSAT,
+        "program": """
+            constraint((0,"(10=11)"),"boolean").
+            unary("(10=11)","()","10=11").
+            binary("10=11","10","=","11").
+            number("10",10).
+            number("11",11).""",
+    },
+    "neg_unsat": {
+        "test": TEST_UNSAT,
+        "program": """
+            constraint((0,"!10=10"),"boolean").
+            unary("!10=10","!","10=10").
+            binary("10=10","10","=","10").
+            number("10",10).""",
+    },
+    "or_unsat": {
+        "test": TEST_UNSAT,
+        "program": """
+            constraint((0,"10=11||10=9"),"boolean").
+            binary("10=11||10=9","10=11","||","10=9").
+            binary("10=11","10","=","11").
+            binary("10=9","10","=","9").
+            number("9",9).
+            number("10",10).
+            number("11",11).""",
+    },
+    "and_unsat": {
+        "test": TEST_UNSAT,
+        "program": """
+            constraint((0,"10=11&&10=10"),"boolean").
+            binary("10=11&&10=10","10=11","&&","10=10").
+            binary("10=11","10","=","11").
+            binary("10=10","10","=","10").
+            number("10",10).
+            number("11",11).""",
+    },
 }
 
 
