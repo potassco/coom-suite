@@ -70,10 +70,7 @@ class COOMApp(Application):
     def __init__(
         self,
         log_level: str = "",
-        options: Dict[str, Any] = {},
-        # solver: str = "",
-        # output: str = "",
-        # show_facts: bool = False,
+        options: Optional[Dict[str, Any]] = None,
         istest: bool = False,
     ):
         """
@@ -81,13 +78,9 @@ class COOMApp(Application):
         """
         self._options = (
             {"solver": "clingo", "output_format": "asp", "show_facts": False, "preprocess": True}
-            if options == {}
+            if options is None
             else options
         )
-        # {"solver": pass, "output_format": pass, "show_facts": True, "preprocess": True}
-        # self._solver = "clingo" if solver == "" else solver
-        # self._output = "asp" if output == "" else output
-        # self._show_facts = show_facts
         self._istest = istest
         self._log_level = "WARNING" if log_level == "" else log_level
         self.config = FclingoConfig(MIN_INT, MAX_INT, Flag(False), Flag(False), DEF)
@@ -123,6 +116,33 @@ class COOMApp(Application):
         # options.add_flag(
         #     group, "view", "Visualize the first solution using clinguin", self._view
         # )
+
+    def _parse_user_input_unsat(self, unsat: Symbol) -> str:
+        """
+        Parses the unsat/2 predicates of the user input check
+        """
+        unsat_type = unsat.arguments[0].string
+        info = unsat.arguments[1]
+
+        if unsat_type == "not exists":
+            variable = info.string
+            msg = f"Variable {variable} is not valid."
+        elif unsat_type == "not part":
+            variable = info.string
+            msg = f"Variable {variable} cannot be added."
+        elif unsat_type == "not attribute":
+            variable = info.string
+            msg = f"No value can be set for variable {variable}."
+        elif unsat_type == "outside domain":
+            variable = info.arguments[0].string
+            if str(info.arguments[1].type) == "SymbolType.Number":
+                value = str(info.arguments[1].number)
+            else:
+                value = info.arguments[1].string
+            msg = f"Value '{value}' is not in domain of variable {variable}."
+        else:
+            raise ValueError(f"Unknown unsat type: {unsat_type}")  # nocoverage
+        return msg
 
     def on_model(self, model: Model) -> None:  # nocoverage
         """
@@ -180,33 +200,6 @@ class COOMApp(Application):
 
         return facts
 
-    def parse_user_input_unsat(self, unsat: Symbol) -> str:
-        """
-        Parses the unsat/2 predicates of the user input check
-        """
-        unsat_type = unsat.arguments[0].string
-        info = unsat.arguments[1]
-
-        if unsat_type == "not exists":
-            variable = info.string
-            msg = f"Variable {variable} is not valid."
-        elif unsat_type == "not part":
-            variable = info.string
-            msg = f"Variable {variable} cannot be added."
-        elif unsat_type == "not attribute":
-            variable = info.string
-            msg = f"No value can be set for variable {variable}."
-        elif unsat_type == "outside domain":
-            variable = info.arguments[0].string
-            if str(info.arguments[1].type) == "SymbolType.Number":
-                value = str(info.arguments[1].number)
-            else:
-                value = info.arguments[1].string
-            msg = f"Value '{value}' is not in domain of variable {variable}."
-        else:
-            raise ValueError(f"Unknown unsat type: {unsat_type}")  # nocoverage
-        return msg
-
     def check_user_input(self, facts: list[str]) -> list[str]:
         """
         Checks if the user input is valid and returns a clingo.SolveResult
@@ -216,7 +209,7 @@ class COOMApp(Application):
         user_input_ctl.add("".join(facts))
         user_input_ctl.ground()
         with user_input_ctl.solve(yield_=True) as handle:
-            unsat = [self.parse_user_input_unsat(s) for s in handle.model().symbols(shown=True)]
+            unsat = [self._parse_user_input_unsat(s) for s in handle.model().symbols(shown=True)]
         return unsat
 
     def main(self, control: Control, files: Sequence[str]) -> None:
@@ -235,6 +228,11 @@ class COOMApp(Application):
 
             encoding = get_encoding(f"encoding-base-{self._options['solver']}.lp")
             facts = "".join(processed_facts)
+            if self._options["solver"] == "preprocess":
+                control.add(facts)
+                control.ground()
+                control.solve()
+
             if self._options["solver"] == "clingo":
 
                 control.load(encoding)

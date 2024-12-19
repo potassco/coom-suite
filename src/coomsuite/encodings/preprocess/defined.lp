@@ -23,3 +23,5 @@
 
 #defined coom_user_include/1.
 #defined coom_user_value/2.
+
+#defined discrete/0.

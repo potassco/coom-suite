@@ -2,8 +2,8 @@
 Sanity check test cases for clingo encodings.
 """
 
-from . import run_test
-from .tests import TEST_EMPTY, TEST_UNSAT
+# from . import run_test
+# from .tests import TEST_EMPTY, TEST_UNSAT
 
 # pylint: disable=deprecated-method
 

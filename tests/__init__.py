@@ -5,7 +5,7 @@ Basic functions to run tests.
 import tempfile
 from copy import deepcopy
 from os.path import join
-from typing import Any, Callable, List, Optional, Sequence
+from typing import Any, Callable, List, Optional, Sequence, Tuple
 
 from antlr4 import InputStream
 from clingo import Application, Control
@@ -23,6 +23,23 @@ def parse_coom(coom_input: str, grammar: str = "model") -> List[str]:
     input_stream = InputStream(coom_input)
     asp_facts = run_antlr4_visitor(input_stream, grammar=grammar)
     return [a for a in asp_facts if a != ""]
+
+
+def unpack_test(test_name: str, tests: dict[str, Any], fclingo: bool = False) -> Tuple[Any, Any, Any]:
+    """
+    Unpacks a clintest.Test with parameters in a dictionary.
+
+    Args:
+        test_name (str): The dictionary key of the test.
+    """
+    test_dict = tests[test_name]
+    program = test_dict.get("program", None)
+    files = test_dict.get("files", None)
+    if fclingo:
+        test = test_dict.get("ftest", test_dict["test"])
+    else:
+        test = test_dict["test"]
+    return test, program, files
 
 
 def run_test(
