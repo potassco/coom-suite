@@ -136,6 +136,10 @@ class TestClingo(TestCase):
         """
         Test aggregation functions (clingo).
         """
+        self.run_test("count")
+        self.run_test("sum")
+        self.run_test("min")
+        self.run_test("max")
 
     def test_user_input(self) -> None:
         """
@@ -273,6 +277,10 @@ class TestFclingo(TestCase):
         """
         Test aggregation functions (fclingo).
         """
+        self.run_test("count")
+        self.run_test("sum")
+        self.run_test("min")
+        self.run_test("max")
 
     def test_user_input(self) -> None:
         """

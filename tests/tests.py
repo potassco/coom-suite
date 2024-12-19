@@ -244,8 +244,8 @@ TESTS_SOLVE: dict[str, dict[str, AnyType]] = {
     "simple_integer": {
         "test": AndTest(
             NumModels(2),
-            Assert(Exact(1), Equals({'value("root.a[0]",1)'})),
-            Assert(Exact(1), Equals({'value("root.a[0]",2)'})),
+            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)'})),
+            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",2)'})),
         ),
         "ftest": AndTest(
             NumModels(2),
@@ -651,6 +651,49 @@ TESTS_SOLVE: dict[str, dict[str, AnyType]] = {
             binary("2+2","2","+","2").
             number("2",2).
             number("6",6).""",
+    },
+    "count": {
+        "test": AndTest(NumModels(1), Assert(Exact(1), Equals({'include("root.x[0]")', 'include("root.x[1]")'}))),
+        "files": ["count.lp"],
+    },
+    "sum": {
+        "test": AndTest(
+            NumModels(2),
+            Assert(Exact(1), Equals({'value("root.x[0]",1)', 'value("root.x[1]",2)'})),
+            Assert(Exact(1), Equals({'value("root.x[0]",2)', 'value("root.x[1]",1)'})),
+        ),
+        "ftest": AndTest(
+            NumModels(2),
+            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]",1)', 'value("root.x[1]",2)'}, check_theory=True)),
+            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]",2)', 'value("root.x[1]",1)'}, check_theory=True)),
+        ),
+        "files": ["sum.lp"],
+    },
+    "min": {
+        "test": AndTest(
+            NumModels(3),
+            Assert(Exact(1), Equals({'value("root.x[0]",4)', 'value("root.x[1]",3)'})),
+            Assert(Exact(1), Equals({'value("root.x[0]",3)', 'value("root.x[1]",3)'})),
+            Assert(Exact(1), Equals({'value("root.x[0]",3)', 'value("root.x[1]",4)'})),
+        ),
+        "ftest": AndTest(
+            NumModels(3),
+            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]",4)', 'value("root.x[1]",3)'}, check_theory=True)),
+            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]",3)', 'value("root.x[1]",3)'}, check_theory=True)),
+            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]",3)', 'value("root.x[1]",4)'}, check_theory=True)),
+        ),
+        "files": ["min.lp"],
+    },
+    "max": {
+        "test": AndTest(
+            NumModels(1),
+            Assert(Exact(1), Equals({'value("root.x[0]",3)', 'value("root.x[1]",3)'})),
+        ),
+        "ftest": AndTest(
+            NumModels(1),
+            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]",3)', 'value("root.x[1]",3)'}, check_theory=True)),
+        ),
+        "files": ["max.lp"],
     },
     "user_value_discrete": {
         "test": AndTest(
