@@ -12,4 +12,4 @@ input_block: 'blockinput' path '{' input_operation* '}';
 input_operation: set_value | add_instance;
 
 set_value: op = 'set' path '=' formula_atom;
-add_instance: op = 'add' INTEGER? path;
+add_instance: op = 'add' path;

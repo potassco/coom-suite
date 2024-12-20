@@ -1,4 +1,6 @@
 
-set color[0] = "Yellow"
-// add basket
-add 2 carrier[0].bag
+set color[0] = Yellow
+// set size[0] = 14
+// add basket[0]
+// add carrier[0].bag[0]
+// add carrier[0].bag[1]
