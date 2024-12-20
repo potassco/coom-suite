@@ -1,5 +1,5 @@
 structure("product").
-feature("product","storageNeeded","bool",1,1).
+feature("product","storageNeeded","Bool",1,1).
 feature("product","bag","Bag",0,1).
 
 structure("Bag").

@@ -1,6 +1,6 @@
 coom_structure("product").
 coom_feature("product","color","Color",1,1).
-coom_feature("product","wheelSupport","bool",1,1).
+coom_feature("product","wheelSupport","Bool",1,1).
 coom_feature("product","frontWheel","Wheel",1,1).
 coom_feature("product","rearWheel","Wheel",1,1).
 

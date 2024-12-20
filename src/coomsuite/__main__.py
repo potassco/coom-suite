@@ -43,16 +43,26 @@ def main():
     elif args.command == "solve":
         log.info("Converting and solving COOM file %s", args.input)
         with TemporaryDirectory() as temp_dir:
-            options = (
+            clingo_options = (
                 [convert_instance(args.input, "model", temp_dir)]
                 + ([convert_instance(args.user_input, "user", temp_dir)] if args.user_input else [])
                 + unknown_args
             )
 
-            if args.show:
-                options.append("--outf=3")
+            if args.show_facts:
+                clingo_options.append("--outf=3")
 
-            clingo_main(COOMApp(solver=args.solver, output=args.output, show=args.show), options)
+            options = {
+                "solver": args.solver,
+                "output_format": args.output,
+                "show_facts": args.show_facts,
+                "preprocess": True,
+            }
+
+            clingo_main(
+                COOMApp(options=options),
+                clingo_options,
+            )
 
 
 if __name__ == "__main__":

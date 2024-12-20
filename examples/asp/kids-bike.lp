@@ -21,9 +21,9 @@ range("Wheel.size",14,20).
 % domain("Wheel.size",18).
 % domain("Wheel.size",20).
 
-discrete("bool").
-domain("bool", "True").
-domain("bool", "False").
+discrete("Bool").
+domain("Bool", "True").
+domain("Bool", "False").
 
 % Complete instance tree
 type("root","product").
@@ -48,7 +48,7 @@ type("root.rearWheel[0].size[0]","Wheel.size").
 parent("root.rearWheel[0].size[0]","root.rearWheel[0]").
 index("root.rearWheel[0].size[0]",0).
 
-type("root.wheelSupport[0]","bool").
+type("root.wheelSupport[0]","Bool").
 parent("root.wheelSupport[0]", "root").
 index("root.wheelSupport[0]",0).
 

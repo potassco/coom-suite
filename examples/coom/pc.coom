@@ -6,7 +6,7 @@ product {
          Efficiency             efficiency
          num            2500-2500  maxPrice
          num            0-2500  price
-         bool                   internetConn
+         Bool                   internetConn
     1..2 HDUnit                 hdunit
          Motherboard            motherboard
     1..2 Screen                 screen
