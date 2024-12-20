@@ -206,7 +206,7 @@ class COOMApp(Application):
         """
         user_input_ctl = Control(message_limit=0)
         user_input_ctl.load(get_encoding("user-check.lp"))
-        user_input_ctl.add("".join(facts))
+        user_input_ctl.add(facts)
         user_input_ctl.ground()
         with user_input_ctl.solve(yield_=True) as handle:
             unsat = [self._parse_user_input_unsat(s) for s in handle.model().symbols(shown=True)]
@@ -221,45 +221,47 @@ class COOMApp(Application):
         if self._options["show_facts"]:
             print("\n".join(processed_facts))  # nocoverage
         else:
-            user_input_check = self.check_user_input(processed_facts)
-            if user_input_check != []:
-                error_msg = "User input not valid.\n" + "\n".join(user_input_check)
-                raise ValueError(error_msg)
-
-            encoding = get_encoding(f"encoding-base-{self._options['solver']}.lp")
             facts = "".join(processed_facts)
+
             if self._options["solver"] == "preprocess":
                 control.add(facts)
                 control.ground()
                 control.solve()
+            else:
+                user_input_check = self.check_user_input(facts)
+                if user_input_check != []:
+                    error_msg = "User input not valid.\n" + "\n".join(user_input_check)
+                    raise ValueError(error_msg)
 
-            if self._options["solver"] == "clingo":
+                encoding = get_encoding(f"encoding-base-{self._options['solver']}.lp")
 
-                control.load(encoding)
-                control.add(facts)
+                if self._options["solver"] == "clingo":
+                    control.load(encoding)
+                    control.add(facts)
 
-                control.ground()
-                control.solve()
-            elif self._options["solver"] == "fclingo":
-                self._propagator.register(control)
-                self._propagator.configure("max-int", str(self.config.max_int))
-                self._propagator.configure("min-int", str(self.config.min_int))
+                    control.ground()
+                    control.solve()
 
-                control.add("base", [], facts)
-                control.add("base", [], THEORY)
+                elif self._options["solver"] == "fclingo":
+                    self._propagator.register(control)
+                    self._propagator.configure("max-int", str(self.config.max_int))
+                    self._propagator.configure("min-int", str(self.config.min_int))
 
-                with ProgramBuilder(control) as bld:
-                    hbt = HeadBodyTransformer()
+                    control.add("base", [], facts)
+                    control.add("base", [], THEORY)
 
-                    parse_files([encoding], lambda ast: bld.add(hbt.visit(ast)))
-                    pos = Position("<string>", 1, 1)
-                    loc = Location(pos, pos)
-                    for rule in hbt.rules_to_add:
-                        bld.add(Rule(loc, rule[0], rule[1]))  # nocoverage # Not sure when this is needed
+                    with ProgramBuilder(control) as bld:
+                        hbt = HeadBodyTransformer()
 
-                control.ground([("base", [])])
-                translator = Translator(control, self.config, Statistic())
-                translator.translate(control.theory_atoms)
+                        parse_files([encoding], lambda ast: bld.add(hbt.visit(ast)))
+                        pos = Position("<string>", 1, 1)
+                        loc = Location(pos, pos)
+                        for rule in hbt.rules_to_add:
+                            bld.add(Rule(loc, rule[0], rule[1]))  # nocoverage # Not sure when this is needed
 
-                self._propagator.prepare(control)
-                control.solve(on_model=self.on_model, on_statistics=self._propagator.on_statistics)
+                    control.ground([("base", [])])
+                    translator = Translator(control, self.config, Statistic())
+                    translator.translate(control.theory_atoms)
+
+                    self._propagator.prepare(control)
+                    control.solve(on_model=self.on_model, on_statistics=self._propagator.on_statistics)

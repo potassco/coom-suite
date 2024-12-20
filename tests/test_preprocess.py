@@ -53,18 +53,18 @@ class TestPreprocess(TestCase):
         self.run_test("require_with_partonomy2")
         self.run_test("require_with_partonomy_multiple_instances")
 
-    # def test_combinations_table(self) -> None:
-    #     """
-    #     Test preprocessing COOM combinations tables.
-    #     """
-    #     self.run_test("combination")
-    #     self.run_test("combination_with_structure")
-    #     self.run_test("combination_at_part_with_wildcard")
-    #     self.run_test("combination_at_part_multiple_instances")
+    def test_combinations_table(self) -> None:
+        """
+        Test preprocessing COOM combinations tables.
+        """
+        self.run_test("combination")
+        self.run_test("combination_with_structure")
+        self.run_test("combination_at_part_with_wildcard")
+        self.run_test("combination_at_part_multiple_instances")
 
-    # def test_numerical_calculations(self) -> None:
+    # def test_numerics(self) -> None:
     #     """
-    #     Test preprocessing arithmetics and numerical function in COOM.
+    #     Test preprocessing numeric features, arithmetics and numerical function in COOM.
     #     """
     #     self.run_test("simple_numeric_feature")
     #     self.run_test("simple_arithmetic_plus")
@@ -78,12 +78,10 @@ class TestPreprocess(TestCase):
 
     #     # Numerical functions (aggregates)
 
-    # def test_user_input(self) -> None:
-    #     """
-    #     Test preprocessing COOM user input.
-    #     """
-    #     self.run_test("set_discrete")
-    #     self.run_test("set_num")
-
-    #     self.run_test("add")
-    #     self.run_test("add2")
+    def test_user_input(self) -> None:
+        """
+        Test preprocessing COOM user input.
+        """
+        self.run_test("set_constant")
+        self.run_test("set_number")
+        self.run_test("add")

@@ -522,126 +522,240 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         ),
         "files": ["require_with_partonomy_multiple_instances.lp"],
     },
-    # "combination": {
-    #     "test": AndTest(
-    #         Assert(Any(), SupersetOf({'value("root.wheelSupport[0]","False")', 'value("root.wheel[0]","W20")'})),
-    #         Assert(Any(), SupersetOf({'value("root.wheelSupport[0]","False")', 'value("root.wheel[0]","W18")'})),
-    #         Assert(Any(), SupersetOf({'value("root.wheelSupport[0]","True")', 'value("root.wheel[0]","W16")'})),
-    #         Assert(Any(), SupersetOf({'value("root.wheelSupport[0]","True")', 'value("root.wheel[0]","W14")'})),
-    #         NumModels(4),
-    #     ),
-    #     "files": ["combination.lp"],
-    # },
-    # "combination_with_structure": {
-    #     "test": AndTest(
-    #         NumModels(8),
-    #         Assert(
-    #             All(),
-    #             Implies(
-    #                 Contains('value("root.wheelSupport[0]","True")'),
-    #                 And(
-    #                     Or(
-    #                         Contains('value("root.wheel[0].size[0]","W14")'),
-    #                         Contains('value("root.wheel[0].size[0]","W16")'),
-    #                     ),
-    #                     Or(
-    #                         Contains('value("root.wheel[1].size[0]","W14")'),
-    #                         Contains('value("root.wheel[1].size[0]","W16")'),
-    #                     ),
-    #                 ),
-    #             ),
-    #         ),
-    #         Assert(
-    #             All(),
-    #             Implies(
-    #                 Contains('value("root.wheelSupport[0]","False")'),
-    #                 And(
-    #                     Or(
-    #                         Contains('value("root.wheel[0].size[0]","W18")'),
-    #                         Contains('value("root.wheel[0].size[0]","W20")'),
-    #                     ),
-    #                     Or(
-    #                         Contains('value("root.wheel[1].size[0]","W18")'),
-    #                         Contains('value("root.wheel[1].size[0]","W20")'),
-    #                     ),
-    #                 ),
-    #             ),
-    #         ),
-    #     ),
-    #     "files": ["combination_with_structure.lp"],
-    # },
-    # "combination_at_part_with_wildcard": {
-    #     "test": AndTest(
-    #         NumModels(5),
-    #         Assert(
-    #             All(),
-    #             Implies(
-    #                 Contains('value("root.wheel[0].size[0]","W30")'),
-    #                 SupersetOf(
-    #                     {
-    #                         'value("root.wheel[0].material[0]","Aluminum")',
-    #                         'value("root.wheel[1].material[0]","Aluminum")',
-    #                     }
-    #                 ),
-    #             ),
-    #         ),
-    #     ),
-    #     "files": ["combination_at_part_with_wildcard.lp"],
-    # },
-    # "combination_at_part_multiple_instances": {
-    #     "test": AndTest(
-    #         NumModels(4),
-    #         Assert(
-    #             All(),
-    #             Implies(
-    #                 Contains('value("root.bike[0].material[0]","Carbon")'),
-    #                 SupersetOf(
-    #                     {
-    #                         'value("root.bike[0].wheel[0]","W28")',
-    #                         'value("root.bike[0].wheel[1]","W28")',
-    #                     }
-    #                 ),
-    #             ),
-    #         ),
-    #         Assert(
-    #             All(),
-    #             Implies(
-    #                 Contains('value("root.bike[0].material[0]","Aluminum")'),
-    #                 SupersetOf(
-    #                     {
-    #                         'value("root.bike[0].wheel[0]","W30")',
-    #                         'value("root.bike[0].wheel[1]","W30")',
-    #                     }
-    #                 ),
-    #             ),
-    #         ),
-    #         Assert(
-    #             All(),
-    #             Implies(
-    #                 Contains('value("root.bike[1].material[0]","Carbon")'),
-    #                 SupersetOf(
-    #                     {
-    #                         'value("root.bike[1].wheel[0]","W28")',
-    #                         'value("root.bike[1].wheel[1]","W28")',
-    #                     }
-    #                 ),
-    #             ),
-    #         ),
-    #         Assert(
-    #             All(),
-    #             Implies(
-    #                 Contains('value("root.bike[1].material[0]","Aluminum")'),
-    #                 SupersetOf(
-    #                     {
-    #                         'value("root.bike[1].wheel[0]","W30")',
-    #                         'value("root.bike[1].wheel[1]","W30")',
-    #                     }
-    #                 ),
-    #             ),
-    #         ),
-    #     ),
-    #     "files": ["combination_at_part_multiple_instances.lp"],
-    # },
+    "combination": {
+        "test": SingleModelEquals(
+            {
+                'discrete("Wheel")',
+                'discrete("Bool")',
+                'part("product")',
+                'constraint(("root.wheelSupport",1),"lowerbound")',
+                'constraint(("root.wheel",1),"lowerbound")',
+                'constraint((0,"root"),"table")',
+                'domain("Wheel","W14")',
+                'domain("Wheel","W16")',
+                'domain("Wheel","W18")',
+                'domain("Wheel","W20")',
+                'domain("Bool","True")',
+                'domain("Bool","False")',
+                'index("root.wheelSupport[0]",0)',
+                'index("root.wheel[0]",0)',
+                'parent("root.wheelSupport[0]","root")',
+                'parent("root.wheel[0]","root")',
+                'set("root.wheelSupport","root.wheelSupport[0]")',
+                'set("root.wheel","root.wheel[0]")',
+                'type("root","product")',
+                'type("root.wheelSupport[0]","Bool")',
+                'type("root.wheel[0]","Wheel")',
+                'allow(0,(0,0),"True")',
+                'allow(0,(1,0),"W14")',
+                'allow(0,(1,0),"W16")',
+                'allow(0,(0,1),"False")',
+                'allow(0,(1,1),"W18")',
+                'allow(0,(1,1),"W20")',
+                'column((0,"root"),0,0,"root.wheelSupport[0]")',
+                'column((0,"root"),0,1,"root.wheel[0]")',
+            }
+        ),
+        "files": ["combination.lp"],
+    },
+    "combination_with_structure": {
+        "test": SingleModelEquals(
+            {
+                'discrete("Size")',
+                'discrete("Bool")',
+                'part("product")',
+                'part("Wheel")',
+                'constraint(("root.wheelSupport",1),"lowerbound")',
+                'constraint(("root.wheel",2),"lowerbound")',
+                'constraint(("root.wheel[0].size",1),"lowerbound")',
+                'constraint(("root.wheel[1].size",1),"lowerbound")',
+                'constraint((0,"root"),"table")',
+                'domain("Size","W14")',
+                'domain("Size","W16")',
+                'domain("Size","W18")',
+                'domain("Size","W20")',
+                'domain("Bool","True")',
+                'domain("Bool","False")',
+                'index("root.wheelSupport[0]",0)',
+                'index("root.wheel[0]",0)',
+                'index("root.wheel[1]",1)',
+                'index("root.wheel[1].size[0]",0)',
+                'index("root.wheel[0].size[0]",0)',
+                'parent("root.wheelSupport[0]","root")',
+                'parent("root.wheel[0]","root")',
+                'parent("root.wheel[1]","root")',
+                'parent("root.wheel[1].size[0]","root.wheel[1]")',
+                'parent("root.wheel[0].size[0]","root.wheel[0]")',
+                'set("root.wheelSupport","root.wheelSupport[0]")',
+                'set("root.wheel","root.wheel[0]")',
+                'set("root.wheel","root.wheel[1]")',
+                'set("root.wheel[0].size","root.wheel[0].size[0]")',
+                'set("root.wheel[1].size","root.wheel[1].size[0]")',
+                'type("root","product")',
+                'type("root.wheelSupport[0]","Bool")',
+                'type("root.wheel[0]","Wheel")',
+                'type("root.wheel[1]","Wheel")',
+                'type("root.wheel[1].size[0]","Size")',
+                'type("root.wheel[0].size[0]","Size")',
+                'allow(0,(0,0),"True")',
+                'allow(0,(1,0),"W14")',
+                'allow(0,(1,0),"W16")',
+                'allow(0,(0,1),"False")',
+                'allow(0,(1,1),"W18")',
+                'allow(0,(1,1),"W20")',
+                'column((0,"root"),0,0,"root.wheelSupport[0]")',
+                'column((0,"root"),0,1,"root.wheel[0].size[0]")',
+                'column((0,"root"),1,0,"root.wheelSupport[0]")',
+                'column((0,"root"),1,1,"root.wheel[1].size[0]")',
+            }
+        ),
+        "files": ["combination_with_structure.lp"],
+    },
+    "combination_at_part_with_wildcard": {
+        "test": SingleModelEquals(
+            {
+                'discrete("Size")',
+                'discrete("Material")',
+                'part("product")',
+                'part("Wheel")',
+                'constraint(("root.wheel",2),"lowerbound")',
+                'constraint(("root.wheel[0].size",1),"lowerbound")',
+                'constraint(("root.wheel[1].size",1),"lowerbound")',
+                'constraint(("root.wheel[0].material",1),"lowerbound")',
+                'constraint(("root.wheel[1].material",1),"lowerbound")',
+                'constraint((0,"root.wheel[0]"),"table")',
+                'constraint((0,"root.wheel[1]"),"table")',
+                'constraint((1,"root.wheel[0].size[0]=root.wheel[1].size[0]"),"boolean")',
+                'constraint((1,"root.wheel[1].size[0]=root.wheel[1].size[0]"),"boolean")',
+                'constraint((1,"root.wheel[0].size[0]=root.wheel[0].size[0]"),"boolean")',
+                'constraint((1,"root.wheel[1].size[0]=root.wheel[0].size[0]"),"boolean")',
+                'domain("Size","W28")',
+                'domain("Size","W30")',
+                'domain("Material","Carbon")',
+                'domain("Material","Aluminum")',
+                'index("root.wheel[0]",0)',
+                'index("root.wheel[1]",1)',
+                'index("root.wheel[1].size[0]",0)',
+                'index("root.wheel[1].material[0]",0)',
+                'index("root.wheel[0].size[0]",0)',
+                'index("root.wheel[0].material[0]",0)',
+                'parent("root.wheel[0]","root")',
+                'parent("root.wheel[1]","root")',
+                'parent("root.wheel[1].size[0]","root.wheel[1]")',
+                'parent("root.wheel[1].material[0]","root.wheel[1]")',
+                'parent("root.wheel[0].size[0]","root.wheel[0]")',
+                'parent("root.wheel[0].material[0]","root.wheel[0]")',
+                'set("root.wheel","root.wheel[0]")',
+                'set("root.wheel","root.wheel[1]")',
+                'set("root.wheel[0].size","root.wheel[0].size[0]")',
+                'set("root.wheel[1].size","root.wheel[1].size[0]")',
+                'set("root.wheel[0].material","root.wheel[0].material[0]")',
+                'set("root.wheel[1].material","root.wheel[1].material[0]")',
+                'type("root","product")',
+                'type("root.wheel[0]","Wheel")',
+                'type("root.wheel[1]","Wheel")',
+                'type("root.wheel[1].size[0]","Size")',
+                'type("root.wheel[1].material[0]","Material")',
+                'type("root.wheel[0].size[0]","Size")',
+                'type("root.wheel[0].material[0]","Material")',
+                'allow(0,(0,0),"W28")',
+                'allow(0,(0,1),"W30")',
+                'allow(0,(1,1),"Aluminum")',
+                'binary("root.wheel[1].size[0]=root.wheel[0].size[0]","root.wheel[1].size[0]","=","root.wheel[0].size[0]")',
+                'binary("root.wheel[0].size[0]=root.wheel[0].size[0]","root.wheel[0].size[0]","=","root.wheel[0].size[0]")',
+                'binary("root.wheel[1].size[0]=root.wheel[1].size[0]","root.wheel[1].size[0]","=","root.wheel[1].size[0]")',
+                'binary("root.wheel[0].size[0]=root.wheel[1].size[0]","root.wheel[0].size[0]","=","root.wheel[1].size[0]")',
+                'column((0,"root.wheel[1]"),0,0,"root.wheel[1].size[0]")',
+                'column((0,"root.wheel[1]"),0,1,"root.wheel[1].material[0]")',
+                'column((0,"root.wheel[0]"),0,0,"root.wheel[0].size[0]")',
+                'column((0,"root.wheel[0]"),0,1,"root.wheel[0].material[0]")',
+            }
+        ),
+        "files": ["combination_at_part_with_wildcard.lp"],
+    },
+    "combination_at_part_multiple_instances": {
+        "test": SingleModelEquals(
+            {
+                'discrete("Wheel")',
+                'discrete("Material")',
+                'part("product")',
+                'part("Bike")',
+                'constraint(("root.bike",2),"lowerbound")',
+                'constraint(("root.bike[0].wheel",2),"lowerbound")',
+                'constraint(("root.bike[1].wheel",2),"lowerbound")',
+                'constraint(("root.bike[0].material",1),"lowerbound")',
+                'constraint(("root.bike[1].material",1),"lowerbound")',
+                'constraint((0,"root.bike[0]"),"table")',
+                'constraint((0,"root.bike[1]"),"table")',
+                'constraint((1,"root.bike[1].wheel[1]=root.bike[1].wheel[0]"),"boolean")',
+                'constraint((1,"root.bike[1].wheel[0]=root.bike[1].wheel[0]"),"boolean")',
+                'constraint((1,"root.bike[1].wheel[1]=root.bike[1].wheel[1]"),"boolean")',
+                'constraint((1,"root.bike[1].wheel[0]=root.bike[1].wheel[1]"),"boolean")',
+                'constraint((1,"root.bike[0].wheel[1]=root.bike[0].wheel[0]"),"boolean")',
+                'constraint((1,"root.bike[0].wheel[0]=root.bike[0].wheel[0]"),"boolean")',
+                'constraint((1,"root.bike[0].wheel[1]=root.bike[0].wheel[1]"),"boolean")',
+                'constraint((1,"root.bike[0].wheel[0]=root.bike[0].wheel[1]"),"boolean")',
+                'domain("Wheel","W28")',
+                'domain("Wheel","W30")',
+                'domain("Material","Carbon")',
+                'domain("Material","Aluminum")',
+                'index("root.bike[0]",0)',
+                'index("root.bike[1]",1)',
+                'index("root.bike[1].wheel[0]",0)',
+                'index("root.bike[1].wheel[1]",1)',
+                'index("root.bike[1].material[0]",0)',
+                'index("root.bike[0].wheel[0]",0)',
+                'index("root.bike[0].wheel[1]",1)',
+                'index("root.bike[0].material[0]",0)',
+                'parent("root.bike[0]","root")',
+                'parent("root.bike[1]","root")',
+                'parent("root.bike[1].wheel[0]","root.bike[1]")',
+                'parent("root.bike[1].wheel[1]","root.bike[1]")',
+                'parent("root.bike[1].material[0]","root.bike[1]")',
+                'parent("root.bike[0].wheel[0]","root.bike[0]")',
+                'parent("root.bike[0].wheel[1]","root.bike[0]")',
+                'parent("root.bike[0].material[0]","root.bike[0]")',
+                'set("root.bike","root.bike[0]")',
+                'set("root.bike","root.bike[1]")',
+                'set("root.bike[0].wheel","root.bike[0].wheel[0]")',
+                'set("root.bike[0].wheel","root.bike[0].wheel[1]")',
+                'set("root.bike[1].wheel","root.bike[1].wheel[0]")',
+                'set("root.bike[1].wheel","root.bike[1].wheel[1]")',
+                'set("root.bike[0].material","root.bike[0].material[0]")',
+                'set("root.bike[1].material","root.bike[1].material[0]")',
+                'type("root","product")',
+                'type("root.bike[0]","Bike")',
+                'type("root.bike[1]","Bike")',
+                'type("root.bike[1].wheel[0]","Wheel")',
+                'type("root.bike[1].wheel[1]","Wheel")',
+                'type("root.bike[1].material[0]","Material")',
+                'type("root.bike[0].wheel[0]","Wheel")',
+                'type("root.bike[0].wheel[1]","Wheel")',
+                'type("root.bike[0].material[0]","Material")',
+                'allow(0,(0,0),"W28")',
+                'allow(0,(1,0),"Carbon")',
+                'allow(0,(0,1),"W30")',
+                'allow(0,(1,1),"Aluminum")',
+                'binary("root.bike[0].wheel[0]=root.bike[0].wheel[1]","root.bike[0].wheel[0]","=","root.bike[0].wheel[1]")',
+                'binary("root.bike[0].wheel[1]=root.bike[0].wheel[1]","root.bike[0].wheel[1]","=","root.bike[0].wheel[1]")',
+                'binary("root.bike[0].wheel[0]=root.bike[0].wheel[0]","root.bike[0].wheel[0]","=","root.bike[0].wheel[0]")',
+                'binary("root.bike[0].wheel[1]=root.bike[0].wheel[0]","root.bike[0].wheel[1]","=","root.bike[0].wheel[0]")',
+                'binary("root.bike[1].wheel[0]=root.bike[1].wheel[1]","root.bike[1].wheel[0]","=","root.bike[1].wheel[1]")',
+                'binary("root.bike[1].wheel[1]=root.bike[1].wheel[1]","root.bike[1].wheel[1]","=","root.bike[1].wheel[1]")',
+                'binary("root.bike[1].wheel[0]=root.bike[1].wheel[0]","root.bike[1].wheel[0]","=","root.bike[1].wheel[0]")',
+                'binary("root.bike[1].wheel[1]=root.bike[1].wheel[0]","root.bike[1].wheel[1]","=","root.bike[1].wheel[0]")',
+                'column((0,"root.bike[1]"),0,0,"root.bike[1].wheel[0]")',
+                'column((0,"root.bike[1]"),1,0,"root.bike[1].wheel[1]")',
+                'column((0,"root.bike[0]"),0,0,"root.bike[0].wheel[0]")',
+                'column((0,"root.bike[0]"),1,0,"root.bike[0].wheel[1]")',
+                'column((0,"root.bike[1]"),0,1,"root.bike[1].material[0]")',
+                'column((0,"root.bike[1]"),1,1,"root.bike[1].material[0]")',
+                'column((0,"root.bike[0]"),0,1,"root.bike[0].material[0]")',
+                'column((0,"root.bike[0]"),1,1,"root.bike[0].material[0]")',
+            }
+        ),
+        "files": ["combination_at_part_multiple_instances.lp"],
+    },
     # "simple_numeric_feature": {
     #     "test": AndTest(
     #         Assert(Exact(1), Contains('value("root.size[0]",1)')),
@@ -738,47 +852,16 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     #     ),
     #     "files": ["parentheses.lp"],
     # },
-    # "set_discrete": {
-    #     "test": AndTest(NumModels(1), Assert(All(), Contains('value("root.color[0]","Yellow")'))),
-    #     "program": """
-    #         coom_structure("product").
-    #         coom_feature("product","color","Color",1,1).
-    #         coom_enumeration("Color").
-    #         coom_option("Color","Red").
-    #         coom_option("Color","Yellow").
-    #         coom_user_value("root.color[0]","Yellow").""",
-    # },
-    # "set_num": {
-    #     "test": AndTest(NumModels(1), Assert(All(), Contains('value("root.size[0]",5)'))),
-    #     "program": """
-    #         coom_structure("product").
-    #         coom_feature("product","size","num",1,1).
-    #         coom_range("product","size",1,10).
-    #         coom_user_value("root.size[0]",5).""",
-    # },
-    # "add": {
-    #     "test": AndTest(
-    #         NumModels(2),
-    #         Assert(All(), Contains('include("root.bag[0]")')),
-    #         Assert(Exact(1), Contains('include("root.bag[1]")')),
-    #     ),
-    #     "program": """
-    #         coom_structure("product").
-    #         coom_feature("product","bag","Bag",0,2).
-    #         coom_structure("Bag").
-    #         coom_user_include("root.bag[0]").""",
-    # },
-    # "add2": {
-    #     "test": AndTest(
-    #         NumModels(1),
-    #         Assert(All(), Contains('include("root.bag[0]")')),
-    #         Assert(All(), Contains('include("root.bag[1]")')),
-    #     ),
-    #     "program": """
-    #         coom_structure("product").
-    #         coom_feature("product","bag","Bag",0,2).
-    #         coom_structure("Bag").
-    #         coom_user_include("root.bag[0]").
-    #         coom_user_include("root.bag[1]").""",
-    # },
+    "set_constant": {
+        "test": SingleModelEquals({'user_value("root.color[0]","Yellow")'}),
+        "program": 'coom_user_value("root.color[0]","Yellow").',
+    },
+    "set_number": {
+        "test": SingleModelEquals({'user_value("root.size[0]",5)'}),
+        "program": 'coom_user_value("root.size[0]",5).',
+    },
+    "add": {
+        "test": SingleModelEquals({'user_include("root.bag[0]")'}),
+        "program": 'coom_user_include("root.bag[0]").',
+    },
 }
