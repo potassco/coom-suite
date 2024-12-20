@@ -118,7 +118,7 @@ attribute_constraint_column(T,Col+1,A) :- coom_attribute(T,A,_), Col = #count{ A
 cardinality_aux(X,N,Min) :- coom_feature(C,N,_,Min,_), type_aux(X,C).
 cardinality_aux(X,A,1)   :- coom_attribute(T,A,_),     type_aux(X,T).
 
-% Always include boolean enumeration
-coom_enumeration("bool").
-coom_option("bool", "True").
-coom_option("bool", "False").
+% Include boolean enumeration if needed
+coom_enumeration("Bool")     :- coom_feature(_,_,"Bool",_,_).
+coom_option("Bool", "True")  :- coom_feature(_,_,"Bool",_,_).
+coom_option("Bool", "False") :- coom_feature(_,_,"Bool",_,_).

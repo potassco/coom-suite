@@ -88,9 +88,9 @@ hit_row(Instance,Constraint,CI) :- allow(Constraint,(_,Row),_), constraint(Insta
                                              -1,Col': hit_cell(Instance,Constraint,CI,(Col',Row)) }.
 
 % Always include boolean enumeration
-enumeration("bool").
-option("bool", "True").
-option("bool", "False").
+enumeration("Bool").
+option("Bool", "True").
+option("Bool", "False").
 
 % Show statements
 #show .

@@ -3,7 +3,7 @@ Clingo application class extended to solve COOM configuration problems
 """
 
 import textwrap
-from typing import Callable, List, Optional, Sequence
+from typing import Any, Callable, Dict, List, Optional, Sequence
 
 from clingcon import ClingconTheory
 from clingo import Control, Model, Symbol
@@ -56,9 +56,10 @@ class COOMApp(Application):
     Application class extending clingo.
     """
 
-    _solver: str
-    _output: str
-    _show_facts: bool
+    _options: Dict[str, Any]
+    # _solver: str
+    # _output: str
+    # _show_facts: bool
     _istest: bool
     _log_level: str
     config: FclingoConfig
@@ -69,17 +70,17 @@ class COOMApp(Application):
     def __init__(
         self,
         log_level: str = "",
-        solver: str = "",
-        output: str = "",
-        show_facts: bool = False,
+        options: Optional[Dict[str, Any]] = None,
         istest: bool = False,
     ):
         """
         Create application.
         """
-        self._solver = "clingo" if solver == "" else solver
-        self._output = "asp" if output == "" else output
-        self._show_facts = show_facts
+        self._options = (
+            {"solver": "clingo", "output_format": "asp", "show_facts": False, "preprocess": True}
+            if options is None
+            else options
+        )
         self._istest = istest
         self._log_level = "WARNING" if log_level == "" else log_level
         self.config = FclingoConfig(MIN_INT, MAX_INT, Flag(False), Flag(False), DEF)
@@ -116,62 +117,7 @@ class COOMApp(Application):
         #     group, "view", "Visualize the first solution using clinguin", self._view
         # )
 
-    def on_model(self, model: Model) -> None:  # nocoverage
-        """
-        Function called after finding each model.
-        Args:
-            model (Model): clingo Model
-        """
-        if self._solver == "fclingo":
-            self._propagator.on_model(model)
-
-            if self._istest:
-                # this slows down solving considerably but makes tests for clingo and fclingo uniform
-                # better way?
-                model.extend(_get_valuation(model))
-
-        # log.debug("------- Full model -----") # disabled because makes solving much slower
-        # log.debug("\n".join([str(s) for s in model.symbols(atoms=True, shown=True, theory=True)]))
-
-    def print_model(self, model: Model, printer: Callable[[], None]) -> None:  # nocoverage
-        """
-        Print a model on the console.
-        """
-
-        if self._solver == "clingo":
-            output_symbols = model.symbols(shown=True)
-        elif self._solver == "fclingo":
-            output_symbols = [
-                atom
-                for atom in model.symbols(shown=True)
-                if not (atom.name == self.config.defined and len(atom.arguments) == 1)
-            ]
-            output_symbols.extend(_get_valuation(model))
-
-        print(_sym_to_prg(output_symbols, self._output))
-
-    def preprocess(self, files: List[str]) -> List[str]:
-        """
-        Preprocesses COOM ASP facts into a "grounded" configuration fact format
-        """
-        # pylint: disable=not-context-manager
-        input_files = files
-        preprocess = get_encoding("preprocess.lp")
-        input_files.append(preprocess)
-        enable_python()
-
-        pre_ctl = Control(message_limit=0)
-        for f in input_files:
-            pre_ctl.load(f)
-        if self._solver == "clingo":
-            pre_ctl.add("base", [], "discrete.")
-        pre_ctl.ground()
-        with pre_ctl.solve(yield_=True) as handle:
-            facts = [str(s) + "." for s in handle.model().symbols(shown=True)]
-
-        return facts
-
-    def parse_user_input_unsat(self, unsat: Symbol) -> str:
+    def _parse_user_input_unsat(self, unsat: Symbol) -> str:
         """
         Parses the unsat/2 predicates of the user input check
         """
@@ -198,16 +144,72 @@ class COOMApp(Application):
             raise ValueError(f"Unknown unsat type: {unsat_type}")  # nocoverage
         return msg
 
-    def check_user_input(self, facts: list[str]) -> list[str]:
+    def on_model(self, model: Model) -> None:  # nocoverage
+        """
+        Function called after finding each model.
+        Args:
+            model (Model): clingo Model
+        """
+        if self._options["solver"] == "fclingo":
+            self._propagator.on_model(model)
+
+            if self._istest:
+                # this slows down solving considerably but makes tests for clingo and fclingo uniform
+                # better way?
+                model.extend(_get_valuation(model))
+
+        # log.debug("------- Full model -----") # disabled because makes solving much slower
+        # log.debug("\n".join([str(s) for s in model.symbols(atoms=True, shown=True, theory=True)]))
+
+    def print_model(self, model: Model, printer: Callable[[], None]) -> None:  # nocoverage
+        """
+        Print a model on the console.
+        """
+
+        if self._options["solver"] == "clingo":
+            output_symbols = model.symbols(shown=True)
+        elif self._options["solver"] == "fclingo":
+            output_symbols = [
+                atom
+                for atom in model.symbols(shown=True)
+                if not (atom.name == self.config.defined and len(atom.arguments) == 1)
+            ]
+            output_symbols.extend(_get_valuation(model))
+
+        print(_sym_to_prg(output_symbols, self._options["output_format"]))
+
+    def preprocess(self, files: List[str]) -> List[str]:
+        """
+        Preprocesses COOM ASP facts into a "grounded" configuration fact format
+        """
+        # pylint: disable=not-context-manager
+        input_files = files
+        pre_ctl = Control(message_limit=0)
+        for f in input_files:
+            pre_ctl.load(f)
+
+        if self._options["preprocess"] or self._options["show_facts"]:
+            enable_python()
+            pre_ctl.load(get_encoding("preprocess.lp"))
+            if self._options["solver"] == "clingo":
+                pre_ctl.add("base", [], "discrete.")  # nocoverage
+
+        pre_ctl.ground()
+        with pre_ctl.solve(yield_=True) as handle:
+            facts = [str(s) + "." for s in handle.model().symbols(shown=True)]
+
+        return facts
+
+    def check_user_input(self, facts: str) -> list[str]:
         """
         Checks if the user input is valid and returns a clingo.SolveResult
         """
         user_input_ctl = Control(message_limit=0)
         user_input_ctl.load(get_encoding("user-check.lp"))
-        user_input_ctl.add("".join(facts))
+        user_input_ctl.add(facts)
         user_input_ctl.ground()
         with user_input_ctl.solve(yield_=True) as handle:
-            unsat = [self.parse_user_input_unsat(s) for s in handle.model().symbols(shown=True)]
+            unsat = [self._parse_user_input_unsat(s) for s in handle.model().symbols(shown=True)]
         return unsat
 
     def main(self, control: Control, files: Sequence[str]) -> None:
@@ -215,43 +217,51 @@ class COOMApp(Application):
         Main function ran on call.
         """
         processed_facts = self.preprocess(list(files))
-        if self._show_facts:
+
+        if self._options["show_facts"]:
             print("\n".join(processed_facts))  # nocoverage
         else:
-            user_input_check = self.check_user_input(processed_facts)
-            if user_input_check != []:
-                error_msg = "User input not valid.\n" + "\n".join(user_input_check)
-                raise ValueError(error_msg)
-
-            encoding = get_encoding(f"encoding-base-{self._solver}.lp")
             facts = "".join(processed_facts)
-            if self._solver == "clingo":
 
-                control.load(encoding)
+            if self._options["solver"] == "preprocess":
                 control.add(facts)
-
                 control.ground()
                 control.solve()
-            elif self._solver == "fclingo":
-                self._propagator.register(control)
-                self._propagator.configure("max-int", str(self.config.max_int))
-                self._propagator.configure("min-int", str(self.config.min_int))
+            else:
+                user_input_check = self.check_user_input(facts)
+                if user_input_check != []:
+                    error_msg = "User input not valid.\n" + "\n".join(user_input_check)
+                    raise ValueError(error_msg)
 
-                control.add("base", [], facts)
-                control.add("base", [], THEORY)
+                encoding = get_encoding(f"encoding-base-{self._options['solver']}.lp")
 
-                with ProgramBuilder(control) as bld:
-                    hbt = HeadBodyTransformer()
+                if self._options["solver"] == "clingo":
+                    control.load(encoding)
+                    control.add(facts)
 
-                    parse_files([encoding], lambda ast: bld.add(hbt.visit(ast)))
-                    pos = Position("<string>", 1, 1)
-                    loc = Location(pos, pos)
-                    for rule in hbt.rules_to_add:
-                        bld.add(Rule(loc, rule[0], rule[1]))  # nocoverage # Not sure when this is needed
+                    control.ground()
+                    control.solve()
 
-                control.ground([("base", [])])
-                translator = Translator(control, self.config, Statistic())
-                translator.translate(control.theory_atoms)
+                elif self._options["solver"] == "fclingo":
+                    self._propagator.register(control)
+                    self._propagator.configure("max-int", str(self.config.max_int))
+                    self._propagator.configure("min-int", str(self.config.min_int))
 
-                self._propagator.prepare(control)
-                control.solve(on_model=self.on_model, on_statistics=self._propagator.on_statistics)
+                    control.add("base", [], facts)
+                    control.add("base", [], THEORY)
+
+                    with ProgramBuilder(control) as bld:
+                        hbt = HeadBodyTransformer()
+
+                        parse_files([encoding], lambda ast: bld.add(hbt.visit(ast)))
+                        pos = Position("<string>", 1, 1)
+                        loc = Location(pos, pos)
+                        for rule in hbt.rules_to_add:
+                            bld.add(Rule(loc, rule[0], rule[1]))  # nocoverage # Not sure when this is needed
+
+                    control.ground([("base", [])])
+                    translator = Translator(control, self.config, Statistic())
+                    translator.translate(control.theory_atoms)
+
+                    self._propagator.prepare(control)
+                    control.solve(on_model=self.on_model, on_statistics=self._propagator.on_statistics)
