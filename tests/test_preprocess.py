@@ -79,7 +79,8 @@ class TestPreprocess(TestCase):
         self.run_test("simple_arithmetic_minus_default_left")
         self.run_test("parentheses")
 
-        # Numerical functions (aggregates)
+        self.run_test("count")
+        self.run_test("sum")
 
     def test_user_input(self) -> None:
         """
