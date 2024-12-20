@@ -25,6 +25,18 @@ class TestPreprocess(TestCase):
         Test preprocessing COOM structures
         """
         self.run_test("empty_product")
+        self.run_test("structure_mandatory")
+        self.run_test("structure_optional")
+        self.run_test("structure_nested")
+        self.run_test("structure_nested_optional")
+
+    def test_enumeration(self) -> None:
+        """
+        Test preprocessing COOM enumerations.
+        """
+        self.run_test("enumeration")
+        self.run_test("bool_enumeration")
+        self.run_test("attribute")
 
 
 #     def test_boolean_constraints(self) -> None:
@@ -48,27 +60,6 @@ class TestPreprocess(TestCase):
 #     """
 #     self.run_test("combination")
 
-# def test_enumeration(self) -> None:
-#     """
-#     Test solving enumeration features (clingo).
-#     """
-#     self.run_test("enumeration")
-#     self.run_test("bool_enumeration")
-
-# def test_attribute(self) -> None:
-#     """
-#     Test solving enumeration features with attributes (clingo).
-#     """
-#     self.run_test("attribute")
-
-# def test_partonomy(self) -> None:
-#     """
-#     Test solving partonomy features (clingo).
-#     """
-#     self.run_test("structure")
-#     self.run_test("structure_optional")
-#     self.run_test("structure_nested")
-#     self.run_test("structure_nested_optional")
 
 # def test_require_with_partonomy(self) -> None:
 #     """

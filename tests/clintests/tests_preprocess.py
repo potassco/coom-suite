@@ -15,7 +15,176 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "empty_product": {
         "test": SingleModelEquals({'part("product")', 'type("root","product")'}),
         "program": 'coom_structure("product").',
-    }
+    },
+    "structure_mandatory": {
+        "test": SingleModelEquals(
+            {
+                'part("product")',
+                'part("Wheel")',
+                'constraint(("root.wheel",1),"lowerbound")',
+                'index("root.wheel[0]",0)',
+                'parent("root.wheel[0]","root")',
+                'set("root.wheel","root.wheel[0]")',
+                'type("root","product")',
+                'type("root.wheel[0]","Wheel")',
+            }
+        ),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","wheel","Wheel",1,1).
+            coom_structure("Wheel").""",
+    },
+    "structure_optional": {
+        "test": SingleModelEquals(
+            {
+                'part("product")',
+                'part("Wheel")',
+                'constraint(("root.wheel",0),"lowerbound")',
+                'index("root.wheel[0]",0)',
+                'parent("root.wheel[0]","root")',
+                'set("root.wheel","root.wheel[0]")',
+                'type("root","product")',
+                'type("root.wheel[0]","Wheel")',
+            }
+        ),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","wheel","Wheel",0,1).
+            coom_structure("Wheel").""",
+    },
+    "structure_nested": {
+        "test": SingleModelEquals(
+            {
+                'part("product")',
+                'part("Carrier")',
+                'part("Bag")',
+                'constraint(("root.carrier",1),"lowerbound")',
+                'constraint(("root.carrier[0].bag",1),"lowerbound")',
+                'index("root.carrier[0]",0)',
+                'index("root.carrier[0].bag[0]",0)',
+                'parent("root.carrier[0]","root")',
+                'parent("root.carrier[0].bag[0]","root.carrier[0]")',
+                'set("root.carrier","root.carrier[0]")',
+                'set("root.carrier[0].bag","root.carrier[0].bag[0]")',
+                'type("root","product")',
+                'type("root.carrier[0]","Carrier")',
+                'type("root.carrier[0].bag[0]","Bag")',
+            }
+        ),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","carrier","Carrier",1,1).
+            coom_structure("Carrier").
+            coom_feature("Carrier","bag","Bag",1,1).
+            coom_structure("Bag").""",
+    },
+    "structure_nested_optional": {
+        "test": SingleModelEquals(
+            {
+                'part("product")',
+                'part("Carrier")',
+                'part("Bag")',
+                'constraint(("root.carrier",0),"lowerbound")',
+                'constraint(("root.carrier[0].bag",0),"lowerbound")',
+                'index("root.carrier[0]",0)',
+                'index("root.carrier[0].bag[0]",0)',
+                'index("root.carrier[0].bag[1]",1)',
+                'parent("root.carrier[0]","root")',
+                'parent("root.carrier[0].bag[0]","root.carrier[0]")',
+                'parent("root.carrier[0].bag[1]","root.carrier[0]")',
+                'set("root.carrier","root.carrier[0]")',
+                'set("root.carrier[0].bag","root.carrier[0].bag[0]")',
+                'set("root.carrier[0].bag","root.carrier[0].bag[1]")',
+                'type("root","product")',
+                'type("root.carrier[0]","Carrier")',
+                'type("root.carrier[0].bag[0]","Bag")',
+                'type("root.carrier[0].bag[1]","Bag")',
+            }
+        ),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","carrier","Carrier",0,1).
+            coom_structure("Carrier").
+            coom_feature("Carrier","bag","Bag",0,2).
+            coom_structure("Bag").""",
+    },
+    "enumeration": {
+        "test": SingleModelEquals(
+            {
+                'discrete("Color")',
+                'part("product")',
+                'constraint(("root.color",1),"lowerbound")',
+                'domain("Color","Red")',
+                'domain("Color","Green")',
+                'domain("Color","Blue")',
+                'index("root.color[0]",0)',
+                'parent("root.color[0]","root")',
+                'set("root.color","root.color[0]")',
+                'type("root","product")',
+                'type("root.color[0]","Color")',
+            }
+        ),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","color","Color",1,1).
+            coom_enumeration("Color").
+            coom_option("Color", "Red").
+            coom_option("Color", "Green").
+            coom_option("Color", "Blue").""",
+    },
+    "bool_enumeration": {
+        "test": SingleModelEquals(
+            {
+                'discrete("Bool")',
+                'part("product")',
+                'constraint(("root.boolean",1),"lowerbound")',
+                'domain("Bool","True")',
+                'domain("Bool","False")',
+                'index("root.boolean[0]",0)',
+                'parent("root.boolean[0]","root")',
+                'set("root.boolean","root.boolean[0]")',
+                'type("root","product")',
+                'type("root.boolean[0]","Bool")',
+            }
+        ),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","boolean","Bool",1,1).""",
+    },
+    "attribute": {
+        "test": SingleModelEquals(
+            {
+                'discrete("Wheel")',
+                'integer("Wheel.size")',
+                'part("product")',
+                'constraint(("root.wheel",1),"lowerbound")',
+                'constraint(("root.wheel[0].size",1),"lowerbound")',
+                'constraint(("Wheel","root.wheel[0]"),"table")',
+                'domain("Wheel","W14")',
+                'index("root.wheel[0]",0)',
+                'index("root.wheel[0].size[0]",0)',
+                'parent("root.wheel[0]","root")',
+                'parent("root.wheel[0].size[0]","root.wheel[0]")',
+                'set("root.wheel","root.wheel[0]")',
+                'set("root.wheel[0].size","root.wheel[0].size[0]")',
+                'type("root","product")',
+                'type("root.wheel[0]","Wheel")',
+                'type("root.wheel[0].size[0]","Wheel.size")',
+                'allow("Wheel",(0,0),"W14")',
+                'allow("Wheel",(1,0),14)',
+                'range("Wheel.size",14,14)',
+                'column(("Wheel","root.wheel[0]"),0,1,"root.wheel[0].size[0]")',
+                'column(("Wheel","root.wheel[0]"),0,0,"root.wheel[0]")',
+            }
+        ),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","wheel","Wheel",1,1).
+            coom_enumeration("Wheel").
+            coom_attribute("Wheel","size","num").
+            coom_option("Wheel", "W14").
+            coom_attribute_value("Wheel","W14","size",14).""",
+    },
     # "require_with_number": {
     #     "test": Assert(All(), ContainsTheory(('value("root.wheel[0].size[0]",27)'))),
     #     "files": ["require_with_number.lp"],
@@ -73,105 +242,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     #         NumModels(4),
     #     ),
     #     "files": ["combination.lp"],
-    # },
-    # "enumeration": {
-    #     "test": AndTest(
-    #         Assert(Exact(1), Contains('value("root.color[0]","Red")')),
-    #         Assert(Exact(1), Contains('value("root.color[0]","Green")')),
-    #         Assert(Exact(1), Contains('value("root.color[0]","Blue")')),
-    #         NumModels(3),
-    #     ),
-    #     "program": """
-    #         coom_structure("product").
-    #         coom_feature("product","color","Color",1,1).
-    #         coom_enumeration("Color").
-    #         coom_option("Color", "Red").
-    #         coom_option("Color", "Green").
-    #         coom_option("Color", "Blue").""",
-    # },
-    # "bool_enumeration": {
-    #     "test": AndTest(
-    #         Assert(Exact(1), Contains('value("root.boolean[0]","True")')),
-    #         Assert(Exact(1), Contains('value("root.boolean[0]","False")')),
-    #         NumModels(2),
-    #     ),
-    #     "program": """
-    #     coom_structure("product").
-    #     coom_feature("product","boolean","Bool",1,1).""",
-    # },
-    # "attribute": {
-    #     "test": Assert(
-    #         Exact(1), SupersetOfTheory({'value("root.wheel[0].size[0]",14)', 'value("root.wheel[0]","W14")'})
-    #     ),
-    #     "ftest": Assert(
-    #         Exact(1),
-    #         SupersetOfTheory({'value("root.wheel[0].size[0]",14)', 'value("root.wheel[0]","W14")'}, check_theory=True),
-    #     ),
-    #     "program": """
-    #     coom_structure("product").
-    #     coom_feature("product","wheel","Wheel",1,1).
-    #     coom_enumeration("Wheel").
-    #     coom_attribute("Wheel","size","num").
-    #     coom_option("Wheel", "W14").
-    #     coom_attribute_value("Wheel","W14","size",14).""",
-    # },
-    # "structure": {
-    #     "test": AndTest(
-    #         Assert(Exact(1), Contains('include("root.wheel[0]")')),
-    #         NumModels(1),
-    #     ),
-    #     "program": """
-    #     coom_structure("product").
-    #     coom_feature("product","wheel","Wheel",1,1).
-    #     coom_structure("Wheel").""",
-    # },
-    # "structure_optional": {
-    #     "test": AndTest(
-    #         Assert(Exact(1), Contains('include("root.basket[0]")')),
-    #         NumModels(2),
-    #     ),
-    #     "program": """
-    #     coom_structure("product").
-    #     coom_feature("product","basket","Basket",0,1).
-    #     coom_structure("Basket").""",
-    # },
-    # "structure_nested": {
-    #     "test": AndTest(
-    #         Assert(
-    #             Exact(1),
-    #             SupersetOf({'include("root.carrier[0]")', 'include("root.carrier[0].bag[0]")'}),
-    #         ),
-    #         NumModels(1),
-    #     ),
-    #     "program": """
-    #     coom_structure("product").
-    #     coom_feature("product","carrier","Carrier",1,1).
-    #     coom_structure("Carrier").
-    #     coom_feature("Carrier","bag","Bag",1,1).
-    #     coom_structure("Bag").""",
-    # },
-    # "structure_nested_optional": {
-    #     "test": AndTest(
-    #         Assert(Exact(3), Contains('include("root.carrier[0]")')),
-    #         Assert(Exact(2), Contains('include("root.carrier[0].bag[0]")')),
-    #         Assert(
-    #             Exact(1),
-    #             SupersetOf(
-    #                 {
-    #                     'include("root.carrier[0]")',
-    #                     'include("root.carrier[0].bag[0]")',
-    #                     'include("root.carrier[0].bag[1]")',
-    #                 }
-    #             ),
-    #         ),
-    #         NumModels(4),
-    #     ),
-    #     "program": """
-    #     coom_structure("product").
-    #     coom_feature("product","carrier","Carrier",0,1).
-    #     coom_structure("Carrier").
-    #     coom_feature("Carrier","bag","Bag",0,2).
-    #     coom_structure("Bag").""",
     # },
     # "require_with_partonomy": {
     #     "test": Assert(All(), Contains('value("root.basket[0].color[0]","Red")')),
