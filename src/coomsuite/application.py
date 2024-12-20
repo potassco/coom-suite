@@ -200,7 +200,7 @@ class COOMApp(Application):
 
         return facts
 
-    def check_user_input(self, facts: list[str]) -> list[str]:
+    def check_user_input(self, facts: str) -> list[str]:
         """
         Checks if the user input is valid and returns a clingo.SolveResult
         """
