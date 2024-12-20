@@ -36,15 +36,16 @@ class ASPUserInputVisitor(UserInputVisitor):
     def visitSet_value(self, ctx: UserInputParser.Set_valueContext):
         path = self.context + ctx.path().getText()
         value = ctx.formula_atom().getText()
-        self.output_asp.append(f'user_value("root.{path}",{value}).')
+        is_str = ctx.formula_atom().path() is not None
+        if is_str:
+            self.output_asp.append(f'user_value("root.{path}","{value}").')
+        else:
+            self.output_asp.append(f'user_value("root.{path}",{value}).')
         super().visitSet_value(ctx)
 
     def visitAdd_instance(self, ctx: UserInputParser.Add_instanceContext):
         path = self.context + ctx.path().getText()
-        INT = ctx.INTEGER()
-        num_instance = int(INT.getText()) if INT is not None else 1
-        for i in range(num_instance):
-            self.output_asp.append(f'user_include("root.{path}[{i}]").')
+        self.output_asp.append(f'user_include("root.{path}").')
         super().visitAdd_instance(ctx)
 
 

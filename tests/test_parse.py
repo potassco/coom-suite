@@ -17,7 +17,7 @@ class TestCOOMUserParser(TestCase):
         Test parsing the 'set' keyword
         used for setting values.
         """
-        self.assertEqual(parse_coom('set color[0] = "Red"', grammar="user"), ['user_value("root.color[0]","Red").'])
+        self.assertEqual(parse_coom("set color[0] = Red", grammar="user"), ['user_value("root.color[0]","Red").'])
         self.assertEqual(
             parse_coom("set frontWheel[0].size[0] = 23", grammar="user"),
             ['user_value("root.frontWheel[0].size[0]",23).'],
@@ -28,9 +28,9 @@ class TestCOOMUserParser(TestCase):
         Test parsing the 'add' keyword
         used for adding instances of objects.
         """
-        self.assertEqual(parse_coom("add basket", grammar="user"), ['user_include("root.basket[0]").'])
+        self.assertEqual(parse_coom("add basket[0]", grammar="user"), ['user_include("root.basket[0]").'])
         self.assertEqual(
-            parse_coom("add 2 wheels", grammar="user"),
+            parse_coom("add wheels[0] add wheels[1]", grammar="user"),
             ['user_include("root.wheels[0]").', 'user_include("root.wheels[1]").'],
         )
 
@@ -39,7 +39,7 @@ class TestCOOMUserParser(TestCase):
         Test parsing a user input block.
         """
         self.assertEqual(
-            parse_coom('blockinput basket[0] {set color[0] = "Yellow"}', grammar="user"),
+            parse_coom("blockinput basket[0] {set color[0] = Yellow}", grammar="user"),
             ['user_value("root.basket[0].color[0]","Yellow").'],
         )
 
