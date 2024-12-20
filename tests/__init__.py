@@ -58,7 +58,7 @@ def run_test(
         ctl_args (Optional[List[str]], optional): List of arguments for clingo.Control. Defaults to [].
     """
     solver = kwargs.get("solver", "clingo")
-    is_preprocess = True if solver == "preprocess" else False
+    is_preprocess = solver == "preprocess"
     options = {
         "solver": solver,
         "output_format": kwargs.get("output_format", "asp"),

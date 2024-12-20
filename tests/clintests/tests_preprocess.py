@@ -7,6 +7,7 @@ The key of the dictionary corresponds to the name of the test.
 All tests run with clingo.
 """
 
+# pylint: disable=line-too-long
 from typing import Any
 
 from . import SingleModelEquals
