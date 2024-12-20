@@ -57,14 +57,18 @@ def run_test(
         program (Optional[str], optional): A clingo program. Defaults to ""
         ctl_args (Optional[List[str]], optional): List of arguments for clingo.Control. Defaults to [].
     """
+    solver = kwargs.get("solver", "clingo")
+    is_preprocess = True if solver == "preprocess" else False
     options = {
-        "solver": kwargs.get("solver", "clingo"),
+        "solver": solver,
         "output_format": kwargs.get("output_format", "asp"),
         "show_facts": False,
-        "preprocess": kwargs.get("preprocess", False),
+        "preprocess": is_preprocess,
     }
     coom_app = COOMApp(options=options, istest=True)
-    file_paths = [join("examples", "tests", "solve", f) for f in files] if files else None
+    file_paths = (
+        [join("examples", "tests", "solve" if not is_preprocess else "preprocess", f) for f in files] if files else None
+    )
     ctl_args = [] if ctl_args is None else ctl_args
     solver = AppSolver(application=coom_app, files=file_paths, program=program, arguments=ctl_args)
     test_copy = deepcopy(test)

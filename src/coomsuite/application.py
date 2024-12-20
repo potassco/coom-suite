@@ -192,7 +192,7 @@ class COOMApp(Application):
             enable_python()
             pre_ctl.load(get_encoding("preprocess.lp"))
             if self._options["solver"] == "clingo":
-                pre_ctl.add("base", [], "discrete.")
+                pre_ctl.add("base", [], "discrete.")  # nocoverage
 
         pre_ctl.ground()
         with pre_ctl.solve(yield_=True) as handle:

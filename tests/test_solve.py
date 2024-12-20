@@ -18,7 +18,7 @@ class TestClingo(TestCase):
         Runs a clintest test with the clingo encoding.
         """
         test, program, files = unpack_test(test_name, TESTS_SOLVE)
-        run_test(test, files=files, program=program, ctl_args=["0"], solver="clingo", preprocess="False")
+        run_test(test, files=files, program=program, ctl_args=["0"], solver="clingo")
 
     def test_structure(self) -> None:
         """
