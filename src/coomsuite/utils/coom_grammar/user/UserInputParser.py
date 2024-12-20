@@ -14,39 +14,38 @@ else:
 def serializedATN():
     with StringIO() as buf:
         buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\31")
-        buf.write("j\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b")
+        buf.write("g\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b")
         buf.write("\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\3\2\3\2")
         buf.write("\7\2\35\n\2\f\2\16\2 \13\2\3\2\3\2\3\3\3\3\3\3\3\3\7\3")
         buf.write("(\n\3\f\3\16\3+\13\3\3\3\3\3\3\4\3\4\5\4\61\n\4\3\5\3")
-        buf.write("\5\3\5\3\5\3\5\3\6\3\6\5\6:\n\6\3\6\3\6\3\7\5\7?\n\7\3")
-        buf.write("\7\3\7\3\b\3\b\3\b\7\bF\n\b\f\b\16\bI\13\b\3\t\3\t\3\t")
-        buf.write("\3\t\3\t\5\tP\n\t\3\t\3\t\5\tT\n\t\3\n\3\n\3\n\3\n\5\n")
-        buf.write("Z\n\n\5\n\\\n\n\3\13\3\13\3\f\3\f\5\fb\n\f\3\r\3\r\3\r")
-        buf.write("\3\r\5\rh\n\r\3\r\2\2\16\2\4\6\b\n\f\16\20\22\24\26\30")
-        buf.write("\2\3\4\2\n\n\24\25\2l\2\36\3\2\2\2\4#\3\2\2\2\6\60\3\2")
-        buf.write("\2\2\b\62\3\2\2\2\n\67\3\2\2\2\f>\3\2\2\2\16B\3\2\2\2")
-        buf.write("\20J\3\2\2\2\22[\3\2\2\2\24]\3\2\2\2\26a\3\2\2\2\30g\3")
-        buf.write("\2\2\2\32\35\5\4\3\2\33\35\5\6\4\2\34\32\3\2\2\2\34\33")
-        buf.write("\3\2\2\2\35 \3\2\2\2\36\34\3\2\2\2\36\37\3\2\2\2\37!\3")
-        buf.write('\2\2\2 \36\3\2\2\2!"\7\2\2\3"\3\3\2\2\2#$\7\3\2\2$%')
-        buf.write("\5\16\b\2%)\7\4\2\2&(\5\6\4\2'&\3\2\2\2(+\3\2\2\2)'")
-        buf.write("\3\2\2\2)*\3\2\2\2*,\3\2\2\2+)\3\2\2\2,-\7\5\2\2-\5\3")
-        buf.write("\2\2\2.\61\5\b\5\2/\61\5\n\6\2\60.\3\2\2\2\60/\3\2\2\2")
-        buf.write("\61\7\3\2\2\2\62\63\7\6\2\2\63\64\5\16\b\2\64\65\7\7\2")
-        buf.write("\2\65\66\5\30\r\2\66\t\3\2\2\2\679\7\b\2\28:\7\24\2\2")
-        buf.write("98\3\2\2\29:\3\2\2\2:;\3\2\2\2;<\5\16\b\2<\13\3\2\2\2")
-        buf.write("=?\7\t\2\2>=\3\2\2\2>?\3\2\2\2?@\3\2\2\2@A\t\2\2\2A\r")
-        buf.write("\3\2\2\2BG\5\20\t\2CD\7\13\2\2DF\5\20\t\2EC\3\2\2\2FI")
-        buf.write("\3\2\2\2GE\3\2\2\2GH\3\2\2\2H\17\3\2\2\2IG\3\2\2\2JS\5")
-        buf.write("\24\13\2KL\7\f\2\2LO\5\22\n\2MN\7\r\2\2NP\5\22\n\2OM\3")
-        buf.write("\2\2\2OP\3\2\2\2PQ\3\2\2\2QR\7\16\2\2RT\3\2\2\2SK\3\2")
-        buf.write("\2\2ST\3\2\2\2T\21\3\2\2\2U\\\7\24\2\2VY\7\17\2\2WX\7")
-        buf.write("\t\2\2XZ\7\24\2\2YW\3\2\2\2YZ\3\2\2\2Z\\\3\2\2\2[U\3\2")
-        buf.write("\2\2[V\3\2\2\2\\\23\3\2\2\2]^\7\23\2\2^\25\3\2\2\2_b\7")
-        buf.write("\20\2\2`b\b\f\1\2a_\3\2\2\2a`\3\2\2\2b\27\3\2\2\2ch\7")
-        buf.write("\21\2\2dh\7\22\2\2eh\5\f\7\2fh\5\16\b\2gc\3\2\2\2gd\3")
-        buf.write("\2\2\2ge\3\2\2\2gf\3\2\2\2h\31\3\2\2\2\17\34\36)\609>")
-        buf.write("GOSY[ag")
+        buf.write("\5\3\5\3\5\3\5\3\6\3\6\3\6\3\7\5\7<\n\7\3\7\3\7\3\b\3")
+        buf.write("\b\3\b\7\bC\n\b\f\b\16\bF\13\b\3\t\3\t\3\t\3\t\3\t\5\t")
+        buf.write("M\n\t\3\t\3\t\5\tQ\n\t\3\n\3\n\3\n\3\n\5\nW\n\n\5\nY\n")
+        buf.write("\n\3\13\3\13\3\f\3\f\5\f_\n\f\3\r\3\r\3\r\3\r\5\re\n\r")
+        buf.write("\3\r\2\2\16\2\4\6\b\n\f\16\20\22\24\26\30\2\3\4\2\n\n")
+        buf.write("\24\25\2h\2\36\3\2\2\2\4#\3\2\2\2\6\60\3\2\2\2\b\62\3")
+        buf.write("\2\2\2\n\67\3\2\2\2\f;\3\2\2\2\16?\3\2\2\2\20G\3\2\2\2")
+        buf.write("\22X\3\2\2\2\24Z\3\2\2\2\26^\3\2\2\2\30d\3\2\2\2\32\35")
+        buf.write("\5\4\3\2\33\35\5\6\4\2\34\32\3\2\2\2\34\33\3\2\2\2\35")
+        buf.write(" \3\2\2\2\36\34\3\2\2\2\36\37\3\2\2\2\37!\3\2\2\2 \36")
+        buf.write('\3\2\2\2!"\7\2\2\3"\3\3\2\2\2#$\7\3\2\2$%\5\16\b\2%')
+        buf.write(")\7\4\2\2&(\5\6\4\2'&\3\2\2\2(+\3\2\2\2)'\3\2\2\2)*")
+        buf.write("\3\2\2\2*,\3\2\2\2+)\3\2\2\2,-\7\5\2\2-\5\3\2\2\2.\61")
+        buf.write("\5\b\5\2/\61\5\n\6\2\60.\3\2\2\2\60/\3\2\2\2\61\7\3\2")
+        buf.write("\2\2\62\63\7\6\2\2\63\64\5\16\b\2\64\65\7\7\2\2\65\66")
+        buf.write("\5\30\r\2\66\t\3\2\2\2\678\7\b\2\289\5\16\b\29\13\3\2")
+        buf.write("\2\2:<\7\t\2\2;:\3\2\2\2;<\3\2\2\2<=\3\2\2\2=>\t\2\2\2")
+        buf.write(">\r\3\2\2\2?D\5\20\t\2@A\7\13\2\2AC\5\20\t\2B@\3\2\2\2")
+        buf.write("CF\3\2\2\2DB\3\2\2\2DE\3\2\2\2E\17\3\2\2\2FD\3\2\2\2G")
+        buf.write("P\5\24\13\2HI\7\f\2\2IL\5\22\n\2JK\7\r\2\2KM\5\22\n\2")
+        buf.write("LJ\3\2\2\2LM\3\2\2\2MN\3\2\2\2NO\7\16\2\2OQ\3\2\2\2PH")
+        buf.write("\3\2\2\2PQ\3\2\2\2Q\21\3\2\2\2RY\7\24\2\2SV\7\17\2\2T")
+        buf.write("U\7\t\2\2UW\7\24\2\2VT\3\2\2\2VW\3\2\2\2WY\3\2\2\2XR\3")
+        buf.write("\2\2\2XS\3\2\2\2Y\23\3\2\2\2Z[\7\23\2\2[\25\3\2\2\2\\")
+        buf.write("_\7\20\2\2]_\b\f\1\2^\\\3\2\2\2^]\3\2\2\2_\27\3\2\2\2")
+        buf.write("`e\7\21\2\2ae\7\22\2\2be\5\f\7\2ce\5\16\b\2d`\3\2\2\2")
+        buf.write("da\3\2\2\2db\3\2\2\2dc\3\2\2\2e\31\3\2\2\2\16\34\36)\60")
+        buf.write(";DLPVX^d")
         return buf.getvalue()
 
 
@@ -446,9 +445,6 @@ class UserInputParser(Parser):
         def path(self):
             return self.getTypedRuleContext(UserInputParser.PathContext, 0)
 
-        def INTEGER(self):
-            return self.getToken(UserInputParser.INTEGER, 0)
-
         def getRuleIndex(self):
             return UserInputParser.RULE_add_instance
 
@@ -470,19 +466,11 @@ class UserInputParser(Parser):
 
         localctx = UserInputParser.Add_instanceContext(self, self._ctx, self.state)
         self.enterRule(localctx, 8, self.RULE_add_instance)
-        self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 53
             localctx.op = self.match(UserInputParser.T__5)
-            self.state = 55
-            self._errHandler.sync(self)
-            _la = self._input.LA(1)
-            if _la == UserInputParser.INTEGER:
-                self.state = 54
-                self.match(UserInputParser.INTEGER)
-
-            self.state = 57
+            self.state = 54
             self.path()
         except RecognitionException as re:
             localctx.exception = re
@@ -529,14 +517,14 @@ class UserInputParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 60
+            self.state = 57
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la == UserInputParser.T__6:
-                self.state = 59
+                self.state = 56
                 self.match(UserInputParser.T__6)
 
-            self.state = 62
+            self.state = 59
             _la = self._input.LA(1)
             if not (
                 (
@@ -601,17 +589,17 @@ class UserInputParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 64
+            self.state = 61
             self.path_item()
-            self.state = 69
+            self.state = 66
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while _la == UserInputParser.T__8:
-                self.state = 65
+                self.state = 62
                 self.match(UserInputParser.T__8)
-                self.state = 66
+                self.state = 63
                 self.path_item()
-                self.state = 71
+                self.state = 68
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
@@ -663,26 +651,26 @@ class UserInputParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 72
+            self.state = 69
             self.name()
-            self.state = 81
+            self.state = 78
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la == UserInputParser.T__9:
-                self.state = 73
+                self.state = 70
                 self.match(UserInputParser.T__9)
-                self.state = 74
+                self.state = 71
                 self.path_index()
-                self.state = 77
+                self.state = 74
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if _la == UserInputParser.T__10:
-                    self.state = 75
+                    self.state = 72
                     self.match(UserInputParser.T__10)
-                    self.state = 76
+                    self.state = 73
                     self.path_index()
 
-                self.state = 79
+                self.state = 76
                 self.match(UserInputParser.T__11)
 
         except RecognitionException as re:
@@ -726,24 +714,24 @@ class UserInputParser(Parser):
         self.enterRule(localctx, 16, self.RULE_path_index)
         self._la = 0  # Token type
         try:
-            self.state = 89
+            self.state = 86
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [UserInputParser.INTEGER]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 83
+                self.state = 80
                 self.match(UserInputParser.INTEGER)
             elif token in [UserInputParser.T__12]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 84
+                self.state = 81
                 self.match(UserInputParser.T__12)
-                self.state = 87
+                self.state = 84
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if _la == UserInputParser.T__6:
-                    self.state = 85
+                    self.state = 82
                     self.match(UserInputParser.T__6)
-                    self.state = 86
+                    self.state = 83
                     self.match(UserInputParser.INTEGER)
 
             else:
@@ -790,7 +778,7 @@ class UserInputParser(Parser):
         self.enterRule(localctx, 18, self.RULE_name)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 91
+            self.state = 88
             self.match(UserInputParser.NAME)
         except RecognitionException as re:
             localctx.exception = re
@@ -829,12 +817,12 @@ class UserInputParser(Parser):
         localctx = UserInputParser.Stmt_endContext(self, self._ctx, self.state)
         self.enterRule(localctx, 20, self.RULE_stmt_end)
         try:
-            self.state = 95
+            self.state = 92
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [UserInputParser.T__13]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 93
+                self.state = 90
                 self.match(UserInputParser.T__13)
             elif token in [UserInputParser.EOF]:
                 self.enterOuterAlt(localctx, 2)
@@ -889,16 +877,16 @@ class UserInputParser(Parser):
         localctx = UserInputParser.Formula_atomContext(self, self._ctx, self.state)
         self.enterRule(localctx, 22, self.RULE_formula_atom)
         try:
-            self.state = 101
+            self.state = 98
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [UserInputParser.T__14]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 97
+                self.state = 94
                 localctx.atom_true = self.match(UserInputParser.T__14)
             elif token in [UserInputParser.T__15]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 98
+                self.state = 95
                 localctx.atom_false = self.match(UserInputParser.T__15)
             elif token in [
                 UserInputParser.T__6,
@@ -907,11 +895,11 @@ class UserInputParser(Parser):
                 UserInputParser.FLOATING,
             ]:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 99
+                self.state = 96
                 localctx.atom_num = self.floating()
             elif token in [UserInputParser.NAME]:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 100
+                self.state = 97
                 localctx.atom_path = self.path()
             else:
                 raise NoViableAltException(self)
