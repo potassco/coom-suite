@@ -7,12 +7,13 @@ The key of the dictionary corresponds to the name of the test.
 All tests run with clingo.
 """
 
-# pylint: disable=line-too-long
+# pylint: disable=line-too-long, too-many-lines
 from typing import Any
 
-from . import SingleModelEquals
+from . import TEST_EMPTY, SingleModelEquals
 
 TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
+    "empty": {"test": TEST_EMPTY, "program": ""},
     "empty_product": {
         "test": SingleModelEquals({'part("product")', 'type("root","product")'}),
         "program": 'coom_structure("product").',
@@ -186,6 +187,17 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_option("Wheel", "W14").
             coom_attribute_value("Wheel","W14","size",14).""",
     },
+    "require_undef": {
+        "test": SingleModelEquals({'constant("Silver")', 'part("product")', 'type("root","product")'}),
+        "program": """
+            coom_structure("product").
+
+            coom_behavior(("product",0)).
+            coom_require(("product",0),"color=Silver").
+            coom_binary("color=Silver","color","=","Silver").
+            coom_path("color",0,"color").
+            coom_constant("Silver").""",
+    },
     "require_with_number": {
         "test": SingleModelEquals(
             {
@@ -351,6 +363,25 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             }
         ),
         "files": ["conditional_require.lp"],
+    },
+    "conditional_require_undef": {
+        "test": SingleModelEquals(
+            {
+                'constant("Silver")',
+                'constant("Big")',
+                'discrete("Size")',
+                'part("product")',
+                'constraint(("root.Size",1),"lowerbound")',
+                'domain("Size","Small")',
+                'domain("Size","Big")',
+                'index("root.Size[0]",0)',
+                'parent("root.Size[0]","root")',
+                'set("root.Size","root.Size[0]")',
+                'type("root","product")',
+                'type("root.Size[0]","size")',
+            }
+        ),
+        "files": ["conditional_require_undef.lp"],
     },
     "require_multiple_instances": {
         "test": SingleModelEquals(

@@ -24,6 +24,7 @@ class TestPreprocess(TestCase):
         """
         Test preprocessing COOM structures.
         """
+        self.run_test("empty")
         self.run_test("empty_product")
         self.run_test("structure_mandatory")
         self.run_test("structure_optional")
@@ -42,10 +43,12 @@ class TestPreprocess(TestCase):
         """
         Test preprocessing COOM require constraints.
         """
+        self.run_test("require_undef")
         self.run_test("require_with_number")
         self.run_test("require_with_number_ge")
         self.run_test("require_with_constant")
         self.run_test("require_two_wheels")
+        self.run_test("conditional_require_undef")
         self.run_test("conditional_require")
 
         self.run_test("require_multiple_instances")
