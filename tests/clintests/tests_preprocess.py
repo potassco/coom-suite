@@ -756,102 +756,204 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         ),
         "files": ["combination_at_part_multiple_instances.lp"],
     },
-    # "simple_numeric_feature": {
-    #     "test": AndTest(
-    #         Assert(Exact(1), Contains('value("root.size[0]",1)')),
-    #         Assert(Exact(1), Contains('value("root.size[0]",2)')),
-    #         Assert(Exact(1), Contains('value("root.size[0]",3)')),
-    #     ),
-    #     "ftest": AndTest(
-    #         Assert(Exact(1), ContainsTheory('value("root.size[0]",1)', check_theory=True)),
-    #         Assert(Exact(1), ContainsTheory('value("root.size[0]",2)', check_theory=True)),
-    #         Assert(Exact(1), ContainsTheory('value("root.size[0]",3)', check_theory=True)),
-    #     ),
-    #     "program": """
-    #         coom_structure("product").
-    #         coom_feature("product","size","num",1,1).
-    #         coom_range("product","size",1,3).""",
-    # },
-    # "simple_arithmetic_plus": {
-    #     "test": AndTest(
-    #         Assert(Exact(1), Equals({'value("root.a[0]",1)', 'value("root.b[0]",3)'})),
-    #         Assert(Exact(1), Equals({'value("root.a[0]",1)', 'value("root.b[0]",4)'})),
-    #         Assert(Exact(1), Equals({'value("root.a[0]",2)', 'value("root.b[0]",3)'})),
-    #     ),
-    #     "ftest": AndTest(
-    #         Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)', 'value("root.b[0]",3)'}, check_theory=True)),
-    #         Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)', 'value("root.b[0]",4)'}, check_theory=True)),
-    #         Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",2)', 'value("root.b[0]",3)'}, check_theory=True)),
-    #     ),
-    #     "files": ["simple_arithmetic_plus.lp"],
-    # },
-    # "simple_arithmetic_minus": {
-    #     "test": AndTest(
-    #         NumModels(1),
-    #         Assert(Exact(1), Equals({'value("root.a[0]",1)', 'value("root.b[0]",4)'})),
-    #     ),
-    #     "ftest": AndTest(
-    #         NumModels(1),
-    #         Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)', 'value("root.b[0]",4)'}, check_theory=True)),
-    #     ),
-    #     "files": ["simple_arithmetic_minus.lp"],
-    # },
-    # "simple_arithmetic_multiplication": {
-    #     "test": AndTest(
-    #         NumModels(1),
-    #         Assert(Exact(1), Equals({'value("root.a[0]",3)', 'value("root.b[0]",4)'})),
-    #     ),
-    #     "files": ["simple_arithmetic_multiplication.lp"],
-    # },
-    # "simple_arithmetic_plus_default_right": {
-    #     "test": AndTest(
-    #         Assert(Exact(1), Equals({'value("root.a[0]",2)'})),
-    #     ),
-    #     "ftest": AndTest(
-    #         Assert(Exact(1), ContainsTheory('value("root.a[0]",2)', check_theory=True)),
-    #     ),
-    #     "files": ["simple_arithmetic_plus_default_right.lp"],
-    # },
-    # "simple_arithmetic_plus_default_left": {
-    #     "test": AndTest(
-    #         Assert(Exact(1), Equals({'value("root.b[0]",2)'})),
-    #     ),
-    #     "ftest": AndTest(
-    #         Assert(Exact(1), ContainsTheory('value("root.b[0]",2)', check_theory=True)),
-    #     ),
-    #     "files": ["simple_arithmetic_plus_default_left.lp"],
-    # },
-    # "simple_arithmetic_minus_default_right": {
-    #     "test": AndTest(
-    #         Assert(Exact(1), Equals({'value("root.a[0]",2)'})),
-    #     ),
-    #     "ftest": AndTest(
-    #         Assert(Exact(1), ContainsTheory('value("root.a[0]",2)', check_theory=True)),
-    #     ),
-    #     "files": ["simple_arithmetic_minus_default_right.lp"],
-    # },
-    # "simple_arithmetic_minus_default_left": {
-    #     "test": AndTest(
-    #         Assert(Exact(1), Equals({'value("root.b[0]",2)'})),
-    #     ),
-    #     "ftest": AndTest(
-    #         Assert(Exact(1), ContainsTheory('value("root.b[0]",2)', check_theory=True)),
-    #     ),
-    #     "files": ["simple_arithmetic_minus_default_left.lp"],
-    # },
-    # "parentheses": {
-    #     "test": AndTest(
-    #         NumModels(2),
-    #         Assert(Exact(1), Equals({'value("root.a[0]",1)', 'value("root.b[0]",1)'})),
-    #         Assert(Exact(1), Equals({'value("root.a[0]",2)', 'value("root.b[0]",2)'})),
-    #     ),
-    #     "ftest": AndTest(
-    #         NumModels(2),
-    #         Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)', 'value("root.b[0]",1)'}, check_theory=True)),
-    #         Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",2)', 'value("root.b[0]",2)'}, check_theory=True)),
-    #     ),
-    #     "files": ["parentheses.lp"],
-    # },
+    "simple_numeric_feature": {
+        "test": SingleModelEquals(
+            {
+                'integer("product.size")',
+                'part("product")',
+                'constraint(("root.size",1),"lowerbound")',
+                'index("root.size[0]",0)',
+                'parent("root.size[0]","root")',
+                'set("root.size","root.size[0]")',
+                'type("root","product")',
+                'type("root.size[0]","product.size")',
+                'range("product.size",1,3)',
+            }
+        ),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","size","num",1,1).
+            coom_range("product","size",1,3).""",
+    },
+    "simple_arithmetic_plus": {
+        "test": SingleModelEquals(
+            {
+                'integer("product.a")',
+                'integer("product.b")',
+                'part("product")',
+                'constraint(("root.a",1),"lowerbound")',
+                'constraint(("root.b",1),"lowerbound")',
+                'constraint((0,"root.a[0]+root.b[0]<6"),"boolean")',
+                'index("root.a[0]",0)',
+                'index("root.b[0]",0)',
+                'number("6",6)',
+                'parent("root.a[0]","root")',
+                'parent("root.b[0]","root")',
+                'set("root.a","root.a[0]")',
+                'set("root.b","root.b[0]")',
+                'type("root","product")',
+                'type("root.a[0]","product.a")',
+                'type("root.b[0]","product.b")',
+                'range("product.a",1,1)',
+                'range("product.b",3,3)',
+                'binary("root.a[0]+root.b[0]","root.a[0]","+","root.b[0]")',
+                'binary("root.a[0]+root.b[0]<6","root.a[0]+root.b[0]","<","6")',
+            }
+        ),
+        "files": ["simple_arithmetic_plus.lp"],
+    },
+    "simple_arithmetic_minus": {
+        "test": SingleModelEquals(
+            {
+                'integer("product.a")',
+                'integer("product.b")',
+                'part("product")',
+                'constraint(("root.a",1),"lowerbound")',
+                'constraint(("root.b",1),"lowerbound")',
+                'constraint((0,"root.b[0]-root.a[0]>=3"),"boolean")',
+                'index("root.a[0]",0)',
+                'index("root.b[0]",0)',
+                'number("3",3)',
+                'parent("root.a[0]","root")',
+                'parent("root.b[0]","root")',
+                'set("root.a","root.a[0]")',
+                'set("root.b","root.b[0]")',
+                'type("root","product")',
+                'type("root.a[0]","product.a")',
+                'type("root.b[0]","product.b")',
+                'range("product.a",1,3)',
+                'range("product.b",3,4)',
+                'binary("root.b[0]-root.a[0]","root.b[0]","-","root.a[0]")',
+                'binary("root.b[0]-root.a[0]>=3","root.b[0]-root.a[0]",">=","3")',
+            }
+        ),
+        "files": ["simple_arithmetic_minus.lp"],
+    },
+    "simple_arithmetic_multiplication": {
+        "test": SingleModelEquals(
+            {
+                'integer("product.a")',
+                'integer("product.b")',
+                'part("product")',
+                'constraint(("root.a",1),"lowerbound")',
+                'constraint(("root.b",1),"lowerbound")',
+                'constraint((0,"root.a[0]*root.b[0]>=10"),"boolean")',
+                'index("root.a[0]",0)',
+                'index("root.b[0]",0)',
+                'number("10",10)',
+                'parent("root.a[0]","root")',
+                'parent("root.b[0]","root")',
+                'set("root.a","root.a[0]")',
+                'set("root.b","root.b[0]")',
+                'type("root","product")',
+                'type("root.a[0]","product.a")',
+                'type("root.b[0]","product.b")',
+                'range("product.a",1,3)',
+                'range("product.b",3,4)',
+                'binary("root.a[0]*root.b[0]","root.a[0]","*","root.b[0]")',
+                'binary("root.a[0]*root.b[0]>=10","root.a[0]*root.b[0]",">=","10")',
+            }
+        ),
+        "files": ["simple_arithmetic_multiplication.lp"],
+    },
+    "simple_arithmetic_plus_default_right": {
+        "test": SingleModelEquals(
+            {
+                'integer("product.a")',
+                'part("product")',
+                'constraint(("root.a",1),"lowerbound")',
+                'index("root.a[0]",0)',
+                'number("2",2)',
+                'parent("root.a[0]","root")',
+                'set("root.a","root.a[0]")',
+                'type("root","product")',
+                'type("root.a[0]","product.a")',
+                'range("product.a",1,3)',
+                'binary("root.a[0]=2","root.a[0]","=","2")',
+                'constraint((0,"root.a[0]=2"),"boolean")',
+            }
+        ),
+        "files": ["simple_arithmetic_plus_default_right.lp"],
+    },
+    "simple_arithmetic_plus_default_left": {
+        "test": SingleModelEquals(
+            {
+                'integer("product.b")',
+                'part("product")',
+                'constraint(("root.b",1),"lowerbound")',
+                'index("root.b[0]",0)',
+                'number("2",2)',
+                'parent("root.b[0]","root")',
+                'set("root.b","root.b[0]")',
+                'type("root","product")',
+                'type("root.b[0]","product.b")',
+                'range("product.b",1,3)',
+                'binary("root.b[0]=2","root.b[0]","=","2")',
+                'constraint((0,"root.b[0]=2"),"boolean")',
+            }
+        ),
+        "files": ["simple_arithmetic_plus_default_left.lp"],
+    },
+    "simple_arithmetic_minus_default_right": {
+        "test": SingleModelEquals(
+            {
+                'integer("product.a")',
+                'part("product")',
+                'constraint(("root.a",1),"lowerbound")',
+                'index("root.a[0]",0)',
+                'number("2",2)',
+                'parent("root.a[0]","root")',
+                'set("root.a","root.a[0]")',
+                'type("root","product")',
+                'type("root.a[0]","product.a")',
+                'range("product.a",1,3)',
+            }
+        ),
+        "files": ["simple_arithmetic_minus_default_right.lp"],
+    },
+    "simple_arithmetic_minus_default_left": {
+        "test": SingleModelEquals(
+            {
+                'integer("product.b")',
+                'part("product")',
+                'constraint(("root.b",1),"lowerbound")',
+                'index("root.b[0]",0)',
+                'number("2",2)',
+                'parent("root.b[0]","root")',
+                'set("root.b","root.b[0]")',
+                'type("root","product")',
+                'type("root.b[0]","product.b")',
+                'range("product.b",1,3)',
+            }
+        ),
+        "files": ["simple_arithmetic_minus_default_left.lp"],
+    },
+    "parentheses": {
+        "test": SingleModelEquals(
+            {
+                'integer("product.a")',
+                'integer("product.b")',
+                'part("product")',
+                'constraint(("root.a",1),"lowerbound")',
+                'constraint(("root.b",1),"lowerbound")',
+                'constraint((0,"root.a[0]=(root.b[0])"),"boolean")',
+                'index("root.a[0]",0)',
+                'index("root.b[0]",0)',
+                'parent("root.a[0]","root")',
+                'parent("root.b[0]","root")',
+                'set("root.a","root.a[0]")',
+                'set("root.b","root.b[0]")',
+                'type("root","product")',
+                'type("root.a[0]","product.a")',
+                'type("root.b[0]","product.b")',
+                'range("product.a",1,2)',
+                'range("product.b",1,3)',
+                'unary("(root.b[0])","()","root.b[0]")',
+                'binary("root.a[0]=(root.b[0])","root.a[0]","=","(root.b[0])")',
+            }
+        ),
+        "files": ["parentheses.lp"],
+    },
     "set_constant": {
         "test": SingleModelEquals({'user_value("root.color[0]","Yellow")'}),
         "program": 'coom_user_value("root.color[0]","Yellow").',

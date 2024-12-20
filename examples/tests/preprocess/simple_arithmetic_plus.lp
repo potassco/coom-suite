@@ -1,8 +1,8 @@
 coom_structure("product").
 coom_feature("product","a","num",1,1).
-coom_range("product","a",1,3).
+coom_range("product","a",1,1).
 coom_feature("product","b","num",1,1).
-coom_range("product","b",3,4).
+coom_range("product","b",3,3).
 
 coom_behavior(0).
 coom_context(0,"product").

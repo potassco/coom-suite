@@ -62,21 +62,21 @@ class TestPreprocess(TestCase):
         self.run_test("combination_at_part_with_wildcard")
         self.run_test("combination_at_part_multiple_instances")
 
-    # def test_numerics(self) -> None:
-    #     """
-    #     Test preprocessing numeric features, arithmetics and numerical function in COOM.
-    #     """
-    #     self.run_test("simple_numeric_feature")
-    #     self.run_test("simple_arithmetic_plus")
-    #     self.run_test("simple_arithmetic_minus")
-    #     self.run_test("simple_arithmetic_multiplication")
-    #     self.run_test("simple_arithmetic_plus_default_right")
-    #     self.run_test("simple_arithmetic_plus_default_left")
-    #     self.run_test("simple_arithmetic_minus_default_right")
-    #     self.run_test("simple_arithmetic_minus_default_left")
-    #     self.run_test("parentheses")
+    def test_numerics(self) -> None:
+        """
+        Test preprocessing numeric features, arithmetics and numerical function in COOM.
+        """
+        self.run_test("simple_numeric_feature")
+        self.run_test("simple_arithmetic_plus")
+        self.run_test("simple_arithmetic_minus")
+        self.run_test("simple_arithmetic_multiplication")
+        self.run_test("simple_arithmetic_plus_default_right")
+        self.run_test("simple_arithmetic_plus_default_left")
+        self.run_test("simple_arithmetic_minus_default_right")
+        self.run_test("simple_arithmetic_minus_default_left")
+        self.run_test("parentheses")
 
-    #     # Numerical functions (aggregates)
+        # Numerical functions (aggregates)
 
     def test_user_input(self) -> None:
         """
