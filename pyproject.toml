@@ -52,8 +52,8 @@ line-length = 120
 max-line-length = 120
 
 [tool.pylint.design]
-max-args = 6
-max-positional-arguments = 6
+max-args = 5
+max-positional-arguments = 5
 max-attributes = 8
 max-bool-expr = 5
 max-branches = 12
