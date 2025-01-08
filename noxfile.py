@@ -59,7 +59,7 @@ def lint_pylint(session):
     """
     Run pylint.
     """
-    session.install("-e", ".[lint_pylint]")
+    session.install("-e", ".[lint_pylint,test]")
     session.run("pylint", "coomsuite", "tests")
 
 
@@ -68,7 +68,7 @@ def typecheck(session):
     """
     Typecheck the code using mypy.
     """
-    session.install("-e", ".[typecheck]")
+    session.install("-e", ".[typecheck,test]")
     session.run("mypy", "--strict", "-p", "coomsuite", "-p", "tests", "--ignore-missing-imports")
 
 
