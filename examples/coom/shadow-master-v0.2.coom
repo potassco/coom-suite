@@ -1,0 +1,237 @@
+product {
+	  1..25	Unterposition	unterposition
+}
+
+structure Unterposition {
+	// 			string			id
+	// reference	Unterposition	previous
+	// reference	Unterposition	next
+				Grundmerkmale	grundmerkmale
+				Konstruktion	konstruktion
+				Cover			cover
+}
+
+structure Grundmerkmale {
+	num/mm		montagehoehe
+	num/mm		durchgangshoehe
+	num/mm		laenge
+	num.#/mm	eingabeBreite
+	num.#/mm	bestellBreite
+	Debug		debugValues
+	num.##/qm	flaeche
+	num.##/Grad	neigungswinkelAnlage
+	num.##/Kg	weight
+}
+
+structure Debug {
+	num.###/mm	deltaHoehe
+	num/mm		deltaBreite
+	num.###/mm	deltaHoehePow2
+	num/mm		deltaBreitePow2
+	num.###/mm	sqrtValue
+	num.##		atanValue
+	num.##		acosValue
+	num.######	atanArg
+	num.######	acosArg
+}
+
+structure Konstruktion {
+	Pfosten	pfostenLI
+	Pfosten	pfostenRE
+}
+
+structure Pfosten {
+				num.####/mm		km_gesamthoehe
+				num.####		km_mittePfosten
+				num.####		ueberstand
+	reference	Unterposition	unterposition
+				TypPfosten		typPfosten
+}
+
+enumeration TypPfosten {
+	_Ohne
+	_Starr
+	_Hoehenverstellbar
+	_Doppelpfosten
+}
+
+enumeration Cover {
+	attribute	num/gramm	weight
+
+	_AcrylLumera		= (	   1495	)
+	_AcrylPerfora		= (	   1238	)
+	_AcrylAllWeather	= (	   2600	)
+	_AcrylStandardFremd	= (	    800	)
+	_AcrylUniQuer		= (	    599	)
+	_AcrylUniQuerFremd	= (	    673	)
+	_KombiAcryl			= (	   2598	)
+	_KombiSoltis		= (	   2293	)
+	_Satinee			= (	   1487	)
+	_Screen				= (	   2499	)
+}
+
+
+behavior Pfosten {
+	require ueberstand = (unterposition.grundmerkmale.eingabeBreite - km_mittePfosten)
+}
+
+behavior Pfosten {
+	require km_gesamthoehe = (unterposition.grundmerkmale.durchgangshoehe + (tan(unterposition.grundmerkmale.neigungswinkelAnlage) * ueberstand))
+}
+
+behavior Pfosten {
+	require ueberstand > 105
+}
+
+behavior Pfosten {
+	require km_mittePfosten < 4000
+}
+
+behavior Pfosten {
+	require km_gesamthoehe > 1000
+}
+
+behavior Pfosten {
+	require km_gesamthoehe < 3200
+}
+
+behavior Pfosten {
+	condition km_gesamthoehe > 2200
+	require typPfosten != _Doppelpfosten
+}
+
+// behavior Pfosten {
+// 	default 	ueberstand = 150
+// }
+
+// behavior Pfosten {
+// 	default 	km_mittePfosten = 3000
+// }
+
+// behavior Pfosten {
+// 	default 	km_gesamthoehe = 2000
+// }
+
+behavior Unterposition {
+	require grundmerkmale.neigungswinkelAnlage = (atan(((125 - grundmerkmale.eingabeBreite) / ((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)))) + acos((48.4985 / sqrt(((((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)) ^ 2) + ((125 - grundmerkmale.eingabeBreite) ^ 2))))))
+}
+
+behavior Unterposition {
+	require grundmerkmale.bestellBreite = (grundmerkmale.eingabeBreite + (tan(grundmerkmale.neigungswinkelAnlage) * 80))
+}
+
+behavior Unterposition {
+	require grundmerkmale.flaeche = (grundmerkmale.laenge * (grundmerkmale.bestellBreite / 1000000))
+}
+
+behavior Unterposition {
+	require grundmerkmale.weight = (grundmerkmale.flaeche * (cover.weight / 1000))
+}
+
+behavior Unterposition {
+	require grundmerkmale.debugValues.deltaHoehe = ((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe))
+}
+
+behavior Unterposition {
+	require grundmerkmale.debugValues.deltaBreite = (125 - grundmerkmale.eingabeBreite)
+}
+
+behavior Unterposition {
+	require grundmerkmale.debugValues.deltaBreitePow2 = ((125 - grundmerkmale.eingabeBreite) ^ 2)
+}
+
+behavior Unterposition {
+	require grundmerkmale.debugValues.deltaHoehePow2 = (((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)) ^ 2)
+}
+
+behavior Unterposition {
+	require grundmerkmale.debugValues.sqrtValue = sqrt(((((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)) ^ 2) + ((125 - grundmerkmale.eingabeBreite) ^ 2)))
+}
+
+behavior Unterposition {
+	require grundmerkmale.debugValues.acosValue = acos((48.4985 / sqrt(((((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)) ^ 2) + ((125 - grundmerkmale.eingabeBreite) ^ 2)))))
+}
+
+behavior Unterposition {
+	require grundmerkmale.debugValues.atanValue = atan(((125 - grundmerkmale.eingabeBreite) / ((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe))))
+}
+
+behavior Unterposition {
+	require grundmerkmale.debugValues.acosArg = (48.4985 / sqrt(((((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)) ^ 2) + ((125 - grundmerkmale.eingabeBreite) ^ 2))))
+}
+
+behavior Unterposition {
+	require grundmerkmale.debugValues.atanArg = ((125 - grundmerkmale.eingabeBreite) / ((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)))
+}
+
+behavior Unterposition {
+	imply konstruktion.pfostenLI.unterposition = this
+}
+
+behavior Unterposition {
+	imply konstruktion.pfostenRE.unterposition = this
+}
+
+// behavior Unterposition {
+// 	default 	cover = _AcrylAllWeather
+// }
+
+// behavior Pfosten {
+// 	default 	typPfosten = _Starr
+// }
+
+// behavior Grundmerkmale {
+// 	readonly bestellBreite
+// }
+
+// behavior Grundmerkmale {
+// 	readonly flaeche
+// }
+
+// behavior Grundmerkmale {
+// 	readonly weight
+// }
+
+// behavior Grundmerkmale {
+// 	readonly debugValues.deltaHoehe
+// }
+
+// behavior Grundmerkmale {
+// 	readonly debugValues.deltaBreite
+// }
+
+// behavior Grundmerkmale {
+// 	readonly debugValues.deltaHoehePow2
+// }
+
+// behavior Grundmerkmale {
+// 	readonly debugValues.deltaBreitePow2
+// }
+
+// behavior Grundmerkmale {
+// 	readonly debugValues.sqrtValue
+// }
+
+// behavior Grundmerkmale {
+// 	readonly debugValues.atanValue
+// }
+
+// behavior Grundmerkmale {
+// 	readonly debugValues.acosValue
+// }
+
+// behavior Grundmerkmale {
+// 	readonly debugValues.atanArg
+// }
+
+// behavior Grundmerkmale {
+// 	readonly debugValues.acosArg
+// }
+
+// behavior Grundmerkmale {
+// 	readonly neigungswinkelAnlage
+// }
+
+// behavior  {
+// 	readonly root.unterposition[0].id
+// }
