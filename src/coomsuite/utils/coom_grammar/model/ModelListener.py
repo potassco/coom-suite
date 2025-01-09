@@ -42,22 +42,6 @@ class ModelListener(ParseTreeListener):
     def exitEnumeration(self, ctx: ModelParser.EnumerationContext):
         pass
 
-    # Enter a parse tree produced by ModelParser#behavior.
-    def enterBehavior(self, ctx: ModelParser.BehaviorContext):
-        pass
-
-    # Exit a parse tree produced by ModelParser#behavior.
-    def exitBehavior(self, ctx: ModelParser.BehaviorContext):
-        pass
-
-    # Enter a parse tree produced by ModelParser#behavior_block.
-    def enterBehavior_block(self, ctx: ModelParser.Behavior_blockContext):
-        pass
-
-    # Exit a parse tree produced by ModelParser#behavior_block.
-    def exitBehavior_block(self, ctx: ModelParser.Behavior_blockContext):
-        pass
-
     # Enter a parse tree produced by ModelParser#feature.
     def enterFeature(self, ctx: ModelParser.FeatureContext):
         pass
@@ -114,6 +98,38 @@ class ModelListener(ParseTreeListener):
     def exitString_def(self, ctx: ModelParser.String_defContext):
         pass
 
+    # Enter a parse tree produced by ModelParser#unit.
+    def enterUnit(self, ctx: ModelParser.UnitContext):
+        pass
+
+    # Exit a parse tree produced by ModelParser#unit.
+    def exitUnit(self, ctx: ModelParser.UnitContext):
+        pass
+
+    # Enter a parse tree produced by ModelParser#fraction.
+    def enterFraction(self, ctx: ModelParser.FractionContext):
+        pass
+
+    # Exit a parse tree produced by ModelParser#fraction.
+    def exitFraction(self, ctx: ModelParser.FractionContext):
+        pass
+
+    # Enter a parse tree produced by ModelParser#behavior.
+    def enterBehavior(self, ctx: ModelParser.BehaviorContext):
+        pass
+
+    # Exit a parse tree produced by ModelParser#behavior.
+    def exitBehavior(self, ctx: ModelParser.BehaviorContext):
+        pass
+
+    # Enter a parse tree produced by ModelParser#behavior_block.
+    def enterBehavior_block(self, ctx: ModelParser.Behavior_blockContext):
+        pass
+
+    # Exit a parse tree produced by ModelParser#behavior_block.
+    def exitBehavior_block(self, ctx: ModelParser.Behavior_blockContext):
+        pass
+
     # Enter a parse tree produced by ModelParser#define.
     def enterDefine(self, ctx: ModelParser.DefineContext):
         pass
@@ -130,12 +146,12 @@ class ModelListener(ParseTreeListener):
     def exitConditioned(self, ctx: ModelParser.ConditionedContext):
         pass
 
-    # Enter a parse tree produced by ModelParser#combinations.
-    def enterCombinations(self, ctx: ModelParser.CombinationsContext):
+    # Enter a parse tree produced by ModelParser#exists.
+    def enterExists(self, ctx: ModelParser.ExistsContext):
         pass
 
-    # Exit a parse tree produced by ModelParser#combinations.
-    def exitCombinations(self, ctx: ModelParser.CombinationsContext):
+    # Exit a parse tree produced by ModelParser#exists.
+    def exitExists(self, ctx: ModelParser.ExistsContext):
         pass
 
     # Enter a parse tree produced by ModelParser#explanation.
@@ -146,20 +162,52 @@ class ModelListener(ParseTreeListener):
     def exitExplanation(self, ctx: ModelParser.ExplanationContext):
         pass
 
-    # Enter a parse tree produced by ModelParser#index_quantification.
-    def enterIndex_quantification(self, ctx: ModelParser.Index_quantificationContext):
-        pass
-
-    # Exit a parse tree produced by ModelParser#index_quantification.
-    def exitIndex_quantification(self, ctx: ModelParser.Index_quantificationContext):
-        pass
-
     # Enter a parse tree produced by ModelParser#precondition.
     def enterPrecondition(self, ctx: ModelParser.PreconditionContext):
         pass
 
     # Exit a parse tree produced by ModelParser#precondition.
     def exitPrecondition(self, ctx: ModelParser.PreconditionContext):
+        pass
+
+    # Enter a parse tree produced by ModelParser#date.
+    def enterDate(self, ctx: ModelParser.DateContext):
+        pass
+
+    # Exit a parse tree produced by ModelParser#date.
+    def exitDate(self, ctx: ModelParser.DateContext):
+        pass
+
+    # Enter a parse tree produced by ModelParser#combinations.
+    def enterCombinations(self, ctx: ModelParser.CombinationsContext):
+        pass
+
+    # Exit a parse tree produced by ModelParser#combinations.
+    def exitCombinations(self, ctx: ModelParser.CombinationsContext):
+        pass
+
+    # Enter a parse tree produced by ModelParser#combination_row.
+    def enterCombination_row(self, ctx: ModelParser.Combination_rowContext):
+        pass
+
+    # Exit a parse tree produced by ModelParser#combination_row.
+    def exitCombination_row(self, ctx: ModelParser.Combination_rowContext):
+        pass
+
+    # Enter a parse tree produced by ModelParser#combination_item.
+    def enterCombination_item(self, ctx: ModelParser.Combination_itemContext):
+        pass
+
+    # Exit a parse tree produced by ModelParser#combination_item.
+    def exitCombination_item(self, ctx: ModelParser.Combination_itemContext):
+        pass
+
+    # Enter a parse tree produced by ModelParser#combination_atom.
+    def enterCombination_atom(self, ctx: ModelParser.Combination_atomContext):
+        pass
+
+    # Exit a parse tree produced by ModelParser#combination_atom.
+    def exitCombination_atom(self, ctx: ModelParser.Combination_atomContext):
         pass
 
     # Enter a parse tree produced by ModelParser#assign_default.
@@ -178,12 +226,12 @@ class ModelListener(ParseTreeListener):
     def exitAssign_imply(self, ctx: ModelParser.Assign_implyContext):
         pass
 
-    # Enter a parse tree produced by ModelParser#assign_new.
-    def enterAssign_new(self, ctx: ModelParser.Assign_newContext):
+    # Enter a parse tree produced by ModelParser#optimize.
+    def enterOptimize(self, ctx: ModelParser.OptimizeContext):
         pass
 
-    # Exit a parse tree produced by ModelParser#assign_new.
-    def exitAssign_new(self, ctx: ModelParser.Assign_newContext):
+    # Exit a parse tree produced by ModelParser#optimize.
+    def exitOptimize(self, ctx: ModelParser.OptimizeContext):
         pass
 
     # Enter a parse tree produced by ModelParser#interaction.
@@ -216,102 +264,6 @@ class ModelListener(ParseTreeListener):
 
     # Exit a parse tree produced by ModelParser#prefer.
     def exitPrefer(self, ctx: ModelParser.PreferContext):
-        pass
-
-    # Enter a parse tree produced by ModelParser#combination_row.
-    def enterCombination_row(self, ctx: ModelParser.Combination_rowContext):
-        pass
-
-    # Exit a parse tree produced by ModelParser#combination_row.
-    def exitCombination_row(self, ctx: ModelParser.Combination_rowContext):
-        pass
-
-    # Enter a parse tree produced by ModelParser#combination_item.
-    def enterCombination_item(self, ctx: ModelParser.Combination_itemContext):
-        pass
-
-    # Exit a parse tree produced by ModelParser#combination_item.
-    def exitCombination_item(self, ctx: ModelParser.Combination_itemContext):
-        pass
-
-    # Enter a parse tree produced by ModelParser#combination_atom.
-    def enterCombination_atom(self, ctx: ModelParser.Combination_atomContext):
-        pass
-
-    # Exit a parse tree produced by ModelParser#combination_atom.
-    def exitCombination_atom(self, ctx: ModelParser.Combination_atomContext):
-        pass
-
-    # Enter a parse tree produced by ModelParser#stmt_end.
-    def enterStmt_end(self, ctx: ModelParser.Stmt_endContext):
-        pass
-
-    # Exit a parse tree produced by ModelParser#stmt_end.
-    def exitStmt_end(self, ctx: ModelParser.Stmt_endContext):
-        pass
-
-    # Enter a parse tree produced by ModelParser#constant.
-    def enterConstant(self, ctx: ModelParser.ConstantContext):
-        pass
-
-    # Exit a parse tree produced by ModelParser#constant.
-    def exitConstant(self, ctx: ModelParser.ConstantContext):
-        pass
-
-    # Enter a parse tree produced by ModelParser#floating.
-    def enterFloating(self, ctx: ModelParser.FloatingContext):
-        pass
-
-    # Exit a parse tree produced by ModelParser#floating.
-    def exitFloating(self, ctx: ModelParser.FloatingContext):
-        pass
-
-    # Enter a parse tree produced by ModelParser#compare.
-    def enterCompare(self, ctx: ModelParser.CompareContext):
-        pass
-
-    # Exit a parse tree produced by ModelParser#compare.
-    def exitCompare(self, ctx: ModelParser.CompareContext):
-        pass
-
-    # Enter a parse tree produced by ModelParser#unit.
-    def enterUnit(self, ctx: ModelParser.UnitContext):
-        pass
-
-    # Exit a parse tree produced by ModelParser#unit.
-    def exitUnit(self, ctx: ModelParser.UnitContext):
-        pass
-
-    # Enter a parse tree produced by ModelParser#fraction.
-    def enterFraction(self, ctx: ModelParser.FractionContext):
-        pass
-
-    # Exit a parse tree produced by ModelParser#fraction.
-    def exitFraction(self, ctx: ModelParser.FractionContext):
-        pass
-
-    # Enter a parse tree produced by ModelParser#path.
-    def enterPath(self, ctx: ModelParser.PathContext):
-        pass
-
-    # Exit a parse tree produced by ModelParser#path.
-    def exitPath(self, ctx: ModelParser.PathContext):
-        pass
-
-    # Enter a parse tree produced by ModelParser#path_item.
-    def enterPath_item(self, ctx: ModelParser.Path_itemContext):
-        pass
-
-    # Exit a parse tree produced by ModelParser#path_item.
-    def exitPath_item(self, ctx: ModelParser.Path_itemContext):
-        pass
-
-    # Enter a parse tree produced by ModelParser#path_index.
-    def enterPath_index(self, ctx: ModelParser.Path_indexContext):
-        pass
-
-    # Exit a parse tree produced by ModelParser#path_index.
-    def exitPath_index(self, ctx: ModelParser.Path_indexContext):
         pass
 
     # Enter a parse tree produced by ModelParser#condition.
@@ -434,6 +386,46 @@ class ModelListener(ParseTreeListener):
     def exitFormula_atom(self, ctx: ModelParser.Formula_atomContext):
         pass
 
+    # Enter a parse tree produced by ModelParser#constant.
+    def enterConstant(self, ctx: ModelParser.ConstantContext):
+        pass
+
+    # Exit a parse tree produced by ModelParser#constant.
+    def exitConstant(self, ctx: ModelParser.ConstantContext):
+        pass
+
+    # Enter a parse tree produced by ModelParser#floating.
+    def enterFloating(self, ctx: ModelParser.FloatingContext):
+        pass
+
+    # Exit a parse tree produced by ModelParser#floating.
+    def exitFloating(self, ctx: ModelParser.FloatingContext):
+        pass
+
+    # Enter a parse tree produced by ModelParser#path.
+    def enterPath(self, ctx: ModelParser.PathContext):
+        pass
+
+    # Exit a parse tree produced by ModelParser#path.
+    def exitPath(self, ctx: ModelParser.PathContext):
+        pass
+
+    # Enter a parse tree produced by ModelParser#path_item.
+    def enterPath_item(self, ctx: ModelParser.Path_itemContext):
+        pass
+
+    # Exit a parse tree produced by ModelParser#path_item.
+    def exitPath_item(self, ctx: ModelParser.Path_itemContext):
+        pass
+
+    # Enter a parse tree produced by ModelParser#path_index.
+    def enterPath_index(self, ctx: ModelParser.Path_indexContext):
+        pass
+
+    # Exit a parse tree produced by ModelParser#path_index.
+    def exitPath_index(self, ctx: ModelParser.Path_indexContext):
+        pass
+
     # Enter a parse tree produced by ModelParser#name.
     def enterName(self, ctx: ModelParser.NameContext):
         pass
@@ -442,12 +434,20 @@ class ModelListener(ParseTreeListener):
     def exitName(self, ctx: ModelParser.NameContext):
         pass
 
-    # Enter a parse tree produced by ModelParser#date.
-    def enterDate(self, ctx: ModelParser.DateContext):
+    # Enter a parse tree produced by ModelParser#stmt_end.
+    def enterStmt_end(self, ctx: ModelParser.Stmt_endContext):
         pass
 
-    # Exit a parse tree produced by ModelParser#date.
-    def exitDate(self, ctx: ModelParser.DateContext):
+    # Exit a parse tree produced by ModelParser#stmt_end.
+    def exitStmt_end(self, ctx: ModelParser.Stmt_endContext):
+        pass
+
+    # Enter a parse tree produced by ModelParser#compare.
+    def enterCompare(self, ctx: ModelParser.CompareContext):
+        pass
+
+    # Exit a parse tree produced by ModelParser#compare.
+    def exitCompare(self, ctx: ModelParser.CompareContext):
         pass
 
 

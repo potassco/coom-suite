@@ -27,14 +27,6 @@ class ModelVisitor(ParseTreeVisitor):
     def visitEnumeration(self, ctx: ModelParser.EnumerationContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by ModelParser#behavior.
-    def visitBehavior(self, ctx: ModelParser.BehaviorContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by ModelParser#behavior_block.
-    def visitBehavior_block(self, ctx: ModelParser.Behavior_blockContext):
-        return self.visitChildren(ctx)
-
     # Visit a parse tree produced by ModelParser#feature.
     def visitFeature(self, ctx: ModelParser.FeatureContext):
         return self.visitChildren(ctx)
@@ -63,6 +55,22 @@ class ModelVisitor(ParseTreeVisitor):
     def visitString_def(self, ctx: ModelParser.String_defContext):
         return self.visitChildren(ctx)
 
+    # Visit a parse tree produced by ModelParser#unit.
+    def visitUnit(self, ctx: ModelParser.UnitContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by ModelParser#fraction.
+    def visitFraction(self, ctx: ModelParser.FractionContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by ModelParser#behavior.
+    def visitBehavior(self, ctx: ModelParser.BehaviorContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by ModelParser#behavior_block.
+    def visitBehavior_block(self, ctx: ModelParser.Behavior_blockContext):
+        return self.visitChildren(ctx)
+
     # Visit a parse tree produced by ModelParser#define.
     def visitDefine(self, ctx: ModelParser.DefineContext):
         return self.visitChildren(ctx)
@@ -71,20 +79,36 @@ class ModelVisitor(ParseTreeVisitor):
     def visitConditioned(self, ctx: ModelParser.ConditionedContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by ModelParser#combinations.
-    def visitCombinations(self, ctx: ModelParser.CombinationsContext):
+    # Visit a parse tree produced by ModelParser#exists.
+    def visitExists(self, ctx: ModelParser.ExistsContext):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by ModelParser#explanation.
     def visitExplanation(self, ctx: ModelParser.ExplanationContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by ModelParser#index_quantification.
-    def visitIndex_quantification(self, ctx: ModelParser.Index_quantificationContext):
-        return self.visitChildren(ctx)
-
     # Visit a parse tree produced by ModelParser#precondition.
     def visitPrecondition(self, ctx: ModelParser.PreconditionContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by ModelParser#date.
+    def visitDate(self, ctx: ModelParser.DateContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by ModelParser#combinations.
+    def visitCombinations(self, ctx: ModelParser.CombinationsContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by ModelParser#combination_row.
+    def visitCombination_row(self, ctx: ModelParser.Combination_rowContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by ModelParser#combination_item.
+    def visitCombination_item(self, ctx: ModelParser.Combination_itemContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by ModelParser#combination_atom.
+    def visitCombination_atom(self, ctx: ModelParser.Combination_atomContext):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by ModelParser#assign_default.
@@ -95,8 +119,8 @@ class ModelVisitor(ParseTreeVisitor):
     def visitAssign_imply(self, ctx: ModelParser.Assign_implyContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by ModelParser#assign_new.
-    def visitAssign_new(self, ctx: ModelParser.Assign_newContext):
+    # Visit a parse tree produced by ModelParser#optimize.
+    def visitOptimize(self, ctx: ModelParser.OptimizeContext):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by ModelParser#interaction.
@@ -113,54 +137,6 @@ class ModelVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by ModelParser#prefer.
     def visitPrefer(self, ctx: ModelParser.PreferContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by ModelParser#combination_row.
-    def visitCombination_row(self, ctx: ModelParser.Combination_rowContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by ModelParser#combination_item.
-    def visitCombination_item(self, ctx: ModelParser.Combination_itemContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by ModelParser#combination_atom.
-    def visitCombination_atom(self, ctx: ModelParser.Combination_atomContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by ModelParser#stmt_end.
-    def visitStmt_end(self, ctx: ModelParser.Stmt_endContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by ModelParser#constant.
-    def visitConstant(self, ctx: ModelParser.ConstantContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by ModelParser#floating.
-    def visitFloating(self, ctx: ModelParser.FloatingContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by ModelParser#compare.
-    def visitCompare(self, ctx: ModelParser.CompareContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by ModelParser#unit.
-    def visitUnit(self, ctx: ModelParser.UnitContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by ModelParser#fraction.
-    def visitFraction(self, ctx: ModelParser.FractionContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by ModelParser#path.
-    def visitPath(self, ctx: ModelParser.PathContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by ModelParser#path_item.
-    def visitPath_item(self, ctx: ModelParser.Path_itemContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by ModelParser#path_index.
-    def visitPath_index(self, ctx: ModelParser.Path_indexContext):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by ModelParser#condition.
@@ -223,12 +199,36 @@ class ModelVisitor(ParseTreeVisitor):
     def visitFormula_atom(self, ctx: ModelParser.Formula_atomContext):
         return self.visitChildren(ctx)
 
+    # Visit a parse tree produced by ModelParser#constant.
+    def visitConstant(self, ctx: ModelParser.ConstantContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by ModelParser#floating.
+    def visitFloating(self, ctx: ModelParser.FloatingContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by ModelParser#path.
+    def visitPath(self, ctx: ModelParser.PathContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by ModelParser#path_item.
+    def visitPath_item(self, ctx: ModelParser.Path_itemContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by ModelParser#path_index.
+    def visitPath_index(self, ctx: ModelParser.Path_indexContext):
+        return self.visitChildren(ctx)
+
     # Visit a parse tree produced by ModelParser#name.
     def visitName(self, ctx: ModelParser.NameContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by ModelParser#date.
-    def visitDate(self, ctx: ModelParser.DateContext):
+    # Visit a parse tree produced by ModelParser#stmt_end.
+    def visitStmt_end(self, ctx: ModelParser.Stmt_endContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by ModelParser#compare.
+    def visitCompare(self, ctx: ModelParser.CompareContext):
         return self.visitChildren(ctx)
 
 
