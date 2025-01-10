@@ -1,10 +1,10 @@
 product {
     //   num /kg 0-200 totalWeight
     //   num /kg 0-200 wantedWeight
-      num /l  0-200 totalVolume
-      num /l  0-200 requestedVolume
+            num /l  0-200   totalVolume
+            num /l  0-200   requestedVolume
     //   num     countBags
-    0..*  Bag  bags
+    0..*    Bag             bags
 }
 
 structure Bag {
@@ -12,7 +12,7 @@ structure Bag {
     Size  size
 }
 
-// enumeration Color { Green Blue Red }
+enumeration Color { Green Blue Red }
 
 enumeration Size {
     attribute num weight
@@ -23,7 +23,7 @@ enumeration Size {
     large   = ( 25 20 )
 }
 
-behavior CargoBike {
+behavior {
     // require sum(bags.size.maxWeight) = totalWeight
     require sum(bags.size.volume) = totalVolume
 
@@ -32,7 +32,7 @@ behavior CargoBike {
 
 }
 
-// behavior CargoBike {
+// behavior {
 //     imply countBags = count(bags)
 //     minimize countBags
 // }
