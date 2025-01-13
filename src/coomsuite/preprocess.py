@@ -1,3 +1,7 @@
+"""
+Contains functions for preprocessing COOM ASP facts and checking user input
+"""
+
 from typing import List
 
 from clingo import Control
@@ -30,7 +34,7 @@ def preprocess(files: List[str], discrete: bool = True) -> List[str]:
     return facts
 
 
-def check_user_input(facts: str):
+def check_user_input(facts: str) -> None:
     """
     Checks if the user input is valid and returns a clingo.SolveResult
     """

@@ -40,7 +40,7 @@ def unpack_test(test_name: str, tests: dict[str, Any], fclingo: bool = False) ->
         test = test_dict.get("ftest", test_dict["test"])
     else:
         test = test_dict["test"]
-    test_with_name = Context(test, str_=lambda test: f"{test_name} \n\n {test.__str__()}")
+    test_with_name = Context(test, str_=lambda test: f"{test_name} \n\n {str(test)}")
     return test_with_name, program, files
 
 

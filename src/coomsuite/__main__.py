@@ -44,16 +44,12 @@ def main():
     elif args.command == "solve":
         log.info("Converting and solving COOM file %s", args.input)
         with TemporaryDirectory() as temp_dir:
+            # Parse COOM to ASP serialized facts
             serialized_facts = [convert_instance(args.input, "model", temp_dir)] + (
                 [convert_instance(args.user_input, "user", temp_dir)] if args.user_input else []
             )
 
-            # clingo_options = (
-            #     [convert_instance(args.input, "model", temp_dir)]
-            #     + ([convert_instance(args.user_input, "user", temp_dir)] if args.user_input else [])
-            #     + unknown_args
-            # )
-
+            # Preprocess serialized ASP facts
             processed_facts = preprocess(
                 serialized_facts,
                 discrete=args.solver == "clingo",
@@ -68,6 +64,7 @@ def main():
                     tmp_name = tmp.name
                     tmp.write("".join(processed_facts))
 
+                # Solve the ASP instance
                 clingo_main(
                     COOMSolverApp(
                         options={

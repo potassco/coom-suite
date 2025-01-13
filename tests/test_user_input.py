@@ -1,3 +1,7 @@
+"""
+Test cases for checking the user input for validity.
+"""
+
 from unittest import TestCase
 
 from coomsuite.preprocess import check_user_input
