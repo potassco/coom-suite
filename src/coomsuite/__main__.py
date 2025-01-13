@@ -3,12 +3,13 @@ The main entry point for the application.
 """
 
 import sys
-from tempfile import TemporaryDirectory
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 
 from clingo.application import clingo_main
 
 from . import convert_instance
-from .application import COOMApp
+from .application import COOMSolverApp
+from .preprocess import check_user_input, preprocess
 from .utils.logging import configure_logging, get_logger
 from .utils.parser import get_parser
 
@@ -43,26 +44,39 @@ def main():
     elif args.command == "solve":
         log.info("Converting and solving COOM file %s", args.input)
         with TemporaryDirectory() as temp_dir:
-            clingo_options = (
-                [convert_instance(args.input, "model", temp_dir)]
-                + ([convert_instance(args.user_input, "user", temp_dir)] if args.user_input else [])
-                + unknown_args
+            serialized_facts = [convert_instance(args.input, "model", temp_dir)] + (
+                [convert_instance(args.user_input, "user", temp_dir)] if args.user_input else []
+            )
+
+            # clingo_options = (
+            #     [convert_instance(args.input, "model", temp_dir)]
+            #     + ([convert_instance(args.user_input, "user", temp_dir)] if args.user_input else [])
+            #     + unknown_args
+            # )
+
+            processed_facts = preprocess(
+                serialized_facts,
+                discrete=args.solver == "clingo",
             )
 
             if args.show_facts:
-                clingo_options.append("--outf=3")
+                print("\n".join(processed_facts))  # nocoverage
+            else:
+                check_user_input(processed_facts)
 
-            options = {
-                "solver": args.solver,
-                "output_format": args.output,
-                "show_facts": args.show_facts,
-                "preprocess": True,
-            }
+                with NamedTemporaryFile(mode="w", delete=False) as tmp:
+                    tmp_name = tmp.name
+                    tmp.write("".join(processed_facts))
 
-            clingo_main(
-                COOMApp(options=options),
-                clingo_options,
-            )
+                clingo_main(
+                    COOMSolverApp(
+                        options={
+                            "solver": args.solver,
+                            "output_format": args.output,
+                        }
+                    ),
+                    [tmp_name] + unknown_args,
+                )
 
 
 if __name__ == "__main__":
