@@ -9,10 +9,11 @@ from typing import Any, Callable, List, Optional, Sequence, Tuple
 
 from antlr4 import InputStream
 from clingo import Application, Control
-from clintest.solver import Solver
-from clintest.test import Test
+from clintest.solver import Clingo, Solver
+from clintest.test import Context, Test
 
-from coomsuite.application import COOMApp
+from coomsuite.application import COOMSolverApp
+from coomsuite.preprocess import preprocess
 from coomsuite.utils import run_antlr4_visitor
 
 
@@ -39,7 +40,8 @@ def unpack_test(test_name: str, tests: dict[str, Any], fclingo: bool = False) ->
         test = test_dict.get("ftest", test_dict["test"])
     else:
         test = test_dict["test"]
-    return test, program, files
+    test_with_name = Context(test, str_=lambda test: f"{test_name} \n\n {test.__str__()}")
+    return test_with_name, program, files
 
 
 def run_test(
@@ -62,15 +64,23 @@ def run_test(
     options = {
         "solver": solver,
         "output_format": kwargs.get("output_format", "asp"),
-        "show_facts": False,
-        "preprocess": is_preprocess,
     }
-    coom_app = COOMApp(options=options, istest=True)
     file_paths = (
-        [join("examples", "tests", "solve" if not is_preprocess else "preprocess", f) for f in files] if files else None
+        [join("examples", "tests", "solve" if not is_preprocess else "preprocess", f) for f in files] if files else []
     )
+    if program:
+        with tempfile.NamedTemporaryFile(mode="w", delete=False) as tmp:
+            tmp_name = tmp.name
+            tmp.write(program)
+        file_paths.append(tmp_name)
     ctl_args = [] if ctl_args is None else ctl_args
-    solver = AppSolver(application=coom_app, files=file_paths, program=program, arguments=ctl_args)
+
+    if is_preprocess:
+        solver = Clingo(program="".join(preprocess(file_paths, discrete=False)))
+    else:
+        coom_app = COOMSolverApp(options=options, istest=True)
+        solver = AppSolver(application=coom_app, files=file_paths, arguments=ctl_args)
+
     test_copy = deepcopy(test)
     solver.solve(test_copy)
     test_copy.assert_()
@@ -143,19 +153,12 @@ class AppSolver(Solver):
     def __init__(
         self,
         application: Application,
-        files: Optional[List[str]] = None,
-        program: Optional[str] = None,
+        files: List[str],
         arguments: Optional[List[str]] = None,
     ) -> None:
         self.__application = application
         self.__arguments = [] if arguments is None else arguments
-        self.__program = "" if program is None else program
-        self.__files = [] if files is None else files
-        if self.__program:
-            with tempfile.NamedTemporaryFile(mode="w", delete=False) as tmp:
-                tmp_name = tmp.name
-                tmp.write(self.__program)
-            self.__files.append(tmp_name)
+        self.__files = files
 
     def solve(self, test: Test) -> None:
         """Solves with clintest."""

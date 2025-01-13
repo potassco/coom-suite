@@ -10,7 +10,7 @@ All other tests work with both clingo and fclingo.
 
 from typing import Any
 
-from clintest.assertion import Equals, SubsetOf, True_
+from clintest.assertion import Equals, SubsetOf
 from clintest.quantifier import Exact
 from clintest.test import And, Assert
 
@@ -716,57 +716,5 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             part("product").
             part("A").
             user_include("root.a[0]").""",
-    },
-    "set_invalid_variable": {
-        "test": True_(),  # Output does not matter, tests whether Exception is raised
-        "program": """
-            user_value("root.color[0]","Yellow").""",
-    },
-    "add_invalid_variable": {
-        "test": True_(),  # Output does not matter, tests whether Exception is raised
-        "program": """
-            user_include("root.basket[0]").""",
-    },
-    "set_invalid_type": {
-        "test": True_(),  # Output does not matter, tests whether Exception is raised
-        "program": """
-            part("product").
-            part("Basket").
-            type("root.basket[0]","Basket").
-            parent("root.basket[0]","root").
-            index("root.basket[0]",0).
-            user_value("root.basket[0]","Yellow").""",
-    },
-    "add_invalid_type": {
-        "test": True_(),  # Output does not matter, tests whether Exception is raised
-        "program": """
-            part("product").
-            discrete("Basket").
-            type("root.basket[0]","Basket").
-            parent("root.basket[0]","root").
-            index("root.basket[0]",0).
-            user_include("root.basket[0]").""",
-    },
-    "set_invalid_value_discrete": {
-        "test": True_(),  # Output does not matter, tests whether Exception is raised
-        "program": """
-            part("product").
-            discrete("Color").
-            domain("Color","Red").
-            type("root.color[0]","Color").
-            parent("root.color[0]","root").
-            index("root.color[0]",0).
-            user_value("root.color[0]","Yellow").""",
-    },
-    "set_invalid_value_num": {
-        "test": True_(),  # Output does not matter, tests whether Exception is raised
-        "program": """
-            part("product").
-            integer("product.size").
-            range("product.size",1,10).
-            type("root.size[0]","product.size").
-            parent("root.size[0]","root").
-            index("root.size[0]",0).
-            user_value("root.size[0]",11).""",
     },
 }

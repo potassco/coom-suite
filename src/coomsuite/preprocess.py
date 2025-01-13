@@ -17,10 +17,9 @@ def preprocess(files: List[str], discrete: bool = True) -> List[str]:
     for f in input_files:
         ctl.load(f)
 
-    # if self._options["preprocess"] or self._options["show_facts"]:
     enable_python()
     ctl.load(get_encoding("preprocess.lp"))
-    # if self._options["solver"] == "clingo":
+
     if discrete:
         ctl.add("base", [], "discrete.")  # nocoverage
 
