@@ -49,31 +49,38 @@ def main():
                 [convert_instance(args.user_input, "user", temp_dir)] if args.user_input else []
             )
 
-            # Preprocess serialized ASP facts
-            processed_facts = preprocess(
-                serialized_facts,
-                discrete=args.solver == "clingo",
-            )
-
             if args.show_facts:
-                print("\n".join(processed_facts))  # nocoverage
+                print("\n".join(preprocess(serialized_facts)))  # nocoverage
             else:
-                check_user_input(processed_facts)
+                ret = 20
+                max_bound = 1
 
-                with NamedTemporaryFile(mode="w", delete=False) as tmp:
-                    tmp_name = tmp.name
-                    tmp.write("".join(processed_facts))
+                while ret == 20:
+                    print(f"\nSolving with max_bound = {max_bound}")
 
-                # Solve the ASP instance
-                clingo_main(
-                    COOMSolverApp(
-                        options={
-                            "solver": args.solver,
-                            "output_format": args.output,
-                        }
-                    ),
-                    [tmp_name] + unknown_args,
-                )
+                    # Preprocess serialized ASP facts
+                    processed_facts = preprocess(
+                        serialized_facts,
+                        max_bound=max_bound,
+                        discrete=args.solver == "clingo",
+                    )
+                    # check_user_input(processed_facts)
+
+                    with NamedTemporaryFile(mode="w", delete=False) as tmp:
+                        tmp_name = tmp.name
+                        tmp.write("".join(processed_facts))
+
+                    # Solve the ASP instance
+                    ret = clingo_main(
+                        COOMSolverApp(
+                            options={
+                                "solver": args.solver,
+                                "output_format": args.output,
+                            }
+                        ),
+                        [tmp_name] + unknown_args,
+                    )
+                    max_bound += 1
 
 
 if __name__ == "__main__":

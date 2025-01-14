@@ -11,13 +11,13 @@ from clingo.symbol import Symbol
 from .utils import get_encoding
 
 
-def preprocess(files: List[str], discrete: bool = True) -> List[str]:
+def preprocess(files: List[str], max_bound: int = 99, discrete: bool = False) -> List[str]:
     """
     Preprocesses COOM ASP facts into a "grounded" configuration fact format
     """
     # pylint: disable=not-context-manager
     input_files = files
-    ctl = Control(message_limit=0)
+    ctl = Control(["-c", f"max_bound={max_bound}"], message_limit=0)
     for f in input_files:
         ctl.load(f)
 
