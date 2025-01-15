@@ -56,7 +56,7 @@ def main():
                 max_bound = 1
 
                 while ret == 20:
-                    print(f"\nSolving with max_bound = {max_bound}")
+                    print(f"\nSolving with max_bound = {max_bound}\n")
 
                     # Preprocess serialized ASP facts
                     processed_facts = preprocess(
@@ -64,7 +64,7 @@ def main():
                         max_bound=max_bound,
                         discrete=args.solver == "clingo",
                     )
-                    # check_user_input(processed_facts)
+                    check_user_input(processed_facts)
 
                     with NamedTemporaryFile(mode="w", delete=False) as tmp:
                         tmp_name = tmp.name

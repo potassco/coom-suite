@@ -127,6 +127,13 @@ class TestClingo(TestCase):
         self.run_test("user_value_integer")
         self.run_test("user_include")
 
+        self.run_test("set_invalid_variable")
+        self.run_test("add_invalid_variable")
+        self.run_test("set_invalid_type")
+        self.run_test("add_invalid_type")
+        self.run_test("set_invalid_value_discrete")
+        self.run_test("set_invalid_value_num")
+
 
 class TestFclingo(TestCase):
     """
