@@ -96,9 +96,8 @@ class ASPModelVisitor(ModelVisitor):
 
         if field.number_def() is not None:
             type_name = "num"
-
-        # elif field.string_def() is not None:
-        #     type_name = "text"
+        elif field.string_def() is not None:
+            return  # ignore string features
         elif field.type_ref is not None:
             type_name = field.type_ref.NAME()
         # else:

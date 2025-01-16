@@ -3,9 +3,6 @@ product {
 }
 
 structure Unterposition {
-	// 			string			id
-	// reference	Unterposition	previous
-	// reference	Unterposition	next
 				Grundmerkmale	grundmerkmale
 				Konstruktion	konstruktion
 				Cover			cover
