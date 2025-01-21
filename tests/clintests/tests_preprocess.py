@@ -10,16 +10,16 @@ All tests run with clingo.
 # pylint: disable=line-too-long, too-many-lines
 from typing import Any
 
-from . import TEST_EMPTY, SingleModelEquals
+from . import TEST_EMPTY, StableModels
 
 TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "empty": {"test": TEST_EMPTY, "program": ""},
     "empty_product": {
-        "test": SingleModelEquals({'part("product")', 'type("root","product")'}),
+        "test": StableModels({'part("product")', 'type("root","product")'}),
         "program": 'coom_structure("product").',
     },
     "structure_mandatory": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'part("product")',
                 'part("Wheel")',
@@ -37,7 +37,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_structure("Wheel").""",
     },
     "structure_optional": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'part("product")',
                 'part("Wheel")',
@@ -55,7 +55,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_structure("Wheel").""",
     },
     "structure_nested": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'part("product")',
                 'part("Carrier")',
@@ -81,7 +81,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_structure("Bag").""",
     },
     "structure_nested_optional": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'part("product")',
                 'part("Carrier")',
@@ -111,7 +111,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_structure("Bag").""",
     },
     "enumeration": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'discrete("Color")',
                 'part("product")',
@@ -135,7 +135,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_option("Color", "Blue").""",
     },
     "bool_enumeration": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'discrete("Bool")',
                 'part("product")',
@@ -154,7 +154,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_feature("product","boolean","Bool",1,1).""",
     },
     "attribute": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'discrete("Wheel")',
                 'integer("Wheel.size")',
@@ -188,7 +188,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_attribute_value("Wheel","W14","size",14).""",
     },
     "require_undef": {
-        "test": SingleModelEquals({'constant("Silver")', 'part("product")', 'type("root","product")'}),
+        "test": StableModels({'constant("Silver")', 'part("product")', 'type("root","product")'}),
         "program": """
             coom_structure("product").
 
@@ -199,7 +199,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_constant("Silver").""",
     },
     "require_with_number": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'discrete("Wheel")',
                 'integer("Wheel.size")',
@@ -233,7 +233,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["require_with_number.lp"],
     },
     "require_with_number_ge": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'discrete("Wheel")',
                 'integer("Wheel.size")',
@@ -267,7 +267,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["require_with_number_ge.lp"],
     },
     "require_with_constant": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'constant("W28")',
                 'discrete("Wheel")',
@@ -287,7 +287,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["require_with_constant.lp"],
     },
     "require_two_wheels": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'discrete("Wheel")',
                 'integer("Wheel.size")',
@@ -333,7 +333,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["require_two_wheels.lp"],
     },
     "conditional_require": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'constant("True")',
                 'constant("Small")',
@@ -365,7 +365,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["conditional_require.lp"],
     },
     "conditional_require_undef": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'constant("Silver")',
                 'constant("Big")',
@@ -384,7 +384,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["conditional_require_undef.lp"],
     },
     "require_multiple_instances": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'constant("W28")',
                 'discrete("Size")',
@@ -421,7 +421,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["require_multiple_instances.lp"],
     },
     "require_with_partonomy": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'constant("Red")',
                 'discrete("Color")',
@@ -447,7 +447,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["require_with_partonomy.lp"],
     },
     "require_with_partonomy2": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'constant("Red")',
                 'discrete("Color")',
@@ -484,7 +484,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["require_with_partonomy2.lp"],
     },
     "require_with_partonomy_multiple_instances": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'constant("Red")',
                 'discrete("Color")',
@@ -555,7 +555,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["require_with_partonomy_multiple_instances.lp"],
     },
     "combination": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'discrete("Wheel")',
                 'discrete("Bool")',
@@ -591,7 +591,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["combination.lp"],
     },
     "combination_with_structure": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'discrete("Size")',
                 'discrete("Bool")',
@@ -644,7 +644,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["combination_with_structure.lp"],
     },
     "combination_at_part_with_wildcard": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'discrete("Size")',
                 'discrete("Material")',
@@ -706,7 +706,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["combination_at_part_with_wildcard.lp"],
     },
     "combination_at_part_multiple_instances": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'discrete("Wheel")',
                 'discrete("Material")',
@@ -789,7 +789,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["combination_at_part_multiple_instances.lp"],
     },
     "simple_numeric_feature": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'integer("product.size")',
                 'part("product")',
@@ -808,7 +808,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_range("product","size",1,3).""",
     },
     "simple_arithmetic_plus": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'integer("product.a")',
                 'integer("product.b")',
@@ -835,7 +835,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["simple_arithmetic_plus.lp"],
     },
     "simple_arithmetic_minus": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'integer("product.a")',
                 'integer("product.b")',
@@ -862,7 +862,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["simple_arithmetic_minus.lp"],
     },
     "simple_arithmetic_multiplication": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'integer("product.a")',
                 'integer("product.b")',
@@ -889,7 +889,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["simple_arithmetic_multiplication.lp"],
     },
     "simple_arithmetic_plus_default_right": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'integer("product.a")',
                 'part("product")',
@@ -908,7 +908,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["simple_arithmetic_plus_default_right.lp"],
     },
     "simple_arithmetic_plus_default_left": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'integer("product.b")',
                 'part("product")',
@@ -927,7 +927,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["simple_arithmetic_plus_default_left.lp"],
     },
     "simple_arithmetic_minus_default_right": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'integer("product.a")',
                 'part("product")',
@@ -944,7 +944,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["simple_arithmetic_minus_default_right.lp"],
     },
     "simple_arithmetic_minus_default_left": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'integer("product.b")',
                 'part("product")',
@@ -961,7 +961,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["simple_arithmetic_minus_default_left.lp"],
     },
     "parentheses": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'integer("product.a")',
                 'integer("product.b")',
@@ -987,7 +987,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["parentheses.lp"],
     },
     "count": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'part("product")',
                 'part("Bag")',
@@ -1014,7 +1014,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["count.lp"],
     },
     "sum": {
-        "test": SingleModelEquals(
+        "test": StableModels(
             {
                 'integer("product.x")',
                 'part("product")',
@@ -1042,15 +1042,15 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["sum.lp"],
     },
     "set_constant": {
-        "test": SingleModelEquals({'user_value("root.color[0]","Yellow")'}),
+        "test": StableModels({'user_value("root.color[0]","Yellow")'}),
         "program": 'coom_user_value("root.color[0]","Yellow").',
     },
     "set_number": {
-        "test": SingleModelEquals({'user_value("root.size[0]",5)'}),
+        "test": StableModels({'user_value("root.size[0]",5)'}),
         "program": 'coom_user_value("root.size[0]",5).',
     },
     "add": {
-        "test": SingleModelEquals({'user_include("root.bag[0]")'}),
+        "test": StableModels({'user_include("root.bag[0]")'}),
         "program": 'coom_user_include("root.bag[0]").',
     },
 }

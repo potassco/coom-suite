@@ -3,10 +3,10 @@
 // see Baumeister et al.: Towards Industrial-scale Product Configuration (2024).
 
 product {
-    num .#/l	0-200   totalVolume
+    num .#/l	  0-200   totalVolume
     num .#/l	200-200   requestedVolume
-    Carrier			    carrier
-    Frame			    frame
+    Carrier			      carrier
+    Frame			      frame
 }
 
 structure Carrier {

@@ -8,7 +8,7 @@ from clingo import Symbol
 from clingo.solving import Model
 from clintest.assertion import Equals, False_, SubsetOf, SupersetOf, True_
 from clintest.quantifier import All, Exact
-from clintest.test import Assert, Test
+from clintest.test import And, Assert, Test
 
 TEST_EMPTY = Assert(All(), SubsetOf(set()))
 TEST_UNSAT = Assert(Exact(0), False_())
@@ -21,14 +21,17 @@ def NumModels(n: int) -> Test:  # pylint: disable=invalid-name
     return Assert(Exact(n), True_())
 
 
-def SingleModelEquals(model: set[Symbol | str]) -> Test:  # pylint: disable=invalid-name
+def StableModels(*args: set[Symbol | str], fclingo: bool = False) -> Test:  # pylint: disable=invalid-name
     """
-    clintest.Test for checking that a program has a single model that is equal to the given argument
+    clintest.Test for checking that a program has a certain set of stable models
 
     Args:
-        model (set[str]): The single model as a set of strings or clingo symbols
+        args: The set of stable models as a set of sets of strings or clingo symbols
+        fclingo (bool): Whether to prepare the test for use with the fclingo solver
     """
-    return Assert(All(), Equals(model))
+    if not fclingo:
+        return And(NumModels(len(args)), *(Assert(Exact(1), Equals(a)) for a in args))
+    return And(NumModels(len(args)), *(Assert(Exact(1), SupersetOfTheory(a, check_theory=True)) for a in args))
 
 
 class SupersetOfTheory(SupersetOf):
@@ -48,7 +51,7 @@ class SupersetOfTheory(SupersetOf):
     def holds_for(self, model: Model) -> bool:
         if self.__check_theory:
             return set(model.symbols(shown=True, theory=True)).issuperset(self.__symbols)
-        return super().holds_for(model)
+        return super().holds_for(model)  # nocoverage
 
 
 # class EqualsTheory(Equals):

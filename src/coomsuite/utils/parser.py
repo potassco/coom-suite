@@ -100,4 +100,9 @@ def get_parser() -> ArgumentParser:
         "--output", "-o", type=str, help="Set console output format", choices=["asp", "coom"], default="asp"
     )
     parser_solve.add_argument("--show-facts", action="store_true", help="Show preprocessed fact format")
+    parser_solve.add_argument(
+        "--incremental-bounds",
+        action="store_true",
+        help="Incrementally increase the maximum for unbounded cardinalities.",
+    )
     return parser
