@@ -115,8 +115,8 @@ class ASPModelVisitor(ModelVisitor):
         self.output_asp.append(f'feature("{self.structure_name}","{feature_name}","{type_name}",{c_min},{c_max}).')
         if type_name == "num":
             num: ModelParser.Number_defContext = field.number_def()
-            r_min = "#inf" if num.min is None else num.min.INTEGER()
-            r_max = "#sup" if num.max is None else num.max.INTEGER()
+            r_min = "#inf" if num.min is None else num.min.getText()
+            r_max = "#sup" if num.max is None else num.max.getText()
             self.output_asp.append(f'range("{self.structure_name}","{feature_name}",{r_min},{r_max}).')
 
     def visitAttribute(self, ctx: ModelParser.AttributeContext):
