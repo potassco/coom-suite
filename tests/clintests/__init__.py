@@ -31,8 +31,7 @@ def StableModels(*args: set[Symbol | str], fclingo: bool = False) -> Test:  # py
     """
     if not fclingo:
         return And(NumModels(len(args)), *(Assert(Exact(1), Equals(a)) for a in args))
-    else:
-        return And(NumModels(len(args)), *(Assert(Exact(1), SupersetOfTheory(a, check_theory=True)) for a in args))
+    return And(NumModels(len(args)), *(Assert(Exact(1), SupersetOfTheory(a, check_theory=True)) for a in args))
 
 
 class SupersetOfTheory(SupersetOf):

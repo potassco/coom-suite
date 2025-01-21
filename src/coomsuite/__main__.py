@@ -4,6 +4,7 @@ The main entry point for the application.
 
 import sys
 from tempfile import NamedTemporaryFile, TemporaryDirectory
+from typing import List
 
 from clingo.application import clingo_main
 
@@ -12,6 +13,34 @@ from .application import COOMSolverApp
 from .preprocess import check_user_input, preprocess
 from .utils.logging import configure_logging, get_logger
 from .utils.parser import get_parser
+
+
+def solve(serialized_facts: List[str], max_bound: int, args, unknown_args) -> int:
+    """
+    Preprocesses and solves a serialized COOM instance.
+    """
+    # Preprocess serialized ASP facts
+    processed_facts = preprocess(
+        serialized_facts,
+        max_bound=max_bound,
+        discrete=args.solver == "clingo",
+    )
+    check_user_input(processed_facts)
+
+    with NamedTemporaryFile(mode="w", delete=False) as tmp:
+        tmp_name = tmp.name
+        tmp.write("".join(processed_facts))
+
+    # Solve the ASP instance
+    return clingo_main(
+        COOMSolverApp(
+            {
+                "solver": args.solver,
+                "output_format": args.output,
+            }
+        ),
+        [tmp_name] + unknown_args,
+    )
 
 
 def main():
@@ -43,6 +72,7 @@ def main():
 
     elif args.command == "solve":
         log.info("Converting and solving COOM file %s", args.input)
+
         with TemporaryDirectory() as temp_dir:
             # Parse COOM to ASP serialized facts
             serialized_facts = [convert_instance(args.input, "model", temp_dir)] + (
@@ -51,35 +81,15 @@ def main():
 
             if args.show_facts:
                 print("\n".join(preprocess(serialized_facts)))  # nocoverage
+            elif not args.incremental_bounds:
+                solve(serialized_facts, 99, args, unknown_args=unknown_args)
             else:
                 ret = 20
                 max_bound = 1
 
                 while ret == 20:
                     print(f"\nSolving with max_bound = {max_bound}\n")
-
-                    # Preprocess serialized ASP facts
-                    processed_facts = preprocess(
-                        serialized_facts,
-                        max_bound=max_bound,
-                        discrete=args.solver == "clingo",
-                    )
-                    check_user_input(processed_facts)
-
-                    with NamedTemporaryFile(mode="w", delete=False) as tmp:
-                        tmp_name = tmp.name
-                        tmp.write("".join(processed_facts))
-
-                    # Solve the ASP instance
-                    ret = clingo_main(
-                        COOMSolverApp(
-                            options={
-                                "solver": args.solver,
-                                "output_format": args.output,
-                            }
-                        ),
-                        [tmp_name] + unknown_args,
-                    )
+                    ret = solve(serialized_facts, max_bound, args, unknown_args=unknown_args)
                     max_bound += 1
 
 
