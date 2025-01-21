@@ -98,6 +98,8 @@ class TestCOOMModelParser(TestCase):
             ],
         )
 
+        self.assertEqual(parse_coom("product{string id}"), ['structure("product").'])
+
     def test_enumeration(self) -> None:
         """
         Test parsing the 'enumeration' keyword.

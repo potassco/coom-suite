@@ -125,7 +125,7 @@ behavior Unterposition {
 	imply konstruktion.pfostenRE.unterposition = this
 
 // 	default 	cover = _AcrylAllWeather
-
+}
 // behavior Grundmerkmale {
 // 	readonly bestellBreite
 // }
