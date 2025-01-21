@@ -121,32 +121,18 @@ class TestClingo(TestCase):
 
     def test_user_input(self) -> None:
         """
-        Test user input (clingo)
+        Test solving user input
         """
-
-        def user_check(test: str, expected_msg: str) -> None:
-            """
-            Runs a test checking the user input for validity.
-            """
-            with self.assertRaises(ValueError) as ctx:
-                self.run_test(test)
-            self.assertEqual(str(ctx.exception), expected_msg)
-
         self.run_test("user_value_discrete")
         self.run_test("user_value_integer")
         self.run_test("user_include")
 
-        user_check("set_invalid_variable", "User input not valid.\nVariable root.color[0] is not valid.")
-        user_check("add_invalid_variable", "User input not valid.\nVariable root.basket[0] is not valid.")
-        user_check("set_invalid_type", "User input not valid.\nNo value can be set for variable root.basket[0].")
-        user_check("add_invalid_type", "User input not valid.\nVariable root.basket[0] cannot be added.")
-        user_check(
-            "set_invalid_value_discrete",
-            "User input not valid.\nValue 'Yellow' is not in domain of variable root.color[0].",
-        )
-        user_check(
-            "set_invalid_value_num", "User input not valid.\nValue '11' is not in domain of variable root.size[0]."
-        )
+        self.run_test("set_invalid_variable")
+        self.run_test("add_invalid_variable")
+        self.run_test("set_invalid_type")
+        self.run_test("add_invalid_type")
+        self.run_test("set_invalid_value_discrete")
+        self.run_test("set_invalid_value_num")
 
 
 class TestFclingo(TestCase):
@@ -260,29 +246,8 @@ class TestFclingo(TestCase):
 
     def test_user_input(self) -> None:
         """
-        Test user input (fclingo)
+        Test solving user input
         """
-
-        def user_check(test: str, expected_msg: str) -> None:
-            """
-            Runs a test checking the user input for validity.
-            """
-            with self.assertRaises(ValueError) as ctx:
-                self.run_test(test)
-            self.assertEqual(str(ctx.exception), expected_msg)
-
         self.run_test("user_value_discrete")
         self.run_test("user_value_integer")
         self.run_test("user_include")
-
-        user_check("set_invalid_variable", "User input not valid.\nVariable root.color[0] is not valid.")
-        user_check("add_invalid_variable", "User input not valid.\nVariable root.basket[0] is not valid.")
-        user_check("set_invalid_type", "User input not valid.\nNo value can be set for variable root.basket[0].")
-        user_check("add_invalid_type", "User input not valid.\nVariable root.basket[0] cannot be added.")
-        user_check(
-            "set_invalid_value_discrete",
-            "User input not valid.\nValue 'Yellow' is not in domain of variable root.color[0].",
-        )
-        user_check(
-            "set_invalid_value_num", "User input not valid.\nValue '11' is not in domain of variable root.size[0]."
-        )

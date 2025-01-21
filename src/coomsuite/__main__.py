@@ -3,14 +3,44 @@ The main entry point for the application.
 """
 
 import sys
-from tempfile import TemporaryDirectory
+from tempfile import NamedTemporaryFile, TemporaryDirectory
+from typing import List
 
 from clingo.application import clingo_main
 
 from . import convert_instance
-from .application import COOMApp
+from .application import COOMSolverApp
+from .preprocess import check_user_input, preprocess
 from .utils.logging import configure_logging, get_logger
 from .utils.parser import get_parser
+
+
+def solve(serialized_facts: List[str], max_bound: int, args, unknown_args) -> int:
+    """
+    Preprocesses and solves a serialized COOM instance.
+    """
+    # Preprocess serialized ASP facts
+    processed_facts = preprocess(
+        serialized_facts,
+        max_bound=max_bound,
+        discrete=args.solver == "clingo",
+    )
+    check_user_input(processed_facts)
+
+    with NamedTemporaryFile(mode="w", delete=False) as tmp:
+        tmp_name = tmp.name
+        tmp.write("".join(processed_facts))
+
+    # Solve the ASP instance
+    return clingo_main(
+        COOMSolverApp(
+            {
+                "solver": args.solver,
+                "output_format": args.output,
+            }
+        ),
+        [tmp_name] + unknown_args,
+    )
 
 
 def main():
@@ -42,27 +72,25 @@ def main():
 
     elif args.command == "solve":
         log.info("Converting and solving COOM file %s", args.input)
+
         with TemporaryDirectory() as temp_dir:
-            clingo_options = (
-                [convert_instance(args.input, "model", temp_dir)]
-                + ([convert_instance(args.user_input, "user", temp_dir)] if args.user_input else [])
-                + unknown_args
+            # Parse COOM to ASP serialized facts
+            serialized_facts = [convert_instance(args.input, "model", temp_dir)] + (
+                [convert_instance(args.user_input, "user", temp_dir)] if args.user_input else []
             )
 
             if args.show_facts:
-                clingo_options.append("--outf=3")
+                print("\n".join(preprocess(serialized_facts)))  # nocoverage
+            elif not args.incremental_bounds:
+                solve(serialized_facts, 99, args, unknown_args=unknown_args)
+            else:
+                ret = 20
+                max_bound = 1
 
-            options = {
-                "solver": args.solver,
-                "output_format": args.output,
-                "show_facts": args.show_facts,
-                "preprocess": True,
-            }
-
-            clingo_main(
-                COOMApp(options=options),
-                clingo_options,
-            )
+                while ret == 20:
+                    print(f"\nSolving with max_bound = {max_bound}\n")
+                    ret = solve(serialized_facts, max_bound, args, unknown_args=unknown_args)
+                    max_bound += 1
 
 
 if __name__ == "__main__":

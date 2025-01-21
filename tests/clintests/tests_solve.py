@@ -10,18 +10,15 @@ All other tests work with both clingo and fclingo.
 
 from typing import Any
 
-from clintest.assertion import Equals, SubsetOf, True_
 from clintest.quantifier import Exact
 from clintest.test import And, Assert
 
-from . import TEST_EMPTY, TEST_UNSAT, NumModels, SingleModelEquals, SupersetOfTheory
+from . import TEST_EMPTY, TEST_UNSAT, NumModels, StableModels, SupersetOfTheory
 
 TESTS_SOLVE: dict[str, dict[str, Any]] = {
     "empty": {"test": TEST_EMPTY, "program": ""},
     "optional_part": {
-        "test": And(
-            NumModels(2), Assert(Exact(1), SubsetOf(set())), Assert(Exact(1), Equals({'include("root.a[0]")'}))
-        ),
+        "test": StableModels({'include("root.a[0]")'}, set()),
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -31,7 +28,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             part("A").""",
     },
     "mandatory_part": {
-        "test": SingleModelEquals({'include("root.a[0]")'}),
+        "test": StableModels({'include("root.a[0]")'}),
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -43,11 +40,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             part("A").""",
     },
     "part_with_cardinality": {
-        "test": And(
-            NumModels(2),
-            Assert(Exact(1), Equals({'include("root.a[0]")'})),
-            Assert(Exact(1), Equals({'include("root.a[0]")', 'include("root.a[1]")'})),
-        ),
+        "test": StableModels({'include("root.a[0]")'}, {'include("root.a[0]")', 'include("root.a[1]")'}),
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -63,11 +56,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             part("A").""",
     },
     "optional_part_with_subpart": {
-        "test": And(
-            NumModels(2),
-            Assert(Exact(1), SubsetOf(set())),
-            Assert(Exact(1), Equals({'include("root.a[0]")', 'include("root.a[0].b[0]")'})),
-        ),
+        "test": StableModels(set(), {'include("root.a[0]")', 'include("root.a[0].b[0]")'}),
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -83,11 +72,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             part("B").""",
     },
     "simple_discrete": {
-        "test": And(
-            NumModels(2),
-            Assert(Exact(1), Equals({'value("root.a[0]","A1")'})),
-            Assert(Exact(1), Equals({'value("root.a[0]","A2")'})),
-        ),
+        "test": StableModels({'value("root.a[0]","A1")'}, {'value("root.a[0]","A2")'}),
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -101,12 +86,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             part("product").""",
     },
     "optional_discrete": {
-        "test": And(
-            NumModels(3),
-            Assert(Exact(1), Equals(set())),
-            Assert(Exact(1), Equals({'value("root.a[0]","A1")'})),
-            Assert(Exact(1), Equals({'value("root.a[0]","A2")'})),
-        ),
+        "test": StableModels(set(), {'value("root.a[0]","A1")'}, {'value("root.a[0]","A2")'}),
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -118,12 +98,11 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             part("product").""",
     },
     "multiple_discrete": {
-        "test": And(
-            NumModels(4),
-            Assert(Exact(1), Equals({'value("root.a[0]","A1")', 'value("root.a[1]","A1")'})),
-            Assert(Exact(1), Equals({'value("root.a[0]","A1")', 'value("root.a[1]","A2")'})),
-            Assert(Exact(1), Equals({'value("root.a[0]","A2")', 'value("root.a[1]","A1")'})),
-            Assert(Exact(1), Equals({'value("root.a[0]","A2")', 'value("root.a[1]","A2")'})),
+        "test": StableModels(
+            {'value("root.a[0]","A1")', 'value("root.a[1]","A1")'},
+            {'value("root.a[0]","A1")', 'value("root.a[1]","A2")'},
+            {'value("root.a[0]","A2")', 'value("root.a[1]","A1")'},
+            {'value("root.a[0]","A2")', 'value("root.a[1]","A2")'},
         ),
         "program": """
             type("root","product").
@@ -142,16 +121,8 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             part("product").""",
     },
     "simple_integer": {
-        "test": And(
-            NumModels(2),
-            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)'})),
-            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",2)'})),
-        ),
-        "ftest": And(
-            NumModels(2),
-            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)'}, check_theory=True)),
-            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",2)'}, check_theory=True)),
-        ),
+        "test": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
+        "ftest": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}, fclingo=True),
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -164,12 +135,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             part("product").""",
     },
     "optional_integer": {
-        "test": And(
-            NumModels(3),
-            Assert(Exact(1), Equals(set())),
-            Assert(Exact(1), Equals({'value("root.a[0]",1)'})),
-            Assert(Exact(1), Equals({'value("root.a[0]",2)'})),
-        ),
+        "test": StableModels(set(), {'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
         "ftest": And(
             NumModels(3),
             # Assert(Exact(1), SubsetOf({})), # How to check empty set for fclingo (with regards to output atoms)?
@@ -186,19 +152,18 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             part("product").""",
     },
     "multiple_integer": {
-        "test": And(
-            NumModels(4),
-            Assert(Exact(1), Equals({'value("root.a[0]",1)', 'value("root.a[1]",1)'})),
-            Assert(Exact(1), Equals({'value("root.a[0]",1)', 'value("root.a[1]",2)'})),
-            Assert(Exact(1), Equals({'value("root.a[0]",2)', 'value("root.a[1]",1)'})),
-            Assert(Exact(1), Equals({'value("root.a[0]",2)', 'value("root.a[1]",2)'})),
+        "test": StableModels(
+            {'value("root.a[0]",1)', 'value("root.a[1]",1)'},
+            {'value("root.a[0]",1)', 'value("root.a[1]",2)'},
+            {'value("root.a[0]",2)', 'value("root.a[1]",1)'},
+            {'value("root.a[0]",2)', 'value("root.a[1]",2)'},
         ),
-        "ftest": And(
-            NumModels(4),
-            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)', 'value("root.a[1]",1)'}, check_theory=True)),
-            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)', 'value("root.a[1]",2)'}, check_theory=True)),
-            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",2)', 'value("root.a[1]",1)'}, check_theory=True)),
-            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",2)', 'value("root.a[1]",2)'}, check_theory=True)),
+        "ftest": StableModels(
+            {'value("root.a[0]",1)', 'value("root.a[1]",1)'},
+            {'value("root.a[0]",1)', 'value("root.a[1]",2)'},
+            {'value("root.a[0]",2)', 'value("root.a[1]",1)'},
+            {'value("root.a[0]",2)', 'value("root.a[1]",2)'},
+            fclingo=True,
         ),
         "program": """
             type("root","product").
@@ -395,64 +360,56 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             unary("!x","!","x").""",
     },
     "table_discrete": {
-        "test": And(
-            NumModels(4),
-            Assert(Exact(1), Equals({'value("root.x[0]","A1")', 'value("root.y[0]","A2")'})),
-            Assert(Exact(1), Equals({'value("root.x[0]","A1")', 'value("root.y[0]","A3")'})),
-            Assert(Exact(1), Equals({'value("root.x[0]","A2")', 'value("root.y[0]","A1")'})),
-            Assert(Exact(1), Equals({'value("root.x[0]","A3")', 'value("root.y[0]","A2")'})),
+        "test": StableModels(
+            {'value("root.x[0]","A1")', 'value("root.y[0]","A2")'},
+            {'value("root.x[0]","A1")', 'value("root.y[0]","A3")'},
+            {'value("root.x[0]","A2")', 'value("root.y[0]","A1")'},
+            {'value("root.x[0]","A3")', 'value("root.y[0]","A2")'},
         ),
         "files": ["table_discrete.lp"],
     },
     "table_integer": {
-        "test": And(
-            NumModels(4),
-            Assert(Exact(1), Equals({'value("root.x[0]",1)', 'value("root.y[0]",2)'})),
-            Assert(Exact(1), Equals({'value("root.x[0]",1)', 'value("root.y[0]",3)'})),
-            Assert(Exact(1), Equals({'value("root.x[0]",2)', 'value("root.y[0]",1)'})),
-            Assert(Exact(1), Equals({'value("root.x[0]",3)', 'value("root.y[0]",2)'})),
+        "test": StableModels(
+            {'value("root.x[0]",1)', 'value("root.y[0]",2)'},
+            {'value("root.x[0]",1)', 'value("root.y[0]",3)'},
+            {'value("root.x[0]",2)', 'value("root.y[0]",1)'},
+            {'value("root.x[0]",3)', 'value("root.y[0]",2)'},
         ),
-        "ftest": And(
-            NumModels(4),
-            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]",1)', 'value("root.y[0]",2)'}, check_theory=True)),
-            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]",1)', 'value("root.y[0]",3)'}, check_theory=True)),
-            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]",2)', 'value("root.y[0]",1)'}, check_theory=True)),
-            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]",3)', 'value("root.y[0]",2)'}, check_theory=True)),
+        "ftest": StableModels(
+            {'value("root.x[0]",1)', 'value("root.y[0]",2)'},
+            {'value("root.x[0]",1)', 'value("root.y[0]",3)'},
+            {'value("root.x[0]",2)', 'value("root.y[0]",1)'},
+            {'value("root.x[0]",3)', 'value("root.y[0]",2)'},
+            fclingo=True,
         ),
         "files": ["table_integer.lp"],
     },
     "table_mixed": {
-        "test": And(
-            NumModels(4),
-            Assert(Exact(1), Equals({'value("root.x[0]","A1")', 'value("root.y[0]",2)'})),
-            Assert(Exact(1), Equals({'value("root.x[0]","A1")', 'value("root.y[0]",3)'})),
-            Assert(Exact(1), Equals({'value("root.x[0]","A2")', 'value("root.y[0]",1)'})),
-            Assert(Exact(1), Equals({'value("root.x[0]","A3")', 'value("root.y[0]",2)'})),
+        "test": StableModels(
+            {'value("root.x[0]","A1")', 'value("root.y[0]",2)'},
+            {'value("root.x[0]","A1")', 'value("root.y[0]",3)'},
+            {'value("root.x[0]","A2")', 'value("root.y[0]",1)'},
+            {'value("root.x[0]","A3")', 'value("root.y[0]",2)'},
         ),
-        "ftest": And(
-            NumModels(4),
-            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]","A1")', 'value("root.y[0]",2)'}, check_theory=True)),
-            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]","A1")', 'value("root.y[0]",3)'}, check_theory=True)),
-            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]","A2")', 'value("root.y[0]",1)'}, check_theory=True)),
-            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]","A3")', 'value("root.y[0]",2)'}, check_theory=True)),
+        "ftest": StableModels(
+            {'value("root.x[0]","A1")', 'value("root.y[0]",2)'},
+            {'value("root.x[0]","A1")', 'value("root.y[0]",3)'},
+            {'value("root.x[0]","A2")', 'value("root.y[0]",1)'},
+            {'value("root.x[0]","A3")', 'value("root.y[0]",2)'},
+            fclingo=True,
         ),
         "files": ["table_mixed.lp"],
     },
     "table_wildcard": {
-        "test": And(
-            NumModels(3),
-            Assert(Exact(1), Equals({'value("root.x[0]","A1")', 'value("root.y[0]","A1")'})),
-            Assert(Exact(1), Equals({'value("root.x[0]","A2")', 'value("root.y[0]","A1")'})),
-            Assert(Exact(1), Equals({'value("root.x[0]","A2")', 'value("root.y[0]","A2")'})),
+        "test": StableModels(
+            {'value("root.x[0]","A1")', 'value("root.y[0]","A1")'},
+            {'value("root.x[0]","A2")', 'value("root.y[0]","A1")'},
+            {'value("root.x[0]","A2")', 'value("root.y[0]","A2")'},
         ),
         "files": ["table_wildcard.lp"],
     },
     "table_undef": {
-        "test": And(
-            NumModels(2),
-            Assert(Exact(1), Equals({'value("root.x[0]","A1")'})),
-            Assert(Exact(1), Equals({'value("root.x[0]","A2")'})),
-        ),
+        "test": StableModels({'value("root.x[0]","A1")'}, {'value("root.x[0]","A2")'}),
         "files": ["table_undef.lp"],
     },
     "table_undef2": {
@@ -634,47 +591,41 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             number("6",6).""",
     },
     "count": {
-        "test": SingleModelEquals({'include("root.x[0]")', 'include("root.x[1]")'}),
+        "test": StableModels({'include("root.x[0]")', 'include("root.x[1]")'}),
         "files": ["count.lp"],
     },
     "sum": {
-        "test": And(
-            NumModels(2),
-            Assert(Exact(1), Equals({'value("root.x[0]",1)', 'value("root.x[1]",2)'})),
-            Assert(Exact(1), Equals({'value("root.x[0]",2)', 'value("root.x[1]",1)'})),
+        "test": StableModels(
+            {'value("root.x[0]",1)', 'value("root.x[1]",2)'}, {'value("root.x[0]",2)', 'value("root.x[1]",1)'}
         ),
-        "ftest": And(
-            NumModels(2),
-            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]",1)', 'value("root.x[1]",2)'}, check_theory=True)),
-            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]",2)', 'value("root.x[1]",1)'}, check_theory=True)),
+        "ftest": StableModels(
+            {'value("root.x[0]",1)', 'value("root.x[1]",2)'},
+            {'value("root.x[0]",2)', 'value("root.x[1]",1)'},
+            fclingo=True,
         ),
         "files": ["sum.lp"],
     },
     "min": {
-        "test": And(
-            NumModels(3),
-            Assert(Exact(1), Equals({'value("root.x[0]",4)', 'value("root.x[1]",3)'})),
-            Assert(Exact(1), Equals({'value("root.x[0]",3)', 'value("root.x[1]",3)'})),
-            Assert(Exact(1), Equals({'value("root.x[0]",3)', 'value("root.x[1]",4)'})),
+        "test": StableModels(
+            {'value("root.x[0]",4)', 'value("root.x[1]",3)'},
+            {'value("root.x[0]",3)', 'value("root.x[1]",3)'},
+            {'value("root.x[0]",3)', 'value("root.x[1]",4)'},
         ),
-        "ftest": And(
-            NumModels(3),
-            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]",4)', 'value("root.x[1]",3)'}, check_theory=True)),
-            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]",3)', 'value("root.x[1]",3)'}, check_theory=True)),
-            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]",3)', 'value("root.x[1]",4)'}, check_theory=True)),
+        "ftest": StableModels(
+            {'value("root.x[0]",4)', 'value("root.x[1]",3)'},
+            {'value("root.x[0]",3)', 'value("root.x[1]",3)'},
+            {'value("root.x[0]",3)', 'value("root.x[1]",4)'},
+            fclingo=True,
         ),
         "files": ["min.lp"],
     },
     "max": {
-        "test": SingleModelEquals({'value("root.x[0]",3)', 'value("root.x[1]",3)'}),
-        "ftest": And(
-            NumModels(1),
-            Assert(Exact(1), SupersetOfTheory({'value("root.x[0]",3)', 'value("root.x[1]",3)'}, check_theory=True)),
-        ),
+        "test": StableModels({'value("root.x[0]",3)', 'value("root.x[1]",3)'}),
+        "ftest": StableModels({'value("root.x[0]",3)', 'value("root.x[1]",3)'}, fclingo=True),
         "files": ["max.lp"],
     },
     "user_value_discrete": {
-        "test": SingleModelEquals({'value("root.a[0]","A1")'}),
+        "test": StableModels({'value("root.a[0]","A1")'}),
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -689,11 +640,8 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             user_value("root.a[0]","A1").""",
     },
     "user_value_integer": {
-        "test": SingleModelEquals({'value("root.a[0]",1)'}),
-        "ftest": And(
-            NumModels(1),
-            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)'}, check_theory=True)),
-        ),
+        "test": StableModels({'value("root.a[0]",1)'}),
+        "ftest": StableModels({'value("root.a[0]",1)'}, fclingo=True),
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -707,7 +655,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             user_value("root.a[0]",1).""",
     },
     "user_include": {
-        "test": SingleModelEquals({'include("root.a[0]")'}),
+        "test": StableModels({'include("root.a[0]")'}),
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -717,18 +665,14 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             part("A").
             user_include("root.a[0]").""",
     },
-    "set_invalid_variable": {
-        "test": True_(),  # Output does not matter, tests whether Exception is raised
-        "program": """
-            user_value("root.color[0]","Yellow").""",
-    },
+    "set_invalid_variable": {"test": StableModels(set()), "program": """user_value("root.color[0]","Yellow")."""},
     "add_invalid_variable": {
-        "test": True_(),  # Output does not matter, tests whether Exception is raised
+        "test": StableModels(set()),
         "program": """
             user_include("root.basket[0]").""",
     },
     "set_invalid_type": {
-        "test": True_(),  # Output does not matter, tests whether Exception is raised
+        "test": StableModels(set(), {'include("root.basket[0]")'}),
         "program": """
             part("product").
             part("Basket").
@@ -738,7 +682,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             user_value("root.basket[0]","Yellow").""",
     },
     "add_invalid_type": {
-        "test": True_(),  # Output does not matter, tests whether Exception is raised
+        "test": StableModels(set()),
         "program": """
             part("product").
             discrete("Basket").
@@ -748,7 +692,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             user_include("root.basket[0]").""",
     },
     "set_invalid_value_discrete": {
-        "test": True_(),  # Output does not matter, tests whether Exception is raised
+        "test": StableModels({'value("root.color[0]","Red")'}),
         "program": """
             part("product").
             discrete("Color").
@@ -756,17 +700,21 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             type("root.color[0]","Color").
             parent("root.color[0]","root").
             index("root.color[0]",0).
-            user_value("root.color[0]","Yellow").""",
+            user_value("root.color[0]","Yellow").
+            constraint(("root.color",1),"lowerbound").
+            set("root.color","root.color[0]").""",
     },
     "set_invalid_value_num": {
-        "test": True_(),  # Output does not matter, tests whether Exception is raised
+        "test": StableModels({'value("root.size[0]",1)'}, {'value("root.size[0]",2)'}, {'value("root.size[0]",3)'}),
         "program": """
             part("product").
             integer("product.size").
-            range("product.size",1,10).
+            range("product.size",1,3).
             type("root.size[0]","product.size").
             parent("root.size[0]","root").
             index("root.size[0]",0).
-            user_value("root.size[0]",11).""",
+            user_value("root.size[0]",11).
+            constraint(("root.size",1),"lowerbound").
+            set("root.size","root.size[0]").""",
     },
 }
