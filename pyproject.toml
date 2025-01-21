@@ -13,8 +13,6 @@ dependencies = [
     "antlr4-tools",
     "antlr4-python3-runtime==4.9.3",
     "clingo==5.7.*",
-    "importlib_resources",
-    "clintest>=0.2.0",
     "clingcon >= 5.2.1, == 5.2.*",                                                                  # requirement for fclingo
     "fclingo@git+https://github.com/potassco/fclingo.git@6f4d7efc92bfac18465e2c95c4ef9ac99ef470b5",
 ]
@@ -29,7 +27,7 @@ Hompage = "https://github.com/krr-up/coom-suite.git/"
 format = ["black", "isort", "autoflake"]
 lint_pylint = ["pylint"]
 typecheck = ["types-setuptools", "mypy"]
-test = ["coverage[toml]"]
+test = ["coverage[toml]", "clintest>=0.2.0"]
 doc = ["sphinx", "furo", "nbsphinx", "sphinx_copybutton", "myst-parser"]
 dev = ["coomsuite[test,typecheck,lint_pylint]"]
 
@@ -54,8 +52,8 @@ line-length = 120
 max-line-length = 120
 
 [tool.pylint.design]
-max-args = 6
-max-positional-arguments = 6
+max-args = 5
+max-positional-arguments = 5
 max-attributes = 8
 max-bool-expr = 5
 max-branches = 12

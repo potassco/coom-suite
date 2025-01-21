@@ -123,7 +123,7 @@ class MockControl:
         except AttributeError:
             return self.__get_global_handler(attr)
 
-    def solve(  # type: ignore
+    def solve(  # type: ignore # pylint: disable=too-many-arguments, too-many-positional-arguments
         self,
         on_model=None,
         on_unsat=None,
