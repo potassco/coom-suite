@@ -6,8 +6,8 @@
 type_aux((),"product") :- coom_structure("product").
 
 % Create auxiliary predicate for every feature
-type_aux((F,(X,I)),T) :- coom_feature(Ctx,F,T,_,  Max),                 type_aux(X,Ctx), I = 0..Max-1, T != "num".
-type_aux((F,(X,I)),T) :- coom_feature(Ctx,F,T,Min,#sup),                type_aux(X,Ctx), I = 0..Min+max_bound-1, T != "num".
+type_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,_,  Max),      type_aux(X,Ctx), I = 0..Max-1, T != "num".
+type_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,Min,#sup),     type_aux(X,Ctx), I = 0..Min+max_bound-1, T != "num".
 type_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",_,  Max),  type_aux(X,Ctx), I = 0..Max-1.
 type_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), type_aux(X,Ctx), I = 0..Min+max_bound-1.
 
@@ -116,7 +116,7 @@ imply(C,X',G)                 :- coom_imply(C,P,F), coom_context(C,Ctx), type_au
 imply(C,X',@function(T,X,P')) :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), function(X,F,T,P').
 
 % Instantiate attribute constraints
-attribute_constraint((T,X)) :- coom_attribute(T,_,_), type(X,T).
+attribute_constraint((T,@dotpath(X)))  :- coom_attribute(T,_,_), type_aux(X,T).
 attribute_constraint_column(T,Col+1,A) :- coom_attribute(T,A,_), Col = #count{ A' : coom_attribute(T,A',_), A' < A }.
 
 % Instantiate cardinality constraints

@@ -34,7 +34,7 @@ def solve(serialized_facts: List[str], max_bound: int, args, unknown_args) -> in
     # Solve the ASP instance
     return clingo_main(
         COOMSolverApp(
-            {
+            options={
                 "solver": args.solver,
                 "output_format": args.output,
             }
