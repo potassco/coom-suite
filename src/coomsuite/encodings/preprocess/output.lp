@@ -98,6 +98,13 @@ number(C,N) :- coom_number(C,N).
 #show constant/1.
 #show number/2.
 
+% Optimization
+minimize(X') :- coom_minimize(C,P), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X').
+maximize(X') :- coom_maximize(C,P), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X').
+
+#show minimize/1.
+#show maximize/1.
+
 % User input
 user_include(X) :- coom_user_include(X).
 user_value(X,V) :- coom_user_value(X,V).
