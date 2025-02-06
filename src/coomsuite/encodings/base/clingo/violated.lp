@@ -1,6 +1,3 @@
-% Constraints cannot be violated
-:- violated(C,ID).
-
 % A formula is violated if it is defined and not satisfied
 violated(C,F) :- constraint((C,F),"boolean"), defined(F), not satisfied(F).
 
@@ -18,3 +15,6 @@ defined(C,ID)   :- column(C,ID,_,_), not undefined(C,ID).
 % (objects are included in ascending order of indices)
 % (maximum does not need to be checked)
 violated(X',P) :- constraint((P,Min),"lowerbound"), set(P,X), index(X,Min-1), not include(X), parent(X,X'), include(X').
+
+% Constraints cannot be violated
+:- violated(C,ID).

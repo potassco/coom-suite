@@ -65,9 +65,9 @@ def _parse_user_input_warnings(warning: Symbol) -> str:
     if warning_type == "not exists":
         variable = info.string
         msg = f"Variable {variable} is not valid: Does not exist."
-    elif warning_type == "not part":
-        variable = info.string
-        msg = f"Variable {variable} cannot be added: Not a part."
+    # elif warning_type == "not part":
+    #     variable = info.string
+    #     msg = f"Variable {variable} cannot be added: Not a part."
     elif warning_type == "not attribute":
         variable = info.string
         msg = f"No value can be set for variable {variable}: Not an attribute."

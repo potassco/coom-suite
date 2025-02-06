@@ -39,9 +39,9 @@ class TestUserInputCheck(TestCase):
             "set_invalid_type",
             "User input not valid.\nNo value can be set for variable root.basket[0]: Not an attribute.",
         )
-        self.user_check(
-            "add_invalid_type", "User input not valid.\nVariable root.basket[0] cannot be added: Not a part."
-        )
+        # self.user_check(
+        #     "add_invalid_type", "User input not valid.\nVariable root.basket[0] cannot be added: Not a part."
+        # )
         self.user_check(
             "set_invalid_value_discrete",
             "User input not valid.\nValue 'Yellow' is not in domain of variable root.color[0].",

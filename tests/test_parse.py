@@ -73,28 +73,48 @@ class TestCOOMModelParser(TestCase):
                 'feature("product","frame","Frame",1,1).',
             ],
         )
-
         self.assertEqual(
             parse_coom("structure Carrier {0..3 Bag bag}"),
             ['structure("Carrier").', 'feature("Carrier","bag","Bag",0,3).'],
         )
-
         self.assertEqual(
             parse_coom("structure Carrier {2..* Bag bag}"),
             ['structure("Carrier").', 'feature("Carrier","bag","Bag",2,#sup).'],
         )
-
         self.assertEqual(
             parse_coom("structure Carrier {5x Bag bag}"),
             ['structure("Carrier").', 'feature("Carrier","bag","Bag",5,5).'],
         )
-
         self.assertEqual(
             parse_coom("product{num	1-100 totalWeight}"),
             [
                 'structure("product").',
                 'feature("product","totalWeight","num",1,1).',
                 'range("product","totalWeight",1,100).',
+            ],
+        )
+        self.assertEqual(
+            parse_coom("product{num	-100-10 totalWeight}"),
+            [
+                'structure("product").',
+                'feature("product","totalWeight","num",1,1).',
+                'range("product","totalWeight",-100,10).',
+            ],
+        )
+        self.assertEqual(
+            parse_coom("product{num 0-∞ totalWeight}"),
+            [
+                'structure("product").',
+                'feature("product","totalWeight","num",1,1).',
+                'range("product","totalWeight",0,#sup).',
+            ],
+        )
+        self.assertEqual(
+            parse_coom("product{num -∞-1000 totalWeight}"),
+            [
+                'structure("product").',
+                'feature("product","totalWeight","num",1,1).',
+                'range("product","totalWeight",#inf,1000).',
             ],
         )
 

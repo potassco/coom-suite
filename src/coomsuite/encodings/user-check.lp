@@ -3,7 +3,7 @@ warning("not exists",X) :- user_value(X,_), not type(X,_).
 warning("not exists",X) :- user_include(X), not type(X,_).
 
 % Check variable type
-warning("not part",X) :- user_include(X), type(X,T), not part(T).
+% warning("not part",X) :- user_include(X), type(X,T), not part(T).
 warning("not attribute",X) :- user_value(X,V), type(X,T), #false : discrete(T); #false : integer(T).
 
 % Check valid domain
