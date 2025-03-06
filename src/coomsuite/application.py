@@ -60,7 +60,7 @@ class COOMSolverApp(Application):
     _log_level: str
     config: FclingoConfig
     _propagator: ClingconTheory
-    program_name: str = "COOM solver"
+    program_name: str = "COOM Suite"
     version: str = "0.1"
 
     def __init__(

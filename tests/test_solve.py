@@ -123,14 +123,14 @@ class TestClingo(TestCase):
         """
         Test solving user input
         """
-        self.run_test("user_value_discrete")
-        self.run_test("user_value_integer")
-        self.run_test("user_include")
+        self.run_test("add_part")
+        self.run_test("add_attribute")
+        self.run_test("set_value_discrete")
+        self.run_test("set_value_integer")
 
         self.run_test("set_invalid_variable")
         self.run_test("add_invalid_variable")
         self.run_test("set_invalid_type")
-        self.run_test("add_invalid_type")
         self.run_test("set_invalid_value_discrete")
         self.run_test("set_invalid_value_num")
 
@@ -168,6 +168,9 @@ class TestFclingo(TestCase):
         self.run_test("simple_integer")
         self.run_test("optional_integer")
         self.run_test("multiple_integer")
+        self.run_test("unbounded_integer")
+        self.run_test("unbounded_integer_below")
+        self.run_test("unbounded_integer_above")
 
     def test_boolean_constraints(self) -> None:
         """
@@ -248,6 +251,13 @@ class TestFclingo(TestCase):
         """
         Test solving user input
         """
-        self.run_test("user_value_discrete")
-        self.run_test("user_value_integer")
-        self.run_test("user_include")
+        self.run_test("add_part")
+        self.run_test("add_attribute")
+        self.run_test("set_value_discrete")
+        self.run_test("set_value_integer")
+
+        self.run_test("set_invalid_variable")
+        self.run_test("add_invalid_variable")
+        self.run_test("set_invalid_type")
+        self.run_test("set_invalid_value_discrete")
+        # self.run_test("set_invalid_value_num")
