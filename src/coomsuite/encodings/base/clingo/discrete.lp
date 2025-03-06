@@ -11,5 +11,5 @@
 value(P,P) :- constant(P).
 
 % Show statements
-#show .
-#show value(X,V) : value(X,V), type(X,T), discrete(T).
+% #show .
+% #show value(X,V) : value(X,V), type(X,T), discrete(T).
