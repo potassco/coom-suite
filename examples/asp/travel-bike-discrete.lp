@@ -15,7 +15,7 @@ integer("product.totalVolume").
 range("product.totalVolume",0,200).
 
 integer("product.requestedVolume").
-range("product.requestedVolume",200,200).
+range("product.requestedVolume",150,200).
 
 discrete("Capacity").
 domain("Capacity", "B10").

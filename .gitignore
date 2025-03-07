@@ -39,3 +39,5 @@ _autosummary
 .antlr
 
 default.profraw
+
+.env

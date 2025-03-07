@@ -198,7 +198,8 @@ elem(icontainer("root"), container, window):-sinstance(I).
     elem(message_unsat(ID), message, window):-_clinguin_mus(constraint(ID,"boolean")).
     attr(message_unsat(ID), title, "Explanation"):-_clinguin_mus(constraint(ID,"boolean")).
     attr(message_unsat(ID), type, "error"):-_clinguin_mus(constraint(ID,"boolean")).
-    attr(message_unsat((I,M)), message, M):-_clinguin_mus(constraint((I,M),"boolean")).
+    % attr(message_unsat((I,M)), message, M):-_clinguin_mus(constraint((I,M),"boolean")).
+    attr(message_unsat(C), message, M):-_clinguin_mus(constraint(C,"boolean")),constraint_explanation(C,M).
 
     %%%%%%%%%%%%%%%%%%%%%%%%
     % Menu bar
