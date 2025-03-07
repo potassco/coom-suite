@@ -80,6 +80,25 @@ clinguin client-server  --domain-files <instance-file> src/coomsuite/encodings/e
 It will use the clingo scripts.
 Make sure everything is shown.
 
+### Add explanation to constraints with LLM
+
+Adds the predicate `constraint_explanation` to an instance using an LLM.
+
+1. Set up a ChatPGT 4.0 key
+
+```
+export OPENAI_API_KEY=<key>
+```
+
+2. Run the script
+
+```
+python src/coomsuite/extend-with-llm.py <instance.lp> > <new-instance.lp>
+```
+This takes a bit
+
+3. Now use the new file as instance file in the UI
+
 ### Solving
 
 To solve a COOM model using ASP run
