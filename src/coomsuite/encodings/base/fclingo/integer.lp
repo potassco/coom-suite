@@ -6,6 +6,3 @@
 
 % Auxiliary values for numbers.
 &sum{N} = Path :- number(Path,N).
-
-% Show statement for numeric values in fclingo
-&show { X : type(X,T), integer(T) }.

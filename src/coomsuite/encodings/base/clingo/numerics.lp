@@ -1,5 +1,3 @@
-#include "boolean.lp".
-
 % Evaluate functions (aggregates)
 value(F,V) :- function(F,"count",P), V = #count{ X    : set(P,X), include(X) }.
 value(F,V) :- function(F,"sum",  P), V = #sum  { V',X : set(P,X), value(X,V')   }.
