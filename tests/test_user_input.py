@@ -33,7 +33,7 @@ class TestUserInputCheck(TestCase):
         self.user_check("add_invalid_variable", "Invalid user input.\nVariable root.basket[0] does not exist.")
         self.user_check(
             "set_invalid_type",
-            "Invalid user input.\nNo value can be set for variable root.basket[0]. Variable exists but corresponds to a part.",
+            "Invalid user input.\nNo value can be set for variable root.basket[0]. Variable exists but is a part.",
         )
         # self.user_check(
         #     "add_invalid_type", "Invalid user input.\nVariable root.basket[0] cannot be added: Not a part."

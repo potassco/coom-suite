@@ -70,7 +70,7 @@ def _parse_user_input_warnings(warning: Symbol) -> str:
     #     msg = f"Variable {variable} cannot be added: Not a part."
     elif warning_type == "not attribute":
         variable = info.string
-        msg = f"No value can be set for variable {variable}. Variable exists but corresponds to a part."
+        msg = f"No value can be set for variable {variable}. Variable exists but is a part."
     elif warning_type == "outside domain":
         variable = info.arguments[0].string
         if str(info.arguments[1].type) == "SymbolType.Number":
