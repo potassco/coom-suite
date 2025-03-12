@@ -1,6 +1,3 @@
-#include "../clingo/boolean.lp".
-#include "boolean.lp".
-
 % Evaluate functions in fclingo (aggregates)
 &sum{ 1,X : set(P,X), include(X) } = F :- function(F,"count",P).
 &sum{   X : set(P,X), include(X) } = F :- function(F,"sum",  P).

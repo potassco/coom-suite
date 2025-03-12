@@ -148,11 +148,13 @@ class COOMSolverApp(Application):
         Main function ran on call.
         """
         encoding = get_encoding(f"encoding-base-{self._options['solver']}.lp")
+        show = get_encoding(f"show-{self._options['solver']}.lp")
         for f in files:
             control.load(f)
 
         if self._options["solver"] == "clingo":
             control.load(encoding)
+            control.load(show)
             control.ground()
             control.solve()
 
@@ -166,7 +168,7 @@ class COOMSolverApp(Application):
             with ProgramBuilder(control) as bld:
                 hbt = HeadBodyTransformer()
 
-                parse_files([encoding], lambda ast: bld.add(hbt.visit(ast)))
+                parse_files([encoding, show], lambda ast: bld.add(hbt.visit(ast)))
                 pos = Position("<string>", 1, 1)
                 loc = Location(pos, pos)
                 for rule in hbt.rules_to_add:

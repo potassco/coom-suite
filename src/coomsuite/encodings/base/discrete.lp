@@ -9,7 +9,3 @@
 
 % Auxiliary values for (non-numeric) constants
 value(P,P) :- constant(P).
-
-% Show statements
-#show .
-#show value(X,V) : value(X,V), type(X,T), discrete(T).

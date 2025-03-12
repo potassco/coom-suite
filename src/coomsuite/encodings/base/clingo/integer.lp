@@ -3,5 +3,3 @@
 
 % Auxiliary values for numbers.
 value(P,N) :- number(P,N).
-
-#show value(X,V) : value(X,V), type(X,T), integer(T).
