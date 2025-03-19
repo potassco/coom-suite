@@ -227,8 +227,8 @@ index("root.frame[0].bag[1].material[0]",0).
 parent("root.frame[0].bag[1].material[0]", "root.frame[0].bag[1]").
 
 % Instantiated constraints
-constraint((0,"count(root.carrier.bag)+count(root.frame.bag)<=4"),"boolean").
-binary("count(root.carrier.bag)+count(root.frame.bag)<=4","count(root.carrier.bag)+count(root.frame.bag)","<=","4").
+constraint((0,"count(root.carrier.bag)+count(root.frame.bag)<=2"),"boolean").
+binary("count(root.carrier.bag)+count(root.frame.bag)<=2","count(root.carrier.bag)+count(root.frame.bag)","<=","2").
 binary("count(root.carrier.bag)+count(root.frame.bag)","count(root.carrier.bag)","+","count(root.frame.bag)").
 function("count(root.carrier.bag)","count","root.carrier.bag").
 set("root.carrier.bag","root.carrier[0].bag[0]").
@@ -237,7 +237,7 @@ set("root.carrier.bag","root.carrier[0].bag[2]").
 function("count(root.frame.bag)","count","root.frame.bag").
 set("root.frame.bag","root.frame[0].bag[0]").
 set("root.frame.bag","root.frame[0].bag[1]").
-number("4",4).
+number("2",2).
 
 constraint((1,"root.totalWeight[0]=root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)"),"boolean").
 binary("root.totalWeight[0]=root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)","root.totalWeight[0]","=","root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)").
@@ -489,3 +489,16 @@ set("root.frame[0].bag[1].capacity[0].weight","root.frame[0].bag[1].capacity[0].
 
 constraint(("root.frame[0].bag[1].material",1),"lowerbound").
 set("root.frame[0].bag[1].material","root.frame[0].bag[1].material[0]").
+
+
+constraint_explanation((0,"count(root.carrier.bag)+count(root.frame.bag)<=4"),"The number of bags of the carrier plus the number of bags of the frame should be less than or equal to 4.").
+constraint_explanation((1,"root.totalWeight[0]=root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)"),"The total weight should be equal to the weight of the front wheel plus the weight of the rear wheel plus the sum of the weights of all bags' capacities on the carrier and the frame.").
+constraint_explanation((2,"root.totalWeight[0]<=root.maxWeight[0]*1000"),"The total weight should be less than or equal to the maximum weight multiplied by 1000.").
+constraint_explanation((3,"root.totalVolume[0]=sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)"),"The total volume should be equal to the sum of the volume of the capacity of the bags of the carrier plus the sum of the volume of the capacity of the bags of the frame.").
+constraint_explanation((4,"root.totalVolume[0]>=root.requestedVolume[0]"),"The total volume should be greater than or equal to the requested volume.").
+constraint_explanation((5,"!root.color[0]=Red||root.frontWheel[0].size[0]=20"),"If the color is Red, then the size of the front wheel should be 20.").
+constraint_explanation((6,"!root.carrier[0].bag[0].material[0]=Leather||root.carrier[0].bag[0].capacity[0]=B10"),"If the material of the first bag of the carrier is leather, then the capacity of the first bag of the carrier should be B10.").
+constraint_explanation((6,"!root.carrier[0].bag[1].material[0]=Leather||root.carrier[0].bag[1].capacity[0]=B10"),"If the material of the second bag of the carrier is leather, then the capacity of the second bag of the carrier should be B10.").
+constraint_explanation((6,"!root.carrier[0].bag[2].material[0]=Leather||root.carrier[0].bag[2].capacity[0]=B10"),"If the material of the third bag of the carrier is leather, then the capacity of the third bag of the carrier should be B10.").
+constraint_explanation((6,"!root.frame[0].bag[0].material[0]=Leather||root.frame[0].bag[0].capacity[0]=B10"),"If the material of the bag of the frame is leather, then the capacity of the bag of the frame should be B10.").
+constraint_explanation((6,"!root.frame[0].bag[1].material[0]=Leather||root.frame[0].bag[1].capacity[0]=B10"),"If the material of the second bag of the frame is leather, then the capacity of that bag should be B10.").
