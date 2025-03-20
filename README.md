@@ -98,6 +98,28 @@ coomsuite solve examples/coom/kids-bike.coom 0 -q
   configuration problem. To show the "refined" facts, run with option
   `--show-facts`. This will print the facts to the console.
 
+#### User input
+
+The coomsuite allows to add user input (or user requirements) for solving with
+the `--user-input` (or `-u`) option.
+
+```bash
+coomsuite solve examples/coom/kids-bike.coom -u examples/coom/user-input-kids.coom
+```
+
+This file contains the `set color[0] = Yellow` directive and therefore returns
+only solutions where the color of the bike is set to Yellow.
+
+#### Unbounded cardinalities
+
+For reasoning with unbounded cardinalites the `--incremental-bounds` option
+provides a simple approach which increases the maximum bound in a stepwise
+manner until reaching a solution.
+
+```bash
+coomsuite solve examples/coom/cargo-bike.coom -u examples/coom/user-input-cargo.coom
+```
+
 ### Extending the workbench
 
 #### Customizing the parser
