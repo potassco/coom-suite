@@ -152,3 +152,14 @@ grammar file name)
 ```
 antlr4 -v 4.9.3 -Dlanguage=Python3 Grammar.g4 -visitor
 ```
+
+### Documentation
+
+To generate the documentation, run
+
+```bash
+nox -s doc -- serve
+```
+
+Instructions to install and use `nox` can be found in
+[DEVELOPMENT.md](./DEVELOPMENT.md)

@@ -4,4 +4,8 @@ ______________________________________________________________________
 
 # API
 
-::: coomsuite handler: python options: members: true show_submodules: true
+::: coomsuite
+    handler: python
+    options:
+        members: true
+        show_submodules: true
