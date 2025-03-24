@@ -1,10 +1,7 @@
-______________________________________________________________________
-
+---
 hide:
-
 - navigation
-
-______________________________________________________________________
+---
 
 # Getting started
 
@@ -24,7 +21,8 @@ cd coomsuite
 pip install -e .[all]
 ```
 
-!!! warning Use only for development purposes
+!!! warning
+    Use only for development purposes
 
 ## Usage
 

@@ -31,7 +31,7 @@ def doc(session):
 
     if open_doc:
         open_cmd = "xdg-open" if sys.platform == "linux" else "open"
-        session.run(open_cmd, "http://localhost:8000/systems/coomsuite/")
+        session.run(open_cmd, "http://localhost:8000/systems/coom-suite/")
         session.run("mkdocs", "serve", *options)
     else:
         session.run("mkdocs", "build", *options)
