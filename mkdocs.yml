@@ -1,6 +1,6 @@
 site_name: COOM Suite
 site_url: https://potassco.org/systems/coom-suite
-site_description:
+site_description: Python package to parse and solve product configuration problems specified in COOM using ASP
 repo_name: potassco/coom-suite
 repo_url: https://github.com/potassco/coom-suite
 copyright: Copyright &copy; 2024 Potassco
@@ -99,7 +99,7 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
-          paths: [src]
+          # paths: [src]
           import:
             - https://docs.python.org/3/objects.inv
           options:
@@ -121,8 +121,12 @@ nav:
   - Reference:
     - reference/index.md
     - Problem: reference/problem/index.md
+    - COOM: reference/coom/index.md
     - Encodings: reference/encodings/index.md
-    - API: reference/api/index.md
+    - Python:
+      - reference/python/index.md
+      - Application: reference/python/application.md
+      - Preprocessor: reference/python/preprocessor.md
   - Community:
     - community/index.md
     - Help: community/help.md

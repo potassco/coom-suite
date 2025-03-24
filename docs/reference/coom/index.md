@@ -1,8 +1,19 @@
-# COOM language fragments
+---
+title: "COOM Reference"
+icon: "material/book-open-variant"
+---
 
-As covered by our encodings
+# COOM documentation
 
-## **COOM core**
+For a complete documentation to the COOM language
+we refer to the official [website].
+
+In the following we give an overview of the three
+COOM language fragments as described in
+TODO: Add reference
+
+
+## COOM Core
 
 ### Configuration tree / Product hierarchy
 
@@ -65,3 +76,6 @@ Everything from **COOM\[P\]** plus
 
 - Open cardinalities
 - Open numeric intervals
+
+
+[website]: https://coom-lang.org

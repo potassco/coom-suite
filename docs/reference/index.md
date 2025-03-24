@@ -8,10 +8,11 @@ learn about specific components, or access essential resources.
 
 ## What’s Inside
 
-- **API Documentation:** Comprehensive details on general classes.
+- **Problem Specifications:** Detailed description and definitions of the problem.
+- **COOM Documentation:** Overview over the COOM language and the fragments used in our system.
 - **ASP Encodings:** Explore the encodings used in our system.
-- **Problem Specifications:** Detailed description and definitions of the
-  problem.
+- **Source Code Reference:** Comprehensive details on the Python source code.
+
 
 <!-- - **Advanced Topics:** Gain insights into complex use cases and integrations. -->
 
