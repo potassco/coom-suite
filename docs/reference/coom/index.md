@@ -6,7 +6,7 @@ icon: "material/book-open-variant"
 # COOM documentation
 
 For a complete documentation to the COOM language
-we refer to the official [website].
+we refer to the official [website][coomlang].
 
 In the following we give an overview of the three
 COOM language fragments as described in
@@ -72,10 +72,13 @@ Everything from **COOM\[P\]** plus
     - fclingo only supports linear calculations (no multiplication of two
       variables)
 
+## COOM\[X*\]
+TODO
+
 ## Future work
 
 - Open cardinalities
 - Open numeric intervals
 
 
-[website]: https://coom-lang.org
+[coomlang]: https://coom-lang.org

@@ -92,6 +92,11 @@ markdown_extensions:
   - toc:
       permalink: true
   - footnotes
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
 
 plugins:
   - search
@@ -117,20 +122,25 @@ plugins:
 nav:
   - Home: index.md
   - Getting Started: getting_started.md
-  - Examples: examples/index.md
+  - Examples:
+      - examples/index.md
+      - Kids Bike: examples/kids-bike.md
+      - City Bike: examples/city-bike.md
+      - Travel Bike: examples/travel-bike.md
+      - Cargo Bike: examples/cargo-bike.md
   - Reference:
-    - reference/index.md
-    - Problem: reference/problem/index.md
-    - COOM: reference/coom/index.md
-    - Encodings: reference/encodings/index.md
-    - Python:
-      - reference/python/index.md
-      - Application: reference/python/application.md
-      - Preprocessor: reference/python/preprocessor.md
+      - reference/index.md
+      - Problem: reference/problem/index.md
+      - COOM: reference/coom/index.md
+      - Encodings: reference/encodings/index.md
+      - Python:
+          - reference/python/index.md
+          - Application: reference/python/application.md
+          - Preprocessor: reference/python/preprocessor.md
   - Community:
-    - community/index.md
-    - Help: community/help.md
-    - Changes: community/CHANGES.md
-    - Contributing: community/CONTRIBUTING.md
-    - Development: community/DEVELOPMENT.md
-    - Deployment: community/DEPLOYMENT.md
+      - community/index.md
+      - Help: community/help.md
+      - Changes: community/CHANGES.md
+      - Contributing: community/CONTRIBUTING.md
+      - Development: community/DEVELOPMENT.md
+      - Deployment: community/DEPLOYMENT.md

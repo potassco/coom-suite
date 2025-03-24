@@ -26,4 +26,4 @@ Your participation keeps our project thriving. Thank you for being part of our
 community!
 
 !!! info
-  The *COOM Suite* is part of the [Potassco](https://potassco.org) suite.
+    The *COOM Suite* is part of the [Potassco](https://potassco.org) suite.
