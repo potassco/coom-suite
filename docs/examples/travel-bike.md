@@ -7,10 +7,15 @@ icon: "material/bike-fast"
 
 The Travel Bike is a product configuration problem
 written in the [COOM\[X\]][xoom] language fragment.
-
 In addition to the City Bike,
 it contains numeric features and constraints
 involving arithmetics and aggregate functions.
+
+!!! info "fclingo"
+    Problems involving large numeric ranges may time out
+    when using the clingo encoding due to large groundings.
+    Here, hybrid solver fclingo, which handles integers natively,
+    can be used by specifying the `--solver fclingo` option.
 
 !!! info "Acknowledgements"
     The Travel Bike example has been provided by [denkbares].
@@ -21,7 +26,7 @@ involving arithmetics and aggregate functions.
 ## Usage
 
 ```console
-coomsuite solve examples/coom/travel-bike.coom
+coomsuite solve examples/coom/travel-bike.coom --solver fclingo
 ```
 ## COOM model
 

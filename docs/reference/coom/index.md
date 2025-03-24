@@ -12,73 +12,87 @@ In the following we give an overview of the three
 COOM language fragments as described in
 TODO: Add reference
 
+These fragments have similar
+counterparts in the
+[COOM language profiles][profiles]
+from the official documentation.
+However, they might differ in some details.
+
 
 ## COOM Core
 
+This is the basic language fragment which
+contains the most essential language features.
+
+It corresponds to the CORE profile of
+the [language profiles][profiles].
+
 ### Configuration tree / Product hierarchy
 
-- Root is `product` with features
-  - Every feature has cardinality 1
-- Only features allowed are `enumeration`
-  - which can have `attribute`
+- The configuration has a root which is specified by the `product` keyword
+  which in turn can have features with a fixed cardinality of 1.
+- The only features allowed are `enumeration`[s] which can have `attribute`[s].
 
 ### Constraints
 
-- `behavior`
-  - `require` and `require` with single `condition` (both not nested)
-    - Binary comparison operators: `=`, `!=`, `<`, `<=`, `>`, `>=`
-    - Unary logical operators: `!`, `()`
-    - Binary logical operators: `||`, `&&`
+- Constraints are specified by the `behavior` keyword
+- The possible constraints are:
+    - `require` (not nested)
+    - `require` with single `condition` (not nested)
+- Formulas can be specified by using the following operators:
+    - Binary comparison: `=`, `!=`, `<`, `<=`, `>`, `>=`
+    - Unary logical: `!`, `()`
+    - Binary logical: `||`, `&&`
     - *Example*: `require ! (color = Red && size = XXL)`
-  - `combinations`
-    - only `allow`
-    - `forbid` not yet implemented
-    - table entries can be tuples
-    - wildcard `-*-` supported
+  - Further, table constraints are allowed by using the `combinations` keyword:
+    - The entries of the table can be formed by using `allow` keyword
+    - The `forbid` keyword is currently not permitted
+    - Table entries can be single values, tuples or a wildcard `-*-`
 
 ## COOM\[P\]
 
-Everything from **COOM core** plus
+**COOM\[P\]** extends **COOM core** by the following.
+This extension corresponds to the C-USER profile.
 
 ### Configuration tree / Product hierarchy
 
-- Features can have cardinalities (`0..1 Basket  basket`)
-  - No open cardinalities
-- Features can also be `structure`
+- Features can have cardinalities (`0..1 Basket  basket`) but these have to be bounded
+- Features can also be `structure` (which builds up a partonomy)
 
 ### Constraints
 
-- Constraints can be specified locally for a structure, eg.
-  `behavior Bag {...}`
+- Constraints can be specified locally for a `structure`, eg. `behavior Bag {...}`
 - This enables longer path expressions, eg. `carrier.bag.capacity.volume`
 
 ## COOM\[X\]
 
-Everything from **COOM\[P\]** plus
+**COOM\[X\]** extends **COOM\[P\]** by the following.
+This extension corresponds to the N-LIN profile.
 
 ### Configuration tree / Product hierarchy
 
 - Features can be numeric, eg. `num .#/g 1-10000 totalWeight`
-  - no open ranges
-  - number of decimals and SI units have no effect
+  with their range specified or left open (only for fclingo).
 
 ### Constraints
 
-- Aggregate functions (`count`, `sum`, `min`, `max`)
-- Arithmetics
-  - Unary: `()`, `+`, `-`
-  - Binary: `+`, `-`, `*`
-    - no support yet for `/` and `^`
-    - fclingo only supports linear calculations (no multiplication of two
-      variables)
+- Formulas can now be built using
+  - Aggregate functions (`count`, `sum`, `min`, `max`)
+  - Arithmetics
+    - Unary: `()`, `+`, `-`
+    - Binary: `+`, `-`, `*`
+      - no support yet for `/` and `^`
+      - fclingo only supports linear calculations (no multiplication of two
+        variables)
 
-## COOM\[X*\]
-TODO
+## Unbounded Cardinalities
 
-## Future work
+The fragments **COOM\[P\]** and **COOM\[X\]**, respectively,
+have extensions which allow for unbounded cardinalities.
+This extension corresponds to the C-OPEN profile.
 
-- Open cardinalities
-- Open numeric intervals
+We call these fragments **COOM\[P*\]** and **COOM\[X*\]**, respectively.
 
 
 [coomlang]: https://coom-lang.org
+[profiles]: https://www.coom-lang.org/profile_about/

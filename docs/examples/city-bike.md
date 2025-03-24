@@ -8,7 +8,6 @@ icon: "material/bicycle-basket"
 
 The City Bike is a product configuration problem
 written in the [COOM\[P\]][poom] language fragment.
-
 It contains a simple partonomy with cardinalities different than 1,
 including optional parts.
 

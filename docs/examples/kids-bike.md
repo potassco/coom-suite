@@ -7,7 +7,6 @@ icon: "material/bike"
 
 The Kids Bike is a simple product configuration problem
 written in the [COOM Core][core] language fragment.
-
 It consists of different enumeration features and constraints over them.
 
 !!! info "Acknowledgements"
@@ -21,6 +20,11 @@ It consists of different enumeration features and constraints over them.
 ```console
 coomsuite solve examples/coom/kids-bike.coom
 ```
+
+!!! info
+    The usual clingo command-line arguments can be used, eg. to calculate all
+    stable models or suppress printing models.
+
 
 ## COOM model
 
