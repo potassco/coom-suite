@@ -49,11 +49,6 @@ fragments defined above: the [Kids](examples/coom/kids-bike.coom),
 We also provide the corresponding (serialized and refined) facts to these
 examples under [`examples/asp`](examples/asp).
 
-#### Benchmarks
-
-The COOM suite includes four scalable benchmark sets. More information can be
-found in the [`benchmarks`](benchmarks) directory.
-
 ### Convert COOM to facts
 
 To convert a COOM instance into a set of (serialized) facts run
@@ -118,39 +113,6 @@ manner until reaching a solution.
 
 ```bash
 coomsuite solve examples/coom/cargo-bike.coom -u examples/coom/user-input-cargo.coom
-```
-
-### Extending the workbench
-
-#### Customizing the parser
-
-To get started have a look at the
-[COOM grammar](src/coomsuite/utils/coom_grammar/Model.g4).
-
-You can customize the conversion by modifying the
-[ASP Visitor](src/coomsuite/utils/parse_coom.py).
-
-More information on the Python target of ANTLR v4 can be found
-[here](https://github.com/antlr/antlr4/blob/master/doc/python-target.md).
-
-#### Add encodings
-
-The encodings are stored in
-[`src/coomsuite/encodings/`](src/coomsuite/encodings/).
-
-Loading of the encodings is handled with clingo's
-[Application class](https://potassco.org/clingo/python-api/5.7/clingo/application.html).
-Modify [this line](src/coomsuite/application.py#L182) to insert your own
-encoding. Note that you might also have to disable/modify the preprocessing
-encoding [here](<(src/coomsuite/application.py#L159)>).
-
-#### Generate ANTLR4 Python files
-
-From the corresponding folder run (possibly replacing the version number and
-grammar file name)
-
-```
-antlr4 -v 4.9.3 -Dlanguage=Python3 Grammar.g4 -visitor
 ```
 
 ### Documentation

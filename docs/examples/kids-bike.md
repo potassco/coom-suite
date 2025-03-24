@@ -8,6 +8,8 @@ icon: "material/bike"
 The Kids Bike is a simple product configuration problem
 written in the [COOM Core][core] language fragment.
 
+It consists of different enumeration features and constraints over them.
+
 !!! info "Acknowledgements"
     The Kids Bike example has been provided by [denkbares].
 
@@ -19,6 +21,7 @@ written in the [COOM Core][core] language fragment.
 ```console
 coomsuite solve examples/coom/kids-bike.coom
 ```
+
 ## COOM model
 
 <!-- ??? quote "COOM Model" -->
@@ -26,3 +29,19 @@ coomsuite solve examples/coom/kids-bike.coom
 ```cpp
 --8<-- "examples/coom/kids-bike.coom:5:"
 ```
+
+## Example solution
+
+```
+color[0] = "Red"
+wheelSupport[0] = "True"
+frontWheel[0] = "W14"
+frontWheel[0].size[0] = 14
+rearWheel[0] = "W14"
+rearWheel[0].size[0] = 14
+```
+
+!!! tip "COOM output"
+    By default the COOM suite outputs ASP atoms.
+    To get the COOM output add the option
+    `--output coom` (`-o`).

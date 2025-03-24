@@ -128,6 +128,7 @@ nav:
       - City Bike: examples/city-bike.md
       - Travel Bike: examples/travel-bike.md
       - Cargo Bike: examples/cargo-bike.md
+      - Benchmarks: examples/benchmarks.md
   - Reference:
       - reference/index.md
       - Problem: reference/problem/index.md
@@ -140,6 +141,7 @@ nav:
   - Community:
       - community/index.md
       - Help: community/help.md
+      - Customization: community/customization.md
       - Changes: community/CHANGES.md
       - Contributing: community/CONTRIBUTING.md
       - Development: community/DEVELOPMENT.md

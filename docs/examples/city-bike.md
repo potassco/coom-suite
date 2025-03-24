@@ -9,6 +9,9 @@ icon: "material/bicycle-basket"
 The City Bike is a product configuration problem
 written in the [COOM\[P\]][poom] language fragment.
 
+It contains a simple partonomy with cardinalities different than 1,
+including optional parts.
+
 !!! info "Acknowledgements"
     The City Bike example has been provided by [denkbares].
 
@@ -27,3 +30,23 @@ coomsuite solve examples/coom/city-bike.coom
 ```cpp
 --8<-- "examples/coom/city-bike.coom:5:"
 ```
+
+## Example solution
+
+```
+basket[0]
+carrier[0]
+saddle[0] = "Comfort"
+color[0] = "Blue"
+frontWheel[0] = "W29"
+frontWheel[0].size[0] = 29
+rearWheel[0] = "W29"
+rearWheel[0].size[0] = 29
+basket[0].color[0] = "Blue"
+basket[0].position[0] = "Back"
+```
+
+!!! tip "COOM output"
+    By default the COOM suite outputs ASP atoms.
+    To get the COOM output add the option
+    `--output coom` (`-o`).

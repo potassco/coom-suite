@@ -8,6 +8,10 @@ icon: "material/bike-fast"
 The Travel Bike is a product configuration problem
 written in the [COOM\[X\]][xoom] language fragment.
 
+In addition to the City Bike,
+it contains numeric features and constraints
+involving arithmetics and aggregate functions.
+
 !!! info "Acknowledgements"
     The Travel Bike example has been provided by [denkbares].
 
@@ -26,3 +30,46 @@ coomsuite solve examples/coom/travel-bike.coom
 ```cpp
 --8<-- "examples/coom/travel-bike.coom:5:"
 ```
+
+## Example solution
+
+```
+carrier[0]
+carrier[0].bag[0]
+carrier[0].bag[1]
+carrier[0].bag[2]
+frame[0]
+frame[0].bag[0]
+requestedVolume[0] = 200
+totalVolume[0] = 200
+totalWeight[0] = 3750
+maxWeight[0] = 8
+color[0] = "Red"
+frontWheel[0] = "W20"
+frontWheel[0].size[0] = 20
+frontWheel[0].weight[0] = 650
+rearWheel[0] = "W22"
+rearWheel[0].size[0] = 22
+rearWheel[0].weight[0] = 700
+carrier[0].bag[0].capacity[0] = "B50"
+carrier[0].bag[0].capacity[0].volume[0] = 50
+carrier[0].bag[0].capacity[0].weight[0] = 600
+carrier[0].bag[0].material[0] = "Polyester"
+carrier[0].bag[1].capacity[0] = "B50"
+carrier[0].bag[1].capacity[0].volume[0] = 50
+carrier[0].bag[1].capacity[0].weight[0] = 600
+carrier[0].bag[1].material[0] = "Polyester"
+carrier[0].bag[2].capacity[0] = "B50"
+carrier[0].bag[2].capacity[0].volume[0] = 50
+carrier[0].bag[2].capacity[0].weight[0] = 600
+carrier[0].bag[2].material[0] = "Cotton"
+frame[0].bag[0].capacity[0] = "B50"
+frame[0].bag[0].capacity[0].volume[0] = 50
+frame[0].bag[0].capacity[0].weight[0] = 600
+frame[0].bag[0].material[0] = "Polyester"
+```
+
+!!! tip "COOM output"
+    By default the COOM suite outputs ASP atoms.
+    To get the COOM output add the option
+    `--output coom` (`-o`).

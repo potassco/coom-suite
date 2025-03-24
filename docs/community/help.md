@@ -15,7 +15,7 @@ icon: material/help-circle
     into how to use the tool.
 
 !!! tip "Mailing list"
-    Our [mailing list][mailing_list] might have some
+    Our [mailing list][mailing-list] might have some
     information about your issue. Search for questions made by previous users of
     the potassco tools. You can also [subscribe] to this list to get updates and
     join the community.
@@ -23,21 +23,21 @@ icon: material/help-circle
 ## Further help
 
 !!! question "Open an Issue"
-    Open an [issue][new_issue] describing your problem.
+    Open an [issue][new-issue] describing your problem.
 
 !!! warning
     To avoid duplicating issues, please search our [issue tracker][issues] and our
-    [mailing list][mailing_list] before filing a new issue.
+    [mailing list][mailing-list] before filing a new issue.
 
 !!! question
     "Reach out in the mailing list" Send an email to the list with your issue.
 
 ## General ASP support
 
-- Take a look at the [support page][support_page] of Potassco.
+- Take a look at the [support page][support-page] of Potassco.
 
 [issues]: https://github.com/potassco/coom-suite/issues
-[mailing_list]: https://sourceforge.net/p/potassco/mailman/potassco-users/
-[new_issue]: https://github.com/potassco/coom-suite/issues/new
+[mailing-list]: https://sourceforge.net/p/potassco/mailman/potassco-users/
+[new-issue]: https://github.com/potassco/coom-suite/issues/new
 [subscribe]: https://sourceforge.net/projects/potassco/lists/potassco-users/
-[support_page]: https://potassco.org/support/
+[support-page]: https://potassco.org/support/

@@ -11,7 +11,7 @@ for modelling product configuration problems. While currently geared towards
 ASP, the COOM Suite is intended to serve as a general workbench for
 experimentation with industrial-scale product configuration problems. It
 includes a (customizable) [ANTLR v4][antlr] parser to convert
-COOM specifications into facts, and currently contains two ASP encodings for
+COOM specifications into facts, and currently contains two [ASP encodings][encodings] for
 solving: one for [clingo] and one for
 hybrid solver [fclingo].
 
@@ -23,6 +23,7 @@ benchmark sets is provided.
 
 [coom]: https://www.coom-lang.org/
 [antlr]: https://www.antlr.org
+[encodings]: reference/encodings/index.md
 [clingo]: https://potassco.org/clingo
 [fclingo]: https://github.com/potassco/fclingo
 [Potassco]: https://potassco.org
