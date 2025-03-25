@@ -11,11 +11,11 @@ written in the [COOM\[P\]][poom] language fragment.
 It contains a simple partonomy with cardinalities different than 1,
 including optional parts.
 
-!!! info "Acknowledgements"
-    The City Bike example has been provided by [denkbares].
+<!-- !!! info "Acknowledgements"
+    The City Bike example has been provided by [denkbares]. -->
 
 [poom]: ../reference/coom/index.md#coomp
-[denkbares]: https://denkbares.com
+<!-- [denkbares]: https://denkbares.com -->
 
 ## Usage
 
@@ -44,8 +44,3 @@ rearWheel[0].size[0] = 29
 basket[0].color[0] = "Blue"
 basket[0].position[0] = "Back"
 ```
-
-!!! tip "COOM output"
-    By default the COOM suite outputs ASP atoms.
-    To get the COOM output add the option
-    `--output coom` (`-o`).

@@ -132,7 +132,7 @@ nav:
       - Benchmarks: examples/benchmarks.md
   - Reference:
       - reference/index.md
-      - Problem: reference/problem/index.md
+      - Translation: reference/translation/index.md
       - COOM: reference/coom/index.md
       - Encodings: reference/encodings/index.md
       - Python:

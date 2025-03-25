@@ -18,13 +18,8 @@ It consists of different enumeration features and constraints over them.
 ## Usage
 
 ```console
-coomsuite solve examples/coom/kids-bike.coom
+comsuite solve examples/coom/kids-bike.coom
 ```
-
-!!! info
-    The usual clingo command-line arguments can be used, eg. to calculate all
-    stable models or suppress printing models.
-
 
 ## COOM model
 
@@ -44,8 +39,3 @@ frontWheel[0].size[0] = 14
 rearWheel[0] = "W14"
 rearWheel[0].size[0] = 14
 ```
-
-!!! tip "COOM output"
-    By default the COOM suite outputs ASP atoms.
-    To get the COOM output add the option
-    `--output coom` (`-o`).

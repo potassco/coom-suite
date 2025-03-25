@@ -73,8 +73,3 @@ frame[0].bag[0].capacity[0].volume[0] = 50
 frame[0].bag[0].capacity[0].weight[0] = 600
 frame[0].bag[0].material[0] = "Polyester"
 ```
-
-!!! tip "COOM output"
-    By default the COOM suite outputs ASP atoms.
-    To get the COOM output add the option
-    `--output coom` (`-o`).
