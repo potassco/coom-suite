@@ -36,7 +36,7 @@ coomsuite solve examples/coom/cargo-bike.coom --incremental-bounds
 
 ## Example solution
 
-```
+```shell
 Solving with max_bound = 1
 UNSATISFIABLE
 

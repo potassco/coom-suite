@@ -14,7 +14,7 @@ We use a simplified version of the [Travel Bike][travelbike] example for demonst
 
 [travelbike]: ../../examples/travel-bike.md
 
-For more information on the fact formats used by the encodings
+For more information on the two fact formats
 head to the [Encodings][encodings] section.
 
 [encodings]: ../encodings/index.md

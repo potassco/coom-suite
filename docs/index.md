@@ -74,7 +74,8 @@ benchmark sets is provided.
 === "Example solution"
 
     To solve the COOM model, run
-    ```shell
+
+    ```console
     coomsuite solve simple.coom -n0 --output coom
     ```
 
@@ -89,7 +90,8 @@ benchmark sets is provided.
         `--output coom` (or `-o` for short).
 
     This gives the following output
-    ```
+
+    ```shell
     COOM Suite version 0.1
     Reading from /tmp/tmpdz0jgc5o
     Solving...

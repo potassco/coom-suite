@@ -19,6 +19,7 @@ we have various examples of bike configurations in increasing complexity:
 - [Cargo Bike][cargo]
 
 We also provide the corresponding [ASP facts][examples-asp] to these examples.
+More information on how they are obtained can be found in the [Translation][translation] section.
 
 ## How to Use This Section
 
@@ -33,6 +34,7 @@ Dive in and start exploring!
 [coom]: ../reference/coom/index.md
 [examples-coom]: https://github.com/potassco/coom-suite/tree/master/examples/coom/
 [examples-asp]: https://github.com/potassco/coom-suite/tree/master/examples/asp/
+[translation]: ../reference/translation/index.md
 [kids]: kids-bike.md
 [city]: city-bike.md
 [travel]: travel-bike.md

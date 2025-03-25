@@ -1,16 +1,5 @@
 # COOM Suite
 
-Python package to parse and solve product configuration problems specified in
-COOM using ASP.
-
-## Installation
-
-```bash
-pip install .
-```
-
-## Usage
-
 The [COOM language](https://www.coom-lang.org/) is a domain-specific language
 for modelling product configuration problems. While currently geared towards
 ASP, the COOM Suite is intended to serve as a general workbench for
@@ -23,18 +12,13 @@ solver [fclingo](https://github.com/potassco/fclingo).
 In addition, a range of examples and a benchmark collection with four scalable
 benchmark sets is provided.
 
-### Examples
+## Installation
 
-The COOM Suite contains a range of (product) configuration examples encoded in
-the COOM language. They can be found in the [`examples/coom`](examples/coom)
-directory. We highlight here only the *Bike* collection, containing three
-examples in increasing complexity that correspond to the three COOM language
-fragments defined above: the [Kids](examples/coom/kids-bike.coom),
-[City](examples/coom/city-bike.coom), and
-[Travel](examples/coom/travel-bike.coom) Bike.
+```bash
+pip install .
+```
 
-We also provide the corresponding (serialized and refined) facts to these
-examples under [`examples/asp`](examples/asp).
+## Usage
 
 ### Convert COOM to facts
 
@@ -66,19 +50,20 @@ them with the clingo encoding.
   configuration problem. To show the "refined" facts, run with option
   `--show-facts`. This will print the facts to the console.
 
-#### User input
+## Examples
 
-The coomsuite allows to add user input (or user requirements) for solving with
-the `--user-input` (or `-u`) option.
+The COOM Suite contains a range of (product) configuration examples encoded in
+the COOM language. They can be found in the [`examples/coom`](examples/coom)
+directory. We highlight here only the *Bike* collection, containing three
+examples in increasing complexity that correspond to the three COOM language
+fragments defined above: the [Kids](examples/coom/kids-bike.coom),
+[City](examples/coom/city-bike.coom), and
+[Travel](examples/coom/travel-bike.coom) Bike.
 
-```bash
-coomsuite solve examples/coom/kids-bike.coom -u examples/coom/user-input-kids.coom
-```
+We also provide the corresponding (serialized and refined) facts to these
+examples under [`examples/asp`](examples/asp).
 
-This file contains the `set color[0] = Yellow` directive and therefore returns
-only solutions where the color of the bike is set to Yellow.
-
-### Documentation
+## Documentation
 
 To generate the documentation, run
 

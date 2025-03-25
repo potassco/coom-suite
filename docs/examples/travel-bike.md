@@ -38,7 +38,7 @@ coomsuite solve examples/coom/travel-bike.coom --solver fclingo
 
 ## Example solution
 
-```
+```shell
 carrier[0]
 carrier[0].bag[0]
 carrier[0].bag[1]

@@ -32,7 +32,7 @@ coomsuite solve examples/coom/city-bike.coom
 
 ## Example solution
 
-```
+```shell
 basket[0]
 carrier[0]
 saddle[0] = "Comfort"

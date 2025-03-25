@@ -31,7 +31,7 @@ comsuite solve examples/coom/kids-bike.coom
 
 ## Example solution
 
-```
+```shell
 color[0] = "Red"
 wheelSupport[0] = "True"
 frontWheel[0] = "W14"
