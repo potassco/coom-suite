@@ -8,7 +8,7 @@ authors = [
     { name = "Nicolas Rühling", email = "nicolas.ruehling@uni-potsdam.de" },
 ]
 description = "Python package to parse and solve COOM configuration instances using ASP."
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "antlr4-tools",
     "antlr4-python3-runtime==4.9.3",
@@ -28,7 +28,7 @@ format = ["black", "isort", "autoflake"]
 lint_pylint = ["pylint"]
 typecheck = ["types-setuptools", "mypy"]
 test = ["coverage[toml]", "clintest>=0.2.0"]
-doc = ["sphinx", "furo", "nbsphinx", "sphinx_copybutton", "myst-parser"]
+doc = ["mkdocs", "mkdocs-material", "mkdocstrings[python]"]
 dev = ["coomsuite[test,typecheck,lint_pylint]"]
 
 [project.scripts]

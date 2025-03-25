@@ -20,4 +20,4 @@ satisfied(F) :- binary(F,XL,"||",XR), 1 <= { satisfied(XL); satisfied(XR) }.
 satisfied(F) :- binary(F,XL,"&&",XR), satisfied(XL), satisfied(XR).
 
 % A Boolean formula is violated if it is defined and not satisfied
-violated(C,F) :- constraint((C,F),"boolean"), defined(F), not satisfied(F).
+violated((C,F)) :- constraint((C,F),"boolean"), defined(F), not satisfied(F).
