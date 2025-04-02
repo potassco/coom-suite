@@ -129,6 +129,7 @@ nav:
       - Travel Bike: examples/travel-bike.md
       - Cargo Bike: examples/cargo-bike.md
       - User Input: examples/user-input.md
+      - UI: examples/ui.md
       - Benchmarks: examples/benchmarks.md
   - Reference:
       - reference/index.md
