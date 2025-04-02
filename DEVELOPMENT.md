@@ -35,6 +35,14 @@ python -m pipx install pre-commit
 pre-commit install
 ```
 
+## Documentation
+
+To generate and run the documentation locally
+
+```bash
+nox -s doc -- serve
+```
+
 [editable]: https://setuptools.pypa.io/en/latest/userguide/development_mode.html
 [nox]: https://nox.thea.codes/en/stable/index.html
 [pipx]: https://pypa.github.io/pipx/
