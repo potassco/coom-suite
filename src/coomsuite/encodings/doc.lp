@@ -170,13 +170,13 @@ An attribute variable value set by user input
 #parameters
     - X : The attribute variable for which the value is set
     - V : The value of the attribute variable
-*%
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Encoding predicates
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%*
+
 #violated(C).
 
 Whether a constraint is violated (Boolean, table or lower bound)
@@ -265,13 +265,13 @@ Whether a table constraint is satisfied
 #parameters
     - C  : The table constraint identifier
     - ID : The identifier of the cross product of the column header variables
-*%
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Output predicates
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%*
+
 #include(X).
 
 Whether a variable is included in the configuration
