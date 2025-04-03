@@ -17,6 +17,7 @@ hybrid solver [fclingo].
 
 In addition, a range of examples and a benchmark collection with four scalable
 benchmark sets is provided.
+Check out our paper [here](https://arxiv.org/pdf/2504.00013).
 
 
 === "Workflow"
@@ -129,6 +130,12 @@ benchmark sets is provided.
 
 !!! info
     The *COOM suite* is part of the [Potassco] suite (which is the home of *clingo* and other ASP tools)
+
+If you want to cite the COOM Suite, please use the following reference
+
+> J. Baumeister, S. Hahn, K. Herud, M. Ostrowski, J. Reutelshöfer, N. Rühling, T. Schaub, P. Wanko.
+> Towards Industrial-scale Product Configuration. _CoRR_, abs/2504.00013, 2025.
+> doi: 10.48550/arXiv.2504.00013. URL https://arxiv.org/abs/2504.00013.
 
 [coom]: https://www.coom-lang.org/
 [antlr]: https://www.antlr.org

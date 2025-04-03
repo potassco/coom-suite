@@ -12,6 +12,13 @@ solver [fclingo](https://github.com/potassco/fclingo).
 In addition, a prototypical UI, a range of examples and a benchmark collection
 with four scalable benchmark sets is provided.
 
+If you want to cite the COOM Suite, please use the following reference
+
+> J. Baumeister, S. Hahn, K. Herud, M. Ostrowski, J. Reutelshöfer, N. Rühling,
+> T. Schaub, P. Wanko. Towards Industrial-scale Product Configuration. _CoRR_,
+> abs/2504.00013, 2025. doi: 10.48550/arXiv.2504.00013. URL
+> https://arxiv.org/abs/2504.00013.
+
 ## Usage
 
 Look at our [documentation page](https://potassco.org/coom-suite) to see how to
