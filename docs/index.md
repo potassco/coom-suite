@@ -15,10 +15,8 @@ COOM specifications into facts, and currently contains two [ASP encodings][encod
 solving: one for [clingo] and one for
 hybrid solver [fclingo].
 
-In addition, a range of examples and a benchmark collection with four scalable
-benchmark sets is provided.
-Check out our paper [here](https://arxiv.org/pdf/2504.00013).
-
+In addition, a [user interface][ui], a range of [examples] and a [benchmark collection][benchmarks]
+with four scalable benchmark sets is provided.
 
 === "Workflow"
     The workflow of the *COOM Suite* is as follows:
@@ -131,7 +129,8 @@ Check out our paper [here](https://arxiv.org/pdf/2504.00013).
 !!! info
     The *COOM suite* is part of the [Potassco] suite (which is the home of *clingo* and other ASP tools)
 
-If you want to cite the COOM Suite, please use the following reference
+If you want to cite the COOM Suite, please use the following reference.
+Check out our paper [here](https://arxiv.org/pdf/2504.00013).
 
 > J. Baumeister, S. Hahn, K. Herud, M. Ostrowski, J. Reutelshöfer, N. Rühling, T. Schaub, P. Wanko.
 > Towards Industrial-scale Product Configuration. _CoRR_, abs/2504.00013, 2025.
@@ -142,4 +141,7 @@ If you want to cite the COOM Suite, please use the following reference
 [encodings]: reference/encodings/index.md
 [clingo]: https://potassco.org/clingo
 [fclingo]: https://github.com/potassco/fclingo
+[ui]: examples/ui.md
+[examples]: examples/index.md
+[benchmarks]: examples/benchmarks.md
 [Potassco]: https://potassco.org
