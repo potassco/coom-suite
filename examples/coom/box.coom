@@ -44,46 +44,46 @@ structure Lid {
 }
 
 behavior {
-    explanation "Length of box has to be greater of equal than its width."
+    explanation "The length of box has to be greater of equal than its width."
     require length >= width
 
-    explanation "Height of the box has to be greater than the height of the lid."
+    explanation "The height of the box has to be greater than the height of the lid."
     require height > lid.height
 
-    explanation "Aluminium and wood only possible with natural color"
+    explanation "A material of aluminium and wood is only possible with natural color"
     combinations    (material   color)
     allow           ( Aluminium Natural )
     allow           ( Wood      Natural )
     allow           ( Paper     -*- )
 
-    explanation "Lid has to have same material as box except paper lid is always allowed."
+    explanation "The lid has to have the same material as the box, except a paper lid is always allowed."
     condition lid.material != Paper
     require lid.material = material
 
-    explanation "Lid has to fit on box."
+    explanation "The lid has to fit on the box (width)."
     require lid.width > width
 
-    explanation "Lid has to fit on box."
+    explanation "The lid has to fit on the box (length)."
     require lid.length > length
 
-    explanation "Lid has to have tight fit on box."
+    explanation "The lid has to have a tight fit on the box (width)."
     require lid.width < width + 3
 
-    explanation "Lid has to have tight fit on box."
+    explanation "The lid has to have a tight fit on the box (length)."
     require lid.length < length + 3
 }
 
 // Area and volume calculations
 behavior {
-    require area = length * width
+    imply area = length * width
 
-    require volume = area * height
+    imply volume = area * height
 }
 
 // User requirements (becomes very slow when added as a range, instead of restricting the range)
 // Very fast when using "="
-behavior {
-    require volume = 5040
+// behavior {
+//     require volume = 5040
 
-    // require volume <= 5040
-}
+//     // require volume <= 5040
+// }

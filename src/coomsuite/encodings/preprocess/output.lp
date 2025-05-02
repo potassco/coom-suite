@@ -98,6 +98,10 @@ number(C,N) :- coom_number(C,N).
 #show constant/1.
 #show number/2.
 
+% Explanations
+explanation(C,E) :- coom_explanation(C,E).
+#show explanation/2.
+
 % User input
 user_include(X) :- coom_user_include(X).
 user_value(X,V) :- coom_user_value(X,V).

@@ -227,10 +227,10 @@ elem(part_container("root"), container, window).
 
 
     % +++++++ Messages for explanation
-    elem(message_unsat(C), message, window):-_clinguin_mus(constraint(C,"boolean")).
-    attr(message_unsat(C), title, "Explanation"):-_clinguin_mus(constraint(C,"boolean")).
-    attr(message_unsat(C), type, "error"):-_clinguin_mus(constraint(C,"boolean")).
-    attr(message_unsat(C), message, M):-_clinguin_mus(constraint(C,"boolean")),constraint_explanation(C,M).
+    elem(message_unsat(C),message,window)      :- _clinguin_mus(constraint(C,"boolean")).
+    attr(message_unsat(C),title,"Explanation") :- _clinguin_mus(constraint(C,"boolean")).
+    attr(message_unsat(C),type,"error")        :- _clinguin_mus(constraint(C,"boolean")).
+    attr(message_unsat(C),message,M)           :- _clinguin_mus(constraint(C,"boolean")) , explanation(I,M), C=(I,_).
 
 
     % +++++++ Menu bar

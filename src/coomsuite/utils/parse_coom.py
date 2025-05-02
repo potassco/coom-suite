@@ -162,6 +162,10 @@ class ASPModelVisitor(ModelVisitor):
             super().visitConditioned(ctx)
             self.constraint_idx += 1
 
+    def visitExplanation(self, ctx: ModelParser.ExplanationContext):
+        self.output_asp.append(f"explanation({self.constraint_idx},{ctx.name().getText()}).")
+        return super().visitExplanation(ctx)
+
     def visitAssign_default(self, ctx: ModelParser.Assign_defaultContext):
         path = ctx.path().getText()
         formula = ctx.formula().getText()

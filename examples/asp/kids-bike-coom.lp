@@ -1,3 +1,4 @@
+%%% COOM model
 coom_structure("product").
 coom_feature("product","color","Color",1,1).
 coom_feature("product","wheelSupport","Bool",1,1).
@@ -23,6 +24,7 @@ coom_attribute_value("Wheel","W20","size",20).
 
 coom_behavior(0).
 coom_context(0,"product").
+coom_explanation(0,"If the color is yellow, then the size of the front wheel must be greater than 16.").
 coom_condition(0,"color=Yellow").
 coom_binary("color=Yellow","color","=","Yellow").
 coom_path("color",0,"color").
@@ -35,6 +37,7 @@ coom_number("16",16).
 
 coom_behavior(1).
 coom_context(1,"product").
+coom_explanation(1,"A wheel support can only be used with rear wheels of type W14 or W16.").
 coom_combinations(1,0,"wheelSupport").
 coom_combinations(1,1,"rearWheel").
 coom_path("wheelSupport",0,"wheelSupport").
@@ -48,6 +51,7 @@ coom_allow(1,(1,1),"W20").
 
 coom_behavior(2).
 coom_context(2,"product").
+coom_explanation(2,"The size of the front wheel must be equal to the size of the rear wheel.").
 coom_require(2,"frontWheel.size=rearWheel.size").
 coom_binary("frontWheel.size=rearWheel.size","frontWheel.size","=","rearWheel.size").
 coom_path("frontWheel.size",0,"frontWheel").

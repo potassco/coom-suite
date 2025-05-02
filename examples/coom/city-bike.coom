@@ -68,17 +68,22 @@ enumeration Material {
 }
 
 behavior {
+	explanation "The color of the bike must match the color of the basket."
     require color = basket.color
 
+	explanation "If the basket is mounted on the front, the front wheel size must be less than 29."
     condition basket.position = Front
     require frontWheel.size < 29
 
+	explanation "If a bag has volume 100, then the size of the rear wheel must be at least 28."
     condition carrier.bag.capacity.volume = 100
     require rearWheel.size >= 28
 
+	explanation "If the saddle is vintage, then the bag must be made of leather."
     condition saddle = Vintage
     require carrier.bag.material = Leather
 
+	explanation "The size of the front wheel must be equal to the size of the rear wheel."
 	require frontWheel.size = rearWheel.size
 }
 
