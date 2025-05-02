@@ -1,7 +1,5 @@
 #defined type/1.
 #defined part/1.
-#defined cardinality/3.
-#defined set/2.
 
 #defined discrete/1.
 #defined domain/2.
@@ -24,6 +22,7 @@
 #defined number/2.
 
 #defined function/3.
+#defined set/2.
 
 #defined user_include/1.
 #defined user_value/2.

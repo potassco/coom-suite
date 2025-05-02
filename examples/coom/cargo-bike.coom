@@ -1,14 +1,15 @@
+// Cargo Bike example
+// Adapted from example provided by denkbares GmbH
+// see Baumeister et al.: Towards Industrial-scale Product Configuration (2025).
+
 product {
-    //   num /kg 0-200 totalWeight
-    //   num /kg 0-200 wantedWeight
             num /l  0-200   totalVolume
             num /l  0-200   requestedVolume
-    //   num     countBags
     0..*    Bag             bags
 }
 
 structure Bag {
-    // Color color
+    Color color
     Size  size
 }
 
@@ -29,10 +30,8 @@ behavior {
 
     explanation "The total volume must be greater than or equal to the requested volume."
     require totalVolume >= requestedVolume
-
 }
 
 // behavior {
-//     imply countBags = count(bags)
-//     minimize countBags
+//     minimize count(bags)
 // }

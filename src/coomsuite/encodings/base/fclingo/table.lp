@@ -13,4 +13,4 @@ not_hit(C,ID,Row)   :- allow(Idx,(Col,Row),_), column(C,ID,Col,_), C=(Idx,_), no
 satisfied(C,ID) :- allow(Idx,(_,Row),_), column(C,ID,_,_), C=(Idx,_), not not_hit(C,ID,Row).
 
 % A table constraint is violated if is defined and not satisfied
-violated(C,ID) :- constraint(C,"table"), defined(C,ID), not satisfied(C,ID).
+violated((C,ID)) :- constraint(C,"table"), defined(C,ID), not satisfied(C,ID).

@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for considering a contribution to coomsuite. ❤️
+Thanks for considering a contribution to the COOM Suite. ❤️
 
 ## How to get help or discuss possible contributions
 

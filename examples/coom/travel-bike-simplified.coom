@@ -1,6 +1,6 @@
 // Simplified Travel Bike example
 // Provided by denkbares GmbH
-// see Baumeister et al.: Towards Industrial-scale Product Configuration (2024).
+// see Baumeister et al.: Towards Industrial-scale Product Configuration (2025).
 
 product {
     num .#/l	  0-200   totalVolume
