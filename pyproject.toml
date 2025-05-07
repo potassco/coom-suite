@@ -22,14 +22,20 @@ dynamic = ["version"]
 readme = "README.md"
 
 [project.urls]
-Hompage = "https://github.com/krr-up/coom-suite.git/"
+Homepage = "https://github.com/krr-up/coom-suite.git/"
 
 [project.optional-dependencies]
 format = ["black", "isort", "autoflake"]
 lint_pylint = ["pylint"]
 typecheck = ["types-setuptools", "mypy"]
 test = ["coverage[toml]", "clintest>=0.2.0"]
-doc = ["mkdocs", "mkdocs-material", "mkdocstrings[python]"]
+doc = [
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings[python]",
+    "mkdoclingo@git+https://github.com/potassco/mkdoclingo.git@f0a300550df741efd8889b3b16a753d34bfcb6e3",
+    "tree_sitter",
+]
 dev = ["coomsuite[test,typecheck,lint_pylint]"]
 
 [project.scripts]

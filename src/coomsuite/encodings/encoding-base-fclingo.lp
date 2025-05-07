@@ -11,3 +11,5 @@
 #include "base/constraints.lp".
 
 #include "base/fclingo/user.lp".
+
+#include "doc.lp".
