@@ -1,9 +1,9 @@
-// Shadow master example
+// "Shadow Master" Blinds example
 // Provided by denkbares GmbH
 
 product {
 	Grundmerkmale	grundmerkmale
-	Konstruktion	konstruktion
+	Pfosten			pfosten
 	Cover			cover
 }
 
@@ -31,10 +31,10 @@ structure Grundmerkmale {
 // 	num.######	acosArg
 // }
 
-structure Konstruktion {
-	Pfosten	pfostenLI
-	Pfosten	pfostenRE
-}
+// structure Konstruktion {
+// 	Pfosten	pfostenLI
+// 	Pfosten	pfostenRE
+// }
 
 structure Pfosten {
 	num.####/mm		km_gesamthoehe
@@ -64,7 +64,6 @@ enumeration Cover {
 	_Satinee			= (	   1487	)
 	_Screen				= (	   2499	)
 }
-
 
 behavior Pfosten {
 	require ueberstand = (root.grundmerkmale.eingabeBreite - km_mittePfosten)

@@ -1,4 +1,4 @@
-% Evaluate functions (aggregates)
+% Evaluate aggregates
 value(F,V) :- function(F,"count",P), V = #count{ X    : set(P,X), include(X) }.
 value(F,V) :- function(F,"sum",  P), V = #sum  { V',X : set(P,X), value(X,V')   }.
 value(F,V) :- function(F,"min",  P), V = #min  { V',X : set(P,X), value(X,V')   }.

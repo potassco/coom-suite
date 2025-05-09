@@ -1,7 +1,7 @@
 %%% COOM model
 coom_structure("product").
 coom_feature("product","grundmerkmale","Grundmerkmale",1,1).
-coom_feature("product","konstruktion","Konstruktion",1,1).
+coom_feature("product","pfosten","Pfosten",1,1).
 coom_feature("product","cover","Cover",1,1).
 
 coom_structure("Grundmerkmale").
@@ -13,10 +13,6 @@ coom_feature("Grundmerkmale","bestellBreite","num",1,1).
 coom_feature("Grundmerkmale","flaeche","num",1,1).
 coom_feature("Grundmerkmale","neigungswinkelAnlage","num",1,1).
 coom_feature("Grundmerkmale","weight","num",1,1).
-
-coom_structure("Konstruktion").
-coom_feature("Konstruktion","pfostenLI","Pfosten",1,1).
-coom_feature("Konstruktion","pfostenRE","Pfosten",1,1).
 
 coom_structure("Pfosten").
 coom_feature("Pfosten","km_gesamthoehe","num",1,1).

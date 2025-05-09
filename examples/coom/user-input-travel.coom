@@ -1,6 +1,6 @@
 
-set color[0] = Red
-add carrier[0].bag[0]
-add carrier[0].bag[1]
+// set color[0] = Red
+// add carrier[0].bag[0]
+// add carrier[0].bag[1]
 set requestedVolume[0] = 200
-set maxWeight[0] = 8
+set maxWeight[0] = 10

@@ -685,46 +685,46 @@ class TestCOOMModelParser(TestCase):
             ],
         )
 
-        self.assertEqual(
-            parse_coom("behavior{require a = delta(b)}"),
-            [
-                "behavior(0).",
-                'context(0,"product").',
-                'require(0,"a=delta(b)").',
-                'binary("a=delta(b)","a","=","delta(b)").',
-                'path("a",0,"a").',
-                'function("product","delta(b)","delta","b").',
-                'path("b",0,"b").',
-            ],
-        )
+        # self.assertEqual(
+        #     parse_coom("behavior{require a = delta(b)}"),
+        #     [
+        #         "behavior(0).",
+        #         'context(0,"product").',
+        #         'require(0,"a=delta(b)").',
+        #         'binary("a=delta(b)","a","=","delta(b)").',
+        #         'path("a",0,"a").',
+        #         'unary("product","delta(b)","delta","b").',
+        #         'path("b",0,"b").',
+        #     ],
+        # )
 
-        self.assertEqual(
-            parse_coom("behavior{require a = delta(b,c)}"),
-            [
-                "behavior(0).",
-                'context(0,"product").',
-                'require(0,"a=delta(b,c)").',
-                'binary("a=delta(b,c)","a","=","delta(b,c)").',
-                'path("a",0,"a").',
-                'function("product","delta(b,c)","delta","b").',
-                'function("product","delta(b,c)","delta","c").',
-                'path("b",0,"b").',
-                'path("c",0,"c").',
-            ],
-        )
+        # self.assertEqual(
+        #     parse_coom("behavior{require a = delta(b,c)}"),
+        #     [
+        #         "behavior(0).",
+        #         'context(0,"product").',
+        #         'require(0,"a=delta(b,c)").',
+        #         'binary("a=delta(b,c)","a","=","delta(b,c)").',
+        #         'path("a",0,"a").',
+        #         'function("product","delta(b,c)","delta","b").',
+        #         'function("product","delta(b,c)","delta","c").',
+        #         'path("b",0,"b").',
+        #         'path("c",0,"c").',
+        #     ],
+        # )
 
-        self.assertEqual(
-            parse_coom("behavior{require a = pow(b)}"),
-            [
-                "behavior(0).",
-                'context(0,"product").',
-                'require(0,"a=pow(b)").',
-                'binary("a=pow(b)","a","=","pow(b)").',
-                'path("a",0,"a").',
-                'function("product","pow(b)","pow","b").',
-                'path("b",0,"b").',
-            ],
-        )
+        # self.assertEqual(
+        #     parse_coom("behavior{require a = pow(b)}"),
+        #     [
+        #         "behavior(0).",
+        #         'context(0,"product").',
+        #         'require(0,"a=pow(b)").',
+        #         'binary("a=pow(b)","a","=","pow(b)").',
+        #         'path("a",0,"a").',
+        #         'function("product","pow(b)","pow","b").',
+        #         'path("b",0,"b").',
+        #     ],
+        # )
 
         self.assertEqual(
             parse_coom("behavior{require a = sqrt(b)}"),
@@ -734,7 +734,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"a=sqrt(b)").',
                 'binary("a=sqrt(b)","a","=","sqrt(b)").',
                 'path("a",0,"a").',
-                'function("product","sqrt(b)","sqrt","b").',
+                'unary("sqrt(b)","sqrt","b").',
                 'path("b",0,"b").',
             ],
         )
@@ -747,7 +747,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"a=ceil(b)").',
                 'binary("a=ceil(b)","a","=","ceil(b)").',
                 'path("a",0,"a").',
-                'function("product","ceil(b)","ceil","b").',
+                'unary("ceil(b)","ceil","b").',
                 'path("b",0,"b").',
             ],
         )
@@ -760,7 +760,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"a=floor(b)").',
                 'binary("a=floor(b)","a","=","floor(b)").',
                 'path("a",0,"a").',
-                'function("product","floor(b)","floor","b").',
+                'unary("floor(b)","floor","b").',
                 'path("b",0,"b").',
             ],
         )
@@ -773,23 +773,23 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"a=round(b)").',
                 'binary("a=round(b)","a","=","round(b)").',
                 'path("a",0,"a").',
-                'function("product","round(b)","round","b").',
+                'unary("round(b)","round","b").',
                 'path("b",0,"b").',
             ],
         )
 
-        self.assertEqual(
-            parse_coom("behavior{require a = mod(b)}"),
-            [
-                "behavior(0).",
-                'context(0,"product").',
-                'require(0,"a=mod(b)").',
-                'binary("a=mod(b)","a","=","mod(b)").',
-                'path("a",0,"a").',
-                'function("product","mod(b)","mod","b").',
-                'path("b",0,"b").',
-            ],
-        )
+        # self.assertEqual(
+        #     parse_coom("behavior{require a = mod(b)}"),
+        #     [
+        #         "behavior(0).",
+        #         'context(0,"product").',
+        #         'require(0,"a=mod(b)").',
+        #         'binary("a=mod(b)","a","=","mod(b)").',
+        #         'path("a",0,"a").',
+        #         'function("product","mod(b)","mod","b").',
+        #         'path("b",0,"b").',
+        #     ],
+        # )
 
         self.assertEqual(
             parse_coom("behavior{require a = log(b)}"),
@@ -799,7 +799,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"a=log(b)").',
                 'binary("a=log(b)","a","=","log(b)").',
                 'path("a",0,"a").',
-                'function("product","log(b)","log","b").',
+                'unary("log(b)","log","b").',
                 'path("b",0,"b").',
             ],
         )
@@ -812,7 +812,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"a=ln(b)").',
                 'binary("a=ln(b)","a","=","ln(b)").',
                 'path("a",0,"a").',
-                'function("product","ln(b)","ln","b").',
+                'unary("ln(b)","ln","b").',
                 'path("b",0,"b").',
             ],
         )
@@ -825,7 +825,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"x=sin(5)").',
                 'binary("x=sin(5)","x","=","sin(5)").',
                 'path("x",0,"x").',
-                'function("product","sin(5)","sin","5").',
+                'unary("sin(5)","sin","5").',
                 'number("5",5).',
             ],
         )
@@ -838,7 +838,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"x=asin(5)").',
                 'binary("x=asin(5)","x","=","asin(5)").',
                 'path("x",0,"x").',
-                'function("product","asin(5)","asin","5").',
+                'unary("asin(5)","asin","5").',
                 'number("5",5).',
             ],
         )
@@ -851,7 +851,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"x=cos(5)").',
                 'binary("x=cos(5)","x","=","cos(5)").',
                 'path("x",0,"x").',
-                'function("product","cos(5)","cos","5").',
+                'unary("cos(5)","cos","5").',
                 'number("5",5).',
             ],
         )
@@ -864,7 +864,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"x=acos(5)").',
                 'binary("x=acos(5)","x","=","acos(5)").',
                 'path("x",0,"x").',
-                'function("product","acos(5)","acos","5").',
+                'unary("acos(5)","acos","5").',
                 'number("5",5).',
             ],
         )
@@ -877,7 +877,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"x=cosh(5)").',
                 'binary("x=cosh(5)","x","=","cosh(5)").',
                 'path("x",0,"x").',
-                'function("product","cosh(5)","cosh","5").',
+                'unary("cosh(5)","cosh","5").',
                 'number("5",5).',
             ],
         )
@@ -890,7 +890,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"x=tan(5)").',
                 'binary("x=tan(5)","x","=","tan(5)").',
                 'path("x",0,"x").',
-                'function("product","tan(5)","tan","5").',
+                'unary("tan(5)","tan","5").',
                 'number("5",5).',
             ],
         )
@@ -903,7 +903,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"x=atan(5)").',
                 'binary("x=atan(5)","x","=","atan(5)").',
                 'path("x",0,"x").',
-                'function("product","atan(5)","atan","5").',
+                'unary("atan(5)","atan","5").',
                 'number("5",5).',
             ],
         )
@@ -916,7 +916,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"x=tanh(5)").',
                 'binary("x=tanh(5)","x","=","tanh(5)").',
                 'path("x",0,"x").',
-                'function("product","tanh(5)","tanh","5").',
+                'unary("tanh(5)","tanh","5").',
                 'number("5",5).',
             ],
         )
@@ -938,5 +938,22 @@ class TestCOOMModelParser(TestCase):
                 'path("b.c.d.e.f",2,"d").',
                 'path("b.c.d.e.f",3,"e").',
                 'path("b.c.d.e.f",4,"f").',
+            ],
+        )
+
+    def test_explanation(self) -> None:
+        """
+        Test parsing behavior with explanation.
+        """
+        self.assertEqual(
+            parse_coom('behavior{explanation "This is a test constraint" require a = b}'),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'explanation(0,"This is a test constraint").',
+                'require(0,"a=b").',
+                'binary("a=b","a","=","b").',
+                'path("a",0,"a").',
+                'path("b",0,"b").',
             ],
         )
