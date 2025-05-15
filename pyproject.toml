@@ -33,7 +33,7 @@ doc = [
     "mkdocs",
     "mkdocs-material",
     "mkdocstrings[python]",
-    "mkdoclingo@git+https://github.com/potassco/mkdoclingo.git@f0a300550df741efd8889b3b16a753d34bfcb6e3",
+    "mkdoclingo",
     "tree_sitter",
 ]
 dev = ["coomsuite[test,typecheck,lint_pylint]"]

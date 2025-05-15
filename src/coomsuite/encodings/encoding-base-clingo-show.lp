@@ -12,4 +12,4 @@
 #include "base/clingo/user.lp".
 
 #include "doc.lp".
-#include "show/clingo.lp".
+#include "show-clingo.lp".

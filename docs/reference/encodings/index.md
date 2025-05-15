@@ -9,7 +9,7 @@ In this section we show a basic documentation of our encoding in the form of a d
 ::: src/coomsuite/encodings/encoding-base-clingo-show.lp
     handler: asp
     options:
-        source: true
+        encodings: true
         predicate_table: true
-        <!-- dependency_graph: true -->
+        dependency_graph: true
         glossary: true
