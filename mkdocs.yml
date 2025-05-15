@@ -103,8 +103,8 @@ plugins:
   - autorefs
   - mkdocstrings:
       handlers:
-        asp:
-          paths: [src/coomsuite/encodings/]
+        # asp:
+        #   paths: [src/coomsuite/encodings/]
         python:
           # paths: [src]
           inventories:
