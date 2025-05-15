@@ -64,7 +64,7 @@ parent("root.carrier[0].bag[0].volume[0]","root.carrier[0].bag[0]").
 parent("root.frame[0].bag[1].volume[0]","root.frame[0].bag[1]").
 parent("root.frame[0].bag[0].volume[0]","root.frame[0].bag[0]").
 
-
+explanation(0,"The bike can have a maximum of 4 bags.").
 constraint((0,"count(root.carrier.bag)+count(root.frame.bag)<=4"),"boolean").
 binary("count(root.carrier.bag)+count(root.frame.bag)<=4","count(root.carrier.bag)+count(root.frame.bag)","<=","4").
 binary("count(root.carrier.bag)+count(root.frame.bag)","count(root.carrier.bag)","+","count(root.frame.bag)").
@@ -77,6 +77,7 @@ set("root.frame[0].bag[0]","root.frame.bag").
 set("root.frame[0].bag[1]","root.frame.bag").
 number("4",4).
 
+explanation(1,"The total volume is equal to the sum of the volumes of all bags on the carrier and the frame.").
 constraint((1,"root.totalVolume[0]=sum(root.carrier.bag.volume)+sum(root.frame.bag.volume)"),"boolean").
 binary("root.totalVolume[0]=sum(root.carrier.bag.volume)+sum(root.frame.bag.volume)","root.totalVolume[0]","=","sum(root.carrier.bag.volume)+sum(root.frame.bag.volume)").
 binary("sum(root.carrier.bag.volume)+sum(root.frame.bag.volume)","sum(root.carrier.bag.volume)","+","sum(root.frame.bag.volume)").
@@ -88,6 +89,7 @@ function("sum(root.frame.bag.volume)","sum","root.frame.bag.volume").
 set("root.frame[0].bag[1].volume[0]","root.frame.bag.volume").
 set("root.frame[0].bag[0].volume[0]","root.frame.bag.volume").
 
+explanation(2,"The total volume must be greater than or equal to the requested volume.").
 constraint((2,"root.totalVolume[0]>=root.requestedVolume[0]"),"boolean").
 binary("root.totalVolume[0]>=root.requestedVolume[0]","root.totalVolume[0]",">=","root.requestedVolume[0]").
 

@@ -26,16 +26,19 @@ enumeration Wheel {
 }
 
 behavior {
+	explanation "If the color is yellow, then the size of the front wheel must be greater than 16."
 	condition color = Yellow
 	require frontWheel.size > 16
 }
 
 behavior {
+	explanation "A wheel support can only be used with rear wheels of type W14 or W16."
 	combinations  (wheelSupport	 rearWheel)
 	allow         (True          (W14, W16))
 	allow         (False         (W18, W20))
 }
 
 behavior {
+	explanation "The size of the front wheel must be equal to the size of the rear wheel."
 	require frontWheel.size = rearWheel.size
 }

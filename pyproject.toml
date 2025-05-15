@@ -15,20 +15,27 @@ dependencies = [
     "clingo==5.7.*",
     "clingcon >= 5.2.1, == 5.2.*",                                                                  # requirement for fclingo
     "fclingo@git+https://github.com/potassco/fclingo.git@6f4d7efc92bfac18465e2c95c4ef9ac99ef470b5",
+    "clinguin>=2.3.0",
 ]
 license = { file = "LICENSE" }
 dynamic = ["version"]
 readme = "README.md"
 
 [project.urls]
-Hompage = "https://github.com/krr-up/coom-suite.git/"
+Homepage = "https://github.com/krr-up/coom-suite.git/"
 
 [project.optional-dependencies]
 format = ["black", "isort", "autoflake"]
 lint_pylint = ["pylint"]
 typecheck = ["types-setuptools", "mypy"]
 test = ["coverage[toml]", "clintest>=0.2.0"]
-doc = ["mkdocs", "mkdocs-material", "mkdocstrings[python]"]
+doc = [
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings[python]",
+    "mkdoclingo",
+    "tree_sitter",
+]
 dev = ["coomsuite[test,typecheck,lint_pylint]"]
 
 [project.scripts]

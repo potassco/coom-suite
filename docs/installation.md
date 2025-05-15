@@ -1,6 +1,7 @@
 ---
+icon: "material/wrench"
 hide:
-- navigation
+- toc
 ---
 
 # Getting started
@@ -23,13 +24,3 @@ pip install -e .[all]
 
 !!! warning
     Use only for development purposes
-
-## Usage
-
-### Command line interface
-
-Details about the command line usage can be found with:
-
-```console
-coomsuite -h
-```

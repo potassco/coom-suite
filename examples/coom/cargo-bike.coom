@@ -25,8 +25,10 @@ enumeration Size {
 }
 
 behavior {
-    require sum(bags.size.volume) = totalVolume
+    explanation "The total volume is equal to the sum of the volumes of all bags."
+    require totalVolume = sum(bags.size.volume)
 
+    explanation "The total volume must be greater than or equal to the requested volume."
     require totalVolume >= requestedVolume
 }
 

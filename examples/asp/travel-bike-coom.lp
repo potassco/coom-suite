@@ -1,12 +1,13 @@
+%%% COOM model
 coom_structure("product").
 coom_feature("product","totalWeight","num",1,1).
 coom_range("product","totalWeight",1,10000).
 coom_feature("product","maxWeight","num",1,1).
-coom_range("product","maxWeight",10,10).
+coom_range("product","maxWeight",0,10).
 coom_feature("product","totalVolume","num",1,1).
 coom_range("product","totalVolume",0,200).
 coom_feature("product","requestedVolume","num",1,1).
-coom_range("product","requestedVolume",200,200).
+coom_range("product","requestedVolume",0,200).
 coom_feature("product","frontWheel","Wheel",1,1).
 coom_feature("product","rearWheel","Wheel",1,1).
 coom_feature("product","carrier","Carrier",1,1).
@@ -71,6 +72,7 @@ coom_option("Color", "Blue").
 
 coom_behavior(0).
 coom_context(0,"product").
+coom_explanation(0,"The bike can have a maximum of 4 bags.").
 coom_require(0,"count(carrier.bag)+count(frame.bag)<=4").
 coom_binary("count(carrier.bag)+count(frame.bag)<=4","count(carrier.bag)+count(frame.bag)","<=","4").
 coom_binary("count(carrier.bag)+count(frame.bag)","count(carrier.bag)","+","count(frame.bag)").
@@ -84,6 +86,7 @@ coom_number("4",4).
 
 coom_behavior(1).
 coom_context(1,"product").
+coom_explanation(1,"The total weight is equal to the weight of the front wheel plus the weight of the rear wheel plus the sum of the weights of all bags on the carrier and the frame.").
 coom_require(1,"totalWeight=frontWheel.weight+rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
 coom_binary("totalWeight=frontWheel.weight+rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)","totalWeight","=","frontWheel.weight+rearWheel.weight+sum(carrier.bag.capacity.weight)+sum(frame.bag.capacity.weight)").
 coom_path("totalWeight",0,"totalWeight").
@@ -107,6 +110,7 @@ coom_path("frame.bag.capacity.weight",3,"weight").
 
 coom_behavior(2).
 coom_context(2,"product").
+coom_explanation(2,"The total weight must not exceed the maximum weight.").
 coom_require(2,"totalWeight<=maxWeight*1000").
 coom_binary("totalWeight<=maxWeight*1000","totalWeight","<=","maxWeight*1000").
 coom_path("totalWeight",0,"totalWeight").
@@ -116,6 +120,7 @@ coom_number("1000",1000).
 
 coom_behavior(3).
 coom_context(3,"product").
+coom_explanation(3,"The total volume is equal to the sum of the volumes of all bags on the carrier and the frame.").
 coom_require(3,"totalVolume=sum(carrier.bag.capacity.volume)+sum(frame.bag.capacity.volume)").
 coom_binary("totalVolume=sum(carrier.bag.capacity.volume)+sum(frame.bag.capacity.volume)","totalVolume","=","sum(carrier.bag.capacity.volume)+sum(frame.bag.capacity.volume)").
 coom_path("totalVolume",0,"totalVolume").
@@ -133,6 +138,7 @@ coom_path("frame.bag.capacity.volume",3,"volume").
 
 coom_behavior(4).
 coom_context(4,"product").
+coom_explanation(4,"The total volume must be greater than or equal to the requested volume.").
 coom_require(4,"totalVolume>=requestedVolume").
 coom_binary("totalVolume>=requestedVolume","totalVolume",">=","requestedVolume").
 coom_path("totalVolume",0,"totalVolume").
@@ -140,6 +146,7 @@ coom_path("requestedVolume",0,"requestedVolume").
 
 coom_behavior(5).
 coom_context(5,"product").
+coom_explanation(5,"If the color is red, then the size of the front wheel must be 20.").
 coom_condition(5,"color=Red").
 coom_binary("color=Red","color","=","Red").
 coom_path("color",0,"color").
@@ -152,6 +159,7 @@ coom_number("20",20).
 
 coom_behavior(6).
 coom_context(6,"Bag").
+coom_explanation(6,"If the material of the bag is leather, then the capacity must be B10.").
 coom_condition(6,"material=Leather").
 coom_binary("material=Leather","material","=","Leather").
 coom_path("material",0,"material").

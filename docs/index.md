@@ -141,7 +141,7 @@ Check out our paper [here](https://arxiv.org/pdf/2504.00013).
 [encodings]: reference/encodings/index.md
 [clingo]: https://potassco.org/clingo
 [fclingo]: https://github.com/potassco/fclingo
-[ui]: examples/ui.md
+[ui]: usage/ui.md
 [examples]: examples/index.md
 [benchmarks]: examples/benchmarks.md
 [Potassco]: https://potassco.org

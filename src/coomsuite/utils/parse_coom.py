@@ -162,6 +162,10 @@ class ASPModelVisitor(ModelVisitor):
             super().visitConditioned(ctx)
             self.constraint_idx += 1
 
+    def visitExplanation(self, ctx: ModelParser.ExplanationContext):
+        self.output_asp.append(f"explanation({self.constraint_idx},{ctx.name().getText()}).")
+        return super().visitExplanation(ctx)
+
     def visitAssign_default(self, ctx: ModelParser.Assign_defaultContext):
         path = ctx.path().getText()
         formula = ctx.formula().getText()
@@ -317,7 +321,10 @@ class ASPModelVisitor(ModelVisitor):
         elif ctx.formula_func() is not None:
             func = ctx.formula_func().FUNCTION()
             for f in ctx.formula_func().formula():
-                self.output_asp.append(f'function("{self.context}","{complete}","{func}","{f.getText()}").')
+                if str(func) in ["sum", "count", "min", "max", "avg"]:
+                    self.output_asp.append(f'function("{self.context}","{complete}","{func}","{f.getText()}").')
+                else:
+                    self.output_asp.append(f'unary("{complete}","{func}","{f.getText()}").')
         super().visitFormula_sign(ctx)
 
     def visitPath(self, ctx: ModelParser.PathContext):

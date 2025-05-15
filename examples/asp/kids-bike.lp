@@ -14,12 +14,11 @@ domain("Wheel","W16").
 domain("Wheel","W18").
 domain("Wheel","W20").
 
-integer("Wheel.size").
-range("Wheel.size",14,20).
-% domain("Wheel.size",14).
-% domain("Wheel.size",16).
-% domain("Wheel.size",18).
-% domain("Wheel.size",20).
+discrete("Wheel.size").
+domain("Wheel.size",14).
+domain("Wheel.size",16).
+domain("Wheel.size",18).
+domain("Wheel.size",20).
 
 discrete("Bool").
 domain("Bool", "True").
@@ -53,6 +52,7 @@ parent("root.wheelSupport[0]", "root").
 index("root.wheelSupport[0]",0).
 
 % Instantiated constraints
+explanation(0,"If the color is yellow, then the size of the front wheel must be greater than 16.").
 constraint((0,"!root.color[0]=Yellow||root.frontWheel[0].size[0]>16"),"boolean").
 binary("!root.color[0]=Yellow||root.frontWheel[0].size[0]>16","!root.color[0]=Yellow","||","root.frontWheel[0].size[0]>16").
 unary("!root.color[0]=Yellow","!","root.color[0]=Yellow").
@@ -61,6 +61,7 @@ constant("Yellow").
 binary("root.frontWheel[0].size[0]>16","root.frontWheel[0].size[0]",">","16").
 number("16",16).
 
+explanation(1,"A wheel support can only be used with rear wheels of type W14 or W16.").
 constraint((1,"root"),"table").
 column((1,"root"),0,0,"root.wheelSupport[0]").
 column((1,"root"),0,1,"root.rearWheel[0]").
@@ -71,6 +72,7 @@ allow(1,(0,1),"False").
 allow(1,(1,1),"W18").
 allow(1,(1,1),"W20").
 
+explanation(2,"The size of the front wheel must be equal to the size of the rear wheel.").
 constraint((2,"root.frontWheel[0].size[0]=root.rearWheel[0].size[0]"),"boolean").
 binary("root.frontWheel[0].size[0]=root.rearWheel[0].size[0]","root.frontWheel[0].size[0]","=","root.rearWheel[0].size[0]").
 

@@ -103,6 +103,8 @@ plugins:
   - autorefs
   - mkdocstrings:
       handlers:
+        # asp:
+        #   paths: [src/coomsuite/encodings/]
         python:
           # paths: [src]
           inventories:
@@ -121,7 +123,11 @@ plugins:
 
 nav:
   - Home: index.md
-  - Getting Started: getting_started.md
+  - Getting Started:
+      - Installation: installation.md
+      - Usage:
+          - usage/index.md
+          - UI: usage/ui.md
   - Examples:
       - examples/index.md
       - Kids Bike: examples/kids-bike.md
@@ -129,7 +135,6 @@ nav:
       - Travel Bike: examples/travel-bike.md
       - Cargo Bike: examples/cargo-bike.md
       - User Input: examples/user-input.md
-      - UI: examples/ui.md
       - Benchmarks: examples/benchmarks.md
   - Reference:
       - reference/index.md

@@ -41,14 +41,15 @@ behavior {
     condition type = Tourist
     require seatCount = count(display)
 
-    explanation "If there is at least one display, at least on DVD player is required."
+    explanation "If there is at least one display, then at least on DVD player is required."
     condition count(display) > 0
     require count(dvdPlayer) > 0
 
-    explanation "If there are more than twenty displays, at least two DVD players are required."
+    explanation "If there are more than twenty displays, then at least two DVD players are required."
     condition count(display) > 20
     require count(dvdPlayer) > 1
 
+    explanation "The total power consumption of the bus is the sum of the power consumption of all devices."
     require totalPowerConsumption = sum(dvdPlayer.powerConsumption) + sum(seat.lamp.powerConsumption) + sum(display.powerConsumption)
 
     require seatCount = count(seat)

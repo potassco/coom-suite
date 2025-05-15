@@ -49,7 +49,7 @@ unary(@neg(Con),"!",Con)                         :- conditional_requirement(_,Co
 
 binary(G,L,Op,R) :- binary(_,_,G,L,Op,R).
 unary(G,Op,F)    :- unary(_,_,G,Op,F).
-
+% #show unary/5.
 #show constraint/2.
 #show binary/4.
 #show unary/3.
@@ -77,8 +77,8 @@ constraint((C,@binary(X',"=",G)),"boolean") :- imply(C,X',G).
 binary(@binary(X',"=",G),X',"=",G)          :- imply(C,X',G).
 
 % Functions
-function(@function(T,X,P),T,@join(X,P)) :- function(X,_,T,P).
-set(@join(X,P),X')                     :- function(X,_,_,P), path_to(X,P,X').
+function(@aggregate(T,X,P),T,@join(X,P)) :- function(X,_,T,P).
+set(@join(X,P),X')                       :- function(X,_,_,P), path_to(X,P,X').
 
 #show function/3.
 #show set/2.
@@ -97,6 +97,10 @@ number(C,N) :- coom_number(C,N).
 
 #show constant/1.
 #show number/2.
+
+% Explanations
+explanation(C,E) :- coom_explanation(C,E).
+#show explanation/2.
 
 % User input
 user_include(X) :- coom_user_include(X).

@@ -25,8 +25,12 @@ def binary(l,op,r):
 def unary(f,op):
     if op.string == "()":
         return String(f"({f.string})")
-    else:
+    elif op.string in ["-","!","+"]:
         return String(f"{op.string}{f.string}")
+    # elif op.string in ["sin","asin","cos","acos","tan","atan","exp","log","sqrt","abs","round","floor","ceil"]:
+    #      return String(f"{op.string}({f.string})")
+    else:
+        return String(f"{op.string}({f.string})")
 
 def join(p1,p2):
     context = dotpath(p1).string
@@ -35,7 +39,7 @@ def join(p1,p2):
     else:
         return String(f"{context}.{p2.string}")
 
-def function(f,c,p):
+def aggregate(f,c,p):
     joined = join(c,p).string
     return String(f"{f.string}({joined})")
 

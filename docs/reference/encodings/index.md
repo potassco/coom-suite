@@ -6,12 +6,10 @@ icon: material/file-code
 
 In this section we show a basic documentation of our encoding in the form of a docstring of the used predicates.
 
-??? info "clindoc"
-
-    In the future we we would like to show here
-    an automatic documentation of our encodings using clindoc (under development).
-
-
-```prolog
---8<-- "src/coomsuite/encodings/doc.lp"
-```
+::: src/coomsuite/encodings/encoding-base-clingo-show.lp
+    handler: asp
+    options:
+        encodings: true
+        predicate_table: true
+        dependency_graph: true
+        glossary: true
