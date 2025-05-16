@@ -254,7 +254,7 @@ elem(part_container("root"), container, window).
         elem(menu_bar_download, button, menu_bar).
         attr(menu_bar_download, label, "Download").
         attr(menu_bar_download, icon, "fa-download").
-        when(menu_bar_download, click, call, download("#show . #show include(I) : include(I), type(I,T), part(T).#show value(X,V) : value(X,V), type(X,T), integer(T). #show value(X,V) : value(X,V), type(X,T), discrete(T).", "coom_solution.lp")).
+        when(menu_bar_download, click, call, download("#show . #show include(I) : include(I), type(I,T), part(T).#show value(X,V) : value(X,V), type(X,T), integer(T). #show value(X,V) : value(X,V), type(X,T), discrete(T).", "current_solution.coom")).
 
 
         elem(menu_bar_select, button, menu_bar).
