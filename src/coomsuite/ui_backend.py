@@ -4,14 +4,14 @@ Contains a custom backend for the UI.
 
 from clingo import Control, Symbol
 from clinguin.server.application.backends.explanation_backend import ExplanationBackend
-from clinguin.utils.annotations import extends, overwrites
+from clinguin.utils.annotations import overwrites
 
 # from .utils import format_sym_coom
 
 
-def format_sym_coom(s: Symbol) -> str:
+def asp2coom(s: Symbol) -> str:
     """
-    Formats output symbols to a more readable COOM format.
+    Converts ASP output symbols to COOM facts.
     """
     if s.name == "include":
         return s.arguments[0].string.removeprefix("root.")
@@ -20,6 +20,18 @@ def format_sym_coom(s: Symbol) -> str:
         value = s.arguments[1]
         return f"{path} = {value}"
     raise ValueError(f"Unrecognized predicate: {s.name}")
+
+
+def coom2asp(c: str) -> str:
+    """
+    Converts COOM facts to ASP facts.
+    """
+    if c.contains("="):
+        path, value = c.split("=")
+        return f'value("{path.strip()}", {value.strip()})'
+    else:
+        path = c.strip()
+        return f'include("{path}")'
 
 
 class CoomBackend(ExplanationBackend):
@@ -52,7 +64,7 @@ class CoomBackend(ExplanationBackend):
                 output_symbols = [s for s in m.symbols(shown=True)]
 
         sorted_symbols = sorted(output_symbols)
-        final_prg = "\n".join([f"{format_sym_coom(s)}" for s in sorted_symbols])
+        final_prg = "\n".join([f"{asp2coom(s)}" for s in sorted_symbols])
 
         file_name = file_name.strip('"')
         with open(file_name, "w", encoding="UTF-8") as file:
@@ -64,3 +76,17 @@ class CoomBackend(ExplanationBackend):
                 "success",
             )
         )
+
+    def upload(self, file: str):
+        """
+        Uploads a COOM solution to the backend.
+        The solution will parsed to ASP and selected as current model.
+
+        Arguments:
+            file (str): The file to upload in COOM format.
+        """
+        self.clear_assumptions()
+
+        lines = file.splitlines()
+        for line in lines:
+            self.add_assumption(coom2asp(line))

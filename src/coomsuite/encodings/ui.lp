@@ -250,6 +250,11 @@ elem(part_container("root"), container, window).
         % attr(menu_bar_clear, class, "border-0").
         % when(menu_bar_clear, click, call, clear_assumptions).
 
+        elem(menu_bar_upload, button, menu_bar).
+        attr(menu_bar_upload, label, "Upload").
+        attr(menu_bar_upload, icon, "fa-upload").
+        when(menu_bar_upload, click, update, (upload_modal, visibility, shown)).
+
 
         elem(menu_bar_download, button, menu_bar).
         attr(menu_bar_download, label, "Download").
@@ -266,3 +271,26 @@ elem(part_container("root"), container, window).
         attr(menu_bar_next, label, "Find next solution").
         attr(menu_bar_next, icon, "fa-forward-step").
         when(menu_bar_next, click, call, next_solution).
+
+            % +++++++ Button to add a new person
+
+            elem(upload_modal, modal, window).
+            attr(upload_modal, title, "Add person").
+
+            elem(c1, container, upload_modal).
+            attr(c1, child_layout, flex).
+            attr(c1, flex_direction, row_reverse).
+            attr(c1, class, "align-items-center").
+
+                elem(t1, textfield, c1).
+                attr(t1, placeholder, "Enter path to COOM solution").
+                attr(t1, width, 250).
+                when(t1, input, context, (t1_content, _value)).
+
+                elem(b1, button, c1).
+                when(b1, click, call, (add_atom(person(_context_value(t1_content,str))),
+                                        set_external(include(_context_value(t1_content,str)),true))).
+                attr(b1, label, "Upload").
+                attr(b1, class, "m-1").
+                attr(b1, class, "btn-primary").
+                attr(b1, icon, "fa-upload").
