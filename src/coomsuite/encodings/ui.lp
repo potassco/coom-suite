@@ -275,7 +275,7 @@ elem(part_container("root"), container, window).
             % +++++++ Button to add a new person
 
             elem(upload_modal, modal, window).
-            attr(upload_modal, title, "Add person").
+            attr(upload_modal, title, "Upload COOM file").
 
             elem(c1, container, upload_modal).
             attr(c1, child_layout, flex).
@@ -283,7 +283,7 @@ elem(part_container("root"), container, window).
             attr(c1, class, "align-items-center").
 
                 elem(t1, textfield, c1).
-                attr(t1, placeholder, "Enter path to COOM solution").
+                attr(t1, placeholder, "Enter path to COOM file").
                 attr(t1, width, 250).
                 when(t1, input, context, (t1_content, _value)).
 
