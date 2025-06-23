@@ -11,6 +11,7 @@ from clingo.application import clingo_main
 from . import convert_instance
 from .application import COOMSolverApp
 from .preprocess import check_user_input, preprocess
+from .utils import sort_refined_facts
 from .utils.logging import configure_logging, get_logger
 from .utils.parser import get_parser
 
@@ -80,7 +81,8 @@ def main():
             )
 
             if args.show_facts:
-                print("\n".join(preprocess(serialized_facts)))  # nocoverage
+                sorted_facts = sort_refined_facts(preprocess(serialized_facts))
+                print("\n".join(sorted_facts))  # nocoverage
             elif not args.incremental_bounds:
                 solve(serialized_facts, 99, args, unknown_args=unknown_args)
             else:
