@@ -15,7 +15,8 @@ from .utils.logging import configure_logging, get_logger
 from .utils.parser import get_parser
 
 
-def solve(serialized_facts: List[str], max_bound: int, args, unknown_args) -> int:
+def solve(serialized_facts: List[str], max_bound: int, args,
+          unknown_args) -> int:
     """
     Preprocesses and solves a serialized COOM instance.
     """
@@ -33,12 +34,10 @@ def solve(serialized_facts: List[str], max_bound: int, args, unknown_args) -> in
 
     # Solve the ASP instance
     return clingo_main(
-        COOMSolverApp(
-            options={
-                "solver": args.solver,
-                "output_format": args.output,
-            }
-        ),
+        COOMSolverApp(options={
+            "solver": args.solver,
+            "output_format": args.output,
+        }),
         [tmp_name] + unknown_args,
     )
 
@@ -62,7 +61,8 @@ def main():
         asp_instance = convert_instance(args.input, "model", args.output)
 
         if args.user_input:
-            output_user_lp_file = convert_instance(args.user_input, "user", args.output)
+            output_user_lp_file = convert_instance(args.user_input, "user",
+                                                   args.output)
 
         if args.output is None:
             print(asp_instance)
@@ -75,22 +75,80 @@ def main():
 
         with TemporaryDirectory() as temp_dir:
             # Parse COOM to ASP serialized facts
-            serialized_facts = [convert_instance(args.input, "model", temp_dir)] + (
-                [convert_instance(args.user_input, "user", temp_dir)] if args.user_input else []
-            )
+            serialized_facts = [
+                convert_instance(args.input, "model", temp_dir)
+            ] + ([convert_instance(args.user_input, "user", temp_dir)]
+                 if args.user_input else [])
 
             if args.show_facts:
                 print("\n".join(preprocess(serialized_facts)))  # nocoverage
             elif not args.incremental_bounds:
                 solve(serialized_facts, 99, args, unknown_args=unknown_args)
-            else:
-                ret = 20
+            elif args.incremental_bounds == "linear":
+                # ret = 20
                 max_bound = 1
 
-                while ret == 20:
+                while True:
                     print(f"\nSolving with max_bound = {max_bound}\n")
-                    ret = solve(serialized_facts, max_bound, args, unknown_args=unknown_args)
+                    ret = solve(serialized_facts,
+                                max_bound,
+                                args,
+                                unknown_args=unknown_args)
+                    if ret == 10:  # 10: SAT, 20: UNSAT
+                        break
                     max_bound += 1
+            else:  # exponential search
+                # taken from https://git-ainf.aau.at/Giulia.Francescutto/papers/-/wikis/uploads/main.py
+                i = 0
+                top = 1
+                print(" ".join(["Solving with bound {}\n".format(top)]))
+
+                ret = solve(serialized_facts,
+                            top,
+                            args,
+                            unknown_args=unknown_args)
+
+                dict = {0: "SAT" if ret == 10 else "UNSAT"}
+
+                while True:
+                    if ret == 10:
+                        break
+                    bottom = top
+                    top = 2**i
+                    print(" ".join(["Solving with bound {}\n".format(top)]))
+                    ret = solve(serialized_facts,
+                                top,
+                                args,
+                                unknown_args=unknown_args)
+                    dict[top] = "SAT" if ret == 10 else "UNSAT"
+                    print(" ".join([
+                        "Top is {} and bottom is {}; i is {}\n".format(
+                            top, bottom, i)
+                    ]))
+
+                    i = i + 1
+
+                # Converge
+                i = i - 2
+
+                # TODO: make into recursive function
+                if (i <= 0):
+                    return top if dict[top] == "SAT" else top + 1
+                i = i - 1
+
+                if (dict[top] == "SAT"):
+                    new = top - 2**i
+                else:
+                    new = top + 2**i
+                print(" ".join([
+                    "Iteration with top {}, new is {}, i is {}\n".format(
+                        top, new, i)
+                ]))
+                ret = solve(serialized_facts,
+                            new,
+                            args,
+                            unknown_args=unknown_args)
+                dict[new] = "SAT" if ret == 10 else "UNSAT"
 
 
 if __name__ == "__main__":
