@@ -27,10 +27,12 @@ def get_parser() -> ArgumentParser:
     """
     parser = ArgumentParser(
         prog="coomsuite",
-        description=dedent("""\
+        description=dedent(
+            """\
             The COOM suite is a package providing functionality
             to parse and solve product configuration problems specified in COOM.
-            """),
+            """
+        ),
     )
     levels = [
         ("error", logging.ERROR),
@@ -54,18 +56,14 @@ def get_parser() -> ArgumentParser:
         type=cast(Any, lambda name: get(levels, name)),
     )
 
-    parser.add_argument("--version",
-                        "-v",
-                        action="version",
-                        version=f"%(prog)s {VERSION}")
+    parser.add_argument("--version", "-v", action="version", version=f"%(prog)s {VERSION}")
 
     subparsers = parser.add_subparsers(help="Sub commands", dest="command")
 
     # -------------
     #  Instance parser
     # -------------
-    parser_convert = subparsers.add_parser(
-        "convert", help="Convert COOM instance to ASP.")
+    parser_convert = subparsers.add_parser("convert", help="Convert COOM instance to ASP.")
     parser_convert.add_argument(
         "input",
         type=str,
@@ -81,10 +79,7 @@ def get_parser() -> ArgumentParser:
         help="Path to output directory. (Optional)",
     )
 
-    parser_convert.add_argument("--user-input",
-                                "-u",
-                                type=str,
-                                help="Input the COOM user input.")
+    parser_convert.add_argument("--user-input", "-u", type=str, help="Input the COOM user input.")
     # -------------
     # Solve parser
     # -------------
@@ -97,31 +92,20 @@ def get_parser() -> ArgumentParser:
         type=str,
         help="Path to the COOM model file to solve",
     )
-    parser_solve.add_argument("--user-input",
-                              "-u",
-                              type=str,
-                              help="Input the COOM user input.")
+    parser_solve.add_argument("--user-input", "-u", type=str, help="Input the COOM user input.")
 
-    parser_solve.add_argument("--solver",
-                              "-s",
-                              type=str,
-                              help="Set solver",
-                              choices=SOLVERS,
-                              default="clingo")
+    parser_solve.add_argument("--solver", "-s", type=str, help="Set solver", choices=SOLVERS, default="clingo")
 
-    parser_solve.add_argument("--output",
-                              "-o",
-                              type=str,
-                              help="Set console output format",
-                              choices=["asp", "coom"],
-                              default="asp")
-    parser_solve.add_argument("--show-facts",
-                              action="store_true",
-                              help="Show preprocessed fact format")
     parser_solve.add_argument(
-        "--incremental-bounds",
+        "--output", "-o", type=str, help="Set console output format", choices=["asp", "coom"], default="asp"
+    )
+    parser_solve.add_argument("--show-facts", action="store_true", help="Show preprocessed fact format")
+    parser_solve.add_argument(
+        "--bounds",
+        "-b",
         type=str,
-        help="Incrementally increase the maximum for unbounded cardinalities.",
-        choices=["linear", 'exponential'],
-        default=None)
+        help="Solve with search for bounds for problems with unbounded cardinalities.",
+        choices=["linear", "exponential"],
+        default=None,
+    )
     return parser
