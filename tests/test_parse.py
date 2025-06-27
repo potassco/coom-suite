@@ -316,10 +316,30 @@ class TestCOOMModelParser(TestCase):
             [
                 "behavior(0).",
                 'context(0,"product").',
-                'condition(0,"a=b").',
+                'condition(0,0,"a=b").',
                 'binary("a=b","a","=","b").',
                 'path("a",0,"a").',
                 'path("b",0,"b").',
+                'require(0,"c>5").',
+                'binary("c>5","c",">","5").',
+                'path("c",0,"c").',
+                'number("5",5).',
+            ],
+        )
+
+        self.assertEqual(
+            parse_coom("behavior {condition a = 2 condition b = 1 require c > 5}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'condition(0,0,"a=2").',
+                'binary("a=2","a","=","2").',
+                'path("a",0,"a").',
+                'number("2",2).',
+                'condition(0,1,"b=1").',
+                'binary("b=1","b","=","1").',
+                'path("b",0,"b").',
+                'number("1",1).',
                 'require(0,"c>5").',
                 'binary("c>5","c",">","5").',
                 'path("c",0,"c").',
@@ -332,7 +352,7 @@ class TestCOOMModelParser(TestCase):
             [
                 "behavior(0).",
                 'context(0,"product").',
-                'condition(0,"a=b").',
+                'condition(0,0,"a=b").',
                 'binary("a=b","a","=","b").',
                 'path("a",0,"a").',
                 'path("b",0,"b").',
@@ -355,9 +375,9 @@ class TestCOOMModelParser(TestCase):
 
         self.assertEqual(parse_coom("behavior{readonly totalWeight}"), [])
 
-    def test_condition(self) -> None:
+    def test_formula(self) -> None:
         """
-        Test parsing the 'condition' keyword.
+        Test parsing with Boolean and arithmetic formulas.
         """
         self.assertEqual(
             parse_coom("behavior{require a = b || a = c}"),
@@ -457,10 +477,6 @@ class TestCOOMModelParser(TestCase):
             ],
         )
 
-    def test_formula(self) -> None:
-        """
-        Test parsing behavior with arithmetic formulas.
-        """
         self.assertEqual(
             parse_coom("behavior{require a = b + c}"),
             [

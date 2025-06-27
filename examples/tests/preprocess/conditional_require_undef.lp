@@ -5,7 +5,7 @@ coom_option("Size","Small").
 coom_option("Size","Big").
 
 coom_behavior(("product",0)).
-coom_condition(("product",0),"color=Silver").
+coom_condition(("product",0),0,"color=Silver").
 coom_binary("color=Silver","color","=","Silver").
 coom_path("color",0,"color").
 coom_constant("Silver").

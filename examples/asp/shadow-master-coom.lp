@@ -109,7 +109,7 @@ coom_number("3200",3200).
 
 coom_behavior(6).
 coom_context(6,"Pfosten").
-coom_condition(6,"km_gesamthoehe>2200").
+coom_condition(6,0,"km_gesamthoehe>2200").
 coom_binary("km_gesamthoehe>2200","km_gesamthoehe",">","2200").
 coom_path("km_gesamthoehe",0,"km_gesamthoehe").
 coom_number("2200",2200).
