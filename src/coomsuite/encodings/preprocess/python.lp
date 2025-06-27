@@ -44,8 +44,5 @@ def aggregate(f,c,p):
     return String(f"{f.string}({joined})")
 
 def implication(a,b):
-    return String(f"{neg(a).string}||{b.string}")
-
-def neg(a):
-    return String(f"!{a.string}")
+    return String(f'{unary(a,String("!")).string}||{b.string}')
 #end.

@@ -41,15 +41,17 @@ parent(@dotpath(X),@dotpath(P)) :- type_aux(X,_), X=(_,(P,_)).
 
 %%% Constraints
 % Formulas
-constraint((C,G),"boolean") :- coom_require(C,F), ground_formula(_,F,G), not coom_condition(C,_).
+constraint((C,G),"boolean") :- coom_require(C,F), ground_formula(_,F,G), not coom_condition(C,_,_).
 
-constraint((C,@implication(Con,Req)),"boolean")  :- conditional_requirement(C,Con,Req).
-binary(@implication(Con,Req),@neg(Con),"||",Req) :- conditional_requirement(_,Con,Req).
-unary(@neg(Con),"!",Con)                         :- conditional_requirement(_,Con,Req).
+constraint((C,@implication(Con,Req)),"boolean")        :- conditional_requirement(C,Con,Req).
+binary(@implication(Con,Req),@unary(Con,"!"),"||",Req) :- conditional_requirement(_,Con,Req).
+unary(@unary(Con,"!"),"!",Con)                         :- conditional_requirement(_,Con,_).
+unary(@unary(G,"()"),"()",G)                           :- conditions_binary(_,_,G,_,_,()).
+binary(G,L,"&&",R)                                     :- conditions_binary(_,_,G,L,R,_).
 
 binary(G,L,Op,R) :- binary(_,_,G,L,Op,R).
 unary(G,Op,F)    :- unary(_,_,G,Op,F).
-% #show unary/5.
+
 #show constraint/2.
 #show binary/4.
 #show unary/3.
