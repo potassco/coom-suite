@@ -50,6 +50,7 @@ class TestPreprocess(TestCase):
         self.run_test("require_two_wheels")
         self.run_test("conditional_require_undef")
         self.run_test("conditional_require")
+        self.run_test("multiple_conditions")
 
         self.run_test("require_multiple_instances")
         self.run_test("require_with_partonomy")

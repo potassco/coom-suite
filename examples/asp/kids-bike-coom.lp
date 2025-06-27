@@ -25,7 +25,7 @@ coom_attribute_value("Wheel","W20","size",20).
 coom_behavior(0).
 coom_context(0,"product").
 coom_explanation(0,"If the color is yellow, then the size of the front wheel must be greater than 16.").
-coom_condition(0,"color=Yellow").
+coom_condition(0,0,"color=Yellow").
 coom_binary("color=Yellow","color","=","Yellow").
 coom_path("color",0,"color").
 coom_constant("Yellow").
