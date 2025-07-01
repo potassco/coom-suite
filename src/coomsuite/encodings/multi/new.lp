@@ -1,5 +1,4 @@
 #program new_object(name,type,parent,index,set).
-% TODO: split up into different program parts for the below? (maybe not as include uses several of the below predicates)
 
 type(name,type).
 parent(name,parent).

@@ -26,6 +26,5 @@ satisfied(f) :- binary(f,xl,op,xr), satisfied(xl), satisfied(xr), op = "&&".
 defined(f) :- unary(f,op,f'), defined(f').
 
 % Satisfaction of unary/binary logical relations
-satisfied(f) :- unary(f,op,f'), not satisfied(arg), op = "!".
-satisfied(f) :- unary(f,op,f'),     satisfied(arg), op = "()".
-
+satisfied(f) :- unary(f,op,f'), not satisfied(f'), op = "!".
+satisfied(f) :- unary(f,op,f'),     satisfied(f'), op = "()".
