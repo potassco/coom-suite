@@ -24,14 +24,14 @@ manner until reaching a solution. This approach is captured in the following dia
 ## Usage
 
 ```console
-coomsuite solve examples/coom/cargo-bike.coom --incremental-bounds
+coomsuite solve examples/coom/bike/cargo-bike.coom --incremental-bounds -u examples/coom/bike/user-input-cargo.coom
 ```
 ## COOM model
 
 <!-- ??? quote "COOM Model" -->
 <!-- title="Cargo Bike" linenums="1" -->
 ```cpp
---8<-- "examples/coom/cargo-bike.coom:5:31"
+--8<-- "examples/coom/bike/cargo-bike.coom:5:31"
 ```
 
 ## Example solution

@@ -18,7 +18,7 @@ It consists of different enumeration features and constraints over them.
 ## Usage
 
 ```console
-comsuite solve examples/coom/kids-bike.coom
+comsuite solve examples/coom/bike/kids-bike.coom
 ```
 
 ## COOM model
@@ -26,7 +26,7 @@ comsuite solve examples/coom/kids-bike.coom
 <!-- ??? quote "COOM Model" -->
 <!-- title="Kids Bike" linenums="1" -->
 ```cpp
---8<-- "examples/coom/kids-bike.coom:5:"
+--8<-- "examples/coom/bike/kids-bike.coom:5:"
 ```
 
 ## Example solution
