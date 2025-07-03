@@ -4,10 +4,8 @@
 % (maximum does not need to be checked)
 violated((X',P)) :- c = (P,MIN), constraint((P,Min),type), set(P,X), index(X,Min-1), not include(X), parent(X,X'), include(X'), type ="lowerbound".
 
+% TODO: change arguments of this program part
 #program new_constraint(c,type).
-% TODO: arguments of violated directly as program part parameters?
-% (parameter differs depending on type of constraint)
-% TODO: add external to deactivate constraint
-% active/1 with argument being the bound
-% alt active/2 with argument bound and wich set -> needed if different bounds per unbounded cardinality
-:- violated(C).
+#external active(index). % needs to be part of parameters
+% can the arguments to violated de infered directly from program part parameters?
+:- violated(C), active(index).

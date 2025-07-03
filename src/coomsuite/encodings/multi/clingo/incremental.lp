@@ -2,7 +2,8 @@
 % this parameter is then carried upwards in constraint tree to the root
 % the violated constraint in the encoding then includes active(index) external
 #program incremental_function(f,agg,p,index).
-% TODO: should X be part of program parameter?
+defined(f,index) :- value(f,_,index).
+
 % compute value step-wise
 value(f,1,  0  ) :- function(f,agg,p), agg = "count", index = 0  , set(p,X), index(X,0)  , include(X).
 value(f,V+1,N+1) :- function(f,agg,p), agg = "count", index = N+1, set(p,X), index(X,N+1), include(X),     value(f,V,N).
@@ -20,6 +21,8 @@ value(f,V',N+1) :- function(f,agg,p), agg = "max", index = N+1, set(p,X), index(
 
 % if object with index N+1 is not inlcuded then the value is just the one from index N
 value(f,V  ,N+1) :- function(f,_  ,p), index = N+1, set(p,X), index(X,N+1), not include(X), value(f,V,N).
+% TODO: default rule for when index 0 element is not included?
+%       may not be necessary because of defined predicate?
 
 #program incremental_unary(f,op,x,index).
 defined(f,index) :- unary(f,op,x), defined(x,index).
@@ -85,14 +88,8 @@ satisfied(f,index) :- binary(f,xl,op,xr), VL <= VR, value(xl,VL), value(xr,VR,in
 satisfied(f,index) :- binary(f,xl,op,xr), 1 <= { satisfied(xl); satisfied(xr,index) }, op = "||".
 satisfied(f,index) :- binary(f,xl,op,xr), satisfied(xl), satisfied(xr,index), op = "&&".
 
-% TODO:
-#program incremental_constraint(..).
-% change to violated/1 rule to use satisfied/2 and define indexed violated/2 instead
-% the constraint
-% :- violated(C).
-% is then changed to
-% :- violated(C,Index), active(Index).
-% where active(Index) is an external
-% (if different bounds for different sets active will need additional argument with set name)
+#program incremental_constraint(cons,type,index).
+#external max_bound(index).
+violated(cons,index) :- constraint(cons,type), defined(F,index), not satisfied(F,index), cons = (C,F), type = "boolean".
 
-% non-incremental versions still needed for adding new cons/bin/un that are not set based
+:- violated(C,index), max_bound(index).

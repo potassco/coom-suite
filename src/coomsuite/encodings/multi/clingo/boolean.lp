@@ -1,8 +1,3 @@
-% TODO: defined rule for multi shot
-% (maybe add do the different program parts where values are assigned?)
-% Definedness of formulas
-defined(X) :- value(X,_).
-
 #program new_constraint(cons,type).
 % A Boolean formula is violated if it is defined and not satisfied
 violated(cons) :- constraint(cons,type), defined(F), not satisfied(F), cons = (C,F), type = "boolean".

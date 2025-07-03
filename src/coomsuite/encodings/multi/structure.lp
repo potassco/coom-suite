@@ -12,7 +12,7 @@ include("root").
 % %                parent(X,P), include(P), type(P,C).
 
 % Do not include an object if its parent is not included
-:- include(name), parent(name,P), not include(P).
+:- include(name), parent(name,parent), not include(parent).
 
 % Indices in ascending order
 :-  include(name), set(set,name ), index(name,index  ), index > 0,
