@@ -3,44 +3,13 @@ The main entry point for the application.
 """
 
 import sys
-from tempfile import NamedTemporaryFile, TemporaryDirectory
-from typing import List
+from tempfile import TemporaryDirectory
 
-from clingo.application import clingo_main
-
-from . import convert_instance
-from .application import COOMSolverApp
-from .preprocess import check_user_input, preprocess
+from . import convert_instance, solve
+from .bounds import BoundSolver
+from .preprocess import preprocess
 from .utils.logging import configure_logging, get_logger
 from .utils.parser import get_parser
-
-
-def solve(serialized_facts: List[str], max_bound: int, args, unknown_args) -> int:
-    """
-    Preprocesses and solves a serialized COOM instance.
-    """
-    # Preprocess serialized ASP facts
-    processed_facts = preprocess(
-        serialized_facts,
-        max_bound=max_bound,
-        discrete=args.solver == "clingo",
-    )
-    check_user_input(processed_facts)
-
-    with NamedTemporaryFile(mode="w", delete=False) as tmp:
-        tmp_name = tmp.name
-        tmp.write("".join(processed_facts))
-
-    # Solve the ASP instance
-    return clingo_main(
-        COOMSolverApp(
-            options={
-                "solver": args.solver,
-                "output_format": args.output,
-            }
-        ),
-        [tmp_name] + unknown_args,
-    )
 
 
 def main():
@@ -48,7 +17,7 @@ def main():
     Run the main function.
     """
     parser = get_parser()
-    args, unknown_args = parser.parse_known_args()
+    args, solver_args = parser.parse_known_args()
     configure_logging(sys.stderr, args.log, sys.stderr.isatty())
 
     log = get_logger("main")
@@ -60,13 +29,13 @@ def main():
 
     if args.command == "convert":
         asp_instance = convert_instance(args.input, "model", args.output)
+        if args.output is None:
+            print(asp_instance)
 
         if args.user_input:
             output_user_lp_file = convert_instance(args.user_input, "user", args.output)
 
-        if args.output is None:
-            print(asp_instance)
-            if args.user_input:
+            if args.output is None:
                 print("")
                 print(output_user_lp_file)
 
@@ -81,16 +50,13 @@ def main():
 
             if args.show_facts:
                 print("\n".join(preprocess(serialized_facts)))  # nocoverage
-            elif not args.incremental_bounds:
-                solve(serialized_facts, 99, args, unknown_args=unknown_args)
-            else:
-                ret = 20
-                max_bound = 1
+            elif args.bounds:
+                bound_solver = BoundSolver(serialized_facts, args, solver_args, args.bounds)
+                bound = bound_solver.get_bounds()
 
-                while ret == 20:
-                    print(f"\nSolving with max_bound = {max_bound}\n")
-                    ret = solve(serialized_facts, max_bound, args, unknown_args=unknown_args)
-                    max_bound += 1
+                print(f"\n Max upper bound is {bound}")
+            else:
+                solve(serialized_facts, 99, args, clingo_args=solver_args)
 
 
 if __name__ == "__main__":

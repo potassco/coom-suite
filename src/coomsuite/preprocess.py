@@ -37,7 +37,7 @@ def preprocess(files: List[str], max_bound: int = 99, discrete: bool = False) ->
     return facts
 
 
-def check_user_input(facts: str) -> None:
+def check_user_input(facts: List[str]) -> None:
     """
     Checks if the user input is valid and returns a clingo.SolveResult
     """

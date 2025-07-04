@@ -101,8 +101,11 @@ def get_parser() -> ArgumentParser:
     )
     parser_solve.add_argument("--show-facts", action="store_true", help="Show preprocessed fact format")
     parser_solve.add_argument(
-        "--incremental-bounds",
-        action="store_true",
-        help="Incrementally increase the maximum for unbounded cardinalities.",
+        "--bounds",
+        "-b",
+        type=str,
+        help="Solve with search for bounds for problems with unbounded cardinalities.",
+        choices=["linear", "exponential"],
+        default=None,
     )
     return parser
