@@ -21,8 +21,8 @@ value(f,V',N+1) :- function(f,agg,p), agg = "max", index = N+1, set(p,X), index(
 
 % if object with index N+1 is not inlcuded then the value is just the one from index N
 value(f,V  ,N+1) :- function(f,_  ,p), index = N+1, set(p,X), index(X,N+1), not include(X), value(f,V,N).
-% TODO: default rule for when index 0 element is not included?
-%       may not be necessary because of defined predicate?
+% TODO: default rule for when index 0 element is not included
+%       would be dependend on the aggregate type
 
 #program incremental_unary(f,op,x,index).
 defined(f,index) :- unary(f,op,x), defined(x,index).
