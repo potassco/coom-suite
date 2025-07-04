@@ -6,3 +6,7 @@
 #include "multi/new-function.lp"
 
 % incremental functions and co
+#include "multi/inc-function.lp"
+#include "multi/inc-unary.lp"
+#include "multi/inc-binary.lp"
+#include "multi/inc-constraint.lp"
