@@ -2,6 +2,8 @@
 Contains a custom backend for the UI.
 """
 
+import base64
+
 from clingo import Control, Symbol
 from clinguin.server.application.backends.explanation_backend import ExplanationBackend
 from clinguin.utils.annotations import overwrites
@@ -26,12 +28,12 @@ def coom2asp(c: str) -> str:
     """
     Converts COOM facts to ASP facts.
     """
-    if c.contains("="):
+    if "=" in c:
         path, value = c.split("=")
-        return f'value("{path.strip()}", {value.strip()})'
+        return f'value("root.{path.strip()}",{value.strip()})'
     else:
         path = c.strip()
-        return f'include("{path}")'
+        return f'include("root.{path}")'
 
 
 class CoomBackend(ExplanationBackend):
@@ -64,11 +66,11 @@ class CoomBackend(ExplanationBackend):
                 output_symbols = [s for s in m.symbols(shown=True)]
 
         sorted_symbols = sorted(output_symbols)
-        final_prg = "\n".join([f"{asp2coom(s)}" for s in sorted_symbols])
+        coom_solution = "\n".join([f"{asp2coom(s)}" for s in sorted_symbols])
 
         file_name = file_name.strip('"')
         with open(file_name, "w", encoding="UTF-8") as file:
-            file.write(final_prg)
+            file.write(coom_solution)
         self._messages.append(
             (
                 "Download successful",
@@ -77,16 +79,20 @@ class CoomBackend(ExplanationBackend):
             )
         )
 
-    def upload(self, file: str):
+    @overwrites(ExplanationBackend)
+    def upload_file(self):
         """
-        Uploads a COOM solution to the backend.
-        The solution will parsed to ASP and selected as current model.
+        Upload file using the context. The context should have the name of the file under `filename` and the
+        file content in base64 under `filecontent`.
+        """
+        coom_solution = next((c.value for c in self._context if c.key == "filecontent"), None)
 
-        Arguments:
-            file (str): The file to upload in COOM format.
-        """
+        if not coom_solution:
+            raise RuntimeError("No content found in context")
+
+        decoded_coom_solution = base64.b64decode(coom_solution).decode("utf-8")
+        asp_facts = [coom2asp(l) for l in decoded_coom_solution.splitlines() if l.strip()]
         self.clear_assumptions()
 
-        lines = file.splitlines()
-        for line in lines:
-            self.add_assumption(coom2asp(line))
+        for f in asp_facts:
+            self.add_assumption(f)

@@ -272,7 +272,7 @@ elem(part_container("root"), container, window).
         attr(menu_bar_next, icon, "fa-forward-step").
         when(menu_bar_next, click, call, next_solution).
 
-            % +++++++ Button to add a new person
+            % +++++++ Upload COOM file modal
 
             elem(upload_modal, modal, window).
             attr(upload_modal, title, "Upload COOM file").
@@ -282,15 +282,6 @@ elem(part_container("root"), container, window).
             attr(c1, flex_direction, row_reverse).
             attr(c1, class, "align-items-center").
 
-                elem(t1, textfield, c1).
-                attr(t1, placeholder, "Enter path to COOM file").
-                attr(t1, width, 250).
-                when(t1, input, context, (t1_content, _value)).
-
-                elem(b1, button, c1).
-                when(b1, click, call, (add_atom(person(_context_value(t1_content,str))),
-                                        set_external(include(_context_value(t1_content,str)),true))).
-                attr(b1, label, "Upload").
-                attr(b1, class, "m-1").
-                attr(b1, class, "btn-primary").
-                attr(b1, icon, "fa-upload").
+                elem(f1, file_input, c1).
+                attr(f1, accept, ".coom").
+                when(f1, change, call, upload_file).
