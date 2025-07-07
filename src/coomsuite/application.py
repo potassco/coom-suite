@@ -16,7 +16,7 @@ from fclingo.__main__ import Statistic
 from fclingo.parsing import THEORY, HeadBodyTransformer
 from fclingo.translator import AUX, Translator
 
-from .utils import format_sym_coom, get_encoding
+from .utils import asp2coom, get_encoding
 from .utils.logging import get_logger
 
 # mypy: allow-untyped-calls
@@ -44,7 +44,7 @@ def _sym_to_prg(symbols: Sequence[Symbol], output: Optional[str] = "asp") -> str
     if output == "asp":
         output_list = [f"{str(s)}" for s in sorted_symbols]
     elif output == "coom":
-        output_list = [f"{format_sym_coom(s)}" for s in sorted_symbols]
+        output_list = [f"{asp2coom(s)}" for s in sorted_symbols]
     else:
         raise ValueError(f"Unrecognized output format: {output}")
     return "\n".join(output_list)
