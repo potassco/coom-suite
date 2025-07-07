@@ -1,5 +1,4 @@
 #program new_constraint(c,type,bound).
-% TODO: can i have same external statement in different program parts?
 #external active(bound).
 constraint(c,type).
 
