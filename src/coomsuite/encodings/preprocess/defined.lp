@@ -9,7 +9,7 @@
 #defined coom_behavior/1.
 #defined coom_context/2.
 #defined coom_require/2.
-#defined coom_condition/2.
+#defined coom_condition/3.
 #defined coom_combinations/3.
 #defined coom_allow/3.
 #defined coom_binary/4.

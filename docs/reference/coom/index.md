@@ -5,12 +5,12 @@ icon: "material/book-open-variant"
 
 # COOM documentation
 
-For a complete documentation to the COOM language
+For a more complete documentation to the COOM language
 we refer to the official [website][coomlang].
 
 In the following we give an overview of the three
-COOM language fragments as described in
-TODO: Add reference
+COOM language fragments as described in [Baumeister et al., 2025][coompaper].
+
 
 These fragments have similar
 counterparts in the
@@ -18,6 +18,9 @@ counterparts in the
 from the official documentation.
 However, they might differ in some details.
 
+> J. Baumeister, S. Hahn, K. Herud, M. Ostrowski, J. Reutelshöfer, N. Rühling, T. Schaub, P. Wanko.
+> Towards Industrial-scale Product Configuration. _CoRR_, abs/2504.00013, 2025.
+> doi: 10.48550/arXiv.2504.00013. URL https://arxiv.org/abs/2504.00013.
 
 ## COOM Core
 
@@ -96,3 +99,4 @@ We call these fragments **COOM\[P*\]** and **COOM\[X*\]**, respectively.
 
 [coomlang]: https://coom-lang.org
 [profiles]: https://www.coom-lang.org/profile_about/
+[coompaper]: https://arxiv.org/pdf/2504.00013

@@ -62,6 +62,7 @@ class ASPModelVisitor(ModelVisitor):
         self.structure_name: str = self.root_name
         self.context: str = self.root_name
         self.constraint_idx: int = 0
+        self.condition_idx: int = 0
         self.row_idx: int = 0
         self.print_path: bool = True
         self.output_asp: List[str] = []
@@ -155,6 +156,7 @@ class ASPModelVisitor(ModelVisitor):
                 )
 
     def visitConditioned(self, ctx: ModelParser.ConditionedContext):
+        self.condition_idx = 0
         if ctx.interaction() is None:
             self.output_asp.append("")
             self.output_asp.append(f"behavior({self.constraint_idx}).")
@@ -202,7 +204,8 @@ class ASPModelVisitor(ModelVisitor):
 
     def visitPrecondition(self, ctx: ModelParser.PreconditionContext):
         condition = f'"{ctx.condition().getText()}"'
-        self.output_asp.append(f"condition({self.constraint_idx},{condition}).")
+        self.output_asp.append(f"condition({self.constraint_idx},{self.condition_idx},{condition}).")
+        self.condition_idx += 1
         super().visitPrecondition(ctx)
 
     def visitRequire(self, ctx: ModelParser.RequireContext):
