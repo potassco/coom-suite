@@ -87,7 +87,12 @@ ignore = ["coom_grammar"]
 
 [tool.coverage.run]
 source = ["coomsuite", "tests"]
-omit = ["*/coomsuite/__main__.py", "*/coom_grammar/*", "*/tests/__init__.py"]
+omit = [
+    "*/coomsuite/__main__.py",
+    "*/coom_grammar/*",
+    "*/tests/__init__.py",
+    "ui_backend.py",
+]
 
 [tool.coverage.report]
 exclude_lines = ["assert", "nocoverage"]

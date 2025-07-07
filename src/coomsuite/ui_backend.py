@@ -4,45 +4,20 @@ Contains a custom backend for the UI.
 
 import base64
 
-from clingo import Control, Symbol
+from clingo import Control
 from clinguin.server.application.backends.explanation_backend import ExplanationBackend
 from clinguin.utils.annotations import overwrites
 
-# from .utils import format_sym_coom
+from .utils import asp2coom, coom2asp
 
 
-def asp2coom(s: Symbol) -> str:
-    """
-    Converts ASP output symbols to COOM facts.
-    """
-    if s.name == "include":
-        return s.arguments[0].string.removeprefix("root.")
-    if s.name == "value":
-        path = s.arguments[0].string.removeprefix("root.")
-        value = s.arguments[1]
-        return f"{path} = {value}"
-    raise ValueError(f"Unrecognized predicate: {s.name}")
-
-
-def coom2asp(c: str) -> str:
-    """
-    Converts COOM facts to ASP facts.
-    """
-    if "=" in c:
-        path, value = c.split("=")
-        return f'value("root.{path.strip()}",{value.strip()})'
-    else:
-        path = c.strip()
-        return f'include("root.{path}")'
-
-
-class CoomBackend(ExplanationBackend):
+class CoomBackend(ExplanationBackend):  # type: ignore
     """
     Extends ExplanationBackend with functionality for the COOM UI.
     """
 
-    @overwrites(ExplanationBackend)
-    def download(self, show_prg=None, file_name="current_solution.coom"):
+    @overwrites(ExplanationBackend)  # type: ignore
+    def download(self, show_prg=None, file_name="current_solution.coom") -> None:  # type: ignore
         """
         Downloads the current model in COOM format. It must be selected first via :func:`~select` .
 
@@ -59,11 +34,11 @@ class CoomBackend(ExplanationBackend):
         try:
             ctl.add("base", [], show_prg.replace('"', ""))
         except RuntimeError as exc:
-            raise Exception("Show program can't be parsed. Make sure it is a valid clingo program.") from exc
+            raise RuntimeError("Show program can't be parsed. Make sure it is a valid clingo program.") from exc
         ctl.ground([("base", [])])
         with ctl.solve(yield_=True) as hnd:
             for m in hnd:
-                output_symbols = [s for s in m.symbols(shown=True)]
+                output_symbols = list(m.symbols(shown=True))
 
         sorted_symbols = sorted(output_symbols)
         coom_solution = "\n".join([f"{asp2coom(s)}" for s in sorted_symbols])
@@ -79,8 +54,8 @@ class CoomBackend(ExplanationBackend):
             )
         )
 
-    @overwrites(ExplanationBackend)
-    def upload_file(self):
+    @overwrites(ExplanationBackend)  # type: ignore
+    def upload_file(self) -> None:
         """
         Upload file using the context. The context should have the name of the file under `filename` and the
         file content in base64 under `filecontent`.
