@@ -2,17 +2,15 @@
 // Falkner et al.: Solver Requirements for Interactive Configuration (2020)
 
 product {
-    num 10-20       length
-    num 50-200      num_passengers
-    num 0-200       standing_room
+    num /mm 10000-20000     length
+    num 50-200              num_passengers
+    num 0-200               standing_room
 
     0..1    HandRail    handrail
     0..80   Seat        seat
 }
 
 enumeration HandRail { Standard Premium}
-
-structure HandRail {}
 
 structure Seat {
     SeatType    type
@@ -24,7 +22,8 @@ enumeration Color { Blue Red White }
 
 behavior {
     explanation "If there is standing room, a handrail is required."
-    condition standing_room > 0 require count(handrail) = 1
+    condition standing_room > 0
+    require count(handrail) = 1
 
     explanation "Max. 4 seats per meter length and one seat occupies the space of three standing passengers."
     require count(seat) * 3 + standing_room <= 12 * length
@@ -37,6 +36,10 @@ behavior {
 
     explanation "The number of passengers is equal to the number of seats plus standing room."
     require num_passengers = count(seat) + standing_room
+
+    // explanation "The color of all seats must be the same, except for special seats." // How to implement? Default (see below)? Or set a "global" type that restricts all seat types?
+    // condition seat.type != Special
+    // require seat.color = seat.color
 }
 
 behavior Seat {
@@ -47,12 +50,14 @@ behavior Seat {
 
 // // Defaults (not implemented currently)
 // behavior {
-//     default type = Standard
+//     default seat.type = Standard
 
-//     default type = Blue
+//     default handrail = Standard
 
-//     default handrail.type = Standard
+//     default seat.color = Blue
 
 //     explanation "All seats have to have the same color (except special seats)"
 //     default seat.color = seat.color
+
+//     explanation "Users prefer to maximize load factor (number of passengers per length)" // How to implement?
 // }

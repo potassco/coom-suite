@@ -5,16 +5,22 @@
 // If using area and volume features, the example does not work with fclingo
 // as there is a (non-linear) multiplication between two variables.
 
+// Could be modeled differently using floats, higher ranges, etc.
+
 product {
-    num 0-20        length
-    num 0-20        width
-    num 0-20        height
-    num 0-400       area
-    num 0-8000      volume
+    1..1 Box body
+    0..1 Box lid
+
+    num /ccm 0-1000 requestedVolume
+}
+
+structure Box {
+    num /mm 0-100        length
+    num /mm 0-100        width
+    num /mm 0-100        height
 
     Color color
     Material material
-    0..1 Lid lid
 }
 
 enumeration Color {
@@ -27,63 +33,41 @@ enumeration Color {
 }
 
 enumeration Material {
-    attribute num thickness
+    attribute num /mm thickness
 
     Paper       = ( 2 )
     Aluminium   = ( 1 )
     Wood        = ( 5 )
 }
 
-structure Lid {
-    num 0-20 length
-    num 0-20 width
-    num 10-10 height
-
-    // Color color // has to be the same as box always
-    Material material
-}
-
-behavior {
+behavior Box {
     explanation "The length of box has to be greater of equal than its width."
     require length >= width
-
-    explanation "The height of the box has to be greater than the height of the lid."
-    require height > lid.height
 
     explanation "A material of aluminium and wood is only possible with natural color"
     combinations    (material   color)
     allow           ( Aluminium Natural )
     allow           ( Wood      Natural )
     allow           ( Paper     -*- )
+}
+
+behavior {
+    explanation "The lid has a height of 20 mm."
+    require lid.height = 20
+
+    explanation "The height of the body has to be greater than the height of the lid."
+    require body.height > lid.height
 
     explanation "The lid has to have the same material as the box, except a paper lid is always allowed."
     condition lid.material != Paper
-    require lid.material = material
-
-    explanation "The lid has to fit on the box (width)."
-    require lid.width > width
-
-    explanation "The lid has to fit on the box (length)."
-    require lid.length > length
+    require lid.material = body.material
 
     explanation "The lid has to have a tight fit on the box (width)."
-    require lid.width < width + 3
+    require lid.width = body.width + body.material.thickness
 
     explanation "The lid has to have a tight fit on the box (length)."
-    require lid.length < length + 3
+    require lid.length = body.length + body.material.thickness
+
+    explanation "The box needs to have at least the requested volume."
+    require requestedVolume * 1000 <= body.length * body.width * body.height
 }
-
-// Area and volume calculations
-behavior {
-    imply area = length * width
-
-    imply volume = area * height
-}
-
-// User requirements (becomes very slow when added as a range, instead of restricting the range)
-// Very fast when using "="
-// behavior {
-//     require volume = 5040
-
-//     // require volume <= 5040
-// }
