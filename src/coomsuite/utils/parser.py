@@ -108,4 +108,9 @@ def get_parser() -> ArgumentParser:
         choices=["linear", "exponential"],
         default=None,
     )
+    parser_solve.add_argument(
+        "--multishot",
+        action="store_true",
+        help="Use multi-shot solving for problems with unbounded cardinalities. (Only if one of the --bounds options is used.)",
+    )
     return parser

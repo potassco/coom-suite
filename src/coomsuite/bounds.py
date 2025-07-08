@@ -12,11 +12,20 @@ class BoundSolver:
     initial_bound: int
     # max_bound: int
 
-    def __init__(self, facts: List[str], args, clingo_args, algorithm: str = "", initial_bound: int = 0):
+    def __init__(
+        self,
+        facts: List[str],
+        args,
+        clingo_args,
+        algorithm: str = "",
+        use_multishot: bool = False,
+        initial_bound: int = 0,
+    ):
         self.facts = facts
         self.args = args
         self.clingo_args = clingo_args
         self.algorithm = "linear" if algorithm == "" else algorithm
+        self.use_multishot = use_multishot
         self.initial_bound = initial_bound
         # self.max_bound = initial_bound
 
