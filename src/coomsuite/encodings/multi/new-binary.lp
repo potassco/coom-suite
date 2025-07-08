@@ -20,7 +20,6 @@ value(f,VL+VR) :- binary(f,xl,op,xr), value(xl,VL), value(xr,VR), op = "+".
 value(f,VL-VR) :- binary(f,xl,op,xr), value(xl,VL), value(xr,VR), op = "-".
 value(f,VL*VR) :- binary(f,xl,op,xr), value(xl,VL), value(xr,VR), op = "*".
 
-% TODO: is default arith also included in incremental?
 value(f, VL) :- binary(f,xl,op,xr), value(xl,VL), not value(xr,_), op = "+".
 value(f, VR) :- binary(f,xl,op,xr), value(xr,VR), not value(xl,_), op = "+".
 value(f, VL) :- binary(f,xl,op,xr), value(xl,VL), not value(xr,_), op = "-".

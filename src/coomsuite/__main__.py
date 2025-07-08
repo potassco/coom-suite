@@ -51,10 +51,11 @@ def main():
             if args.show_facts:
                 print("\n".join(preprocess(serialized_facts)))  # nocoverage
             elif args.bounds:
-                bound_solver = BoundSolver(serialized_facts, args, solver_args, args.bounds)
-                bound = bound_solver.get_bounds()
+                bound_solver = BoundSolver(serialized_facts, args, solver_args, args.bounds, args.multishot)
+                bound_solver.get_bounds()
+                # bound = bound_solver.get_bounds()
 
-                print(f"\n Max upper bound is {bound}")
+                # print(f"\n Max upper bound is {bound}")
             else:
                 solve(serialized_facts, 99, args, clingo_args=solver_args)
 
