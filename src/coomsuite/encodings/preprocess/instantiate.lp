@@ -14,6 +14,15 @@ type_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), type_aux
 % Create auxiliary prediate for attribute variables
 type_aux((A,(X,0)),A) :- type_aux(X,T), coom_enumeration(T), coom_attribute_value(T,_,A,_).
 
+% incremental auxiliary predicate
+inc_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,Min,#sup),     type_aux(X,Ctx), I = 0..Min+max_bound-1, T != "num".
+inc_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), type_aux(X,Ctx), I = 0..Min+max_bound-1.
+
+inc_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,_,  Max),      inc_aux(X,Ctx), I = 0..Max-1, T != "num".
+inc_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",_,  Max),  inc_aux(X,Ctx), I = 0..Max-1.
+
+inc_aux((A,(X,0)),A) :- inc_aux(X,T), coom_enumeration(T), coom_attribute_value(T,_,A,_).
+
 
 %%% Constraints
 % Get formula context
