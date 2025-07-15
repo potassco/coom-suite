@@ -73,32 +73,32 @@ class BoundSolver:
                         break
                     max_bound += 1
 
-                    return max_bound
+                return max_bound
 
-                else:
-                    # exponential search
-                    # taken from https://git-ainf.aau.at/Giulia.Francescutto/papers/-/wikis/uploads/main.py
-                    i = 0
-                    bottom = 0
-                    top = 0
+            else:
+                # exponential search
+                # taken from https://git-ainf.aau.at/Giulia.Francescutto/papers/-/wikis/uploads/main.py
+                i = 0
+                bottom = 0
+                top = 0
 
+                print(" ".join(["Solving with bound {}\n".format(top)]))
+                ret = self._solve(top)
+                solve_results = {0: ret_dict[ret]}
+
+                while True:
+                    if ret_dict[ret] == "SAT":
+                        break
+                    bottom = top
+                    top = 2**i
                     print(" ".join(["Solving with bound {}\n".format(top)]))
                     ret = self._solve(top)
-                    solve_results = {0: ret_dict[ret]}
+                    solve_results[top] = ret_dict[ret]
+                    print(" ".join(["Top is {} and bottom is {}; i is {}\n".format(top, bottom, i)]))
 
-                    while True:
-                        if ret_dict[ret] == "SAT":
-                            break
-                        bottom = top
-                        top = 2**i
-                        print(" ".join(["Solving with bound {}\n".format(top)]))
-                        ret = self._solve(top)
-                        solve_results[top] = ret_dict[ret]
-                        print(" ".join(["Top is {} and bottom is {}; i is {}\n".format(top, bottom, i)]))
+                    i = i + 1
 
-                        i = i + 1
-
-                        if ret == "SAT" and i == 0:
-                            return top
-                        else:
-                            return self._converge(solve_results, top, i - 2)
+                    if ret == "SAT" and i == 0:
+                        return top
+                    else:
+                        return self._converge(solve_results, top, i - 2)
