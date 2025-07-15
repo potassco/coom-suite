@@ -10,8 +10,7 @@ authors = [
 description = "Python package to parse and solve COOM configuration instances using ASP."
 requires-python = ">=3.12"
 dependencies = [
-    # "antlr4-tools",
-    "antlr4-python3-runtime==4.9.3",
+    "antlr4-python3-runtime==4.13.2",
     "clingo==5.7.*",
     "clingcon >= 5.2.1, == 5.2.*",                                                                    # requirement for fclingo
     "fclingo@git+https://github.com/potassco/fclingo.git@6f4d7efc92bfac18465e2c95c4ef9ac99ef470b5",
@@ -36,7 +35,8 @@ doc = [
     "mkdoclingo",
     "tree_sitter",
 ]
-dev = ["coomsuite[test,typecheck,lint_pylint]"]
+grammar = ["antlr4-tools"]
+dev = ["coomsuite[test,typecheck,lint_pylint,grammar]"]
 
 [project.scripts]
 coomsuite = "coomsuite.__main__:main"
