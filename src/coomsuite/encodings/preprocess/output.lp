@@ -96,12 +96,12 @@ inc_set(@join(X,P)) :- function(X,_,_,P), path_to(X,P,X'), inc_obj(X').
 % #show inc_obj/1.
 #show inc_set/1.
 
-incremental("function",X)   :- function(X,_,P), inc_set(P).
-incremental("binary",X)     :- binary(X,L,_,_), incremental(_,L).
-incremental("binary",X)     :- binary(X,_,_,R), incremental(_,R).
-incremental("unary",X)      :- unary(X,_,X'),   incremental(_,X').
-incremental("constraint",X) :- constraint((_,X),"boolean"), incremental(_,X).
-#show incremental/2.
+incremental("function",  X,P,(X,F,P))            :- function(X,F,P),              inc_set(P).
+incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,L,P,_).
+incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,R,P,_).
+incremental("unary",     X,P,(X,O,X'))           :- unary(X,O,X'),                incremental(_,X',P,_).
+incremental("constraint",X,P,((ID,X),"boolean")) :- constraint((ID,X),"boolean"), incremental(_,X,P,_).
+#show incremental/4.
 
 % Constants and numbers
 constant(C) :- coom_constant(C).
