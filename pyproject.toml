@@ -12,9 +12,9 @@ requires-python = ">=3.12"
 dependencies = [
     "antlr4-python3-runtime==4.13.2",
     "clingo==5.7.*",
-    "clingcon >= 5.2.1, == 5.2.*",                                                                    # requirement for fclingo
+    "clingcon >= 5.2.1, == 5.2.*",                                                                  # requirement for fclingo
     "fclingo@git+https://github.com/potassco/fclingo.git@6f4d7efc92bfac18465e2c95c4ef9ac99ef470b5",
-    "clinguin@git+https://github.com/potassco/clinguin.git@3f3f46157c33333390dfa4268716303bee2fbe0d",
+    "clinguin>=2.6.1",
 ]
 license-files = ["LICENSE"]
 dynamic = ["version"]
