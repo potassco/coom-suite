@@ -11,6 +11,7 @@ set(set,name).
 #external active(bound).
 
 type(name,type).
+bound(name,bound).
 
 defined(name) :- value(name,_).
 
