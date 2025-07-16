@@ -24,6 +24,3 @@ value(f,0,0)   :- function(f,agg,p), agg = "count", bound = 0.
 value(f,0,0)   :- function(f,agg,p), agg = "sum",   bound = 0.
 % TODO: values of max/min aggregate for max bound 0.
 value(f,V,N+1) :- function(f,_  ,p), bound = N+1, set(p,X), bound(X,bound), not include(X), value(f,V,N).
-
-#show value/3.
-% #show bound/2.
