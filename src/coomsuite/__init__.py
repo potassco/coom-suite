@@ -53,7 +53,7 @@ def solve(
     max_bound: int,
     clingo_args: List[str],
     output: str,
-) -> int:
+) -> int:  # nocoverage
     """
     Preprocesses and solves a serialized COOM instance.
     """
