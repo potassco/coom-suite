@@ -26,14 +26,14 @@ involving arithmetics and aggregate functions.
 ## Usage
 
 ```console
-coomsuite solve examples/coom/travel-bike.coom --solver fclingo
+coomsuite solve examples/coom/bike/travel-bike.coom --solver fclingo
 ```
 ## COOM model
 
 <!-- ??? quote "COOM Model" -->
 <!-- title="Travel Bike" linenums="1" -->
 ```cpp
---8<-- "examples/coom/travel-bike.coom:5:"
+--8<-- "examples/coom/bike/travel-bike.coom:5:"
 ```
 
 ## Example solution

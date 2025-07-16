@@ -18,7 +18,7 @@ The syntax allows for two directives:
 ## Usage
 
 ```console
-coomsuite solve examples/coom/kids-bike.coom -u examples/coom/user-input-kids.coom
+coomsuite solve examples/coom/bike/kids-bike.coom -u examples/coom/bike/user-input-kids.coom
 ```
 
 
@@ -33,7 +33,7 @@ of the [Kids Bike][kids] this also filters all solutions with small wheels
 which in turn disable the wheel suppport.
 As a consequence only two solutions remain.
 
-[user-input-file]: https://github.com/potassco/coom-suite/tree/master/examples/coom/user-input-kids.coom
+[user-input-file]: https://github.com/potassco/coom-suite/tree/master/examples/coom/bike/user-input-kids.coom
 [kids]: ../examples/kids-bike.md
 
 ```shell

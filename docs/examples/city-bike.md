@@ -14,20 +14,20 @@ including optional parts.
 <!-- !!! info "Acknowledgements"
     The City Bike example has been provided by [denkbares]. -->
 
-[poom]: ../reference/coom/index.md#coomp
+[poom]: ../reference/coom/bike/index.md#coomp
 <!-- [denkbares]: https://denkbares.com -->
 
 ## Usage
 
 ```console
-coomsuite solve examples/coom/city-bike.coom
+coomsuite solve examples/bike/coom/city-bike.coom
 ```
 ## COOM model
 
 <!-- ??? quote "COOM Model" -->
 <!-- title="City Bike" linenums="1" -->
 ```cpp
---8<-- "examples/coom/city-bike.coom:5:"
+--8<-- "examples/coom/bike/city-bike.coom:5:"
 ```
 
 ## Example solution

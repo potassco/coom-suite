@@ -2,16 +2,16 @@
 // Taken from Felfernig et al.: Knowledge-based Configuration: From Research to Business Cases. Elsevier (2014).
 
 product {
-         Usage                  usage
-         Efficiency             efficiency
-         num            2500-2500  maxPrice
-         num            0-2500  price
-         Bool                   internetConn
-    1..2 HDUnit                 hdunit
-         Motherboard            motherboard
-    1..2 Screen                 screen
-         OS                     os
-    1..5 Application            applications
+    Usage               usage
+    Efficiency          efficiency
+    Bool                internetConn
+    OS                  os
+    Motherboard         motherboard
+    num        0-2500   maxPrice
+    num        0-2500   price
+    1..2 HDUnit         hdunit
+    1..2 Screen         screen
+    1..5 Application    applications
 }
 
 enumeration Usage {
@@ -48,9 +48,9 @@ enumeration HDController {
 }
 
 structure Motherboard {
-         num         0-350   price
-         MBType              mbtype
-         CPU                 cpu
+    num     0-350   price
+    MBType          mbtype
+    CPU             cpu
 }
 
 enumeration MBType {
@@ -92,7 +92,7 @@ structure Application {
 }
 
 behavior {
-    require price = sum(hdunit.price) + motherboard.price + sum(motherboard.cpu.price)
+    imply price = sum(hdunit.price) + motherboard.price + sum(motherboard.cpu.price)
                   + os.price + sum(screen.price) + sum(applications.price)
 
     require price <= maxPrice
@@ -115,11 +115,11 @@ behavior {
 }
 
 behavior HDUnit {
-    require price = sum(hdisk.price) + sum(hdcontroller.price)
+    imply price = sum(hdisk.price) + sum(hdcontroller.price)
 }
 
 behavior Motherboard {
-    require price = mbtype.price
+    imply price = mbtype.price
 
     condition mbtype = MBSilver
     require   cpu  != CPUD

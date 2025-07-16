@@ -147,7 +147,7 @@ coom_path("requestedVolume",0,"requestedVolume").
 coom_behavior(5).
 coom_context(5,"product").
 coom_explanation(5,"If the color is red, then the size of the front wheel must be 20.").
-coom_condition(5,"color=Red").
+coom_condition(5,0,"color=Red").
 coom_binary("color=Red","color","=","Red").
 coom_path("color",0,"color").
 coom_constant("Red").
@@ -160,7 +160,7 @@ coom_number("20",20).
 coom_behavior(6).
 coom_context(6,"Bag").
 coom_explanation(6,"If the material of the bag is leather, then the capacity must be B10.").
-coom_condition(6,"material=Leather").
+coom_condition(6,0,"material=Leather").
 coom_binary("material=Leather","material","=","Leather").
 coom_path("material",0,"material").
 coom_constant("Leather").

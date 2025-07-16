@@ -1,0 +1,814 @@
+product {
+	   1..3	Bean_Container			bean_container
+	       	Water_Tank				water_tank
+	       	Grinding_Unit			grinding_unit
+	       	Brew_Unit				brew_unit
+	   0..1	Milk_System				milk_system
+	       	Cup_Warmer				cup_warmer
+	       	Additional_Equipment	additional_equipment
+}
+
+structure Bean_Container {
+	BOM_BC			bom_bc
+	Color			color
+	Bean_Chamber	volume_bean_chamber
+}
+
+structure BOM_BC {
+	MAT_bean_container	mat_bean_container
+}
+
+structure Water_Tank {
+	BOM_WT		bom_wt
+	Tank_Volume	tank_volume
+	Bool		water_pipe_connection
+	Water_Pump	water_pump
+}
+
+structure BOM_WT {
+	MAT_Water_Tank	mat_water_tank
+}
+
+structure Water_Pump {
+	num/bar 2-6	required_water_pressure
+}
+
+structure Grinding_Unit {
+	BOM_GU				bom_gu
+	Noise_Level			noise_level
+	Grinding_Type		type
+	Frame				grinding_frame
+	Grinder_Material	material
+	num					weight
+}
+
+structure BOM_GU {
+	MAT_Grinding_Core	mat_grinder
+	MAT_Grinder_Drive	mat_grind_drive
+}
+
+structure Brew_Unit {
+	BOM_BU			bom_bu
+	Brewing_Chamber	brewing_chamber
+	Pump			brew_pump
+	Pressure_Tank	pressure_tank
+	Heating_System	heating_system
+	// num				steam_exit_velocity
+}
+
+structure BOM_BU {
+	MAT_Brewing_Pump		mat_brewing_case
+	MAT_Brewing_Controller	mat_brewing_controller
+}
+
+structure Milk_System {
+	Available	milk_warmer
+	Available	milk_foamer
+}
+
+structure Cup_Warmer {
+	BOM_CW					bom_cw
+	Heating_Plate_Size		size
+	Active_Heating_Plate	heating_plate
+}
+
+structure BOM_CW {
+	MAT_Cup_Warmer	mat_cup_warmer
+}
+
+structure Additional_Equipment {
+	BOM_AE		bom_ae
+	Available	water_filter
+	Available	coin_slot
+	Available	timer_switch
+}
+
+structure BOM_AE {
+	MAT_Water_Filter	mat_water_filter
+	MAT_Coin_Slot		mat_coin_slot
+}
+
+enumeration MAT_bean_container {
+	attribute	num/ccm	volume
+
+	M_BC5290520	= (	    800	)
+	M_BC2059800	= (	   1200	)
+	M_BC2059345	= (	   2000	)
+}
+
+enumeration Color {
+	attribute	string	RAL_code
+	attribute	string	HTML_code
+
+	green_beige				= (	"1000"	"#D7C9A1"	)
+	beige					= (	"1001"	"#CEA176"	)
+	sand_yellow				= (	"1002"	"#D0B173"	)
+	signal_yellow			= (	"1003"	"#F2AD00"	)
+	golden_yellow			= (	"1004"	"#E4A700"	)
+	honey_yellow			= (	"1005"	"#C79600"	)
+	maize_yellow			= (	"1006"	"#D99300"	)
+	daffodil_yellow			= (	"1007"	"#E69400"	)
+	brown_beige				= (	"1011"	"#AF8552"	)
+	lemon_yellow			= (	"1012"	"#E5D900"	)
+	oyster_white			= (	"1013"	"#E8DFB0"	)
+	ivory					= (	"1014"	"#E1CC88"	)
+	light_ivory				= (	"1015"	"#E6D690"	)
+	sulfur_yellow			= (	"1016"	"#EFF300"	)
+	saffron_yellow			= (	"1017"	"#F4B752"	)
+	zinc_yellow				= (	"1018"	"#F3E03B"	)
+	grey_beige				= (	"1019"	"#A4957D"	)
+	olive_yellow			= (	"1020"	"#999950"	)
+	rape_yellow				= (	"1021"	"#F3DA0B"	)
+	traffic_yellow			= (	"1023"	"#FAD201"	)
+	ochre_yellow			= (	"1024"	"#AEA04B"	)
+	curry_yellow			= (	"1027"	"#A38C15"	)
+	melon_yellow			= (	"1028"	"#FFAB00"	)
+	broom_yellow			= (	"1032"	"#D6AE01"	)
+	dahlia_yellow			= (	"1033"	"#F3A505"	)
+	pastel_yellow			= (	"1034"	"#EFA94A"	)
+	pearl_beige				= (	"1035"	"#6A5D4D"	)
+	pearl_gold				= (	"1036"	"#705335"	)
+	sun_yellow				= (	"1037"	"#F39F18"	)
+	yellow_orange			= (	"2000"	"#EE7600"	)
+	red_orange				= (	"2001"	"#DD5300"	)
+	vermilion				= (	"2002"	"#CB2821"	)
+	pastel_orange			= (	"2003"	"#FF7514"	)
+	pure_orange				= (	"2004"	"#F44611"	)
+	luminous_orange			= (	"2005"	"#FF2301"	)
+	luminous_bright_orange	= (	"2007"	"#FFA420"	)
+	bright_red_orange		= (	"2008"	"#F75E25"	)
+	traffic_orange			= (	"2009"	"#F54021"	)
+	signal_orange			= (	"2010"	"#D84B20"	)
+	deep_orange				= (	"2011"	"#EC7C26"	)
+	salmon_orange			= (	"2012"	"#E55137"	)
+	pearl_orange			= (	"2013"	"#C35831"	)
+	flame_red				= (	"3000"	"#AF2B1E"	)
+	signal_red				= (	"3001"	"#A52019"	)
+	carmine_red				= (	"3002"	"#A2231D"	)
+	ruby_red				= (	"3003"	"#9B111E"	)
+	purple_red				= (	"3004"	"#75151E"	)
+	wine_red				= (	"3005"	"#5E2129"	)
+	black_red				= (	"3007"	"#412227"	)
+	oxide_red				= (	"3009"	"#642424"	)
+	brown_red				= (	"3011"	"#781F19"	)
+	tomato_red				= (	"3012"	"#C1876B"	)
+	antique_pink			= (	"3014"	"#D36E70"	)
+	light_pink				= (	"3015"	"#E3A0AC"	)
+	coral_red				= (	"3016"	"#B32821"	)
+	rose_red				= (	"3017"	"#E63244"	)
+	strawberry_red			= (	"3018"	"#D53032"	)
+	traffic_red				= (	"3020"	"#CC0605"	)
+	salmon_pink				= (	"3022"	"#D95030"	)
+	luminous_red			= (	"3024"	"#F80000"	)
+	luminous_bright_red		= (	"3026"	"#FE0000"	)
+	raspberry_red			= (	"3027"	"#C51D34"	)
+	pure_red				= (	"3028"	"#CB3234"	)
+	orient_red				= (	"3031"	"#B32428"	)
+	pearl_ruby_red			= (	"3032"	"#721422"	)
+	pearl_pink				= (	"3033"	"#B44C43"	)
+	red_lilac				= (	"4001"	"#6D3F5B"	)
+	red_violet				= (	"4002"	"#922B3E"	)
+	heather_violet			= (	"4003"	"#DE4C8A"	)
+	claret_violet			= (	"4004"	"#641C34"	)
+	blue_lilac				= (	"4005"	"#6C4675"	)
+	traffic_purple			= (	"4006"	"#A03472"	)
+	purple_violet			= (	"4007"	"#4A192C"	)
+	signal_violet			= (	"4008"	"#924E7D"	)
+	pastel_violet			= (	"4009"	"#A18594"	)
+	telemagenta				= (	"4010"	"#CF3476"	)
+	pearl_violet			= (	"4011"	"#8673A1"	)
+	pearl_black_berry		= (	"4012"	"#6C6874"	)
+	violet_blue				= (	"5000"	"#354D73"	)
+	green_blue				= (	"5001"	"#1F3438"	)
+	ultramarine_blue		= (	"5002"	"#20214F"	)
+	sapphire_blue			= (	"5003"	"#1D1E33"	)
+	black_blue				= (	"5004"	"#18171C"	)
+	signal_blue				= (	"5005"	"#1E2460"	)
+	brilliant_blue			= (	"5007"	"#3E5F8A"	)
+	grey_blue				= (	"5008"	"#26252D"	)
+	azure_blue				= (	"5009"	"#025669"	)
+	gentian_blue			= (	"5010"	"#0E294B"	)
+	steel_blue				= (	"5011"	"#231A24"	)
+	light_blue				= (	"5012"	"#3B83BD"	)
+	cobalt_blue				= (	"5013"	"#1E213D"	)
+	pigeon_blue				= (	"5014"	"#606E8C"	)
+	sky_blue				= (	"5015"	"#2271B3"	)
+	traffic_blue			= (	"5017"	"#063971"	)
+	turquoise_blue			= (	"5018"	"#3F888F"	)
+	capri_blue				= (	"5019"	"#1B5583"	)
+	ocean_blue				= (	"5020"	"#1D334A"	)
+	water_blue				= (	"5021"	"#256D7B"	)
+	night_blue				= (	"5022"	"#252850"	)
+	distant_blue			= (	"5023"	"#49678D"	)
+}
+
+enumeration Bean_Chamber {
+	attribute	num/gr	capacity
+
+	S	= (	200	)
+	M	= (	350	)
+	L	= (	500	)
+}
+
+enumeration MAT_Water_Tank {
+	attribute	num/liter	volume
+
+	M_TA5739520	= (	  1	)
+	M_TA3486935	= (	  2	)
+	M_TA3253577	= (	  5	)
+	M_TA3456370	= (	  5	)
+}
+
+enumeration Tank_Volume {
+	attribute	num/liter	vol
+
+	S	= (	  1	)
+	M	= (	  2	)
+	L	= (	  5	)
+}
+
+enumeration MAT_Grinding_Core {
+	attribute	string	material_number
+	attribute	num/gr	weight
+
+	M_CR283742	= (	"CR283742"	470	)
+	M_CR384583	= (	"CR384583"	680	)
+}
+
+enumeration MAT_Grinder_Drive {
+	attribute	string	material_number
+	attribute	num		weight
+
+	M_CD872463	= (	"872463"	450	)
+	M_CD453798	= (	"453798"	560	)
+	M_CD348573	= (	"348573"	900	)
+}
+
+enumeration Noise_Level {
+	quiet
+	medium
+	noisy
+}
+
+enumeration Grinding_Type {
+	impact_cropping
+	disc_cropping
+	cone_cropping
+}
+
+enumeration Frame {
+	attribute	num		size
+	attribute	string	materialNumber
+	attribute	string	comment
+
+	FR_20_3453897	= (	 20	"3453897"	"standard"	)
+	FR_20_4758238	= (	 20	"4758238"	"strong"	)
+	FR_22_9384577	= (	 22	"9384577"	"standard"	)
+	FR_22_8437599	= (	 22	"8437599"	"strong"	)
+}
+
+enumeration Grinder_Material {
+	steel
+	ceramic
+}
+
+enumeration MAT_Brewing_Pump {
+	attribute	num		weight
+	attribute	string	materialNumber
+
+	M_BP23492387	= (	 60	"23492387"	)
+	M_BP24895734	= (	 75	"24895734"	)
+}
+
+enumeration MAT_Brewing_Controller {
+	attribute	num		weight
+	attribute	string	materialNumber
+
+	M_BCN843523948	= (	150	"843523948"	)
+	M_BCN349829383	= (	200	"349829383"	)
+}
+
+enumeration Brewing_Chamber {
+	M
+	L
+	XL
+}
+
+enumeration Pump {
+	M
+	L
+	XL
+}
+
+enumeration Pressure_Tank {
+	attribute	num/bar	pressure
+
+	P30	= (	  30000	)
+	P40	= (	  40000	)
+	P50	= (	  50000	)
+}
+
+enumeration Heating_System {
+	attribute	num	steamDensity
+
+	H16	= (	   1600	)
+	H20	= (	   2000	)
+	H22	= (	   2200	)
+}
+
+enumeration Available {
+	unavailable
+	available
+}
+
+enumeration MAT_Cup_Warmer {
+	without
+	M_CW_1a_590503
+	M_CW_1p_534566
+	M_CW_3a_593453
+	M_CW_3p_593666
+	M_CW_5a_534553
+	M_CW_5p_593666
+	M_CW_EXT_48966
+}
+
+enumeration Heating_Plate_Size {
+	without
+	one_cup
+	three_cups
+	five_cups
+}
+
+enumeration Active_Heating_Plate {
+	without
+	standard
+	extended
+}
+
+enumeration MAT_Water_Filter {
+	attribute	num	max_capacity
+
+	M_WF012039	= (	   1000	)
+	M_WF012990	= (	   5000	)
+}
+
+enumeration MAT_Coin_Slot {
+	unavailable
+	M_CS0122
+	M_C00101
+}
+
+
+behavior Brew_Unit {
+	combinations	(	brewing_chamber	brew_pump	)
+	allow			(	M				(M, L)		)
+	allow			(	L				(L, XL)		)
+	allow			(	XL				XL			)
+}
+
+behavior Cup_Warmer {
+	combinations	(	heating_plate	size					)
+	allow			(	without			without					)
+	allow			(	standard		(one_cup, three_cups)	)
+	allow			(	extended		(five_cups, three_cups)	)
+}
+
+behavior Milk_System {
+	combinations	(	milk_foamer	milk_warmer	)
+	allow			(	available	available	)
+	allow			(	unavailable		-*-			)
+}
+
+behavior Water_Tank {
+	combinations	(	water_pipe_connection	tank_volume	)
+	allow			(	True					(L, M)		)
+	allow			(	False					-*-			)
+}
+
+// behavior Grinding_Unit {
+// 	default 	noise_level = quiet
+// }
+
+// behavior Grinding_Unit {
+// 	condition noise_level = quiet
+// 	default 	type = cone_cropping
+// }
+
+// behavior Grinding_Unit {
+// 	condition (noise_level = medium || noise_level = noisy)
+// 	default 	type = disc_cropping
+// }
+
+// behavior Brew_Unit {
+// 	explanation "KM"
+// 	condition steam_exit_velocity <= 6
+// 	require bom_bu.mat_brewing_controller = M_BCN843523948
+// }
+
+// behavior Brew_Unit {
+// 	explanation "KM"
+// 	condition steam_exit_velocity <= 6
+// 	require bom_bu.mat_brewing_case = M_BP23492387
+// }
+
+// behavior Brew_Unit {
+// 	explanation "KM"
+// 	condition steam_exit_velocity > 6
+// 	condition steam_exit_velocity <= 7
+// 	require bom_bu.mat_brewing_controller = M_BCN349829383
+// }
+
+// behavior Brew_Unit {
+// 	explanation "KM"
+// 	condition steam_exit_velocity > 6
+// 	condition steam_exit_velocity <= 7
+// 	require bom_bu.mat_brewing_case = M_BP23492387
+// }
+
+// behavior Brew_Unit {
+// 	explanation "KM"
+// 	condition steam_exit_velocity > 7
+// 	require bom_bu.mat_brewing_controller = M_BCN349829383
+// }
+
+// behavior Brew_Unit {
+// 	explanation "KM"
+// 	condition steam_exit_velocity > 7
+// 	require bom_bu.mat_brewing_case = M_BP24895734
+// }
+
+// behavior Brew_Unit {
+// 	explanation "KM"
+// 	imply steam_exit_velocity = sqrt(((2 * pressure_tank.pressure) / heating_system.steamDensity))
+// }
+
+// behavior Brew_Unit {
+// 	explanation "KM"
+// 	combinations ( brew_pump brewing_chamber heating_system pressure_tank)
+// 	allow			( M			(M,L)				H16				P30)
+// 	allow 			( L			L					H20 			P40)
+// 	allow			( (L,M)		XL					H16 			P40)
+// 	allow			( L			M					H20 			P30)
+// 	allow			( XL		L					H22 			P50)
+// 	allow			( XL		M					H20 			P40)
+// 	allow			( XL		XL					H22 			P50)
+// }
+
+behavior Brew_Unit {
+	explanation "KM"
+	condition brew_pump = M
+	condition (brewing_chamber = M || brewing_chamber = L)
+	require heating_system = H16
+}
+
+behavior Brew_Unit {
+	explanation "KM"
+	condition brew_pump = M
+	condition (brewing_chamber = M || brewing_chamber = L)
+	require pressure_tank = P30
+}
+
+behavior Brew_Unit {
+	explanation "KM"
+	condition brew_pump = L
+	condition brewing_chamber = L
+	require heating_system = H20
+}
+
+behavior Brew_Unit {
+	explanation "KM"
+	condition brew_pump = L
+	condition brewing_chamber = L
+	require pressure_tank = P40
+}
+
+behavior Brew_Unit {
+	explanation "KM"
+	condition brew_pump = XL
+	condition brewing_chamber = L
+	require heating_system = H22
+}
+
+behavior Brew_Unit {
+	explanation "KM"
+	condition brew_pump = XL
+	condition brewing_chamber = L
+	require pressure_tank = P50
+}
+
+behavior Brew_Unit {
+	explanation "KM"
+	condition brew_pump = XL
+	condition brewing_chamber = M
+	require heating_system = H20
+}
+
+behavior Brew_Unit {
+	explanation "KM"
+	condition brew_pump = XL
+	condition brewing_chamber = M
+	require pressure_tank = P40
+}
+
+behavior Brew_Unit {
+	explanation "KM"
+	condition brew_pump = XL
+	condition brewing_chamber = XL
+	require heating_system = H22
+}
+
+behavior Brew_Unit {
+	explanation "KM"
+	condition brew_pump = XL
+	condition brewing_chamber = XL
+	require pressure_tank = P50
+}
+
+behavior Brew_Unit {
+	explanation "KM"
+	condition (brew_pump = L || brew_pump = M)
+	condition brewing_chamber = XL
+	require heating_system = H16
+}
+
+behavior Brew_Unit {
+	explanation "KM"
+	condition (brew_pump = L || brew_pump = M)
+	condition brewing_chamber = XL
+	require pressure_tank = P40
+}
+
+behavior Brew_Unit {
+	explanation "KM"
+	condition brew_pump = L
+	condition brewing_chamber = M
+	require heating_system = H20
+}
+
+behavior Brew_Unit {
+	explanation "KM"
+	condition brew_pump = L
+	condition brewing_chamber = M
+	require pressure_tank = P30
+}
+
+behavior Grinding_Unit {
+	explanation "KM"
+	default 	grinding_frame = FR_20_3453897
+}
+
+behavior Grinding_Unit {
+	explanation "KM"
+	default 	grinding_frame = FR_20_4758238
+}
+
+behavior Additional_Equipment {
+	explanation "KM"
+	condition coin_slot = available
+	require bom_ae.mat_coin_slot = M_CS0122
+}
+
+behavior Additional_Equipment {
+	explanation "KM"
+	condition coin_slot = unavailable
+	require bom_ae.mat_coin_slot = unavailable
+}
+
+behavior Grinding_Unit {
+	explanation "KM"
+	condition noise_level = quiet
+	condition type = impact_cropping
+	require bom_gu.mat_grind_drive = M_CD872463
+}
+
+behavior Grinding_Unit {
+	explanation "KM"
+	condition (noise_level = medium || noise_level = noisy)
+	condition type = impact_cropping
+	require bom_gu.mat_grind_drive = M_CD453798
+}
+
+behavior Grinding_Unit {
+	explanation "KM"
+	condition (noise_level = quiet || noise_level = medium || noise_level = noisy)
+	condition (type = disc_cropping || type = cone_cropping)
+	require bom_gu.mat_grind_drive = M_CD348573
+}
+
+behavior Grinding_Unit {
+	explanation "KM"
+	condition material = steel
+	require bom_gu.mat_grinder = M_CR283742
+}
+
+behavior Grinding_Unit {
+	explanation "KM"
+	condition material = ceramic
+	require bom_gu.mat_grinder = M_CR384583
+}
+
+behavior Water_Tank {
+	explanation "KM"
+	condition tank_volume = S
+	condition water_pipe_connection = False
+	require bom_wt.mat_water_tank = M_TA5739520
+}
+
+behavior Water_Tank {
+	explanation "KM"
+	condition tank_volume = M
+	condition water_pipe_connection = False
+	require bom_wt.mat_water_tank = M_TA3486935
+}
+
+behavior Water_Tank {
+	explanation "KM"
+	condition tank_volume = L
+	condition water_pipe_connection = False
+	require bom_wt.mat_water_tank = M_TA3253577
+}
+
+behavior Water_Tank {
+	explanation "KM"
+	condition tank_volume = L
+	condition water_pipe_connection = True
+	require bom_wt.mat_water_tank = M_TA3456370
+}
+
+behavior Water_Tank {
+	explanation "KM"
+	condition tank_volume = M
+	condition water_pipe_connection = True
+	require bom_wt.mat_water_tank = M_TA3456370
+}
+
+behavior Bean_Container {
+	explanation "KM"
+	condition volume_bean_chamber = S
+	require bom_bc.mat_bean_container = M_BC5290520
+}
+
+behavior Bean_Container {
+	explanation "KM"
+	condition volume_bean_chamber = M
+	require bom_bc.mat_bean_container = M_BC2059800
+}
+
+behavior Bean_Container {
+	explanation "KM"
+	condition volume_bean_chamber = L
+	require bom_bc.mat_bean_container = M_BC2059345
+}
+
+behavior Cup_Warmer {
+	explanation "KM"
+	condition heating_plate = without
+	condition size = without
+	require bom_cw.mat_cup_warmer = without
+}
+
+behavior Cup_Warmer {
+	explanation "KM"
+	condition heating_plate = standard
+	condition size = one_cup
+	require bom_cw.mat_cup_warmer = M_CW_1a_590503
+}
+
+behavior Cup_Warmer {
+	explanation "KM"
+	condition heating_plate = without
+	condition size = one_cup
+	require bom_cw.mat_cup_warmer = M_CW_1p_534566
+}
+
+behavior Cup_Warmer {
+	explanation "KM"
+	condition heating_plate = standard
+	condition size = three_cups
+	require bom_cw.mat_cup_warmer = M_CW_3a_593453
+}
+
+behavior Cup_Warmer {
+	explanation "KM"
+	condition heating_plate = without
+	condition size = three_cups
+	require bom_cw.mat_cup_warmer = M_CW_3p_593666
+}
+
+behavior Cup_Warmer {
+	explanation "KM"
+	condition heating_plate = standard
+	condition size = five_cups
+	require bom_cw.mat_cup_warmer = M_CW_5a_534553
+}
+
+behavior Cup_Warmer {
+	explanation "KM"
+	condition heating_plate = without
+	condition size = five_cups
+	require bom_cw.mat_cup_warmer = M_CW_5p_593666
+}
+
+behavior Cup_Warmer {
+	explanation "KM"
+	condition heating_plate = extended
+	condition (size = without || size = one_cup || size = three_cups || size = five_cups)
+	require bom_cw.mat_cup_warmer = M_CW_EXT_48966
+}
+
+behavior Grinding_Unit {
+	explanation "KM"
+	condition type = impact_cropping
+	condition material = steel
+	require noise_level = noisy
+}
+
+behavior Grinding_Unit {
+	explanation "KM"
+	condition type = disc_cropping
+	condition material = steel
+	require noise_level = medium
+}
+
+behavior Grinding_Unit {
+	explanation "KM"
+	condition type = cone_cropping
+	condition material = steel
+	require noise_level = medium
+}
+
+behavior Grinding_Unit {
+	explanation "KM"
+	condition type = impact_cropping
+	condition material = ceramic
+	require noise_level = medium
+}
+
+behavior Grinding_Unit {
+	explanation "KM"
+	condition type = disc_cropping
+	condition material = ceramic
+	require noise_level = medium
+}
+
+behavior Grinding_Unit {
+	explanation "KM"
+	condition type = cone_cropping
+	condition material = ceramic
+	require noise_level = quiet
+}
+
+behavior Grinding_Unit {
+	explanation "KM"
+	combinations	(	type											material	)
+	allow			(	(impact_cropping, disc_cropping, cone_cropping)	steel		)
+	allow			(	(cone_cropping, impact_cropping)				ceramic		)
+
+}
+
+behavior Grinding_Unit {
+	explanation "KM"
+	imply weight = (bom_gu.mat_grinder.weight + bom_gu.mat_grind_drive.weight)
+}
+
+behavior Grinding_Unit {
+	explanation "KM"
+	condition type = cone_cropping
+	require grinding_frame.size = 22
+}
+
+behavior Grinding_Unit {
+	explanation "KM"
+	condition weight > 1100
+	require (grinding_frame = FR_20_4758238 || grinding_frame = FR_22_9384577)
+}
+
+behavior Water_Tank {
+	explanation "KM"
+	condition water_pipe_connection = True
+	condition tank_volume = S
+	imply water_pump.required_water_pressure = 2
+}
+
+behavior Water_Tank {
+	explanation "KM"
+	condition water_pipe_connection = True
+	condition tank_volume = M
+	imply water_pump.required_water_pressure = 4
+}
+
+behavior Water_Tank {
+	explanation "KM"
+	condition water_pipe_connection = True
+	condition tank_volume = L
+	imply water_pump.required_water_pressure = 6
+}
+
+// behavior Brew_Unit {
+// 	message KM
+// }
+
+// behavior Water_Tank {
+// 	condition water_pipe_connection = False
+// 	hide water_pump.required_water_pressure
+// }

@@ -11,6 +11,7 @@ Parsing and translating the COOM files is done via the Python target of ANTLR v4
 - To get started have a look at the [COOM grammar][grammar]
 - You can customize the translation by modifying the [ASP Visitor][visitor]
 
+
 !!! tip
     More information on the Python target of ANTLR v4 can be found [here][antlr-python].
 
@@ -24,16 +25,15 @@ Parsing and translating the COOM files is done via the Python target of ANTLR v4
     you might have to modify the preprocessing encoding
     located in the [Encodings folder][encodings] as well.
 
-## Generate ANTLR4 Python files
+## Changing the grammar Generate ANTLR4 Python files
 
-These files are used by the parser.
-To generate them from an ANTLR4 grammar,
-navigate to the corresponding folder and run
-(possibly replacing the version number and grammar file name)
-
+If you make changes to the grammar, you will need to re-generate the necessary ANTLR4 Python files used by the parser.
+This can be done by executing
 ```shell
-antlr4 -v 4.9.3 -Dlanguage=Python3 Grammar.g4 -visitor
+./build_grammar.sh
 ```
+
+These files are
 
 [grammar]: https://github.com/potassco/coom-suite/tree/master/src/coomsuite/utils/coom_grammar/model/Model.g4
 [visitor]: https://github.com/potassco/coom-suite/tree/master/src/coomsuite/utils/parse_coom.py

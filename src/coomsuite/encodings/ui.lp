@@ -250,11 +250,16 @@ elem(part_container("root"), container, window).
         % attr(menu_bar_clear, class, "border-0").
         % when(menu_bar_clear, click, call, clear_assumptions).
 
+        elem(menu_bar_upload, button, menu_bar).
+        attr(menu_bar_upload, label, "Upload").
+        attr(menu_bar_upload, icon, "fa-upload").
+        when(menu_bar_upload, click, update, (upload_modal, visibility, shown)).
+
 
         elem(menu_bar_download, button, menu_bar).
         attr(menu_bar_download, label, "Download").
         attr(menu_bar_download, icon, "fa-download").
-        when(menu_bar_download, click, call, download("#show . #show include(I) : include(I), type(I,T), part(T).#show value(X,V) : value(X,V), type(X,T), integer(T). #show value(X,V) : value(X,V), type(X,T), discrete(T).", "coom_solution.lp")).
+        when(menu_bar_download, click, call, download("#show . #show include(I) : include(I), type(I,T), part(T).#show value(X,V) : value(X,V), type(X,T), integer(T). #show value(X,V) : value(X,V), type(X,T), discrete(T).", "current_solution.coom")).
 
 
         elem(menu_bar_select, button, menu_bar).
@@ -266,3 +271,17 @@ elem(part_container("root"), container, window).
         attr(menu_bar_next, label, "Find next solution").
         attr(menu_bar_next, icon, "fa-forward-step").
         when(menu_bar_next, click, call, next_solution).
+
+            % +++++++ Upload COOM file modal
+
+            elem(upload_modal, modal, window).
+            attr(upload_modal, title, "Upload COOM file").
+
+            elem(c1, container, upload_modal).
+            attr(c1, child_layout, flex).
+            attr(c1, flex_direction, row_reverse).
+            attr(c1, class, "align-items-center").
+
+                elem(f1, file_input, c1).
+                attr(f1, accept, ".coom").
+                when(f1, change, call, upload_file).
