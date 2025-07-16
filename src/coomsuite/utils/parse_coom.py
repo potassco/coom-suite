@@ -8,12 +8,17 @@ in a visitor style fashion and outputs ASP facts.
 # flake8: noqa
 # pylint: skip-file
 # mypy: ignore-errors
+import sys
 from typing import List, Optional
 
-from .coom_grammar.model.ModelParser import ModelParser
-from .coom_grammar.model.ModelVisitor import ModelVisitor
-from .coom_grammar.user.UserInputParser import UserInputParser
-from .coom_grammar.user.UserInputVisitor import UserInputVisitor
+try:
+    from .coom_grammar.model.ModelParser import ModelParser
+    from .coom_grammar.model.ModelVisitor import ModelVisitor
+    from .coom_grammar.user.UserInputParser import UserInputParser
+    from .coom_grammar.user.UserInputVisitor import UserInputVisitor
+except ModuleNotFoundError:
+    print("COOM grammar files not found. Please run \n\n     ./build_grammar.sh")
+    sys.exit(1)
 
 
 class ASPUserInputVisitor(UserInputVisitor):

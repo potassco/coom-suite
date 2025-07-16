@@ -1,4 +1,4 @@
-# Generated from user/UserInput.g4 by ANTLR 4.13.2
+# Generated from /home/ruehling/projects/coom-suite/src/coomsuite/utils/coom_grammar/user/UserInput.g4 by ANTLR 4.13.2
 from antlr4 import *
 if "." in __name__:
     from .UserInputParser import UserInputParser
