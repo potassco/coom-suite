@@ -108,4 +108,11 @@ def get_parser() -> ArgumentParser:
         choices=["linear", "exponential"],
         default=None,
     )
+    parser_solve.add_argument(
+        "--initial-bound",
+        "-i",
+        type=int,
+        default=0,
+        help="Initial bound for the incremental search algorithm. Default is 0.",
+    )
     return parser

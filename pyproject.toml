@@ -98,4 +98,4 @@ omit = [
 exclude_lines = ["assert", "nocoverage"]
 
 [tool.mypy]
-exclude = ['coom_grammar', '/coomsuite/__main__.py']
+exclude = ['coom_grammar'] # , '/coomsuite/__main__.py']
