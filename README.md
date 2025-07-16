@@ -59,9 +59,9 @@ The COOM Suite contains a range of (product) configuration examples encoded in
 the COOM language. They can be found in the [`examples/coom`](examples/coom)
 directory. We highlight here only the *Bike* collection, containing three
 examples in increasing complexity that correspond to the three COOM language
-fragments defined above: the [Kids](examples/coom/kids-bike.coom),
-[City](examples/coom/city-bike.coom), and
-[Travel](examples/coom/travel-bike.coom) Bike.
+fragments defined above: the [Kids](examples/coom/bike/kids-bike.coom),
+[City](examples/coom/bike/city-bike.coom), and
+[Travel](examples/coom/bike/travel-bike.coom) Bike.
 
 We also provide the corresponding (serialized and refined) facts to these
 examples under [`examples/asp`](examples/asp).
