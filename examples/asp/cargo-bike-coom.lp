@@ -7,6 +7,7 @@ coom_range("product","requestedVolume",0,200).
 coom_feature("product","bags","Bag",0,#sup).
 
 coom_structure("Bag").
+coom_feature("Bag","color","Color",1,1).
 coom_feature("Bag","size","Size",1,1).
 
 coom_enumeration("Color").
