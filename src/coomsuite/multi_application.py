@@ -116,11 +116,16 @@ class COOMMultiSolverApp(COOMSolverApp):
                         parts += self.get_prog_part(fact)
 
                 else:
+                    # TODO: this processing does not seem fully correct yet ?
+                    # - need to check which parts of preprocessing with max bound 1 actually are relevant
+                    # - ex: root.totalVolume = sum(root.bags.size.volume) vs.
+                    #       table constraint on bag size and pocket size
+
+                    # TODO: do i need to save the incremental facts here ?
                     incremental_facts = self.get_initial_incremental_data()
                     for fact in new_processed_facts:
                         x = parse_term(fact[:-1])
                         if x.name == "function" and x.arguments[0].string in self.incremental_expressions:
-                            print(f"found an incremental function")
                             parts.append(("incremental_function", x.arguments + [Number(self.max_bound)]))
                             processed_facts.append(fact)
                         elif x.name == "binary" and x.arguments[0].string in self.incremental_expressions:

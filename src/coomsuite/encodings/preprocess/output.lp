@@ -94,6 +94,7 @@ set(@join(X,N),X')                       :- cardinality_aux(X,N,_), path_to(X,N,
 inc_obj(@dotpath(X)) :- inc_aux(X,_).
 inc_set(@join(X,P)) :- function(X,_,_,P), path_to(X,P,X'), inc_obj(X').
 % #show inc_obj/1.
+% TODO: verify that this only includes sets like root.bags and not root.bags[0].color
 #show inc_set/1.
 
 incremental("function",  X,P,(X,F,P))            :- function(X,F,P),              inc_set(P).

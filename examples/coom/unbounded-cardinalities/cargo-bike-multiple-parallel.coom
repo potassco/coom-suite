@@ -26,6 +26,7 @@ enumeration Size {
 }
 
 behavior {
+    // BUG: not working -> probably related to issues in test-cargo-bike.coom
     explanation "The total volume is equal to the sum of the volumes of all bags."
     require totalVolume = sum(bags.size.volume) + sum(bags2.size.volume)
 
