@@ -31,8 +31,8 @@ class COOMMultiSolverApp(COOMSolverApp):
             if exp[0] == "function":
                 program_parts.append(("incremental_function", exp[1] + [Number(self.max_bound)]))
             elif exp[0] == "binary":
-                lhs = exp[1][1]
-                rhs = exp[1][3]
+                lhs = exp[1][1].string
+                rhs = exp[1][3].string
                 if lhs not in self.incremental_expressions:
                     program_parts.append(("incremental_binary_r", exp[1] + [Number(self.max_bound)]))
                 elif rhs not in self.incremental_expressions:
