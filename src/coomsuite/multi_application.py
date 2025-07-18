@@ -7,6 +7,8 @@ from .application import COOMSolverApp
 from .preprocess import preprocess
 from .utils import get_encoding
 
+from pprint import pprint
+
 
 class COOMMultiSolverApp(COOMSolverApp):
     # need to have serialized facts as preprocessing is done in this class
@@ -14,6 +16,8 @@ class COOMMultiSolverApp(COOMSolverApp):
     max_bound = 0
     incremental_sets: Dict[str, Any] = {}
     incremental_expressions: List[str] = []
+    # keep track of whether an incremental expression is already initialized
+    is_initialized: Dict[str, bool] = {}
 
     def __init__(
         self,
@@ -25,24 +29,43 @@ class COOMMultiSolverApp(COOMSolverApp):
         super(COOMMultiSolverApp, self).__init__(log_level, options, istest)
         self.serialized_facts = serialized_facts
 
+    def get_incremental_prog_part(self, exp_type: str, args):
+        name = ""
+        if exp_type in ["function", "binary", "unary"]:
+            name = args[0].string
+        else:
+            name = args[0].arguments[1].string
+
+        part_name = ""
+        args = args + [Number(self.max_bound)]
+        if exp_type == "function":
+            prefix = ""
+            if self.is_initialized[name]:
+                prefix = "update_"
+            else:
+                prefix = "new_"
+                self.is_initialized[name] = True
+            part_name = prefix + "incremental_function"
+        elif exp_type == "binary":
+            part_name = "incremental_binary"
+            lhs = args[1].string
+            rhs = args[3].string
+            if lhs not in self.incremental_expressions:
+                part_name += "_r"
+            elif rhs not in self.incremental_expressions:
+                part_name += "_l"
+        elif exp_type == "unary":
+            part_name = "incremental_unary"
+        elif exp_type == "constraint":
+            part_name = "incremental_constraint"
+
+        return (part_name, args)
+
+    # TODO: change name of this function to be different from the above
     def get_incremental_prog_parts(self, inc_set: str):
         program_parts = []
         for exp in self.incremental_sets[inc_set]:
-            if exp[0] == "function":
-                program_parts.append(("incremental_function", exp[1] + [Number(self.max_bound)]))
-            elif exp[0] == "binary":
-                lhs = exp[1][1].string
-                rhs = exp[1][3].string
-                if lhs not in self.incremental_expressions:
-                    program_parts.append(("incremental_binary_r", exp[1] + [Number(self.max_bound)]))
-                elif rhs not in self.incremental_expressions:
-                    program_parts.append(("incremental_binary_l", exp[1] + [Number(self.max_bound)]))
-                else:
-                    program_parts.append(("incremental_binary", exp[1] + [Number(self.max_bound)]))
-            elif exp[0] == "unary":
-                program_parts.append(("incremental_unary", exp[1] + [Number(self.max_bound)]))
-            elif exp[0] == "constraint":
-                program_parts.append(("incremental_constraint", exp[1] + [Number(self.max_bound)]))
+            program_parts.append(self.get_incremental_prog_part(exp[0], exp[1]))
 
         return program_parts
 
@@ -86,6 +109,8 @@ class COOMMultiSolverApp(COOMSolverApp):
                 if exp.arguments[2] == inc_set:
                     self.incremental_sets[inc_set.string].append((exp.arguments[0].string, exp.arguments[3].arguments))
                     self.incremental_expressions.append(exp.arguments[1].string)
+                    if exp.arguments[0].string == "function":
+                        self.is_initialized[exp.arguments[1].string] = False
 
     def main(self, control: Control, files: Sequence[str]) -> None:
         if self._options["solver"] == "fclingo":
@@ -125,28 +150,15 @@ class COOMMultiSolverApp(COOMSolverApp):
                     incremental_facts = self.get_initial_incremental_data()
                     for fact in new_processed_facts:
                         x = parse_term(fact[:-1])
-                        if x.name == "function" and x.arguments[0].string in self.incremental_expressions:
-                            parts.append(("incremental_function", x.arguments + [Number(self.max_bound)]))
-                            processed_facts.append(fact)
-                        elif x.name == "binary" and x.arguments[0].string in self.incremental_expressions:
-                            lhs = x.arguments[1].string
-                            rhs = x.arguments[3].string
-                            if lhs not in self.incremental_expressions:
-                                parts.append(("incremental_binary_r", x.arguments + [Number(self.max_bound)]))
-                            elif rhs not in self.incremental_expressions:
-                                parts.append(("incremental_binary_l", x.arguments + [Number(self.max_bound)]))
-                            else:
-                                parts.append(("incremental_binary", x.arguments + [Number(self.max_bound)]))
-                            processed_facts.append(fact)
-                        elif x.name == "unary" and x.arguments[0].string in self.incremental_expressions:
-                            parts.append(("incremental_unary", x.arguments + [Number(self.max_bound)]))
-                            processed_facts.append(fact)
-                        elif (
+                        if (
+                            x.name in ["function", "binary", "unary"]
+                            and x.arguments[0].string in self.incremental_expressions
+                        ) or (
                             x.name == "constraint"
                             and x.arguments[1].string == "boolean"
                             and x.arguments[0].arguments[1].string in self.incremental_expressions
                         ):
-                            parts.append(("incremental_constraint", x.arguments + [Number(self.max_bound)]))
+                            parts.append(self.get_incremental_prog_part(x.name, x.arguments))
                             processed_facts.append(fact)
 
                     # remove every fact that was already handled in the above loop

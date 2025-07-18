@@ -1,7 +1,7 @@
 product {
             num /l  0-200   totalVolume
             num /l  0-200   requestedVolume
-    0..*    Bag             bags
+    2..*    Bag             bags
             Color           color
 }
 
@@ -45,23 +45,11 @@ behavior Bag {
     require color = Green
 }
 
-// BUG: not working correctly
 behavior Bag {
-    // only works correctly for bags[0]
-    // problem: for bags[1] the corresponding incremental constraint/function is only added
-    // at bound 2, thus the value of the function is not correctly defined
-    // -> it may be necessary to have a new_incremental_function and an update_incremental_function
-    // program part
-    // in the above example the new incremental function part needs to be added first for the bags[1]
-    // this program part should the define the value for all bounds smaller than the current to be whatever the default of the function is
-
-    // require size.weight <= count(pockets)
-    require 1 <= count(pockets)
+    require 2 <= count(pockets)
 }
 
 behavior Bag {
-    // TODO: do explanations have to be added in multishot ?
-    // seems to not be necessary
     explanation "The size of the pockets of a bag have to match the size of the bag."
     combinations (size     pockets)
     allow        (small    Small  )
