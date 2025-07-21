@@ -3,13 +3,17 @@ function(f,agg,p).
 
 defined(f,bound) :- value(f,_,bound).
 
-value(f,V,bound) :- function(f,agg,p), agg = "count", V = #count{ X : set(p,X), bound(X,bound), include(X) }.
+value(f,V,bound) :- function(f,agg,p), agg = "count", V = #count{ X : set(p,X),                 include(X) }, bound = 0.
+value(f,V,bound) :- function(f,agg,p), agg = "count", V = #count{ X : set(p,X), bound(X,bound), include(X) }, bound > 0.
 
-value(f,V,bound) :- function(f,agg,p), agg = "sum", V = #sum{ V',X : set(p,X), bound(X,bound), value(X,V') }.
+value(f,V,bound) :- function(f,agg,p), agg = "sum", V = #sum{ V',X : set(p,X),                 value(X,V') }, bound = 0.
+value(f,V,bound) :- function(f,agg,p), agg = "sum", V = #sum{ V',X : set(p,X), bound(X,bound), value(X,V') }, bound > 0.
 
-value(f,V   ,bound) :- function(f,agg,p), agg = "min", V = #min{ V',X : set(p,X), bound(X,bound), value(X,V') }.
+value(f,V,bound) :- function(f,agg,p), agg = "min", V = #min{ V',X : set(p,X),                 value(X,V') }, bound = 0.
+value(f,V,bound) :- function(f,agg,p), agg = "min", V = #min{ V',X : set(p,X), bound(X,bound), value(X,V') }, bound > 0.
 
-value(f,V   ,bound) :- function(f,agg,p), agg = "max", V = #max{ V',X : set(p,X), bound(X,bound), value(X,V') }.
+value(f,V,bound) :- function(f,agg,p), agg = "max", V = #max{ V',X : set(p,X),                 value(X,V') }, bound = 0.
+value(f,V,bound) :- function(f,agg,p), agg = "max", V = #max{ V',X : set(p,X), bound(X,bound), value(X,V') }, bound > 0.
 
 #show value(f,V,bound) : function(f,_,_), value(f,V,bound).
 
