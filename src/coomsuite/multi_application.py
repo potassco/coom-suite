@@ -7,6 +7,7 @@ from .application import COOMSolverApp
 from .preprocess import preprocess
 from .utils import get_encoding
 
+# TODO: remove
 from pprint import pprint
 
 
@@ -15,9 +16,9 @@ class COOMMultiSolverApp(COOMSolverApp):
     serialized_facts: List[str]
     max_bound = 0
     # which sets have unbounded cardinality and in which expressions are they used
-    incremental_sets: Dict[str, Any] = {}  # TODO: change second argument of dict
+    incremental_sets: Dict[str, List[Tuple[str, List[Any]]]] = {}
     # all the incremental expressions in the program
-    incremental_expressions: List[str] = []  # TODO: change to set
+    incremental_expressions: Set[str] = set()
     # keep track of whether an incremental expression is already initialized
     is_initialized: Dict[str, bool] = {}
     # store for which incremental sets program parts have to be added
@@ -129,12 +130,15 @@ class COOMMultiSolverApp(COOMSolverApp):
 
         # save incremental sets and their expressions
         for inc_set in inc_sets:
-            self.incremental_sets[inc_set.string] = []
+            if inc_set not in self.incremental_sets:
+                self.incremental_sets[inc_set.string] = []
             for exp in inc_expressions:
                 if exp.arguments[2] == inc_set:
                     # expression is added both to the set as well as to the set of all incremental expressions
-                    self.incremental_sets[inc_set.string].append((exp.arguments[0].string, exp.arguments[3].arguments))
-                    self.incremental_expressions.append(exp.arguments[1].string)
+                    x = (exp.arguments[0].string, exp.arguments[3].arguments)
+                    if x not in self.incremental_sets[inc_set.string]:
+                        self.incremental_sets[inc_set.string].append(x)
+                    self.incremental_expressions.add(exp.arguments[1].string)
                     # for functions we need to keep track whether they are intialized already
                     if exp.arguments[0].string == "function":
                         if exp.arguments[1].string not in self.is_initialized:
@@ -182,7 +186,6 @@ class COOMMultiSolverApp(COOMSolverApp):
                     # - ex: root.totalVolume = sum(root.bags.size.volume) vs.
                     #       table constraint on bag size and pocket size
 
-                    # TODO: do i need to save the incremental facts here ?
                     incremental_facts = self.get_initial_incremental_data()
                     for fact in new_processed_facts:
                         x = parse_term(fact[:-1])
