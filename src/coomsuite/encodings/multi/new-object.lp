@@ -26,7 +26,6 @@ not include(X'  ), set(P,X'   ), index(X'  ,I-1), constraint((P,_),_).
 
 { value(name,V) : V = Min..Max } = 1 :- include(name), type(name,type), integer(type), range(type,Min,Max).
 
-#show include(name) : include(name).
-% #show value(name,V) : value(name,V).
+#show include(name) : include(name), type(name,type), part(type).
 #show value(X,V) : value(X,V), type(X,T), discrete(T).
 #show value(X,V) : value(X,V), type(X,T), integer(T).
