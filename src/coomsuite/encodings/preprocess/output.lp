@@ -91,22 +91,6 @@ set(@join(X,N),X')                       :- cardinality_aux(X,N,_), path_to(X,N,
 
 #show part/1.
 
-inc_obj(@dotpath(X)) :- inc_aux(X,_).
-inc_set(@join(X,P)) :- function(X,_,_,P), path_to(X,P,X'), inc_obj(X').
-% #show inc_obj/1.
-% TODO: verify that this only includes sets like root.bags and not root.bags[0].color
-#show inc_set/1.
-
-
-incremental("function",  X,P,(X,F,P))            :- function(X,F,P),              inc_set(P).
-incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,L,P,_).
-incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,R,P,_).
-incremental("unary",     X,P,(X,O,X'))           :- unary(X,O,X'),                incremental(_,X',P,_).
-incremental("constraint",X,P,((ID,X),"boolean")) :- constraint((ID,X),"boolean"), incremental(_,X,P,_).
-incremental("constraint",X,P,((ID,X),"table"))   :- constraint((ID,X),"table"),
-                                                    column((ID,X),_,_,E), set(P,E), inc_set(P).
-#show incremental/4.
-
 % Constants and numbers
 constant(C) :- coom_constant(C).
 number(C,N) :- coom_number(C,N).
