@@ -15,8 +15,6 @@ value(f,V,bound) :- function(f,agg,p), agg = "min", V = #min{ V',X : set(p,X), b
 value(f,V,bound) :- function(f,agg,p), agg = "max", V = #max{ V',X : set(p,X),                 value(X,V') }, bound = 0.
 value(f,V,bound) :- function(f,agg,p), agg = "max", V = #max{ V',X : set(p,X), bound(X,bound), value(X,V') }, bound > 0.
 
-#show value(f,V,bound) : function(f,_,_), value(f,V,bound).
-
 #program update_incremental_function(f,agg,p,bound).
 function(f,agg,p).
 
@@ -35,5 +33,3 @@ value(f,V',N+1) :- function(f,agg,p), agg = "max", bound = N+1, set(p,X), bound(
 
 % if object with bound N+1 is not included then the value is just the one from bound N
 value(f,V,N+1) :- function(f,_,p), bound = N+1, set(p,X), bound(X,bound), not include(X), value(f,V,N).
-
-#show value(f,V,bound) : function(f,_,_), value(f,V,bound).
