@@ -112,6 +112,8 @@ def get_parser() -> ArgumentParser:
         "--multishot",
         "-m",
         action="store_true",
-        help="Use multi-shot solving for problems with unbounded cardinalities. (Only if one of the --bounds options is used.)",
+        help="""
+        Use multi-shot solving for problems with unbounded cardinalities.
+        (If --bounds is not used this flag is ignored.)""",
     )
     return parser

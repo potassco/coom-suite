@@ -54,11 +54,11 @@ class BoundSolver:
         if self.use_multishot:
             return clingo_main(
                 COOMMultiSolverApp(
+                    serialized_facts=self.facts,
                     options={
                         "solver": self.args.solver,
                         "output_format": self.args.output,
                     },
-                    serialized_facts=self.facts,
                 ),
                 self.clingo_args,
             )
