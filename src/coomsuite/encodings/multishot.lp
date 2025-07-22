@@ -6,12 +6,7 @@
 #include "multi/new-function.lp".
 #include "multi/new-allow.lp".
 
-% TODO: proper handling for nested unbounded cardinalities
-% - will require having two program parts for each type of expression
-% - new_incremental_function defines initial value of the function
-%   (compared to current encoding this initial value can be at any bound not just 0/1)
-% - update_incremental_function is like the current encoding just with initial definitions removed
-% incremental functions and co
+#defined value/3.
 #include "multi/inc-function.lp".
 #include "multi/inc-unary.lp".
 #include "multi/inc-binary.lp".
