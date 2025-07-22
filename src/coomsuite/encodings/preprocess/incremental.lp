@@ -1,3 +1,5 @@
+% TODO: improve incremental detection to also detect sets/expression for 0..* with max_bound 0
+
 % incremental auxiliary predicate
 inc_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,Min,#sup),     type_aux(X,Ctx), I = 0..Min+max_bound-1, T != "num".
 inc_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), type_aux(X,Ctx), I = 0..Min+max_bound-1.

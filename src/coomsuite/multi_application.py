@@ -7,9 +7,6 @@ from .application import COOMSolverApp
 from .preprocess import preprocess
 from .utils import get_encoding
 
-# TODO: remove
-from pprint import pprint
-
 
 class COOMMultiSolverApp(COOMSolverApp):
     # need to have serialized facts as preprocessing is done in this class
@@ -112,7 +109,6 @@ class COOMMultiSolverApp(COOMSolverApp):
     def get_initial_incremental_data(self):
         # incremental expressions may already turn up with initial bound of 0
         # but preprocessing only detects them at bound 1 (at least for 0..*)
-        # TODO: improve incremental detection in preprocessing
         processed_facts = preprocess(self.serialized_facts, max_bound=1, discrete=True)
         incremental_facts = self.get_incremental_facts(processed_facts)
 
@@ -181,11 +177,6 @@ class COOMMultiSolverApp(COOMSolverApp):
                     self.sets_to_process = set()
 
                 else:
-                    # TODO: this processing does not seem fully correct yet ?
-                    # - need to check which parts of preprocessing with max bound 1 actually are relevant
-                    # - ex: root.totalVolume = sum(root.bags.size.volume) vs.
-                    #       table constraint on bag size and pocket size
-
                     incremental_facts = self.get_initial_incremental_data()
                     for fact in new_processed_facts:
                         x = parse_term(fact[:-1])
@@ -221,6 +212,7 @@ class COOMMultiSolverApp(COOMSolverApp):
 
                 self.max_bound += 1
                 processed_facts += new_processed_facts
+                incremental_facts += new_incremental_facts
                 new_processed_facts = preprocess(self.serialized_facts, max_bound=self.max_bound, discrete=True)
                 new_incremental_facts = self.get_incremental_facts(new_processed_facts)
                 new_processed_facts = [x for x in new_processed_facts if x not in new_incremental_facts]
