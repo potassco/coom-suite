@@ -14,12 +14,23 @@ from .utils import get_encoding
 ProgPart: TypeAlias = Tuple[str, List[Symbol]]
 
 
-# remove everything from new_facts that is alreay in facts
 def filter_facts(facts: List[str], new_facts: List[str]) -> List[str]:
+    """
+    Filter a list of new_facts by removing everything that is already in the list facts
+    """
     return [x for x in new_facts if x not in facts]
 
 
 def get_fact_name_and_args(fact: str) -> Tuple[str, List[Symbol]]:
+    """
+    Convert a fact given as a string to its name and arguments
+
+    Args:
+        fact (str): The fact in string representation (with trailing '.')
+
+    Returns:
+        Tuple[str, List[Symbol]]: A tuple of the name of the fact and the list of its arguments (as clingo.Symbol)
+    """
     x = parse_term(fact[:-1])
     return (x.name, x.arguments)
 
@@ -65,11 +76,16 @@ class COOMMultiSolverApp(COOMSolverApp):
         self.serialized_facts = serialized_facts
 
     def update_bound(self) -> None:
+        """
+        Update the current maximum bound
+        """
         self.prev_bound = self.max_bound
         self.max_bound += 1
 
-    # do preprocessing for the new bound and update fact data structures
     def preprocess_new_bound(self, bound: int) -> None:
+        """
+        Preprocess the serialized facts for the given bound and update the fact data structures
+        """
         # update facts that were already processed
         self.processed_facts += self.new_processed_facts
         self.incremental_facts += self.new_incremental_facts
@@ -85,8 +101,14 @@ class COOMMultiSolverApp(COOMSolverApp):
         self.new_incremental_facts = filter_facts(self.incremental_facts, self.new_incremental_facts)
         self.new_processed_facts = filter_facts(self.processed_facts, self.new_processed_facts)
 
-    # check if name(args) is an incremental expression
     def is_incremental_expression(self, name: str, args: List[Symbol]) -> bool:
+        """
+        Check if a predicate (given by name and arguments) is an incremental expression
+
+        Args:
+            name (str): The name of the predicate
+            args (List[Symbol]): The arguments of the predicate as clingo.Symbol's
+        """
         return (name in ["function", "binary", "unary"] and args[0].string in self.incremental_expressions) or (
             name == "constraint"
             and args[1].string == "boolean"
@@ -94,6 +116,12 @@ class COOMMultiSolverApp(COOMSolverApp):
         )
 
     def get_initial_incremental_prog_parts(self) -> List[ProgPart]:
+        """
+        Get the list of incremental programs parts for the initial bound
+
+        Gets all the program parts belonging to all the facts in new_processed_facts which are incremental expressions.
+        If a fact is an incremental expression it is also moved to the list of already processed facts.
+        """
         parts = []
         for fact in self.new_processed_facts:
             name, args = get_fact_name_and_args(fact)
@@ -104,13 +132,17 @@ class COOMMultiSolverApp(COOMSolverApp):
         return parts
 
     def get_incremental_prog_part(self, exp_type: str, args: List[Symbol]) -> ProgPart:
-        # get incremental program part for an expression of type exp_type with arguments args
+        """
+        Get the incremental program part for an expression of type exp_type with arguments args
+        """
         # determine the name of the expression
         name = ""
         if exp_type in ["function", "binary", "unary"]:
             name = args[0].string
-        else:
+        elif exp_type in ["constraint"]:
             name = args[0].arguments[1].string
+        else:
+            raise ValueError(f"unknown type of incremental expression: {exp_type}")
 
         # determine the name and arguments of the program part
         part_name = ""
@@ -143,26 +175,45 @@ class COOMMultiSolverApp(COOMSolverApp):
         return (part_name, args)
 
     def get_prog_part_of_inc_set(self, inc_set: str) -> List[ProgPart]:
-        # get all the program parts for an incremental set
+        """
+        Get all the program parts belonging to an incremental set
+        """
         program_parts = []
         for exp in self.incremental_sets[inc_set]:
             program_parts.append(self.get_incremental_prog_part(exp[0], exp[1]))
 
         return program_parts
 
-    # TODO: change from list to just a single ProgPart
-    def get_prog_part(self, fact: str) -> List[ProgPart]:
+    def get_prog_part(self, fact: str) -> ProgPart:
+        """
+        Get the program part belonging to a fact
+
+        Args:
+            fact (str): The fact representet as a string (with trailing '.')
+        """
         # convert fact to name and arguments
         name, args = get_fact_name_and_args(fact)
 
+        if name not in [
+            "parent",
+            "index",
+            "set",
+            "type",
+            "constraint",
+            "column",
+            "unary",
+            "binary",
+            "function",
+            "allow",
+        ]:
+            raise ValueError(f"unknown new fact (no corresponding program part exists): {fact}")
+
         # determine the corresponding program part
-        program_parts = [
-            (
-                f"new_{name}",
-                # the program parts new_type and new_constraint need the current max bound as an additional argument
-                args if name not in ["type", "constraint"] else args + [Number(self.max_bound)],
-            )
-        ]
+        program_part = (
+            f"new_{name}",
+            # the program parts new_type and new_constraint need the current max bound as an additional argument
+            args if name not in ["type", "constraint"] else args + [Number(self.max_bound)],
+        )
 
         # a fact set(S,X) adds an element to set S
         # if S is an incremental set we need to add its corresponding program parts
@@ -171,23 +222,36 @@ class COOMMultiSolverApp(COOMSolverApp):
             # as this could result in parts for one set being added multiple times
             self.inc_sets_to_process.add(args[0].string)
 
-        return program_parts
+        return program_part
 
     def get_incremental_facts(self, facts: List[str]) -> List[str]:
+        """
+        Collect all incremental facts from a list of facts
+
+        Incremental facts are either predicate inc_set/1 or incremental/4
+        """
         # get all facts inc_set/1 and incremental/4 from list of facts
         incremental_facts = [x for x in facts if x.startswith(("inc_set", "incremental"))]
 
         return incremental_facts
 
     def get_initial_incremental_data(self) -> None:
-        # incremental expressions may already turn up with initial bound of 0
-        # but preprocessing only detects them at bound 1 (at least for 0..*)
+        """
+        Obtain incremental expressions and sets for initial bound
+
+        Incremental expressions (and sets) may already turn up with an initial bound of 0 but the preprocessing only
+        detects them if at least one element of the type is available, i.e., only if the lower bound is not 0.
+        For cases where the unbounded cardinality is of the form 0..* this step is necessary.
+        """
         processed_facts = preprocess(self.serialized_facts, max_bound=1, discrete=True)
         self.incremental_facts = self.get_incremental_facts(processed_facts)
 
         self.update_incremental_data(self.incremental_facts)
 
     def update_incremental_data(self, incremental_facts: List[str]) -> None:
+        """
+        Update internal data structures keeping track of the incremental sets and their expressions
+        """
         # incremental_facts contain predicates:
         # inc_set(S) indicating sets S with unbounded cardinalities, and
         # incremental(T,N,S,Arg) indicating an expression of type T with name N
@@ -212,59 +276,64 @@ class COOMMultiSolverApp(COOMSolverApp):
                             self.is_initialized[exp.arguments[1].string] = False
 
     def main(self, control: Control, files: Sequence[str]) -> None:
+        """
+        Main function of the multishot application class
+        """
         if self._options["solver"] == "fclingo":
-            print("multi shot solving not supported for fclingo")
-        else:
-            encoding = get_encoding("encoding-base-clingo-multi.lp")
-            show = get_encoding("show-clingo.lp")
-            control.load(encoding)
-            control.load(show)
+            raise ValueError("multishot solving is currently not supported for the fclingo solver")
 
-            while True:
-                print(f"\nSolving with max_bound = {self.max_bound}\n")
+        encoding = get_encoding("encoding-base-clingo-multi.lp")
+        show = get_encoding("show-clingo.lp")
+        control.load(encoding)
+        control.load(show)
 
-                # preprocessing
-                self.preprocess_new_bound(self.max_bound)
+        while True:
+            print(f"\nSolving with max_bound = {self.max_bound}\n")
 
-                # collect program parts
-                parts = []
+            # preprocessing
+            self.preprocess_new_bound(self.max_bound)
 
-                if self.prev_bound is None:
-                    self.get_initial_incremental_data()
-                    parts += self.get_initial_incremental_prog_parts()
+            # collect program parts
+            parts = []
 
-                    # remove every fact that was already handled above
-                    self.new_processed_facts = filter_facts(self.processed_facts, self.new_processed_facts)
+            if self.prev_bound is None:
+                self.get_initial_incremental_data()
+                # process initial incremental facts
+                parts += self.get_initial_incremental_prog_parts()
 
-                    # ground base (needs to be grounded before other program parts below)
-                    control.add("base", [], "".join(self.new_processed_facts))
-                    control.ground([("base", [])])
-                else:
-                    self.update_incremental_data(self.new_incremental_facts)
+                # remove every fact that was already handled above
+                self.new_processed_facts = filter_facts(self.processed_facts, self.new_processed_facts)
 
-                    # keep track of inc sets that were updated (i.e. received new member)
-                    self.inc_sets_to_process = set()
+                # ground base (needs to be grounded before other program parts below)
+                control.add("base", [], "".join(self.new_processed_facts))
+                control.ground([("base", [])])
+            else:
+                self.update_incremental_data(self.new_incremental_facts)
 
-                    # collect program parts for all the new facts
-                    for fact in self.new_processed_facts:
-                        parts += self.get_prog_part(fact)
+                # keep track of inc sets that were updated (i.e. received new member)
+                self.inc_sets_to_process = set()
 
-                    # collect program parts for all the incremental sets were updated
-                    for inc_set in self.inc_sets_to_process:
-                        parts += self.get_prog_part_of_inc_set(inc_set)
+                # collect program parts for all the new facts
+                for fact in self.new_processed_facts:
+                    # this also adds sets to self.inc_sets_to_process
+                    parts.append(self.get_prog_part(fact))
 
-                # ground
-                control.ground(parts)
+                # collect program parts for all the incremental sets were updated
+                for inc_set in self.inc_sets_to_process:
+                    parts += self.get_prog_part_of_inc_set(inc_set)
 
-                # update externals
-                control.assign_external(Function("active", [Number(self.max_bound)]), True)
-                control.assign_external(Function("max_bound", [Number(self.max_bound)]), True)
-                if self.prev_bound is not None:
-                    control.assign_external(Function("max_bound", [Number(self.prev_bound)]), False)
+            # ground
+            control.ground(parts)
 
-                # solve
-                ret = control.solve()
-                if ret.satisfiable:
-                    break
+            # update externals
+            control.assign_external(Function("active", [Number(self.max_bound)]), True)
+            control.assign_external(Function("max_bound", [Number(self.max_bound)]), True)
+            if self.prev_bound is not None:
+                control.assign_external(Function("max_bound", [Number(self.prev_bound)]), False)
 
-                self.update_bound()
+            # solve
+            ret = control.solve()
+            if ret.satisfiable:
+                break
+
+            self.update_bound()
