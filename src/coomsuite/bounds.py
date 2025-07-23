@@ -52,16 +52,20 @@ class BoundSolver:
 
     def get_bounds(self):
         if self.use_multishot:
-            return clingo_main(
-                COOMMultiSolverApp(
-                    serialized_facts=self.facts,
-                    options={
-                        "solver": self.args.solver,
-                        "output_format": self.args.output,
-                    },
-                ),
+            multishot_solver = COOMMultiSolverApp(
+                serialized_facts=self.facts,
+                options={
+                    "solver": self.args.solver,
+                    "output_format": self.args.output,
+                },
+            )
+
+            clingo_main(
+                multishot_solver,
                 self.clingo_args,
             )
+
+            return multishot_solver.max_bound
         else:
             if self.algorithm == "linear":
                 max_bound = self.initial_bound
