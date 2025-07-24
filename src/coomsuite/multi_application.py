@@ -115,21 +115,21 @@ class COOMMultiSolverApp(COOMSolverApp):
             and args[0].arguments[1].string in self._incremental_expressions
         )
 
-    def _get_initial_incremental_prog_parts(self) -> List[ProgPart]:
+    def _remove_new_incremental_expressions(self) -> List[str]:
         """
-        Get the list of incremental programs parts for the initial bound
-
-        Gets all the program parts belonging to all the facts in new_processed_facts which are incremental expressions.
-        If a fact is an incremental expression it is also moved to the list of already processed facts.
+        Remove all facts from new_incremental_facts that are incremental expressions
         """
-        parts = []
+        inc_expressions = []
         for fact in self._new_processed_facts:
             name, args = _get_fact_name_and_args(fact)
             if self._is_incremental_expression(name, args):
-                parts.append(self._get_incremental_prog_part(name, args))
-                self._processed_facts.append(fact)
+                inc_expressions.append(fact)
 
-        return parts
+        # move all inc_expressions from new_processed_facts to processed_facts
+        self._processed_facts += inc_expressions
+        self._new_processed_facts = _filter_facts(self._processed_facts, self._new_processed_facts)
+
+        return inc_expressions
 
     def _get_incremental_prog_part(self, exp_type: str, args: List[Symbol]) -> ProgPart:
         """
@@ -299,16 +299,20 @@ class COOMMultiSolverApp(COOMSolverApp):
             if self._prev_bound is None:
                 self._get_initial_incremental_data()
                 # process initial incremental facts
-                parts += self._get_initial_incremental_prog_parts()
-
-                # remove every fact that was already handled above
-                self._new_processed_facts = _filter_facts(self._processed_facts, self._new_processed_facts)
+                inc_expressions = self._remove_new_incremental_expressions()
+                for fact in inc_expressions:
+                    name, args = _get_fact_name_and_args(fact)
+                    parts.append(self._get_incremental_prog_part(name, args))
 
                 # ground base (needs to be grounded before other program parts below)
                 control.add("base", [], "".join(self._new_processed_facts))
                 control.ground([("base", [])])
             else:
                 self._update_incremental_data(self._new_incremental_facts)
+
+                # remove all the new incremental expressions from new_processed_facts
+                # adding their program parts is handled below (via inc_set)
+                self._remove_new_incremental_expressions()
 
                 # keep track of inc sets that were updated (i.e. received new member)
                 self._inc_sets_to_process = set()
