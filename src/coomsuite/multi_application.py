@@ -2,7 +2,8 @@
 Clingo application class for solving COOM configuration problems with multi-shot solving
 """
 
-from typing import Any, Dict, List, Optional, Sequence, Set, Tuple, TypeAlias
+from itertools import count, dropwhile
+from typing import Any, Dict, Iterator, List, Optional, Sequence, Set, Tuple, TypeAlias
 
 from clingo import Control
 from clingo.symbol import Function, Number, Symbol, parse_term
@@ -33,6 +34,30 @@ def _get_fact_name_and_args(fact: str) -> Tuple[str, List[Symbol]]:
     """
     x = parse_term(fact[:-1])
     return (x.name, x.arguments)
+
+
+def _exponential_iter() -> Iterator[int]:
+    n = 0
+    while True:
+        yield 2**n
+        n += 1
+
+
+def get_bound_iter(algorithm: str, start: int) -> Iterator[int]:
+    """
+    Get an iterator over the bounds for a selected algorithm
+
+    Note that the iterator starts after the start value.
+    """
+    iterator: Iterator[int]
+    if algorithm == "linear":
+        iterator = count(start + 1)
+    elif algorithm == "exponential":
+        iterator = dropwhile(lambda x: x <= start, _exponential_iter())
+    else:
+        raise ValueError(f"unknown algorithm for bound iter: {algorithm}")
+
+    return iterator
 
 
 class COOMMultiSolverApp(COOMSolverApp):
@@ -80,6 +105,7 @@ class COOMMultiSolverApp(COOMSolverApp):
         self._serialized_facts = serialized_facts
         self.max_bound = initial_bound
         self._algorithm = algorithm
+        self._bound_iter = get_bound_iter(algorithm, initial_bound)
 
         if algorithm not in ["linear", "exponential"]:
             raise ValueError(f"unknown algorith option: {algorithm}")
@@ -89,7 +115,7 @@ class COOMMultiSolverApp(COOMSolverApp):
         Update the current maximum bound
         """
         self._prev_bound = self.max_bound
-        self.max_bound += 1
+        self.max_bound = next(self._bound_iter)
 
     def _preprocess_new_bound(self, bound: int) -> None:
         """
@@ -291,9 +317,6 @@ class COOMMultiSolverApp(COOMSolverApp):
         if self._options["solver"] == "fclingo":
             raise ValueError("multishot solving is currently not supported for the fclingo solver")
 
-        if self._algorithm == "exponential":
-            raise ValueError("exponential incremental bounds currently not supported for multishot solving")
-
         encoding = get_encoding("encoding-base-clingo-multi.lp")
         show = get_encoding("show-clingo.lp")
         control.load(encoding)
@@ -305,6 +328,7 @@ class COOMMultiSolverApp(COOMSolverApp):
             for i in range(0 if self._prev_bound is None else self._prev_bound + 1, self.max_bound + 1):
                 self._current_bound = i
                 print(f"Grounding with bound = {self._current_bound}")
+
                 # preprocessing
                 self._preprocess_new_bound(self._current_bound)
 
