@@ -46,6 +46,8 @@ class COOMMultiSolverApp(COOMSolverApp):
     max_bound: int = 0
     # previous max bound
     _prev_bound: Optional[int] = None
+    # the current bound
+    _current_bound: int = 0
 
     # preprocessed facts are stored split up into which are incremental and which not
     # first we need to save what are currently the new facts
@@ -68,12 +70,19 @@ class COOMMultiSolverApp(COOMSolverApp):
     def __init__(
         self,
         serialized_facts: List[str],
+        algorithm: str = "linear",
+        initial_bound: int = 0,
         log_level: str = "",
         options: Optional[Dict[str, Any]] = None,
         istest: bool = False,
     ):
         super().__init__(log_level, options, istest)
         self._serialized_facts = serialized_facts
+        self.max_bound = initial_bound
+        self._algorithm = algorithm
+
+        if algorithm not in ["linear", "exponential"]:
+            raise ValueError(f"unknown algorith option: {algorithm}")
 
     def _update_bound(self) -> None:
         """
@@ -147,7 +156,7 @@ class COOMMultiSolverApp(COOMSolverApp):
         # determine the name and arguments of the program part
         part_name = ""
         # to the arguments we just need to add the current max_bound
-        args = args + [Number(self.max_bound)]
+        args = args + [Number(self._current_bound)]
         # the name of the program part depends on the type of the expression
         if exp_type == "function":
             # for functions we need to check whether they are already initialized
@@ -212,7 +221,7 @@ class COOMMultiSolverApp(COOMSolverApp):
         program_part = (
             f"new_{name}",
             # the program parts new_type and new_constraint need the current max bound as an additional argument
-            args if name not in ["type", "constraint"] else args + [Number(self.max_bound)],
+            args if name not in ["type", "constraint"] else args + [Number(self._current_bound)],
         )
 
         # a fact set(S,X) adds an element to set S
@@ -282,60 +291,69 @@ class COOMMultiSolverApp(COOMSolverApp):
         if self._options["solver"] == "fclingo":
             raise ValueError("multishot solving is currently not supported for the fclingo solver")
 
+        if self._algorithm == "exponential":
+            raise ValueError("exponential incremental bounds currently not supported for multishot solving")
+
         encoding = get_encoding("encoding-base-clingo-multi.lp")
         show = get_encoding("show-clingo.lp")
         control.load(encoding)
         control.load(show)
 
         while True:
-            print(f"\nSolving with max_bound = {self.max_bound}\n")
+            print(f"\nNew max bound is = {self.max_bound} (previous was {self._prev_bound})\n")
 
-            # preprocessing
-            self._preprocess_new_bound(self.max_bound)
+            for i in range(0 if self._prev_bound is None else self._prev_bound + 1, self.max_bound + 1):
+                self._current_bound = i
+                print(f"Grounding with bound = {self._current_bound}")
+                # preprocessing
+                self._preprocess_new_bound(self._current_bound)
 
-            # collect program parts
-            parts = []
+                # collect program parts
+                parts = []
 
-            if self._prev_bound is None:
-                self._get_initial_incremental_data()
-                # process initial incremental facts
-                inc_expressions = self._remove_new_incremental_expressions()
-                for fact in inc_expressions:
-                    name, args = _get_fact_name_and_args(fact)
-                    parts.append(self._get_incremental_prog_part(name, args))
+                if self._current_bound == 0:
+                    self._get_initial_incremental_data()
+                    # process initial incremental facts
+                    inc_expressions = self._remove_new_incremental_expressions()
+                    for fact in inc_expressions:
+                        name, args = _get_fact_name_and_args(fact)
+                        parts.append(self._get_incremental_prog_part(name, args))
 
-                # ground base (needs to be grounded before other program parts below)
-                control.add("base", [], "".join(self._new_processed_facts))
-                control.ground([("base", [])])
-            else:
-                self._update_incremental_data(self._new_incremental_facts)
+                    # ground base (needs to be grounded before other program parts below)
+                    control.add("base", [], "".join(self._new_processed_facts))
+                    control.ground([("base", [])])
+                else:
+                    self._update_incremental_data(self._new_incremental_facts)
 
-                # remove all the new incremental expressions from new_processed_facts
-                # adding their program parts is handled below (via inc_set)
-                self._remove_new_incremental_expressions()
+                    # remove all the new incremental expressions from new_processed_facts
+                    # adding their program parts is handled below (via inc_set)
+                    self._remove_new_incremental_expressions()
 
-                # keep track of inc sets that were updated (i.e. received new member)
-                self._inc_sets_to_process = set()
+                    # keep track of inc sets that were updated (i.e. received new member)
+                    self._inc_sets_to_process = set()
 
-                # collect program parts for all the new facts
-                for fact in self._new_processed_facts:
-                    # this also adds sets to self._inc_sets_to_process
-                    parts.append(self._get_prog_part(fact))
+                    # collect program parts for all the new facts
+                    for fact in self._new_processed_facts:
+                        # this also adds sets to self._inc_sets_to_process
+                        parts.append(self._get_prog_part(fact))
 
-                # collect program parts for all the incremental sets were updated
-                for inc_set in self._inc_sets_to_process:
-                    parts += self._get_prog_part_of_inc_set(inc_set)
+                    # collect program parts for all the incremental sets were updated
+                    for inc_set in self._inc_sets_to_process:
+                        parts += self._get_prog_part_of_inc_set(inc_set)
 
-            # ground
-            control.ground(parts)
+                # ground
+                control.ground(parts)
 
-            # update externals
-            control.assign_external(Function("active", [Number(self.max_bound)]), True)
+                # update active external
+                control.assign_external(Function("active", [Number(self._current_bound)]), True)
+
+            # update max bound external
             control.assign_external(Function("max_bound", [Number(self.max_bound)]), True)
             if self._prev_bound is not None:
                 control.assign_external(Function("max_bound", [Number(self._prev_bound)]), False)
 
             # solve
+            print(f"\nSolving with bound = {self.max_bound}\n")
             ret = control.solve()
             if ret.satisfiable:
                 break

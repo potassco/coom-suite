@@ -51,7 +51,14 @@ def main():
             if args.show_facts:
                 print("\n".join(preprocess(serialized_facts, max_bound=1)))  # nocoverage
             elif args.bounds:
-                bound_solver = BoundSolver(serialized_facts, args, solver_args, args.bounds, args.multishot)
+                bound_solver = BoundSolver(
+                    serialized_facts,
+                    args,
+                    solver_args,
+                    algorithm=args.bounds,
+                    use_multishot=args.multishot,
+                    initial_bound=args.initial_bound,
+                )
                 bound = bound_solver.get_bounds()
 
                 print(f"\n Max upper bound is {bound}")

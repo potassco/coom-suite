@@ -30,7 +30,6 @@ class BoundSolver:
         self.algorithm = "linear" if algorithm == "" else algorithm
         self.use_multishot = use_multishot
         self.initial_bound = initial_bound
-        # self.max_bound = initial_bound
 
     def _solve(self, max_bound: int):
         return solve(self.facts, max_bound, self.args, clingo_args=self.clingo_args)
@@ -54,6 +53,8 @@ class BoundSolver:
         if self.use_multishot:
             multishot_solver = COOMMultiSolverApp(
                 serialized_facts=self.facts,
+                initial_bound=self.initial_bound,
+                algorithm=self.algorithm,
                 options={
                     "solver": self.args.solver,
                     "output_format": self.args.output,
