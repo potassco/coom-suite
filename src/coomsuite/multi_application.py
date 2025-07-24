@@ -60,6 +60,19 @@ def get_bound_iter(algorithm: str, start: int) -> Iterator[int]:
     return iterator
 
 
+def next_bound_converge(unsat_bound: int, sat_bound: int) -> Optional[int]:
+    """
+    Determine the next bound (between unsat_bound and sat_bound) while converging to the optimal bound
+
+    Returns:
+        Optional[int]: The next bound to check, or None if sat_bound is already the optimal bound
+    """
+    if unsat_bound + 1 == sat_bound:
+        return None
+    else:
+        return (unsat_bound + sat_bound) // 2
+
+
 class COOMMultiSolverApp(COOMSolverApp):
     """
     Application class for multi-shot solving extending the standard COOM application class
@@ -310,6 +323,36 @@ class COOMMultiSolverApp(COOMSolverApp):
                         if exp.arguments[1].string not in self._is_initialized:
                             self._is_initialized[exp.arguments[1].string] = False
 
+    def _find_minimal_bound(self, control: Control) -> None:
+        """
+        Find the minimal bound for an instance once a satisfiable bound was found
+
+        This assumes that for _prev_bound the instance was UNSAT, and for max_bound the instance is SAT.
+        The minimal bound is found when _prev_bound + 1 is equal to max_bound.
+        """
+        if self._prev_bound is None:
+            self._prev_bound = -1
+
+        while True:
+            self._current_bound = next_bound_converge(self._prev_bound, self.max_bound)
+            if self._current_bound is None:
+                break
+
+            print("\nOptimal bound not yet found")
+            print(f"Solving with bound = {self._current_bound}\n")
+
+            for i in range(self._current_bound + 1, self.max_bound + 1):
+                control.assign_external(Function("active", [Number(i)]), False)
+
+            control.assign_external(Function("max_bound", [Number(self.max_bound)]), False)
+            control.assign_external(Function("max_bound", [Number(self._current_bound)]), True)
+
+            ret = control.solve()
+            if ret.satisfiable:
+                self.max_bound = self._current_bound
+            else:
+                self._prev_bound = self._current_bound
+
     def main(self, control: Control, files: Sequence[str]) -> None:
         """
         Main function of the multishot application class
@@ -380,6 +423,7 @@ class COOMMultiSolverApp(COOMSolverApp):
             print(f"\nSolving with bound = {self.max_bound}\n")
             ret = control.solve()
             if ret.satisfiable:
+                self._find_minimal_bound(control)
                 break
 
             self._update_bound()

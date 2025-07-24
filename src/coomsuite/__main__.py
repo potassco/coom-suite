@@ -61,7 +61,7 @@ def main():
                 )
                 bound = bound_solver.get_bounds()
 
-                print(f"\n Max upper bound is {bound}")
+                print(f"\n The minimal upper bound is {bound}")
             else:
                 solve(serialized_facts, 99, args, clingo_args=solver_args)
 
