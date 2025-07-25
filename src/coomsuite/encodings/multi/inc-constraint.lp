@@ -10,5 +10,3 @@ violated(cons,bound) :- constraint(cons,type), defined(F,bound), not satisfied(F
 violated((cons,ID),bound) :- constraint(cons,type), defined(cons,ID), not satisfied(cons,ID), type = "table".
 
 :- violated(C,bound), max_bound(bound).
-% error(C,bound) :- violated(C,bound), max_bound(bound).
-% #show error/2.

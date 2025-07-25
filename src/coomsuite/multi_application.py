@@ -117,7 +117,6 @@ class COOMMultiSolverApp(COOMSolverApp):
         super().__init__(log_level, options, istest)
         self._serialized_facts = serialized_facts
         self.max_bound = initial_bound
-        self._algorithm = algorithm
         self._bound_iter = get_bound_iter(algorithm, initial_bound)
 
         if algorithm not in ["linear", "exponential"]:
@@ -336,6 +335,7 @@ class COOMMultiSolverApp(COOMSolverApp):
         while True:
             self._current_bound = next_bound_converge(self._prev_bound, self.max_bound)
             if self._current_bound is None:
+                print("\nOptimal bound found")
                 break
 
             print("\nOptimal bound not yet found")
