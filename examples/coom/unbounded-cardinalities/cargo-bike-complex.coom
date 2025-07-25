@@ -39,6 +39,10 @@ behavior {
     require color = Blue
 }
 
+// behavior {
+//     require color = Green
+// }
+
 behavior {
     condition color = Blue
     require 3 <= count(bags)
@@ -49,7 +53,7 @@ behavior {
 }
 
 behavior Bag {
-    require 2 <= count(pockets)
+    require 11 <= count(pockets)
 }
 
 // behavior Bag {
@@ -71,7 +75,7 @@ behavior Bag {
     allow        (large    (L,XL) )
 }
 
-// BUG: not working correctly due to preprocessing
+// BUG: not working correctly due to preprocessing (inc_set detection)
 // behavior Bag {
 //     require 2 = count(openings)
 // }
