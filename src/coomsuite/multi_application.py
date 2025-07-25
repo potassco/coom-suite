@@ -69,8 +69,8 @@ def next_bound_converge(unsat_bound: int, sat_bound: int) -> Optional[int]:
     """
     if unsat_bound + 1 == sat_bound:
         return None
-    else:
-        return (unsat_bound + sat_bound) // 2
+
+    return (unsat_bound + sat_bound) // 2
 
 
 class COOMMultiSolverApp(COOMSolverApp):
@@ -78,14 +78,11 @@ class COOMMultiSolverApp(COOMSolverApp):
     Application class for multi-shot solving extending the standard COOM application class
     """
 
-    # need to have serialized facts as preprocessing is done in this class
-    _serialized_facts: List[str]
+    # pylint: disable=too-many-instance-attributes
     # current max bound
     max_bound: int = 0
     # previous max bound
     _prev_bound: Optional[int] = None
-    # the current bound
-    _current_bound: int = 0
 
     # preprocessed facts are stored split up into which are incremental and which not
     # first we need to save what are currently the new facts
@@ -113,7 +110,7 @@ class COOMMultiSolverApp(COOMSolverApp):
         log_level: str = "",
         options: Optional[Dict[str, Any]] = None,
         istest: bool = False,
-    ):
+    ):  # pylint: disable=too-many-arguments,too-many-positional-arguments
         super().__init__(log_level, options, istest)
         self._serialized_facts = serialized_facts
         self.max_bound = initial_bound
@@ -178,7 +175,7 @@ class COOMMultiSolverApp(COOMSolverApp):
 
         return inc_expressions
 
-    def _get_incremental_prog_part(self, exp_type: str, args: List[Symbol]) -> ProgPart:
+    def _get_incremental_prog_part(self, exp_type: str, args: List[Symbol], bound: int) -> ProgPart:
         """
         Get the incremental program part for an expression of type exp_type with arguments args
         """
@@ -194,7 +191,7 @@ class COOMMultiSolverApp(COOMSolverApp):
         # determine the name and arguments of the program part
         part_name = ""
         # to the arguments we just need to add the current max_bound
-        args = args + [Number(self._current_bound)]
+        args = args + [Number(bound)]
         # the name of the program part depends on the type of the expression
         if exp_type == "function":
             # for functions we need to check whether they are already initialized
@@ -221,17 +218,17 @@ class COOMMultiSolverApp(COOMSolverApp):
 
         return (part_name, args)
 
-    def _get_prog_part_of_inc_set(self, inc_set: str) -> List[ProgPart]:
+    def _get_prog_part_of_inc_set(self, inc_set: str, bound: int) -> List[ProgPart]:
         """
         Get all the program parts belonging to an incremental set
         """
         program_parts = []
         for exp in self._incremental_sets[inc_set]:
-            program_parts.append(self._get_incremental_prog_part(exp[0], exp[1]))
+            program_parts.append(self._get_incremental_prog_part(exp[0], exp[1], bound))
 
         return program_parts
 
-    def _get_prog_part(self, fact: str) -> ProgPart:
+    def _get_prog_part(self, fact: str, bound: int) -> ProgPart:
         """
         Get the program part belonging to a fact
 
@@ -259,7 +256,7 @@ class COOMMultiSolverApp(COOMSolverApp):
         program_part = (
             f"new_{name}",
             # the program parts new_type and new_constraint need the current max bound as an additional argument
-            args if name not in ["type", "constraint"] else args + [Number(self._current_bound)],
+            args if name not in ["type", "constraint"] else args + [Number(bound)],
         )
 
         # a fact set(S,X) adds an element to set S
@@ -333,25 +330,25 @@ class COOMMultiSolverApp(COOMSolverApp):
             self._prev_bound = -1
 
         while True:
-            self._current_bound = next_bound_converge(self._prev_bound, self.max_bound)
-            if self._current_bound is None:
+            current_bound = next_bound_converge(self._prev_bound, self.max_bound)
+            if current_bound is None:
                 print("\nOptimal bound found")
                 break
 
             print("\nOptimal bound not yet found")
-            print(f"Solving with bound = {self._current_bound}\n")
+            print(f"Solving with bound = {current_bound}\n")
 
-            for i in range(self._current_bound + 1, self.max_bound + 1):
+            for i in range(current_bound + 1, self.max_bound + 1):
                 control.assign_external(Function("active", [Number(i)]), False)
 
             control.assign_external(Function("max_bound", [Number(self.max_bound)]), False)
-            control.assign_external(Function("max_bound", [Number(self._current_bound)]), True)
+            control.assign_external(Function("max_bound", [Number(current_bound)]), True)
 
             ret = control.solve()
             if ret.satisfiable:
-                self.max_bound = self._current_bound
+                self.max_bound = current_bound
             else:
-                self._prev_bound = self._current_bound
+                self._prev_bound = current_bound
 
     def main(self, control: Control, files: Sequence[str]) -> None:
         """
@@ -368,23 +365,22 @@ class COOMMultiSolverApp(COOMSolverApp):
         while True:
             print(f"\nNew max bound is = {self.max_bound} (previous was {self._prev_bound})\n")
 
-            for i in range(0 if self._prev_bound is None else self._prev_bound + 1, self.max_bound + 1):
-                self._current_bound = i
-                print(f"Grounding with bound = {self._current_bound}")
+            for bound in range(0 if self._prev_bound is None else self._prev_bound + 1, self.max_bound + 1):
+                print(f"Grounding with bound = {bound}")
 
                 # preprocessing
-                self._preprocess_new_bound(self._current_bound)
+                self._preprocess_new_bound(bound)
 
                 # collect program parts
                 parts = []
 
-                if self._current_bound == 0:
+                if bound == 0:
                     self._get_initial_incremental_data()
                     # process initial incremental facts
                     inc_expressions = self._remove_new_incremental_expressions()
                     for fact in inc_expressions:
                         name, args = _get_fact_name_and_args(fact)
-                        parts.append(self._get_incremental_prog_part(name, args))
+                        parts.append(self._get_incremental_prog_part(name, args, bound))
 
                     # ground base (needs to be grounded before other program parts below)
                     control.add("base", [], "".join(self._new_processed_facts))
@@ -402,17 +398,17 @@ class COOMMultiSolverApp(COOMSolverApp):
                     # collect program parts for all the new facts
                     for fact in self._new_processed_facts:
                         # this also adds sets to self._inc_sets_to_process
-                        parts.append(self._get_prog_part(fact))
+                        parts.append(self._get_prog_part(fact, bound))
 
                     # collect program parts for all the incremental sets were updated
                     for inc_set in self._inc_sets_to_process:
-                        parts += self._get_prog_part_of_inc_set(inc_set)
+                        parts += self._get_prog_part_of_inc_set(inc_set, bound)
 
                 # ground
                 control.ground(parts)
 
                 # update active external
-                control.assign_external(Function("active", [Number(self._current_bound)]), True)
+                control.assign_external(Function("active", [Number(bound)]), True)
 
             # update max bound external
             control.assign_external(Function("max_bound", [Number(self.max_bound)]), True)
