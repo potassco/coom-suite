@@ -53,19 +53,8 @@ behavior {
 }
 
 behavior Bag {
-    require 11 <= count(pockets)
+    require 2 <= count(pockets)
 }
-
-// behavior Bag {
-//     condition size = small
-//     require 2 <= count(pockets)
-
-//     condition size = medium
-//     require 3 <= count(pockets)
-
-//     condition size = large
-//     require 5 <= count(pockets)
-// }
 
 behavior Bag {
     explanation "The size of the pockets of a bag have to match the size of the bag."
@@ -79,3 +68,7 @@ behavior Bag {
 // behavior Bag {
 //     require 2 = count(openings)
 // }
+
+behavior {
+   require 5 < count(bags.pockets)
+}
