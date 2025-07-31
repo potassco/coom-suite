@@ -58,9 +58,9 @@ def run_antlr4_visitor(coom_input_stream: InputStream, grammar: str) -> List[str
     return visitor.output_asp
 
 
-def format_sym_coom(s: Symbol) -> str:
+def asp2coom(s: Symbol) -> str:
     """
-    Formats output symbols to a more readable COOM format.
+    Formats ASP output symbols to a more readable COOM format.
     """
     if s.name == "include":
         return s.arguments[0].string.removeprefix("root.")
@@ -69,3 +69,14 @@ def format_sym_coom(s: Symbol) -> str:
         value = s.arguments[1]
         return f"{path} = {value}"
     raise ValueError(f"Unrecognized predicate: {s.name}")
+
+
+def coom2asp(c: str) -> str:
+    """
+    Converts COOM facts to ASP facts.
+    """
+    if "=" in c:
+        path, value = c.split("=")
+        return f'value("root.{path.strip()}",{value.strip()})'
+    path = c.strip()
+    return f'include("root.{path}")'

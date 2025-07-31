@@ -1,0 +1,85 @@
+product {
+	BOM_WT		bom_wt
+	Tank_Volume	tank_volume
+	Bool		water_pipe_connection
+	Water_Pump	water_pump
+}
+
+structure BOM_WT {
+	MAT_Water_Tank	mat_water_tank
+}
+
+structure Water_Pump {
+	num/bar 2-6	required_water_pressure
+}
+
+enumeration MAT_Water_Tank {
+	attribute	num/liter	volume
+
+	M_TA5739520	= (	  1	)
+	M_TA3486935	= (	  2	)
+	M_TA3253577	= (	  5	)
+	M_TA3456370	= (	  5	)
+}
+
+enumeration Tank_Volume {
+	attribute	num/liter	vol
+
+	S	= (	  1	)
+	M	= (	  2	)
+	L	= (	  5	)
+}
+
+behavior {
+	condition water_pipe_connection = True
+	condition tank_volume = S
+	imply water_pump.required_water_pressure = 2
+}
+
+behavior {
+	condition water_pipe_connection = True
+	condition tank_volume = M
+	imply water_pump.required_water_pressure = 4
+}
+
+behavior {
+	condition water_pipe_connection = True
+	condition tank_volume = L
+	imply water_pump.required_water_pressure = 6
+}
+
+behavior {
+	combinations	(	water_pipe_connection	tank_volume	)
+	allow			(	True					(L, M)		)
+	allow			(	False					-*-			)
+}
+
+behavior {
+	condition tank_volume = S
+	condition water_pipe_connection = False
+	require bom_wt.mat_water_tank = M_TA5739520
+}
+
+behavior {
+	condition tank_volume = M
+	condition water_pipe_connection = False
+	require bom_wt.mat_water_tank = M_TA3486935
+}
+
+behavior {
+	condition tank_volume = L
+	condition water_pipe_connection = False
+	require bom_wt.mat_water_tank = M_TA3253577
+}
+
+behavior {
+	condition tank_volume = L
+	condition water_pipe_connection = True
+	require bom_wt.mat_water_tank = M_TA3456370
+}
+
+behavior {
+	condition tank_volume = M
+	condition water_pipe_connection = True
+	require bom_wt.mat_water_tank = M_TA3456370
+}

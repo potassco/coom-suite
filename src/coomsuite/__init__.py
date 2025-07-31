@@ -47,7 +47,13 @@ def convert_instance(coom_file: str, grammar: str, outdir: Optional[str] = None)
     return asp_instance
 
 
-def solve(serialized_facts: List[str], max_bound: int, args, clingo_args) -> int:
+def solve(
+    serialized_facts: List[str],
+    solver: str,
+    max_bound: int,
+    clingo_args: List[str],
+    output: str,
+) -> int:  # nocoverage
     """
     Preprocesses and solves a serialized COOM instance.
     """
@@ -55,7 +61,7 @@ def solve(serialized_facts: List[str], max_bound: int, args, clingo_args) -> int
     processed_facts = preprocess(
         serialized_facts,
         max_bound=max_bound,
-        discrete=args.solver == "clingo",
+        discrete=solver == "clingo",
     )
     check_user_input(processed_facts)
 
@@ -67,8 +73,8 @@ def solve(serialized_facts: List[str], max_bound: int, args, clingo_args) -> int
     return clingo_main(
         COOMSolverApp(
             options={
-                "solver": args.solver,
-                "output_format": args.output,
+                "solver": solver,
+                "output_format": output,
             }
         ),
         [tmp_name] + clingo_args,

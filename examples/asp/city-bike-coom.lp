@@ -72,7 +72,7 @@ coom_path("basket.color",1,"color").
 coom_behavior(1).
 coom_context(1,"product").
 coom_explanation(1,"If the basket is mounted on the front, the front wheel size must be less than 29.").
-coom_condition(1,"basket.position=Front").
+coom_condition(1,0,"basket.position=Front").
 coom_binary("basket.position=Front","basket.position","=","Front").
 coom_path("basket.position",0,"basket").
 coom_path("basket.position",1,"position").
@@ -86,7 +86,7 @@ coom_number("29",29).
 coom_behavior(2).
 coom_context(2,"product").
 coom_explanation(2,"If a bag has volume 100, then the size of the rear wheel must be at least 28.").
-coom_condition(2,"carrier.bag.capacity.volume=100").
+coom_condition(2,0,"carrier.bag.capacity.volume=100").
 coom_binary("carrier.bag.capacity.volume=100","carrier.bag.capacity.volume","=","100").
 coom_path("carrier.bag.capacity.volume",0,"carrier").
 coom_path("carrier.bag.capacity.volume",1,"bag").
@@ -102,7 +102,7 @@ coom_number("28",28).
 coom_behavior(3).
 coom_context(3,"product").
 coom_explanation(3,"If the saddle is vintage, then the bag must be made of leather.").
-coom_condition(3,"saddle=Vintage").
+coom_condition(3,0,"saddle=Vintage").
 coom_binary("saddle=Vintage","saddle","=","Vintage").
 coom_path("saddle",0,"saddle").
 coom_constant("Vintage").

@@ -5,61 +5,65 @@
 product {
     0..80   Seat        seat
     0..4    DVDPlayer   dvdPlayer
-    0..80   Display     display
             BusType     type
-    num     0-2000      totalPowerConsumption
-    num     0-80        seatCount
 
+    num /W  0-3400      totalPowerConsumption
+    num     0-80        seatCount
 }
 
 structure Seat {
-            Lamp    lamp
+            Lamp     lamp
+    0..1    Display  display
+            SeatType type
 }
 
 enumeration DVDPlayer {
-    attribute num powerConsumption
+    attribute num /W powerConsumption
 
     Player = ( 50)
 }
 
 enumeration BusType { Standard Tourist }
+enumeration SeatType { Standard DeLuxe }
 
 enumeration Lamp {
-    attribute num powerConsumption
+    attribute num /W powerConsumption
 
     ReadingLamp = ( 25 )
 }
 
 enumeration Display {
-    attribute num powerConsumption
+    attribute num /W powerConsumption
 
     LCDDisplay = ( 15 )
 }
 
+behavior Seat {
+    explanation "DeLuxe seats have an LCD display"
+    condition type = DeLuxe
+    require count(display) = 1
+}
+
 behavior {
-    explanation "In tourist busses every seat needs to have a display."
+    explanation "In tourist busses every seat is of type DeLuxe."
     condition type = Tourist
-    require seatCount = count(display)
+    require seat.type = DeLuxe
 
     explanation "If there is at least one display, then at least on DVD player is required."
-    condition count(display) > 0
+    condition count(seat.display) > 0
     require count(dvdPlayer) > 0
 
     explanation "If there are more than twenty displays, then at least two DVD players are required."
-    condition count(display) > 20
+    condition count(seat.display) > 20
     require count(dvdPlayer) > 1
 
-    explanation "The total power consumption of the bus is the sum of the power consumption of all devices."
-    require totalPowerConsumption = sum(dvdPlayer.powerConsumption) + sum(seat.lamp.powerConsumption) + sum(display.powerConsumption)
+    explanation "The total power consumption is the sum of all devices"
+    imply totalPowerConsumption = sum(dvdPlayer.powerConsumption) + sum(seat.lamp.powerConsumption) + sum(seat.display.powerConsumption)
 
-    require seatCount = count(seat)
-}
+    explanation "The total power consumption must not exceed 2000 W."
+    require totalPowerConsumption <= 2000
 
-// User requirements
-behavior {
-    // require count(display) < 5
+    imply seatCount = count(seat)
 
-    require seatCount > 30
-
-    require type = Tourist
+    // maximize seatCount
 }

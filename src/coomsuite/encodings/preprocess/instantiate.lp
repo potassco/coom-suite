@@ -18,11 +18,11 @@ type_aux((A,(X,0)),A) :- type_aux(X,T), coom_enumeration(T), coom_attribute_valu
 %%% Constraints
 % Get formula context
 formula_context(F,Ctx) :- coom_binary(F,_,_,_), coom_require(C,F),   coom_context(C,Ctx).
-formula_context(F,Ctx) :- coom_binary(F,_,_,_), coom_condition(C,F), coom_context(C,Ctx).
+formula_context(F,Ctx) :- coom_binary(F,_,_,_), coom_condition(C,_,F), coom_context(C,Ctx).
 formula_context(F,Ctx) :- coom_binary(F,_,_,_), coom_imply(C,_,F),   coom_context(C,Ctx).
 
 formula_context(F,Ctx) :- coom_unary(F,_,_),    coom_require(C,F),   coom_context(C,Ctx).
-formula_context(F,Ctx) :- coom_unary(F,_,_),    coom_condition(C,F), coom_context(C,Ctx).
+formula_context(F,Ctx) :- coom_unary(F,_,_),    coom_condition(C,_,F), coom_context(C,Ctx).
 formula_context(F,Ctx) :- coom_unary(F,_,_),    coom_imply(C,_,F),   coom_context(C,Ctx).
 
 formula_context(L,Ctx) :- coom_binary(L,_,_,_), coom_binary(F,L,_,_), formula_context(F,Ctx).
@@ -94,8 +94,18 @@ path_to(X,N,@dotpath(X')) :- coom_feature(Ctx,N,_,_,_), type_aux(X,Ctx), type_au
 path_to(X,A,@dotpath(X')) :- coom_attribute(T,A,_),     type_aux(X,T),   type_aux(X',_), X' =(A,(X,_)).
 
 % Instantiate conditional requirements
-conditional_requirement(C,G,G') :- coom_context(C,Ctx), coom_condition(C,F), ground_formula(X,F,G),
-                                   type_aux(X,Ctx),     coom_require(C,F'),  ground_formula(X,F',G').
+conditions_aux(C,X,0,(G,()))  :- coom_context(C,Ctx), type_aux(X,Ctx), coom_condition(C,0,F), ground_formula(X,F,G).
+conditions_aux(C,X,I+1,(G,T)) :- conditions_aux(C,X,I,T), coom_condition(C,I+1,F), ground_formula(X,F,G).
+conditions_aux(C,X,T)         :- conditions_aux(C,X,I,T), not coom_condition(C,I+1,_).
+
+conditions_binary(C,X,@binary(L,"&&",R),L,R,T) :- conditions_aux(C,X,(R,(L,T))).
+conditions_binary(C,X,@binary(L,"&&",R),L,R,T) :- conditions_binary(C,X,R,_,_,(L,T)).
+
+conditions(C,X,G)              :- conditions_aux(C,X,(G,())).
+conditions(C,X,@unary(G,"()")) :- conditions_binary(C,X,G,_,_,()).
+
+conditional_requirement(C,G,G') :- coom_context(C,Ctx), type_aux(X,Ctx), conditions(C,X,G),
+                                   coom_require(C,F'),  ground_formula(X,F',G').
 
 % Instantiate combination tables
 table(C,X) :- coom_combinations(C,_,_), coom_context(C,Ctx), type_aux(X,Ctx).

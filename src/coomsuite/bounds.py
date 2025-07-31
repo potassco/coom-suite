@@ -1,4 +1,8 @@
-from typing import List
+"""
+Contains a module for solving problems with open bounds/cardinalities.
+"""
+
+from typing import Dict, List
 
 from clingo.application import clingo_main
 
@@ -9,32 +13,33 @@ ret_dict = {10: "SAT", 20: "UNSAT"}
 
 
 class BoundSolver:
+    """
+    Module for solving problems with open bounds/cardinalities.
+    """
 
     facts: List[str]
-    algorithm: str
-    initial_bound: int
-    # max_bound: int
+    solver: str
+    clingo_args: List[str]
+    output_format: str
 
     def __init__(
         self,
         facts: List[str],
-        args,
-        clingo_args,
-        algorithm: str = "",
+        solver: str,
+        clingo_args: List[str],
+        output_format: str,
         use_multishot: bool = False,
-        initial_bound: int = 0,
     ):
         self.facts = facts
-        self.args = args
+        self.solver = solver
         self.clingo_args = clingo_args
-        self.algorithm = "linear" if algorithm == "" else algorithm
         self.use_multishot = use_multishot
-        self.initial_bound = initial_bound
+        self.output_format = output_format
 
-    def _solve(self, max_bound: int):
-        return solve(self.facts, max_bound, self.args, clingo_args=self.clingo_args)
+    def _solve(self, max_bound: int) -> int:
+        return solve(self.facts, self.solver, max_bound, self.clingo_args, self.output_format)
 
-    def _converge(self, solve_results, top, i):
+    def _converge(self, solve_results: Dict[int, str], top: int, i: int) -> int:
         if i <= 0:
             return top if solve_results[top] == "SAT" else top + 1
 
@@ -43,18 +48,21 @@ class BoundSolver:
             new = top - 2**i
         else:
             new = top + 2**i
-        print(" ".join(["Iteration with top {}, new is {}, i is {}\n".format(top, new, i)]))
+        print(" ".join([f"Iteration with top {top}, new is {new}, i is {i}\n"]))
         ret = self._solve(new)
         solve_results[new] = "SAT" if ret == 10 else "UNSAT"
 
         return self._converge(solve_results, new, i)
 
-    def get_bounds(self):
+    def get_bounds(self, algorithm: str = "linear", initial_bound: int = 0) -> int:
+        """
+        Gets the minimum bounds for the problem.
+        """
         if self.use_multishot:
             multishot_solver = COOMMultiSolverApp(
                 serialized_facts=self.facts,
-                initial_bound=self.initial_bound,
-                algorithm=self.algorithm,
+                initial_bound=initial_bound,
+                algorithm=algorithm,
                 options={
                     "solver": self.args.solver,
                     "output_format": self.args.output,
@@ -68,8 +76,8 @@ class BoundSolver:
 
             return multishot_solver.max_bound
         else:
-            if self.algorithm == "linear":
-                max_bound = self.initial_bound
+            if algorithm == "linear":
+                max_bound = initial_bound
 
                 while True:
                     print(f"\nSolving with max_bound = {max_bound}\n")
@@ -87,7 +95,7 @@ class BoundSolver:
                 bottom = 0
                 top = 0
 
-                print(" ".join(["Solving with bound {}\n".format(top)]))
+                print(" ".join([f"Solving with bound {format(top)}\n"]))
                 ret = self._solve(top)
                 solve_results = {0: ret_dict[ret]}
 
@@ -96,10 +104,10 @@ class BoundSolver:
                         break
                     bottom = top
                     top = 2**i
-                    print(" ".join(["Solving with bound {}\n".format(top)]))
+                    print(" ".join([f"Solving with bound {format(top)}\n"]))
                     ret = self._solve(top)
                     solve_results[top] = ret_dict[ret]
-                    print(" ".join(["Top is {} and bottom is {}; i is {}\n".format(top, bottom, i)]))
+                    print(" ".join([f"Top is {top} and bottom is {bottom}; i is {i}\n"]))
 
                     i = i + 1
 

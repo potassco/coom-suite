@@ -120,9 +120,7 @@ def get_parser() -> ArgumentParser:
         "--initial-bound",
         "-i",
         type=int,
-        help="""
-        Initial bound for problems with unbounded cardinalities.
-        (If --bounds is not used this option is ignored.)""",
         default=0,
+        help="Initial bound for the incremental search algorithm. Default is 0.",
     )
     return parser
