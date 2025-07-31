@@ -109,6 +109,14 @@ def get_parser() -> ArgumentParser:
         default=None,
     )
     parser_solve.add_argument(
+        "--multishot",
+        "-m",
+        action="store_true",
+        help="""
+        Use multi-shot solving for problems with unbounded cardinalities.
+        (If --bounds is not used this flag is ignored.)""",
+    )
+    parser_solve.add_argument(
         "--initial-bound",
         "-i",
         type=int,

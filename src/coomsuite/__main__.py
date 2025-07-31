@@ -52,9 +52,11 @@ def main() -> None:
                 print("\n".join(preprocess(serialized_facts)))  # nocoverage
             elif args.bounds:
                 bound_solver = BoundSolver(serialized_facts, args.solver, solver_args, args.output)
-                bound = bound_solver.get_bounds(algorithm=args.bounds, initial_bound=args.initial_bound)
+                bound = bound_solver.get_bounds(
+                    algorithm=args.bounds, initial_bound=args.initial_bound, use_multishot=args.multishot
+                )
 
-                print(f"\n Max upper bound is {bound}")
+                print(f"\n The minimal upper bound is {bound}")
             else:
                 solve(serialized_facts, args.solver, 99, solver_args, args.output)
 

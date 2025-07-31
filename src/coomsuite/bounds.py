@@ -4,7 +4,10 @@ Contains a module for solving problems with open bounds/cardinalities.
 
 from typing import Dict, List
 
+from clingo.application import clingo_main
+
 from . import solve
+from .multi_application import COOMMultiSolverApp
 
 ret_dict = {10: "SAT", 20: "UNSAT"}
 
@@ -49,10 +52,27 @@ class BoundSolver:
 
         return self._converge(solve_results, new, i)
 
-    def get_bounds(self, algorithm: str = "linear", initial_bound: int = 0) -> int:
+    def get_bounds(self, algorithm: str = "linear", initial_bound: int = 0, use_multishot: bool = False) -> int:
         """
         Gets the minimum bounds for the problem.
         """
+        if use_multishot:
+            multishot_solver = COOMMultiSolverApp(
+                serialized_facts=self.facts,
+                initial_bound=initial_bound,
+                algorithm=algorithm,
+                options={
+                    "solver": self.solver,
+                    "output_format": self.output_format,
+                },
+            )
+
+            clingo_main(
+                multishot_solver,
+                self.clingo_args,
+            )
+
+            return multishot_solver.max_bound
 
         if algorithm == "linear":
             max_bound = initial_bound
@@ -66,28 +86,32 @@ class BoundSolver:
 
             return max_bound
 
-        # exponential search
-        # taken from https://git-ainf.aau.at/Giulia.Francescutto/papers/-/wikis/uploads/main.py
-        i = 0
-        bottom = 0
-        top = 0
+        if algorithm == "exponential":
+            # exponential search
+            # taken from https://git-ainf.aau.at/Giulia.Francescutto/papers/-/wikis/uploads/main.py
+            i = 0
+            bottom = 0
+            top: int = 0
 
-        print(" ".join([f"Solving with bound {format(top)}\n"]))
-        ret = self._solve(top)
-        solve_results = {0: ret_dict[ret]}
-
-        while True:
-            if ret_dict[ret] == "SAT":
-                break
-            bottom = top
-            top = 2**i
             print(" ".join([f"Solving with bound {format(top)}\n"]))
             ret = self._solve(top)
-            solve_results[top] = ret_dict[ret]
-            print(" ".join([f"Top is {top} and bottom is {bottom}; i is {i}\n"]))
+            solve_results = {0: ret_dict[ret]}
 
-            i = i + 1
+            while True:
+                if ret_dict[ret] == "SAT":
+                    break
+                bottom = top
+                top = 2**i
+                print(" ".join([f"Solving with bound {format(top)}\n"]))
+                ret = self._solve(top)
+                solve_results[top] = ret_dict[ret]
+                print(" ".join([f"Top is {top} and bottom is {bottom}; i is {i}\n"]))
 
-        if ret_dict[ret] == "SAT" and i == 0:
-            return top
-        return self._converge(solve_results, top, i - 2)
+                i = i + 1
+
+                if ret_dict[ret] == "SAT" and i == 0:
+                    return top
+
+                return self._converge(solve_results, top, i - 2)
+
+        raise ValueError(f"unknown algorithm: {algorithm}")
