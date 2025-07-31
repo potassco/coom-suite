@@ -58,7 +58,6 @@ unary(G,Op,F)    :- unary(_,_,G,Op,F).
 
 % Table constraints
 constraint((C,@dotpath(X)),"table") :- table(C,X).
-% TODO: update tests
 column((C,@dotpath(X)),CT,Col,@dotpath(X')) :- coom_combinations(C,Col,P),
                                                path_to(X,P,X'), in_tuple(CT,X').
 allow(C,XY,V) :- coom_allow(C,XY,V).
