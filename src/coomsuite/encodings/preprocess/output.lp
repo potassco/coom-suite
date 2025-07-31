@@ -56,10 +56,9 @@ unary(G,Op,F)    :- unary(_,_,G,Op,F).
 
 % Table constraints
 constraint((C,@dotpath(X)),"table") :- table(C,X).
-% TODO: using ID for column leads to changing ID's with higher max_bound
-% using CT instead avoids the problem (needs updates to the corresponding tests)
+% TODO: update tests
 column((C,@dotpath(X)),CT,Col,@dotpath(X')) :- coom_combinations(C,Col,P),
-                                               path_to(X,P,X'), in_tuple(CT,X'), tuple_order((C,X),CT,ID).
+                                               path_to(X,P,X'), in_tuple(CT,X').
 allow(C,XY,V) :- coom_allow(C,XY,V).
 
 #show column/4.

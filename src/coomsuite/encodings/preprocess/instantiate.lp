@@ -108,8 +108,6 @@ combinations_tuple((C,Ctx),Col,(X',X)) :- combinations_tuple((C,Ctx),Col+1,X),
                                           path_to(Ctx,P,X').
 combinations_tuple(C,CT) :- combinations_tuple(C,0,CT).
 
-tuple_order(C,CT,ID) :-  combinations_tuple(C,CT), ID = #count{ CT': combinations_tuple(C,CT'), CT'<CT }.
-
 in_tuple((X,CT'),CT',X) :- combinations_tuple(_,CT), CT=(X,CT').
 in_tuple(CT,CT',X)      :- in_tuple(CT,(X,CT'),_).
 in_tuple(CT,X)          :- in_tuple(CT,_,X).
