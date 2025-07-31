@@ -329,26 +329,38 @@ class COOMMultiSolverApp(COOMSolverApp):
         if self._prev_bound is None:
             self._prev_bound = -1
 
+        unsat_bound = -1
+        if self._prev_bound is not None:
+            unsat_bound = self._prev_bound
+        sat_bound = self.max_bound
+        prev_bound = self.max_bound
+
         while True:
-            current_bound = next_bound_converge(self._prev_bound, self.max_bound)
+            current_bound = next_bound_converge(unsat_bound, sat_bound)
             if current_bound is None:
                 print("\nOptimal bound found")
+                self.max_bound = sat_bound
                 break
 
             print("\nOptimal bound not yet found")
             print(f"Solving with bound = {current_bound}\n")
 
-            for i in range(current_bound + 1, self.max_bound + 1):
-                control.assign_external(Function("active", [Number(i)]), False)
+            if current_bound < prev_bound:
+                for i in range(current_bound + 1, prev_bound + 1):
+                    control.assign_external(Function("active", [Number(i)]), False)
+            else:
+                for i in range(prev_bound + 1, current_bound + 1):
+                    control.assign_external(Function("active", [Number(i)]), True)
 
-            control.assign_external(Function("max_bound", [Number(self.max_bound)]), False)
+            control.assign_external(Function("max_bound", [Number(prev_bound)]), False)
             control.assign_external(Function("max_bound", [Number(current_bound)]), True)
 
             ret = control.solve()
+            prev_bound = current_bound
             if ret.satisfiable:
-                self.max_bound = current_bound
+                sat_bound = current_bound
             else:
-                self._prev_bound = current_bound
+                unsat_bound = current_bound
 
     def main(self, control: Control, files: Sequence[str]) -> None:
         """
