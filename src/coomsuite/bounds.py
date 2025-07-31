@@ -28,12 +28,10 @@ class BoundSolver:
         solver: str,
         clingo_args: List[str],
         output_format: str,
-        use_multishot: bool = False,
     ):
         self.facts = facts
         self.solver = solver
         self.clingo_args = clingo_args
-        self.use_multishot = use_multishot
         self.output_format = output_format
 
     def _solve(self, max_bound: int) -> int:
@@ -54,18 +52,18 @@ class BoundSolver:
 
         return self._converge(solve_results, new, i)
 
-    def get_bounds(self, algorithm: str = "linear", initial_bound: int = 0) -> int:
+    def get_bounds(self, algorithm: str = "linear", initial_bound: int = 0, use_multishot: bool = False) -> int:
         """
         Gets the minimum bounds for the problem.
         """
-        if self.use_multishot:
+        if use_multishot:
             multishot_solver = COOMMultiSolverApp(
                 serialized_facts=self.facts,
                 initial_bound=initial_bound,
                 algorithm=algorithm,
                 options={
-                    "solver": self.args.solver,
-                    "output_format": self.args.output,
+                    "solver": self.solver,
+                    "output_format": self.output_format,
                 },
             )
 
@@ -75,43 +73,45 @@ class BoundSolver:
             )
 
             return multishot_solver.max_bound
-        else:
-            if algorithm == "linear":
-                max_bound = initial_bound
 
-                while True:
-                    print(f"\nSolving with max_bound = {max_bound}\n")
-                    ret = self._solve(max_bound)
-                    if ret_dict[ret] == "SAT":
-                        break
-                    max_bound += 1
+        if algorithm == "linear":
+            max_bound = initial_bound
 
-                return max_bound
+            while True:
+                print(f"\nSolving with max_bound = {max_bound}\n")
+                ret = self._solve(max_bound)
+                if ret_dict[ret] == "SAT":
+                    break
+                max_bound += 1
 
-            else:
-                # exponential search
-                # taken from https://git-ainf.aau.at/Giulia.Francescutto/papers/-/wikis/uploads/main.py
-                i = 0
-                bottom = 0
-                top = 0
+            return max_bound
 
+        if algorithm == "exponential":
+            # exponential search
+            # taken from https://git-ainf.aau.at/Giulia.Francescutto/papers/-/wikis/uploads/main.py
+            i = 0
+            bottom = 0
+            top = 0
+
+            print(" ".join([f"Solving with bound {format(top)}\n"]))
+            ret = self._solve(top)
+            solve_results = {0: ret_dict[ret]}
+
+            while True:
+                if ret_dict[ret] == "SAT":
+                    break
+                bottom = top
+                top = 2**i
                 print(" ".join([f"Solving with bound {format(top)}\n"]))
                 ret = self._solve(top)
-                solve_results = {0: ret_dict[ret]}
+                solve_results[top] = ret_dict[ret]
+                print(" ".join([f"Top is {top} and bottom is {bottom}; i is {i}\n"]))
 
-                while True:
-                    if ret_dict[ret] == "SAT":
-                        break
-                    bottom = top
-                    top = 2**i
-                    print(" ".join([f"Solving with bound {format(top)}\n"]))
-                    ret = self._solve(top)
-                    solve_results[top] = ret_dict[ret]
-                    print(" ".join([f"Top is {top} and bottom is {bottom}; i is {i}\n"]))
+                i = i + 1
 
-                    i = i + 1
+                if ret == "SAT" and i == 0:
+                    return top
 
-                    if ret == "SAT" and i == 0:
-                        return top
-                    else:
-                        return self._converge(solve_results, top, i - 2)
+                return self._converge(solve_results, top, i - 2)
+
+        raise ValueError(f"unknown algorithm: {algorithm}")
