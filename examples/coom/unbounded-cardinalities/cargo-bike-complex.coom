@@ -64,10 +64,9 @@ behavior Bag {
     allow        (large    (L,XL) )
 }
 
-// BUG: not working correctly due to preprocessing (inc_set detection)
-// behavior Bag {
-//     require 2 = count(openings)
-// }
+behavior Bag {
+    require 2 <= count(openings)
+}
 
 behavior {
    require 5 < count(bags.pockets)

@@ -1,20 +1,18 @@
+% mark which objects have unbounded cardinalities
+inc_obj(@dotpath((F,(X,I)))) :- coom_feature(Ctx,F,T,Min,#sup), type_aux(X,Ctx), I = 0..Min+max_bound-1.
+
 % TODO: improve incremental detection to also detect sets/expression for 0..* with max_bound 0
+% something like the following may work
+% inc_obj(@dotpath((F,(X,I)))) :- coom_feature(Ctx,F,T,Min,#sup), type_aux(X,Ctx), I = 0, Min = 0, max_bound = 0.
+% but then needs rules defining path_to/4 as this is dependent on type_aux ...
 
-% incremental auxiliary predicate
-inc_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,Min,#sup),     type_aux(X,Ctx), I = 0..Min+max_bound-1, T != "num".
-inc_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), type_aux(X,Ctx), I = 0..Min+max_bound-1.
+% map path_to/4 atoms to path_out/2 by using output formatting (step index is discarded)
+path_out(@join(X,P),@dotpath(X')) :- path_to(X,P,_,X').
 
-inc_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,_,  Max),      inc_aux(X,Ctx), I = 0..Max-1, T != "num".
-inc_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",_,  Max),  inc_aux(X,Ctx), I = 0..Max-1.
-
-inc_aux((A,(X,0)),A) :- inc_aux(X,T), coom_enumeration(T), coom_attribute_value(T,_,A,_).
-
-% incremental objects
-inc_obj(@dotpath(X)) :- inc_aux(X,_).
-
-% incremental sets
-% TODO: verify that this only includes sets like root.bags and not root.bags[0].color
-inc_set(@join(X,P)) :- function(X,_,_,P), path_to(X,P,X'), inc_obj(X').
+% incremental sets: a set is incremental if:
+% - there is a path from an unbounded object to the set
+% - limit to only sets used in functions
+inc_set(P) :- function(_,_,P), path_out(P,X'), inc_obj(X').
 
 #show inc_set/1.
 
