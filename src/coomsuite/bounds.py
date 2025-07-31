@@ -37,25 +37,28 @@ class BoundSolver:
     def _solve(self, max_bound: int) -> int:
         return solve(self.facts, self.solver, max_bound, self.clingo_args, self.output_format)
 
-    def _converge(self, solve_results: Dict[int, str], top: int, i: int) -> int:
-        if i <= 0:
-            return top if solve_results[top] == "SAT" else top + 1
+    def _converge(self, unsat_bound: int, sat_bound: int) -> int:
+        while True:
+            current_bound = next_bound_converge(unsat_bound, sat_bound)
 
-        i = i - 1
-        if solve_results[top] == "SAT":
-            new = top - 2**i
-        else:
-            new = top + 2**i
-        print(" ".join([f"Iteration with top {top}, new is {new}, i is {i}\n"]))
-        ret = self._solve(new)
-        solve_results[new] = "SAT" if ret == 10 else "UNSAT"
+            if current_bound is None:
+                print("\nOptimal bound found")
+                return sat_bound
 
-        return self._converge(solve_results, new, i)
+            print("\nOptimal bound not yet found")
+            print(f"Solving with bound = {current_bound}\n")
+
+            ret = self._solve(current_bound)
+            if ret_dict[ret] == "SAT":
+                sat_bound = current_bound
+            else:
+                unsat_bound = current_bound
 
     def get_bounds(self, algorithm: str = "linear", initial_bound: int = 0, use_multishot: bool = False) -> int:
         """
         Gets the minimum bounds for the problem.
         """
+        # multi shot solving
         if use_multishot:
             multishot_solver = COOMMultiSolverApp(
                 serialized_facts=self.facts,
@@ -74,44 +77,14 @@ class BoundSolver:
 
             return multishot_solver.max_bound
 
-        if algorithm == "linear":
-            max_bound = initial_bound
-
-            while True:
-                print(f"\nSolving with max_bound = {max_bound}\n")
-                ret = self._solve(max_bound)
-                if ret_dict[ret] == "SAT":
-                    break
-                max_bound += 1
-
-            return max_bound
-
-        if algorithm == "exponential":
-            # exponential search
-            # taken from https://git-ainf.aau.at/Giulia.Francescutto/papers/-/wikis/uploads/main.py
-            i = 0
-            bottom = 0
-            top: int = 0
-
-            print(" ".join([f"Solving with bound {format(top)}\n"]))
-            ret = self._solve(top)
-            solve_results = {0: ret_dict[ret]}
-
-            while True:
-                if ret_dict[ret] == "SAT":
-                    break
-                bottom = top
-                top = 2**i
-                print(" ".join([f"Solving with bound {format(top)}\n"]))
-                ret = self._solve(top)
-                solve_results[top] = ret_dict[ret]
-                print(" ".join([f"Top is {top} and bottom is {bottom}; i is {i}\n"]))
-
-                i = i + 1
-
-                if ret_dict[ret] == "SAT" and i == 0:
-                    return top
-
-                return self._converge(solve_results, top, i - 2)
-
-        raise ValueError(f"unknown algorithm: {algorithm}")
+        # single shot solving
+        bounds_iter = get_bound_iter(algorithm, initial_bound)
+        max_bound = initial_bound
+        prev_bound = -1
+        while True:
+            print(f"\nSolving with max_bound = {max_bound}\n")
+            ret = self._solve(max_bound)
+            if ret_dict[ret] == "SAT":
+                return self._converge(prev_bound, max_bound)
+            prev_bound = max_bound
+            max_bound = next(bounds_iter)
