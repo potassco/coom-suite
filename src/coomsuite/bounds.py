@@ -91,7 +91,7 @@ class BoundSolver:
             # taken from https://git-ainf.aau.at/Giulia.Francescutto/papers/-/wikis/uploads/main.py
             i = 0
             bottom = 0
-            top = 0
+            top: int = 0
 
             print(" ".join([f"Solving with bound {format(top)}\n"]))
             ret = self._solve(top)
@@ -109,7 +109,7 @@ class BoundSolver:
 
                 i = i + 1
 
-                if ret == "SAT" and i == 0:
+                if ret_dict[ret] == "SAT" and i == 0:
                     return top
 
                 return self._converge(solve_results, top, i - 2)
