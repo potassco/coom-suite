@@ -2,11 +2,13 @@
 Contains a module for solving problems with open bounds/cardinalities.
 """
 
-from typing import Dict, List
+from typing import List
 
 from clingo.application import clingo_main
 
-from . import solve
+from coomsuite import solve
+
+from . import get_bound_iter, next_bound_converge
 from .multi_application import COOMMultiSolverApp
 
 ret_dict = {10: "SAT", 20: "UNSAT"}

@@ -1,0 +1,43 @@
+"""
+General helper functions for solving unbounded cardinalities.
+"""
+
+from itertools import count, dropwhile
+from typing import Iterator, Optional
+
+
+def _exponential_iter() -> Iterator[int]:
+    n = 0
+    while True:
+        yield 2**n
+        n += 1
+
+
+def get_bound_iter(algorithm: str, start: int) -> Iterator[int]:
+    """
+    Get an iterator over the bounds for a selected algorithm
+
+    Note that the iterator starts after the start value.
+    """
+    iterator: Iterator[int]
+    if algorithm == "linear":
+        iterator = count(start + 1)
+    elif algorithm == "exponential":
+        iterator = dropwhile(lambda x: x <= start, _exponential_iter())
+    else:
+        raise ValueError(f"unknown algorithm for bound iter: {algorithm}")
+
+    return iterator
+
+
+def next_bound_converge(unsat_bound: int, sat_bound: int) -> Optional[int]:
+    """
+    Determine the next bound (between unsat_bound and sat_bound) while converging to the optimal bound
+
+    Returns:
+        Optional[int]: The next bound to check, or None if sat_bound is already the optimal bound
+    """
+    if unsat_bound + 1 == sat_bound:
+        return None
+
+    return (unsat_bound + sat_bound) // 2

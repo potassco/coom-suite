@@ -6,7 +6,7 @@ import sys
 from tempfile import TemporaryDirectory
 
 from . import convert_instance, solve
-from .bounds import BoundSolver
+from .bounds.solver import BoundSolver
 from .preprocess import preprocess
 from .utils.logging import configure_logging, get_logger
 from .utils.parser import get_parser
