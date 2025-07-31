@@ -63,8 +63,8 @@ number("16",16).
 
 explanation(1,"A wheel support can only be used with rear wheels of type W14 or W16.").
 constraint((1,"root"),"table").
-column((1,"root"),0,0,"root.wheelSupport[0]").
-column((1,"root"),0,1,"root.rearWheel[0]").
+column((1,"root"),("root.wheelSupport[0]","root.rearWheel[0]"),0,"root.wheelSupport[0]").
+column((1,"root"),("root.wheelSupport[0]","root.rearWheel[0]"),1,"root.rearWheel[0]").
 allow(1,(0,0),"True").
 allow(1,(1,0),"W14").
 allow(1,(1,0),"W16").
@@ -78,12 +78,12 @@ binary("root.frontWheel[0].size[0]=root.rearWheel[0].size[0]","root.frontWheel[0
 
 % Attribute constraints
 constraint(("Wheel","root.frontWheel[0]"),"table").
-column(("Wheel","root.frontWheel[0]"),0,0,"root.frontWheel[0]").
-column(("Wheel","root.frontWheel[0]"),0,1,"root.frontWheel[0].size[0]").
+column(("Wheel","root.frontWheel[0]"),("root.frontWheel[0]","root.frontWheel[0].size[0]"),0,"root.frontWheel[0]").
+column(("Wheel","root.frontWheel[0]"),("root.frontWheel[0]","root.frontWheel[0].size[0]"),1,"root.frontWheel[0].size[0]").
 
 constraint(("Wheel","root.rearWheel[0]"),"table").
-column(("Wheel","root.rearWheel[0]"),0,0,"root.rearWheel[0]").
-column(("Wheel","root.rearWheel[0]"),0,1,"root.rearWheel[0].size[0]").
+column(("Wheel","root.rearWheel[0]"),("root.rearWheel[0]","root.rearWheel[0].size[0]"),0,"root.rearWheel[0]").
+column(("Wheel","root.rearWheel[0]"),("root.rearWheel[0]","root.rearWheel[0].size[0]"),1,"root.rearWheel[0].size[0]").
 
 allow("Wheel",(0,0),"W14").
 allow("Wheel",(1,0),14).

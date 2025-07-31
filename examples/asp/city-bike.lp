@@ -176,12 +176,12 @@ constraint((4,"root.frontWheel[0].size[0]=root.rearWheel[0].size[0]"),"boolean")
 binary("root.frontWheel[0].size[0]=root.rearWheel[0].size[0]","root.frontWheel[0].size[0]","=","root.rearWheel[0].size[0]").
 
 constraint((5,"root.carrier[0].bag[0]"),"table").
-column((5,"root.carrier[0].bag[0]"),0,0,"root.carrier[0].bag[0].material[0]").
-column((5,"root.carrier[0].bag[0]"),0,1,"root.carrier[0].bag[0].capacity[0]").
+column((5,"root.carrier[0].bag[0]"),("root.carrier[0].bag[0].material[0]","root.carrier[0].bag[0].capacity[0]"),0,"root.carrier[0].bag[0].material[0]").
+column((5,"root.carrier[0].bag[0]"),("root.carrier[0].bag[0].material[0]","root.carrier[0].bag[0].capacity[0]"),1,"root.carrier[0].bag[0].capacity[0]").
 
 constraint((5,"root.carrier[0].bag[1]"),"table").
-column((5,"root.carrier[0].bag[1]"),0,0,"root.carrier[0].bag[1].material[0]").
-column((5,"root.carrier[0].bag[1]"),0,1,"root.carrier[0].bag[1].capacity[0]").
+column((5,"root.carrier[0].bag[1]"),("root.carrier[0].bag[1].material[0]","root.carrier[0].bag[1].capacity[0]"),0,"root.carrier[0].bag[1].material[0]").
+column((5,"root.carrier[0].bag[1]"),("root.carrier[0].bag[1].material[0]","root.carrier[0].bag[1].capacity[0]"),1,"root.carrier[0].bag[1].capacity[0]").
 
 allow(5,(0,0),"Leather").
 allow(5,(1,0),"B10").
@@ -195,12 +195,12 @@ allow(5,(1,2),"B100").
 
 % Attribute constraints
 constraint(("Wheel","root.frontWheel[0]"),"table").
-column(("Wheel","root.frontWheel[0]"),0,0,"root.frontWheel[0]").
-column(("Wheel","root.frontWheel[0]"),0,1,"root.frontWheel[0].size[0]").
+column(("Wheel","root.frontWheel[0]"),("root.frontWheel[0]","root.frontWheel[0].size[0]"),0,"root.frontWheel[0]").
+column(("Wheel","root.frontWheel[0]"),("root.frontWheel[0]","root.frontWheel[0].size[0]"),1,"root.frontWheel[0].size[0]").
 
 constraint(("Wheel","root.rearWheel[0]"),"table").
-column(("Wheel","root.rearWheel[0]"),0,0,"root.rearWheel[0]").
-column(("Wheel","root.rearWheel[0]"),0,1,"root.rearWheel[0].size[0]").
+column(("Wheel","root.rearWheel[0]"),("root.rearWheel[0]","root.rearWheel[0].size[0]"),0,"root.rearWheel[0]").
+column(("Wheel","root.rearWheel[0]"),("root.rearWheel[0]","root.rearWheel[0].size[0]"),1,"root.rearWheel[0].size[0]").
 
 allow("Wheel",(0,0),"W26").
 allow("Wheel",(1,0),26).
@@ -213,12 +213,12 @@ allow("Wheel",(1,3),29).
 
 
 constraint(("Capacity","root.carrier[0].bag[0]"),"table").
-column(("Capacity","root.carrier[0].bag[0]"),0,0,"root.carrier[0].bag[0].capacity[0]").
-column(("Capacity","root.carrier[0].bag[0]"),0,1,"root.carrier[0].bag[0].capacity[0].volume[0]").
+column(("Capacity","root.carrier[0].bag[0]"),("root.carrier[0].bag[0].capacity[0]","root.carrier[0].bag[0].capacity[0].volume[0]"),0,"root.carrier[0].bag[0].capacity[0]").
+column(("Capacity","root.carrier[0].bag[0]"),("root.carrier[0].bag[0].capacity[0]","root.carrier[0].bag[0].capacity[0].volume[0]"),1,"root.carrier[0].bag[0].capacity[0].volume[0]").
 
 constraint(("Capacity","root.carrier[0].bag[1]"),"table").
-column(("Capacity","root.carrier[0].bag[1]"),0,0,"root.carrier[0].bag[1].capacity[0]").
-column(("Capacity","root.carrier[0].bag[1]"),0,1,"root.carrier[0].bag[1].capacity[0].volume[0]").
+column(("Capacity","root.carrier[0].bag[1]"),("root.carrier[0].bag[1].capacity[0]","root.carrier[0].bag[1].capacity[0].volume[0]"),0,"root.carrier[0].bag[1].capacity[0]").
+column(("Capacity","root.carrier[0].bag[1]"),("root.carrier[0].bag[1].capacity[0]","root.carrier[0].bag[1].capacity[0].volume[0]"),1,"root.carrier[0].bag[1].capacity[0].volume[0]").
 
 allow("Capacity",(0,0),"B10").
 allow("Capacity",(1,0),10).
