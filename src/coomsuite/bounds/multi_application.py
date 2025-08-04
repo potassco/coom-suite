@@ -2,15 +2,16 @@
 Clingo application class for solving COOM configuration problems with multi-shot solving
 """
 
-from itertools import count, dropwhile
-from typing import Any, Dict, Iterator, List, Optional, Sequence, Set, Tuple, TypeAlias
+from typing import Any, Dict, List, Optional, Sequence, Set, Tuple, TypeAlias
 
 from clingo import Control
 from clingo.symbol import Function, Number, Symbol, parse_term
 
-from .application import COOMSolverApp
-from .preprocess import preprocess
-from .utils import get_encoding
+from coomsuite.application import COOMSolverApp
+from coomsuite.preprocess import preprocess
+from coomsuite.utils import get_encoding
+
+from . import get_bound_iter, next_bound_converge
 
 ProgPart: TypeAlias = Tuple[str, List[Symbol]]
 
@@ -34,43 +35,6 @@ def _get_fact_name_and_args(fact: str) -> Tuple[str, List[Symbol]]:
     """
     x = parse_term(fact[:-1])
     return (x.name, x.arguments)
-
-
-def _exponential_iter() -> Iterator[int]:
-    n = 0
-    while True:
-        yield 2**n
-        n += 1
-
-
-def get_bound_iter(algorithm: str, start: int) -> Iterator[int]:
-    """
-    Get an iterator over the bounds for a selected algorithm
-
-    Note that the iterator starts after the start value.
-    """
-    iterator: Iterator[int]
-    if algorithm == "linear":
-        iterator = count(start + 1)
-    elif algorithm == "exponential":
-        iterator = dropwhile(lambda x: x <= start, _exponential_iter())
-    else:
-        raise ValueError(f"unknown algorithm for bound iter: {algorithm}")
-
-    return iterator
-
-
-def next_bound_converge(unsat_bound: int, sat_bound: int) -> Optional[int]:
-    """
-    Determine the next bound (between unsat_bound and sat_bound) while converging to the optimal bound
-
-    Returns:
-        Optional[int]: The next bound to check, or None if sat_bound is already the optimal bound
-    """
-    if unsat_bound + 1 == sat_bound:
-        return None
-
-    return (unsat_bound + sat_bound) // 2
 
 
 class COOMMultiSolverApp(COOMSolverApp):
@@ -329,26 +293,38 @@ class COOMMultiSolverApp(COOMSolverApp):
         if self._prev_bound is None:
             self._prev_bound = -1
 
+        unsat_bound = -1
+        if self._prev_bound is not None:
+            unsat_bound = self._prev_bound
+        sat_bound = self.max_bound
+        prev_bound = self.max_bound
+
         while True:
-            current_bound = next_bound_converge(self._prev_bound, self.max_bound)
+            current_bound = next_bound_converge(unsat_bound, sat_bound)
             if current_bound is None:
                 print("\nOptimal bound found")
+                self.max_bound = sat_bound
                 break
 
             print("\nOptimal bound not yet found")
             print(f"Solving with bound = {current_bound}\n")
 
-            for i in range(current_bound + 1, self.max_bound + 1):
-                control.assign_external(Function("active", [Number(i)]), False)
+            if current_bound < prev_bound:
+                for i in range(current_bound + 1, prev_bound + 1):
+                    control.assign_external(Function("active", [Number(i)]), False)
+            else:
+                for i in range(prev_bound + 1, current_bound + 1):
+                    control.assign_external(Function("active", [Number(i)]), True)
 
-            control.assign_external(Function("max_bound", [Number(self.max_bound)]), False)
+            control.assign_external(Function("max_bound", [Number(prev_bound)]), False)
             control.assign_external(Function("max_bound", [Number(current_bound)]), True)
 
             ret = control.solve()
+            prev_bound = current_bound
             if ret.satisfiable:
-                self.max_bound = current_bound
+                sat_bound = current_bound
             else:
-                self._prev_bound = current_bound
+                unsat_bound = current_bound
 
     def main(self, control: Control, files: Sequence[str]) -> None:
         """

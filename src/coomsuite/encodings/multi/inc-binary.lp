@@ -2,7 +2,8 @@
 #program incremental_binary(f,xl,op,xr,bound).
 binary(f,xl,op,xr).
 
-defined(f,bound) :- binary(f,xl,_,xr), defined(xl,bound), defined(xr,bound).
+defined(f,bound) :- binary(f,xl,op,xr), defined(xl,bound), defined(xr,bound).
+defined(f,bound) :- binary(f,xl,op,xr), value(f,_,bound).
 
 value(f,VL+VR,bound) :- binary(f,xl,op,xr), value(xl,VL,bound), value(xr,VR,bound), op = "+".
 value(f,VL-VR,bound) :- binary(f,xl,op,xr), value(xl,VL,bound), value(xr,VR,bound), op = "-".
@@ -27,7 +28,8 @@ satisfied(f,bound) :- binary(f,xl,op,xr), satisfied(xl,bound), satisfied(xr,boun
 #program incremental_binary_l(f,xl,op,xr,bound).
 binary(f,xl,op,xr).
 
-defined(f,bound) :- binary(f,xl,_,xr), defined(xl,bound), defined(xr).
+defined(f,bound) :- binary(f,xl,op,xr), defined(xl,bound), defined(xr).
+defined(f,bound) :- binary(f,xl,op,xr), value(f,_,bound).
 
 value(f,VL+VR,bound) :- binary(f,xl,op,xr), value(xl,VL,bound), value(xr,VR), op = "+".
 value(f,VL-VR,bound) :- binary(f,xl,op,xr), value(xl,VL,bound), value(xr,VR), op = "-".
@@ -52,7 +54,8 @@ satisfied(f,bound) :- binary(f,xl,op,xr), satisfied(xl,bound), satisfied(xr), op
 #program incremental_binary_r(f,xl,op,xr,bound).
 binary(f,xl,op,xr).
 
-defined(f,bound) :- binary(f,xl,_,xr), defined(xl), defined(xr,bound).
+defined(f,bound) :- binary(f,xl,op,xr), defined(xl), defined(xr,bound).
+defined(f,bound) :- binary(f,xl,op,xr), value(f,_,bound).
 
 value(f,VL+VR,bound) :- binary(f,xl,op,xr), value(xl,VL), value(xr,VR,bound), op = "+".
 value(f,VL-VR,bound) :- binary(f,xl,op,xr), value(xl,VL), value(xr,VR,bound), op = "-".
