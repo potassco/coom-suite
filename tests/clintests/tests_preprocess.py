@@ -10,7 +10,8 @@ All tests run with clingo.
 # pylint: disable=line-too-long, too-many-lines
 from typing import Any
 
-from . import TEST_EMPTY, StableModels
+from . import TEST_EMPTY, StableModels, Supersets
+from .. import get_model_from_file
 
 TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "empty": {"test": TEST_EMPTY, "program": ""},
@@ -1096,5 +1097,37 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "add": {
         "test": StableModels({'user_include("root.bag[0]")'}),
         "program": 'coom_user_include("root.bag[0]").',
+    },
+    "unbounded_singleshot_zero_lb_zero_max": {
+        "test": StableModels(get_model_from_file("unbounded_singleshot_zero_lb_zero_max.lp")),
+        "files": ["unbounded_zero_lb.lp"],
+    },
+    "unbounded_singleshot_zero_lb_one_max": {
+        "test": StableModels(get_model_from_file("unbounded_singleshot_zero_lb_one_max.lp")),
+        "files": ["unbounded_zero_lb.lp"],
+    },
+    "unbounded_singleshot_two_lb_zero_max": {
+        "test": StableModels(get_model_from_file("unbounded_singleshot_two_lb_zero_max.lp")),
+        "files": ["unbounded_two_lb.lp"],
+    },
+    "unbounded_singleshot_two_lb_one_max": {
+        "test": StableModels(get_model_from_file("unbounded_singleshot_two_lb_one_max.lp")),
+        "files": ["unbounded_two_lb.lp"],
+    },
+    "unbounded_multishot_zero_lb_zero_max_superset": {
+        "test": Supersets(get_model_from_file("unbounded_singleshot_zero_lb_zero_max.lp")),
+        "files": ["unbounded_zero_lb.lp"],
+    },
+    "unbounded_multishot_zero_lb_one_max_superset": {
+        "test": Supersets(get_model_from_file("unbounded_singleshot_zero_lb_one_max.lp")),
+        "files": ["unbounded_zero_lb.lp"],
+    },
+    "unbounded_multishot_two_lb_zero_max_superset": {
+        "test": Supersets(get_model_from_file("unbounded_singleshot_two_lb_zero_max.lp")),
+        "files": ["unbounded_two_lb.lp"],
+    },
+    "unbounded_multishot_two_lb_one_max_superset": {
+        "test": Supersets(get_model_from_file("unbounded_singleshot_two_lb_one_max.lp")),
+        "files": ["unbounded_two_lb.lp"],
     },
 }
