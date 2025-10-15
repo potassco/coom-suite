@@ -218,7 +218,7 @@ class COOMMultiSolverApp(COOMSolverApp):
             raise ValueError(f"unknown new fact (no corresponding program part exists): {fact}")
 
         # some program parts need the current bound as an additional argument
-        parts_with_bound = ["type", "constraint"]
+        parts_with_bound = ["type", "constraint", "column"]
 
         # determine the corresponding program part
         program_part = (

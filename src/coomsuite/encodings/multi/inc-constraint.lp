@@ -1,12 +1,19 @@
 #program incremental_constraint(cons,type,bound).
-#external max_bound(bound).
 constraint(cons,type).
 
 violated(cons,bound) :- constraint(cons,type), defined(F,bound), not satisfied(F,bound), cons = (C,F), type = "boolean".
 
-% TODO: can this be improved to only violation on the new elements is checked
-% then it would be possilbe to use the add_constraint program part instead
-% which would be more fitting for this type of constraint
-violated((cons,ID),bound) :- constraint(cons,type), defined(cons,ID), not satisfied(cons,ID), type = "table".
+% violation of boolean constraints is only checked at the max bound
+#external max_bound(bound).
+:- constraint(cons,type), type = "boolean", max_bound(bound),
+   violated(cons,bound).
 
-:- violated(C,bound), max_bound(bound).
+% for table constraints the thable IDs are associated with a specific bound
+% for bound 0 this association does not exist
+violated((cons,ID),0) :- constraint(cons,type), defined(cons,ID), not satisfied(cons,ID), type = "table", bound = 0.
+violated((cons,ID),bound) :- constraint(cons,type), table_bound(cons,ID,bound), defined(cons,ID), not satisfied(cons,ID), type = "table".
+
+% violation of table constraints is checked for all active bounds
+#external active(bound).
+:- constraint(cons,type), type = "table", active(bound),
+   violated((cons,ID),bound), table_bound(cons,ID,bound).
