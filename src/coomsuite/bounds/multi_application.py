@@ -369,8 +369,8 @@ class COOMMultiSolverApp(COOMSolverApp):
                 parts = []
 
                 if bound == 0:
-                    # process initial incremental facts
-                    self._get_initial_incremental_data()
+                    self._update_incremental_data(self._new_incremental_facts)
+
                     # remove all the new incremental expressions from new_processed_facts
                     inc_expressions = self._remove_new_incremental_expressions()
                     # add the incremental program parts for each of the incremental expressions
