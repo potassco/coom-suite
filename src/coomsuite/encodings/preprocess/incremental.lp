@@ -21,12 +21,12 @@ help_path_to(X,P,X')  :- coom_path(P,0,N), path_start(X,P),
                          help_aux(X',_), X' =(N,(X,_)).
 help_path_to(X,P,X')  :- coom_path(P,0,"root"), coom_path(P,1,N), path_start(X,P),
                          help_aux(X',_), X' =(N,((),_)).
-help_path_to(X,P,X'') :- coom_path(P,I,N), help_path_to(X,P,I-1,X'),
+help_path_to(X,P,X'') :- coom_path(P,I,N), help_path_to(X,P,X'),
                          help_aux(X'',_), X''=(N,(X',_)).
 
 % map path_to/4 atoms to path_step/2 by using output formatting
 % - needs to be filtered by help_aux to remove sets belonging to the helper objects
-path_step(@join(X,P),@dotpath(X')) :- path_to(X,P,X'), not help_aux(X,_).
+path_step(@join(X,P),@dotpath(X')) :- help_path_to(X,P,X'), not help_aux(X,_).
 
 % compute sets used in the column of a table
 table_column((C,@dotpath(X)),@join(X,P)) :- table(C,X), coom_combinations(C,_,P).
