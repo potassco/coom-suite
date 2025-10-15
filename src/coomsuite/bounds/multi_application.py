@@ -266,10 +266,10 @@ class COOMMultiSolverApp(COOMSolverApp):
         # add incremental expressions
         for exp in inc_expressions:
             # first, add the expressions to the incremental_sets dictionary
-            inc_set = exp.arguments[2].string
+            inc_set = exp.arguments[2]
             x = (exp.arguments[0].string, exp.arguments[3].arguments)
-            if x not in self._incremental_sets[inc_set]:
-                self._incremental_sets[inc_set].append(x)
+            if x not in self._incremental_sets[inc_set.string]:
+                self._incremental_sets[inc_set.string].append(x)
 
             # second, add it to the set of all incremental expressions
             self._incremental_expressions.add(exp.arguments[1].string)
