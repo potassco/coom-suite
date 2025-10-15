@@ -3,8 +3,29 @@ inc_obj(@dotpath((F,(X,I)))) :- coom_feature(Ctx,F,T,Min,#sup), type_aux(X,Ctx),
 % dummy incremental object when 0..* and max_bound = 0
 inc_obj(@dotpath((F,(X,-1)))) :- coom_feature(Ctx,F,T,0,#sup),  type_aux(X,Ctx), max_bound = 0.
 
+% helper rules for instantiating starting from 0..* objects with max_bound=0
+help_aux((F,(X,-1)),T)            :- coom_feature(Ctx,F,T,Min,#sup),     type_aux(X,Ctx), Min = 0, max_bound = 0, T != "num".
+help_aux((F,(X,-1)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), type_aux(X,Ctx), Min = 0, max_bound = 0.
+
+help_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,_,  Max),      help_aux(X,Ctx), I = 0..Max-1, T != "num".
+help_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,Min,#sup),     help_aux(X,Ctx), I = 0..Min+max_bound-1, T != "num".
+help_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",_,  Max),  help_aux(X,Ctx), I = 0..Max-1.
+help_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), help_aux(X,Ctx), I = 0..Min+max_bound-1.
+
+% TODO: remove the step index?
+% helper rules to instantiate path_to/4 atoms based on help_aux/2
+help_path_to(X,P,0,X')  :- coom_path(P,0,N), path_start(X,P),
+                           help_aux(X',_), X' =(N,(X,_)).
+help_path_to(X,P,1,X')  :- coom_path(P,0,"root"), coom_path(P,1,N), path_start(X,P),
+                           help_aux(X',_), X' =(N,((),_)).
+help_path_to(X,P,I,X'') :- coom_path(P,I,N), help_path_to(X,P,I-1,X'),
+                           help_aux(X'',_), X''=(N,(X',_)).
+% also project out the actual path_to/4 atoms
+help_path_to(X,P,N,X') :- path_to(X,P,N,X').
+
 % map path_to/4 atoms to path_step/2 by using output formatting (step index is discarded)
-path_step(@join(X,P),@dotpath(X')) :- path_to(X,P,_,X'), not dummy(X,_).
+% needs to be filtered by help_aux to remove sets belonging to the helper objects
+path_step(@join(X,P),@dotpath(X')) :- path_to(X,P,_,X'), not help_aux(X,_).
 
 % compute sets used in a table
 table_column((C,@dotpath(X)),@join(X,P)) :- table(C,X), coom_combinations(C,_,P).

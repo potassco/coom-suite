@@ -29,11 +29,11 @@ range(@join(Ctx,N),Min,Max) :- coom_feature(Ctx,N,"num",_,_), coom_range(Ctx,N,M
 % Instances (of structures, enumerations and attributes in COOM)
 type("root","product") :- coom_structure("product").
 
-type(@dotpath(X),T)             :- type_aux(X,T), not coom_attribute(_,T,_), not dummy(X,T).
-type(@dotpath(X),@join(T,A))    :- type_aux(X,A),     coom_attribute(T,A,_), type_aux(P,T), X=(_,(P,_)), not dummy(X,A).
+type(@dotpath(X),T)             :- type_aux(X,T), not coom_attribute(_,T,_).
+type(@dotpath(X),@join(T,A))    :- type_aux(X,A),     coom_attribute(T,A,_), type_aux(P,T), X=(_,(P,_)).
 
-index(@dotpath(X),Idx)          :- type_aux(X,T), X=((_,(_,Idx))), not dummy(X,T).
-parent(@dotpath(X),@dotpath(P)) :- type_aux(X,_), X=(_,(P,_)), not dummy(X,_).
+index(@dotpath(X),Idx)          :- type_aux(X,T), X=((_,(_,Idx))).
+parent(@dotpath(X),@dotpath(P)) :- type_aux(X,_), X=(_,(P,_)).
 
 #show type/2.
 #show index/2.
@@ -57,10 +57,9 @@ unary(G,Op,F)    :- unary(_,_,G,Op,F).
 #show unary/3.
 
 % Table constraints
-constraint((C,@dotpath(X)),"table") :- table(C,X), not dummy(X,_).
+constraint((C,@dotpath(X)),"table") :- table(C,X).
 column((C,@dotpath(X)),CT,Col,X') :- coom_combinations(C,Col,P),
-                                               path_to(X,P,X'), in_tuple(CT,X'), not dummy_table(CT).
-dummy_table(CT) :- in_tuple(CT,X), dummy_out(X).
+                                               path_to(X,P,X'), in_tuple(CT,X').
 allow(C,XY,V) :- coom_allow(C,XY,V).
 
 #show column/4.
@@ -81,7 +80,7 @@ binary(@binary(X',"=",G),X',"=",G)          :- imply(C,X',G).
 
 % Functions
 function(@aggregate(T,X,P),T,@join(X,P)) :- function(X,_,T,P).
-set(@join(X,P),X')                       :- function(X,_,_,P), path_to(X,P,X'), not dummy_out(X').
+set(@join(X,P),X')                       :- function(X,_,_,P), path_to(X,P,X').
 
 #show function/3.
 #show set/2.
@@ -90,7 +89,7 @@ set(@join(X,P),X')                       :- function(X,_,_,P), path_to(X,P,X'), 
 part(T) :- coom_structure(T).
 
 constraint((@join(X,N),Min),"lowerbound") :- cardinality_aux(X,N,Min).
-set(@join(X,N),X')                       :- cardinality_aux(X,N,_), path_to(X,N,X'), not dummy_out(X').
+set(@join(X,N),X')                       :- cardinality_aux(X,N,_), path_to(X,N,X').
 
 #show part/1.
 
