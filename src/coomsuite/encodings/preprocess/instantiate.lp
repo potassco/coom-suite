@@ -11,6 +11,13 @@ type_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,Min,#sup),     type_aux
 type_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",_,  Max),  type_aux(X,Ctx), I = 0..Max-1.
 type_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), type_aux(X,Ctx), I = 0..Min+max_bound-1.
 
+% dummy object
+type_aux((F,(X,-1)),T)            :- coom_feature(Ctx,F,T,Min,#sup),     type_aux(X,Ctx), Min = 0, max_bound = 0, T != "num".
+type_aux((F,(X,-1)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), type_aux(X,Ctx), Min = 0, max_bound = 0.
+dummy((F,(X,-1)),T) :- type_aux((F,(X,-1)),T).
+dummy((F,(X,I)),T) :- type_aux((F,(X,I)),T), type_aux(X,Ctx), dummy(X,Ctx).
+dummy_out(@dotpath(X)) :- dummy(X,_).
+
 % Create auxiliary prediate for attribute variables
 type_aux((A,(X,0)),A) :- type_aux(X,T), coom_enumeration(T), coom_attribute_value(T,_,A,_).
 
@@ -127,12 +134,12 @@ imply(C,X',G)                  :- coom_imply(C,P,F), coom_context(C,Ctx), type_a
 imply(C,X',@aggregate(T,X,P')) :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), function(X,F,T,P').
 
 % Instantiate attribute constraints
-attribute_constraint((T,@dotpath(X)))  :- coom_attribute(T,_,_), type_aux(X,T).
+attribute_constraint((T,@dotpath(X)))  :- coom_attribute(T,_,_), type_aux(X,T), not dummy(X,T).
 attribute_constraint_column(T,Col+1,A) :- coom_attribute(T,A,_), Col = #count{ A' : coom_attribute(T,A',_), A' < A }.
 
 % Instantiate cardinality constraints
-cardinality_aux(X,N,Min) :- coom_feature(C,N,_,Min,_), type_aux(X,C).
-cardinality_aux(X,A,1)   :- coom_attribute(T,A,_),     type_aux(X,T).
+cardinality_aux(X,N,Min) :- coom_feature(C,N,_,Min,_), type_aux(X,C), not dummy(X,C).
+cardinality_aux(X,A,1)   :- coom_attribute(T,A,_),     type_aux(X,T), not dummy(X,T).
 
 % Include boolean enumeration if needed
 coom_enumeration("Bool")     :- coom_feature(_,_,"Bool",_,_).
