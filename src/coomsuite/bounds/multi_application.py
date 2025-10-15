@@ -1,5 +1,5 @@
 """
-Clingo application class for solving COOM configuration problems with multi-shot solving
+Clingo application class for solving COOM configuration problems with multi-shot solving.
 """
 
 from typing import Any, Dict, List, Optional, Sequence, Set, Tuple, TypeAlias
@@ -48,7 +48,7 @@ class COOMMultiSolverApp(COOMSolverApp):
     # previous max bound
     _prev_bound: Optional[int] = None
 
-    # preprocessed facts are stored split up into which are incremental and which not
+    # preprocessed facts are stored split up into which are incremental and which not:
     # first we need to save what are currently the new facts
     _new_processed_facts: List[str] = []
     _new_incremental_facts: List[str] = []
@@ -56,7 +56,7 @@ class COOMMultiSolverApp(COOMSolverApp):
     _processed_facts: List[str] = []
     _incremental_facts: List[str] = []
 
-    # data structure for incremental sets and expressions
+    # data structure for incremental sets and expressions:
     # which sets have unbounded cardinality and in which expressions are they used
     _incremental_sets: Dict[str, List[Tuple[str, List[Symbol]]]] = {}
     # all the incremental expressions in the program
@@ -81,7 +81,7 @@ class COOMMultiSolverApp(COOMSolverApp):
         self._bound_iter = get_bound_iter(algorithm, initial_bound)
 
         if algorithm not in ["linear", "exponential"]:
-            raise ValueError(f"unknown algorith option: {algorithm}")
+            raise ValueError(f"unknown algorithm option: {algorithm}")
 
     def _update_bound(self) -> None:
         """
@@ -143,7 +143,7 @@ class COOMMultiSolverApp(COOMSolverApp):
         """
         Get the incremental program part for an expression of type exp_type with arguments args
         """
-        # determine the name of the expression
+        # determine the name of the expression based on its type
         name = ""
         if exp_type in ["function", "binary", "unary"]:
             name = args[0].string
@@ -202,6 +202,7 @@ class COOMMultiSolverApp(COOMSolverApp):
         # convert fact to name and arguments
         name, args = _get_fact_name_and_args(fact)
 
+        # check if the fact corresponds to a valid program part
         if name not in [
             "parent",
             "index",
@@ -216,11 +217,14 @@ class COOMMultiSolverApp(COOMSolverApp):
         ]:
             raise ValueError(f"unknown new fact (no corresponding program part exists): {fact}")
 
+        # some program parts need the current bound as an additional argument
+        parts_with_bound = ["type", "constraint"]
+
         # determine the corresponding program part
         program_part = (
             f"new_{name}",
-            # the program parts new_type and new_constraint need the current max bound as an additional argument
-            args if name not in ["type", "constraint"] else args + [Number(bound)],
+            # check if bound needs to be added to the args
+            args if name not in parts_with_bound else args + [Number(bound)],
         )
 
         # a fact set(S,X) adds an element to set S
@@ -346,6 +350,8 @@ class COOMMultiSolverApp(COOMSolverApp):
         while True:
             print(f"\nNew max bound is = {self.max_bound} (previous was {self._prev_bound})\n")
 
+            # grounding and assigning active externals
+            # in steps of 1 to enable deactivation of specific bounds later (when converging to minimal bound)
             for bound in range(0 if self._prev_bound is None else self._prev_bound + 1, self.max_bound + 1):
                 print(f"Grounding with bound = {bound}")
 
@@ -356,14 +362,17 @@ class COOMMultiSolverApp(COOMSolverApp):
                 parts = []
 
                 if bound == 0:
-                    self._get_initial_incremental_data()
                     # process initial incremental facts
+                    self._get_initial_incremental_data()
+                    # remove all the new incremental expressions from new_processed_facts
                     inc_expressions = self._remove_new_incremental_expressions()
+                    # add the incremental program parts for each of the incremental expressions
                     for fact in inc_expressions:
                         name, args = _get_fact_name_and_args(fact)
                         parts.append(self._get_incremental_prog_part(name, args, bound))
 
-                    # ground base (needs to be grounded before other program parts below)
+                    # ground base with the preprocessed facts added
+                    # (needs to be grounded before other program parts below)
                     control.add("base", [], "".join(self._new_processed_facts))
                     control.ground([("base", [])])
                 else:
