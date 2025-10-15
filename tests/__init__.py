@@ -76,7 +76,11 @@ def run_test(
     ctl_args = [] if ctl_args is None else ctl_args
 
     if is_preprocess:
-        solver = Clingo(program="".join(preprocess(file_paths, discrete=False)))
+        multishot = kwargs.get("multishot", False)
+        max_bound = kwargs.get("max_bound", 99)
+        solver = Clingo(
+            program="".join(preprocess(file_paths, discrete=False, max_bound=max_bound, multishot=multishot))
+        )
     else:
         coom_app = COOMSolverApp(options=options, istest=True)
         solver = AppSolver(application=coom_app, files=file_paths, arguments=ctl_args)
