@@ -14,7 +14,7 @@ from .utils.logging import get_logger
 log = get_logger("main")
 
 
-def preprocess(files: List[str], max_bound: int = 99, discrete: bool = False) -> List[str]:
+def preprocess(files: List[str], max_bound: int = 99, discrete: bool = False, multishot: bool = False) -> List[str]:
     """
     Preprocesses COOM ASP facts into a "grounded" configuration fact format
     """
@@ -25,7 +25,7 @@ def preprocess(files: List[str], max_bound: int = 99, discrete: bool = False) ->
         ctl.load(f)
 
     enable_python()
-    ctl.load(get_encoding("preprocess.lp"))
+    ctl.load(get_encoding("preprocess.lp" if not multishot else "preprocess-multishot.lp"))
 
     if discrete:
         ctl.add("base", [], "discrete.")  # nocoverage
