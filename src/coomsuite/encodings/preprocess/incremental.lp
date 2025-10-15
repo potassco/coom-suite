@@ -14,18 +14,18 @@ help_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), help_aux
 
 % TODO: remove the step index?
 % helper rules to instantiate path_to/4 atoms based on help_aux/2
-help_path_to(X,P,0,X')  :- coom_path(P,0,N), path_start(X,P),
-                           help_aux(X',_), X' =(N,(X,_)).
-help_path_to(X,P,1,X')  :- coom_path(P,0,"root"), coom_path(P,1,N), path_start(X,P),
-                           help_aux(X',_), X' =(N,((),_)).
-help_path_to(X,P,I,X'') :- coom_path(P,I,N), help_path_to(X,P,I-1,X'),
-                           help_aux(X'',_), X''=(N,(X',_)).
+help_path_to(X,P,X')  :- coom_path(P,0,N), path_start(X,P),
+                         help_aux(X',_), X' =(N,(X,_)).
+help_path_to(X,P,X')  :- coom_path(P,0,"root"), coom_path(P,1,N), path_start(X,P),
+                         help_aux(X',_), X' =(N,((),_)).
+help_path_to(X,P,X'') :- coom_path(P,I,N), help_path_to(X,P,I-1,X'),
+                         help_aux(X'',_), X''=(N,(X',_)).
 % also project out the actual path_to/4 atoms
-help_path_to(X,P,N,X') :- path_to(X,P,N,X').
+help_path_to(X,P,X') :- path_to(X,P,_,X').
 
 % map path_to/4 atoms to path_step/2 by using output formatting (step index is discarded)
 % needs to be filtered by help_aux to remove sets belonging to the helper objects
-path_step(@join(X,P),@dotpath(X')) :- path_to(X,P,_,X'), not help_aux(X,_).
+path_step(@join(X,P),@dotpath(X')) :- path_to(X,P,X'), not help_aux(X,_).
 
 % compute sets used in a table
 table_column((C,@dotpath(X)),@join(X,P)) :- table(C,X), coom_combinations(C,_,P).
