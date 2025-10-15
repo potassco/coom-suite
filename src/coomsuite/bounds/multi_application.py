@@ -267,21 +267,26 @@ class COOMMultiSolverApp(COOMSolverApp):
         inc_sets = [parse_term(x[:-1]).arguments[0] for x in incremental_facts if x.startswith("inc_set")]
         inc_expressions = [parse_term(x[:-1]) for x in incremental_facts if x.startswith("incremental")]
 
-        # save incremental sets and their expressions
+        # initialize dictionary for new incremental sets
         for inc_set in inc_sets:
             if inc_set not in self._incremental_sets:
                 self._incremental_sets[inc_set.string] = []
-            for exp in inc_expressions:
-                if exp.arguments[2] == inc_set:
-                    # expression is added both to the set as well as to the set of all incremental expressions
-                    x = (exp.arguments[0].string, exp.arguments[3].arguments)
-                    if x not in self._incremental_sets[inc_set.string]:
-                        self._incremental_sets[inc_set.string].append(x)
-                    self._incremental_expressions.add(exp.arguments[1].string)
-                    # for functions we need to keep track whether they are intialized already
-                    if exp.arguments[0].string == "function":
-                        if exp.arguments[1].string not in self._is_initialized:
-                            self._is_initialized[exp.arguments[1].string] = False
+
+        # add incremental expressions
+        for exp in inc_expressions:
+            # first, add the expressions to the incremental_sets dictionary
+            inc_set = exp.arguments[2].string
+            x = (exp.arguments[0].string, exp.arguments[3].arguments)
+            if x not in self._incremental_sets[inc_set]:
+                self._incremental_sets[inc_set].append(x)
+
+            # second, add it to the set of all incremental expressions
+            self._incremental_expressions.add(exp.arguments[1].string)
+
+            # for functions we need to keep track whether they are already initialized
+            if exp.arguments[0].string == "function":
+                if exp.arguments[1].string not in self._is_initialized:
+                    self._is_initialized[exp.arguments[1].string] = False
 
     def _find_minimal_bound(self, control: Control) -> None:
         """
