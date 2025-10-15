@@ -2,8 +2,8 @@
 Test cases for preprocessing the serialized fact format.
 """
 
-from unittest import TestCase
 from typing import Any
+from unittest import TestCase
 
 from . import run_test, unpack_test
 from .clintests.tests_preprocess import TESTS_PREPROCESS

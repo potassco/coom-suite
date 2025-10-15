@@ -10,8 +10,8 @@ All tests run with clingo.
 # pylint: disable=line-too-long, too-many-lines
 from typing import Any
 
-from . import TEST_EMPTY, StableModels, Supersets
 from .. import get_model_from_file
+from . import TEST_EMPTY, StableModels, Supersets
 
 TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "empty": {"test": TEST_EMPTY, "program": ""},
