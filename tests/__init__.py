@@ -8,7 +8,7 @@ from os.path import join
 from typing import Any, Callable, List, Optional, Sequence, Tuple
 
 from antlr4 import InputStream
-from clingo import Application, Control
+from clingo import Application, Control, Symbol
 from clintest.solver import Clingo, Solver
 from clintest.test import Context, Test
 
@@ -42,6 +42,23 @@ def unpack_test(test_name: str, tests: dict[str, Any], fclingo: bool = False) ->
         test = test_dict["test"]
     test_with_name = Context(test, str_=lambda test: f"{test_name} \n\n {str(test)}")
     return test_with_name, program, files
+
+
+def get_model_from_file(model_file: str) -> set[Symbol | str]:
+    """
+    Helper function to get the model for a clintest from a file.
+
+    Args:
+        model_file (str): The file containing the model in the directory tests/clintests/results
+    """
+    model: set[Symbol | str] = set()
+    with open(join("tests", "clintests", "results", model_file), "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                model.add(line[:-1])
+
+    return model
 
 
 def run_test(
