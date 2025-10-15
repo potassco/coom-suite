@@ -299,16 +299,16 @@ class COOMMultiSolverApp(COOMSolverApp):
         This assumes that for _prev_bound the instance was UNSAT, and for max_bound the instance is SAT.
         The minimal bound is found when _prev_bound + 1 is equal to max_bound.
         """
-        if self._prev_bound is None:
-            self._prev_bound = -1
-
+        # unsat_bound and sat_bound give the range of the optimal bound
         unsat_bound = -1
         if self._prev_bound is not None:
             unsat_bound = self._prev_bound
         sat_bound = self.max_bound
+        # prev_bound stores the bound from the last solve call
         prev_bound = self.max_bound
 
         while True:
+            # compute next bound to check
             current_bound = next_bound_converge(unsat_bound, sat_bound)
             if current_bound is None:
                 print("\nOptimal bound found")
@@ -318,18 +318,25 @@ class COOMMultiSolverApp(COOMSolverApp):
             print("\nOptimal bound not yet found")
             print(f"Solving with bound = {current_bound}\n")
 
+            # set active externals
             if current_bound < prev_bound:
+                # if the bound we want to solve at is smaller than the previous solve bound,
+                # the active externals have to be set to false
                 for i in range(current_bound + 1, prev_bound + 1):
                     control.assign_external(Function("active", [Number(i)]), False)
             else:
+                # otherwise they have to be set to true
                 for i in range(prev_bound + 1, current_bound + 1):
                     control.assign_external(Function("active", [Number(i)]), True)
 
+            # set max_bound externals
             control.assign_external(Function("max_bound", [Number(prev_bound)]), False)
             control.assign_external(Function("max_bound", [Number(current_bound)]), True)
 
             ret = control.solve()
+            # update bound of last solve call
             prev_bound = current_bound
+            # update sat/unsat bound depending on result of solve
             if ret.satisfiable:
                 sat_bound = current_bound
             else:
