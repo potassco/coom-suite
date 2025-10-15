@@ -352,12 +352,13 @@ class COOMMultiSolverApp(COOMSolverApp):
                 # preprocessing
                 self._preprocess_new_bound(bound)
 
+                # update incremental data with results from preprocessing
+                self._update_incremental_data()
+
                 # collect program parts
                 parts = []
 
                 if bound == 0:
-                    self._update_incremental_data()
-
                     # remove all the new incremental expressions from new_processed_facts
                     inc_expressions = self._remove_new_incremental_expressions()
                     # add the incremental program parts for each of the incremental expressions
@@ -370,8 +371,6 @@ class COOMMultiSolverApp(COOMSolverApp):
                     control.add("base", [], "".join(self._new_processed_facts))
                     control.ground([("base", [])])
                 else:
-                    self._update_incremental_data()
-
                     # remove all the new incremental expressions from new_processed_facts
                     # adding their program parts is handled below (via inc_set)
                     self._remove_new_incremental_expressions()
