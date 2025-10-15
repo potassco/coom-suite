@@ -99,7 +99,7 @@ class COOMMultiSolverApp(COOMSolverApp):
         self._incremental_facts += self._new_incremental_facts
 
         # preprocess with bound
-        facts = preprocess(self._serialized_facts, max_bound=bound, discrete=True)
+        facts = preprocess(self._serialized_facts, max_bound=bound, discrete=True, multishot=True)
 
         # split into incremental and non-incremental facts
         self._new_incremental_facts = self._get_incremental_facts(facts)
@@ -255,7 +255,7 @@ class COOMMultiSolverApp(COOMSolverApp):
         detects them if at least one element of the type is available, i.e., only if the lower bound is not 0.
         For cases where the unbounded cardinality is of the form 0..* this step is necessary.
         """
-        processed_facts = preprocess(self._serialized_facts, max_bound=1, discrete=True)
+        processed_facts = preprocess(self._serialized_facts, max_bound=1, discrete=True, multishot=True)
         self._incremental_facts = self._get_incremental_facts(processed_facts)
 
         self._update_incremental_data(self._incremental_facts)
