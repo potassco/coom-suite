@@ -69,11 +69,13 @@ path_to(X,P,P) :- coom_binary(F,P,_,_), coom_number(P,_), formula_context(F,T), 
 % Instantiate binaries and unaries
 binary(X,F,@binary(XL,Op,XR),XL,Op,XR) :- coom_binary(F,L,Op,R),
                                           formula_context(F,C),
-                                          type_aux(X,C), path_to(X,L,XL), path_to(X,R,XR).
+                                          type_aux(X,C), path_to(X,L,XL), path_to(X,R,XR),
+                                          not dummy(Y,_) : path_to(Y,_,XL); not dummy(Y,_) : path_to(Y,_,XR).
 
 unary(X,F,@unary(X',Op),Op,X') :- coom_unary(F,Op,F'),
                                   formula_context(F,C),
-                                  type_aux(X,C), path_to(X,F',X').
+                                  type_aux(X,C), path_to(X,F',X'),
+                                  not dummy(Y,_) : path_to(Y,_,X').
 
 ground_formula(X,F,G)  :- binary(X,F,G,_,_,_).
 ground_formula(X,F,G)  :- unary(X,F,G,_,_).

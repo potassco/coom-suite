@@ -57,9 +57,9 @@ unary(G,Op,F)    :- unary(_,_,G,Op,F).
 #show unary/3.
 
 % Table constraints
-constraint((C,@dotpath(X)),"table") :- table(C,X).
+constraint((C,@dotpath(X)),"table") :- table(C,X), not dummy(X,_).
 column((C,@dotpath(X)),CT,Col,@dotpath(X')) :- coom_combinations(C,Col,P),
-                                               path_to(X,P,X'), in_tuple(CT,X').
+                                               path_to(X,P,X'), in_tuple(CT,X'), not dummy(X,_).
 allow(C,XY,V) :- coom_allow(C,XY,V).
 
 #show column/4.

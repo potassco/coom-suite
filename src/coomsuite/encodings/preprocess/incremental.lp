@@ -4,7 +4,7 @@ inc_obj(@dotpath((F,(X,I)))) :- coom_feature(Ctx,F,T,Min,#sup), type_aux(X,Ctx),
 inc_obj(@dotpath((F,(X,-1)))) :- coom_feature(Ctx,F,T,0,#sup),  type_aux(X,Ctx), max_bound = 0.
 
 % map path_to/4 atoms to path_step/2 by using output formatting (step index is discarded)
-path_step(@join(X,P),@dotpath(X')) :- path_to(X,P,_,X').
+path_step(@join(X,P),@dotpath(X')) :- path_to(X,P,_,X'), not dummy(X,_).
 % map path_to/3 atoms to path_final/2 by using output formatting
 path_final(@join(X,P),@dotpath(X')) :- path_to(X,P,X').
 
