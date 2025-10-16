@@ -2,12 +2,12 @@
 // Falkner et al.: Solver Requirements for Interactive Configuration (2020)
 
 product {
-    num /mm 10000-20000     length
-    num 50-200              num_passengers
-    num 0-200               standing_room
+    num /mm 100000-200000     length
+    num 50-2000              num_passengers
+    num 0-2000               standing_room
 
     0..1    HandRail    handrail
-    0..80   Seat        seat
+    0..1000   Seat        seat
 }
 
 enumeration HandRail { Standard Premium}

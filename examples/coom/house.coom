@@ -1,0 +1,24 @@
+product {
+    10..10 Thing thing
+    2..2 Person person
+    1..1 House house
+}
+
+enumeration Thing {
+    short
+    long
+}
+
+structure Person {}
+
+structure House {
+    2..2 Room room
+}
+
+structure Room {
+    0..4 Cabinet cabinet
+}
+
+structure Cabinet {
+    0..5 Thing thing
+}
