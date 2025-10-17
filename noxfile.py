@@ -6,9 +6,9 @@ import nox
 nox.options.sessions = "lint_pylint", "typecheck", "test"
 
 EDITABLE_TESTS = True
-PYTHON_VERSIONS = ["3.11"]
+PYTHON_VERSIONS = ["3.13"]
 if "GITHUB_ACTIONS" in os.environ:
-    PYTHON_VERSIONS = ["3.11"]
+    PYTHON_VERSIONS = ["3.11", "3.13"]
     EDITABLE_TESTS = False
 
 
