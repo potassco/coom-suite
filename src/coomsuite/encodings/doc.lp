@@ -289,7 +289,7 @@ Whether a table constraint is undefined
 %*
 #hit(C,ID,(Col,Row)).
 
-Whether an entry of a table constraint is satisfied (only for fclingo encoding)
+Whether an entry of a table constraint is satisfied (only for flingo encoding)
 
 #parameters
     - C   : The table constraint identifier
