@@ -41,8 +41,20 @@ parent(@dotpath(X),@dotpath(P)) :- type_aux(X,_), X=(_,(P,_)).
 
 %%% Constraints
 % Formulas
-constraint((C,G),"boolean") :- coom_require(C,F), ground_formula(_,F,G), not coom_condition(C,_,_).
+% Constraints at root and without conditions can be instantiated "as is"
+constraint((C,G),"boolean") :- coom_require(C,F), ground_formula((),F,G), not coom_condition(C,_,_).
 
+% Local constraints without conditions get converted into conditional requirement
+% to add an "definedness" condition on their context variable
+local_constraint(C,@dotpath(X),G) :- coom_require(C,F), ground_formula(X,F,G), not coom_condition(C,_,_), X != ().
+function(@unary(X,"count"),"count",X)     :- local_constraint(C,X,G).
+set(X,X)                                  :- local_constraint(_,X,_).
+binary(@binary(Fun,"=","1"),Fun,"=","1")  :- local_constraint(_,X,_), function(Fun,"count",X).
+number("1",1)                             :- local_constraint(_,_,_).
+conditional_requirement(C,Con,G)          :- local_constraint(C,X,G), function(Fun,"count",X), binary(Con,Fun,"=","1").
+
+
+% Conditional requirements get converted into a disjuction
 constraint((C,@implication(Con,Req)),"boolean")        :- conditional_requirement(C,Con,Req).
 binary(@implication(Con,Req),@unary(Con,"!"),"||",Req) :- conditional_requirement(_,Con,Req).
 unary(@unary(Con,"!"),"!",Con)                         :- conditional_requirement(_,Con,_).
