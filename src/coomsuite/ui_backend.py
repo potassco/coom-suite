@@ -8,7 +8,7 @@ from clingo import Control
 from clinguin.server.application.backends.explanation_backend import ExplanationBackend
 from clinguin.utils.annotations import overwrites
 
-from .utils import asp2coom, coom2asp
+from coomsuite.utils import asp2coom, coom2asp
 
 
 class CoomBackend(ExplanationBackend):  # type: ignore
