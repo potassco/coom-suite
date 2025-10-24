@@ -295,7 +295,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                     control.assign_external(Function("active", [Number(i)]), True)
 
             # set max_bound externals
-            control.assign_external(Function("max_bound", [Number(last_bound)]), False)
+            control.release_external(Function("max_bound", [Number(last_bound)]))
             control.assign_external(Function("max_bound", [Number(current_bound)]), True)
 
             ret = control.solve()
@@ -400,7 +400,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             # update max bound external
             control.assign_external(Function("max_bound", [Number(self.max_bound)]), True)
             if self._prev_bound is not None:
-                control.assign_external(Function("max_bound", [Number(self._prev_bound)]), False)
+                control.release_external(Function("max_bound", [Number(self._prev_bound)]))
 
             # solve
             print(f"\nSolving with bound = {self.max_bound}\n")
