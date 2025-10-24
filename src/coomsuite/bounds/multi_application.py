@@ -80,8 +80,6 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         """The set of all incremental expressions (represented by their name)"""
         self._is_initialized: Set[str] = set()
         """Keeps track of all incremental expressions that are already initialized"""
-        self._inc_sets_to_process: Set[str] = set()
-        """Keeps track of which incremental sets were updated during a processing step and thus need to be processed"""
 
     def _update_bound(self) -> None:
         """
@@ -226,13 +224,6 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             args if name not in parts_with_bound else args + [Number(bound)],
         )
 
-        # a fact set(S,X) adds an element to set S
-        # if S is an incremental set we need to add its corresponding program parts
-        if name == "set" and args[0].string in self._incremental_sets:
-            # can not add program parts for the incremental set directly
-            # as this could result in parts for one set being added multiple times
-            self._inc_sets_to_process.add(args[0].string)
-
         return program_part
 
     def _update_incremental_data(self, incremental_facts: List[str]) -> None:
@@ -316,35 +307,59 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             else:
                 unsat_bound = current_bound
 
+    def _check_if_updates_inc_set(self, fact: str) -> Optional[str]:
+        """
+        Determine whether a fact updates an incremental set
+
+        Returns:
+            Optional[str]: if None is returned the fact does not update an incremental set,
+                           otherwise the name of the incremental set that is updated is returned
+        """
+        # check if fact has the form set(_,S)
+        if fact.startswith("set"):
+            # then S is the name of the set which is updated
+            _, args = _get_fact_name_and_args(fact)
+            set_name = args[0].string
+
+            # check if the set is an incremental set
+            if set_name in self._incremental_sets:
+                return set_name
+
+        return None
+
     def _compute_prog_parts(self, bound: int) -> List[ProgPart]:
+        """
+        Compute all program parts for the current new processed facts
+        """
         parts = []
 
+        # remove all expressions that were detected as incremental from the processed facts
+        # (necessary to avoid adding them via the normal new_* program parts,
+        # instead we add them using specific incremental program parts later)
+        incremental_expressions = self._remove_new_incremental_expressions()
+
         if bound == 0:
-            # before grounding base below with the added processed facts, we have to remove the incremental
-            # expressions as they have to added through their respective program parts (to enable control via
-            # the max_bound external)
-            # - remove all the new incremental expressions from new_processed_facts
-            inc_expressions = self._remove_new_incremental_expressions()
-            # - add the incremental program parts for each of the incremental expressions
-            for fact in inc_expressions:
+            # add the incremental program parts corresponding to each incremental expression
+            for fact in incremental_expressions:
                 name, args = _get_fact_name_and_args(fact)
                 parts.append(self._get_incremental_prog_part(name, args, bound))
         else:
-            # remove all the new incremental expressions from new_processed_facts
-            # adding their program parts is handled below (using inc_sets_to_process)
-            self._remove_new_incremental_expressions()
-
-            # keep track of inc sets that were updated (i.e. received new member)
-            self._inc_sets_to_process = set()
+            # keep track of which incremental sets are updated,
+            # i.e. which incremental sets received a new member
+            updated_inc_sets = set()
 
             # collect program parts for all the new facts
             for fact in self._new_processed_facts:
-                # if the fact is "set(P,M)", i.e. M is added to set P, and P is an incremental set,
-                # this also adds P to self._inc_sets_to_process
+                # check whether the fact adds a new member to an incremental set
+                updated_set = self._check_if_updates_inc_set(fact)
+                if updated_set:
+                    updated_inc_sets.add(updated_set)
+
+                # add the program part of the fact
                 parts.append(self._get_prog_part(fact, bound))
 
-            # collect program parts for all the incremental sets that were updated
-            for inc_set in self._inc_sets_to_process:
+            # add the program parts belonging to every updated incremental set
+            for inc_set in updated_inc_sets:
                 parts += self._get_prog_part_of_inc_set(inc_set, bound)
 
         return parts
