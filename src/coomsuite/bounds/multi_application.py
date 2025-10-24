@@ -53,6 +53,9 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
     ):  # pylint: disable=too-many-arguments,too-many-positional-arguments
         super().__init__(log_level, options, istest)
 
+        if self._options["solver"] == "flingo":
+            raise ValueError("multishot solving is currently not supported for the flingo solver")  # nocoverage
+
         self._serialized_facts: List[str] = serialized_facts
         """The instance to solve given as serialized facts"""
         self.max_bound: int = initial_bound
@@ -315,17 +318,45 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             else:
                 unsat_bound = current_bound
 
+    def _compute_prog_parts(self, bound: int) -> List[ProgPart]:
+        parts = []
+
+        if bound == 0:
+            # before grounding base below with the added processed facts, we have to remove the incremental
+            # expressions as they have to added through their respective program parts (to enable control via
+            # the max_bound external)
+            # - remove all the new incremental expressions from new_processed_facts
+            inc_expressions = self._remove_new_incremental_expressions()
+            # - add the incremental program parts for each of the incremental expressions
+            for fact in inc_expressions:
+                name, args = _get_fact_name_and_args(fact)
+                parts.append(self._get_incremental_prog_part(name, args, bound))
+        else:
+            # remove all the new incremental expressions from new_processed_facts
+            # adding their program parts is handled below (using inc_sets_to_process)
+            self._remove_new_incremental_expressions()
+
+            # keep track of inc sets that were updated (i.e. received new member)
+            self._inc_sets_to_process = set()
+
+            # collect program parts for all the new facts
+            for fact in self._new_processed_facts:
+                # if the fact is "set(P,M)", i.e. M is added to set P, and P is an incremental set,
+                # this also adds P to self._inc_sets_to_process
+                parts.append(self._get_prog_part(fact, bound))
+
+            # collect program parts for all the incremental sets that were updated
+            for inc_set in self._inc_sets_to_process:
+                parts += self._get_prog_part_of_inc_set(inc_set, bound)
+
+        return parts
+
     def main(self, control: Control, files: Sequence[str]) -> None:
         """
         Main function of the multishot application class
         """
-        if self._options["solver"] == "flingo":
-            raise ValueError("multishot solving is currently not supported for the flingo solver")  # nocoverage
-
-        encoding = get_encoding("encoding-base-clingo-multi.lp")
-        show = get_encoding("show-clingo.lp")
-        control.load(encoding)
-        control.load(show)
+        control.load(get_encoding("encoding-base-clingo-multi.lp"))
+        control.load(get_encoding("show-clingo.lp"))
 
         while True:
             print(f"\nNew max bound is = {self.max_bound} (previous was {self._prev_bound})\n")
@@ -339,36 +370,13 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                 self._preprocess_new_bound(bound)
 
                 # collect program parts
-                parts = []
+                parts = self._compute_prog_parts(bound)
 
                 if bound == 0:
-                    # remove all the new incremental expressions from new_processed_facts
-                    inc_expressions = self._remove_new_incremental_expressions()
-                    # add the incremental program parts for each of the incremental expressions
-                    for fact in inc_expressions:
-                        name, args = _get_fact_name_and_args(fact)
-                        parts.append(self._get_incremental_prog_part(name, args, bound))
-
-                    # ground base with the preprocessed facts added
+                    # ground base with the remaining preprocessed facts added
                     # (needs to be grounded before other program parts below)
                     control.add("base", [], "".join(self._new_processed_facts))
                     control.ground([("base", [])])
-                else:
-                    # remove all the new incremental expressions from new_processed_facts
-                    # adding their program parts is handled below (via inc_set)
-                    self._remove_new_incremental_expressions()
-
-                    # keep track of inc sets that were updated (i.e. received new member)
-                    self._inc_sets_to_process = set()
-
-                    # collect program parts for all the new facts
-                    for fact in self._new_processed_facts:
-                        # this also adds sets to self._inc_sets_to_process
-                        parts.append(self._get_prog_part(fact, bound))
-
-                    # collect program parts for all the incremental sets were updated
-                    for inc_set in self._inc_sets_to_process:
-                        parts += self._get_prog_part_of_inc_set(inc_set, bound)
 
                 # ground
                 control.ground(parts)
