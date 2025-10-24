@@ -69,8 +69,6 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         """Incremental facts added by current preprocessing step"""
         self._processed_facts: List[str] = []
         """Processed facts from all previous preprocessing steps"""
-        self._incremental_facts: List[str] = []
-        """Incremental facts from all previous preprocessing steps"""
 
         self._incremental_sets: Dict[str, List[Tuple[str, List[Symbol]]]] = {}
         """
@@ -97,7 +95,6 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         """
         # update facts that were already processed
         self._processed_facts += self._new_processed_facts
-        self._incremental_facts += self._new_incremental_facts
 
         # preprocess with bound
         facts = preprocess(self._serialized_facts, max_bound=bound, discrete=True, multishot=True)
@@ -107,7 +104,6 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         self._new_processed_facts = _filter_facts(self._new_incremental_facts, facts)
 
         # filter out facts that were previously processed
-        self._new_incremental_facts = _filter_facts(self._incremental_facts, self._new_incremental_facts)
         self._new_processed_facts = _filter_facts(self._processed_facts, self._new_processed_facts)
 
     def _remove_new_incremental_expressions(self) -> List[str]:
