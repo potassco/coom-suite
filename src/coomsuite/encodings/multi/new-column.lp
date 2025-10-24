@@ -1,6 +1,7 @@
 #program new_column(c,id,col,x,bound).
 column(c,id,col,x).
 
+% table_bound is only needed if the corresponding table constraint is incremental
 table_bound(c,id,bound).
 
 undefined(c,id) :- column(c,id,_,x), not include(x).

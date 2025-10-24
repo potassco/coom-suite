@@ -40,6 +40,9 @@ class BoundSolver:
         return solve(self.facts, self.solver, max_bound, self.clingo_args, self.output_format)
 
     def _converge(self, unsat_bound: int, sat_bound: int) -> int:
+        """
+        Converge to the minimal bound given lower bound (unsat_bound) and upper bound (sat_bound)
+        """
         while True:
             current_bound = next_bound_converge(unsat_bound, sat_bound)
 
@@ -58,7 +61,7 @@ class BoundSolver:
 
     def get_bounds(self, algorithm: str = "linear", initial_bound: int = 0, use_multishot: bool = False) -> int:
         """
-        Gets the minimum bounds for the problem.
+        Compute the minimal bound for the problem.
         """
         # multi shot solving
         if use_multishot:

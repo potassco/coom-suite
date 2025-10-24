@@ -15,9 +15,13 @@ def _exponential_iter() -> Iterator[int]:
 
 def get_bound_iter(algorithm: str, start: int) -> Iterator[int]:
     """
-    Get an iterator over the bounds for a selected algorithm
+    Get an iterator over the bounds for a selected algorithm.
 
     Note that the iterator starts after the start value.
+
+    Args:
+        algorithm (str): either "linear" or "exponential"
+        start (int): value after which the iterator starts
     """
     iterator: Iterator[int]
     if algorithm == "linear":
@@ -32,10 +36,10 @@ def get_bound_iter(algorithm: str, start: int) -> Iterator[int]:
 
 def next_bound_converge(unsat_bound: int, sat_bound: int) -> Optional[int]:
     """
-    Determine the next bound (between unsat_bound and sat_bound) while converging to the optimal bound
+    Determine the next bound (between unsat_bound and sat_bound) for converging to the minimal bound
 
     Returns:
-        Optional[int]: The next bound to check, or None if sat_bound is already the optimal bound
+        Optional[int]: The next bound to check, or None if sat_bound is already the minimal bound
     """
     if unsat_bound + 1 == sat_bound:
         return None
