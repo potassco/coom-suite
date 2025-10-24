@@ -74,12 +74,12 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         self._incremental_sets: Dict[str, List[Tuple[str, List[Symbol]]]] = {}
         """
         Keys are the incremental sets, the values are lists of expressions (binary, function, etc.) depending on the set
-        (represented by the name of the expressions and its arguments)
+        (represented by the type of the expressions and its arguments)
         """
         self._incremental_expressions: Set[str] = set()
         """The set of all incremental expressions (represented by their name)"""
-        self._is_initialized: Dict[str, bool] = {}
-        """Keeps track of whether an incremental expressions is already initialized, by mapping its name to a bool """
+        self._is_initialized: Set[str] = set()
+        """Keeps track of all incremental expressions that are already initialized"""
         self._inc_sets_to_process: Set[str] = set()
         """Keeps track of which incremental sets were updated during a processing step and thus need to be processed"""
 
@@ -159,11 +159,11 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         if exp_type == "function":
             # for functions we need to check whether they are already initialized
             prefix = ""
-            if self._is_initialized[name]:
+            if name in self._is_initialized:
                 prefix = "update_"
             else:
                 prefix = "new_"
-                self._is_initialized[name] = True
+                self._is_initialized.add(name)
             part_name = prefix + "incremental_function"
         elif exp_type == "binary":
             # for binaries we need to check which of the subexpressions are incremental themselves
@@ -241,8 +241,8 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         """
         # incremental_facts contain predicates:
         # inc_set(S) indicating sets S with unbounded cardinalities, and
-        # incremental(T,N,S,Arg) indicating an expression of type T with name N
-        #                        belonging to set S, Arg are the arguments of the expression
+        # incremental(T,N,S,Args) indicating an expression of type T with name N
+        #                         belonging to set S, Args are the arguments of the expression
         inc_sets = [parse_term(x[:-1]).arguments[0] for x in incremental_facts if x.startswith("inc_set")]
         inc_expressions = [parse_term(x[:-1]) for x in incremental_facts if x.startswith("incremental")]
 
@@ -253,19 +253,17 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
         # add incremental expressions
         for exp in inc_expressions:
+            exp_type = exp.arguments[0].string
+            exp_name = exp.arguments[1].string
+            exp_set = exp.arguments[2].string
+            exp_args = exp.arguments[3].arguments
+
             # first, add the expressions to the incremental_sets dictionary
-            inc_set = exp.arguments[2]
-            x = (exp.arguments[0].string, exp.arguments[3].arguments)
-            if x not in self._incremental_sets[inc_set.string]:
-                self._incremental_sets[inc_set.string].append(x)
+            if (exp_type, exp_args) not in self._incremental_sets[exp_set]:
+                self._incremental_sets[exp_set].append((exp_type, exp_args))
 
             # second, add it to the set of all incremental expressions
-            self._incremental_expressions.add(exp.arguments[1].string)
-
-            # for functions we need to keep track whether they are already initialized
-            if exp.arguments[0].string == "function":
-                if exp.arguments[1].string not in self._is_initialized:
-                    self._is_initialized[exp.arguments[1].string] = False
+            self._incremental_expressions.add(exp_name)
 
     def _find_minimal_bound(self, control: Control) -> None:
         """
