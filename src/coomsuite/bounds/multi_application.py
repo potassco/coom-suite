@@ -14,11 +14,11 @@ from coomsuite.utils import get_encoding
 from . import get_bound_iter, next_bound_converge
 
 
-def _filter_facts(facts: List[str], new_facts: List[str]) -> List[str]:
+def _filter_existing_facts(existing: List[str], new: List[str]) -> List[str]:
     """
-    Filter a list of new_facts by removing everything that is already in the list facts
+    Filter all existing facts from a list of new facts
     """
-    return [x for x in new_facts if x not in facts]
+    return [x for x in new if x not in existing]
 
 
 def _get_fact_name_and_args(fact: str) -> Tuple[str, List[Symbol]]:
@@ -71,10 +71,12 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         self._processed_facts: List[str] = []
         """Processed facts from all previous preprocessing steps"""
 
-        self._incremental_sets: Dict[str, List[Tuple[str, List[Symbol]]]] = {}
+        self._incremental_sets: Dict[str, Set[Tuple[str, Tuple[Symbol, ...]]]] = {}
         """
-        Keys are the incremental sets, the values are lists of expressions (binary, function, etc.) depending on the set
-        (represented by the type of the expressions and its arguments)
+        Keep track of the incremental sets and expressions depending on them
+
+        Keys: incremental sets
+        Values: sets of expressions (binary, function, etc.), represented by its type and arguments
         """
         self._incremental_expressions: Set[str] = set()
         """The set of all incremental expressions (represented by their name)"""
@@ -93,24 +95,24 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         Preprocess the serialized facts for the given bound and update the fact data structures
         """
         # update facts that were already processed
-        self._processed_facts += self._new_processed_facts
+        self._processed_facts.extend(self._new_processed_facts)
 
         # preprocess with bound
         facts = preprocess(self._serialized_facts, max_bound=bound, discrete=True, multishot=True)
 
-        # split into incremental and non-incremental facts
+        # split facts into incremental and non-incremental facts
         incremental_facts = [x for x in facts if x.startswith(("inc_set", "incremental"))]
-        self._new_processed_facts = _filter_facts(incremental_facts, facts)
+        non_incremental_facts = [x for x in facts if x not in incremental_facts]
 
         # update incremental data with results from preprocessing
         self._update_incremental_data(incremental_facts)
 
         # filter out facts that were previously processed
-        self._new_processed_facts = _filter_facts(self._processed_facts, self._new_processed_facts)
+        self._new_processed_facts = _filter_existing_facts(self._processed_facts, non_incremental_facts)
 
-    def _remove_new_incremental_expressions(self) -> List[str]:
+    def _remove_new_incremental_expressions(self) -> List[Tuple[str, List[Symbol]]]:
         """
-        Remove all facts from new_incremental_facts that are incremental expressions
+        Remove all facts from new_processed_facts that are incremental expressions
         """
         inc_expressions = []
         for fact in self._new_processed_facts:
@@ -128,11 +130,12 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             )
 
             if is_incremental_constraint or is_incremental_expression:
-                inc_expressions.append(fact)
+                inc_expressions.append((name, args))
+                # add the fact to the processed_facts
+                self._processed_facts.append(fact)
 
-        # move all inc_expressions from new_processed_facts to processed_facts
-        self._processed_facts += inc_expressions
-        self._new_processed_facts = _filter_facts(self._processed_facts, self._new_processed_facts)
+        # filter new_processed_facts to remove the incremental expressions
+        self._new_processed_facts = _filter_existing_facts(self._processed_facts, self._new_processed_facts)
 
         return inc_expressions
 
@@ -144,7 +147,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         name = ""
         if exp_type in ["function", "binary", "unary"]:
             name = args[0].string
-        elif exp_type in ["constraint"]:
+        elif exp_type == "constraint":
             name = args[0].arguments[1].string
         else:
             raise ValueError(f"unknown type of incremental expression: {exp_type}")  # nocoverage
@@ -152,16 +155,12 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         # determine the name and arguments of the program part
         part_name = ""
         # to the arguments we just need to add the current max_bound
-        args = args + [Number(bound)]
+        args.append(Number(bound))
         # the name of the program part depends on the type of the expression
         if exp_type == "function":
             # for functions we need to check whether they are already initialized
-            prefix = ""
-            if name in self._is_initialized:
-                prefix = "update_"
-            else:
-                prefix = "new_"
-                self._is_initialized.add(name)
+            prefix = "update_" if name in self._is_initialized else "new_"
+            self._is_initialized.add(name)
             part_name = prefix + "incremental_function"
         elif exp_type == "binary":
             # for binaries we need to check which of the subexpressions are incremental themselves
@@ -179,13 +178,13 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
         return (part_name, args)
 
-    def _get_prog_part_of_inc_set(self, inc_set: str, bound: int) -> List[ProgPart]:
+    def _get_prog_part_of_incremental_set(self, inc_set: str, bound: int) -> List[ProgPart]:
         """
         Get all the program parts belonging to an incremental set
         """
         program_parts = []
         for exp in self._incremental_sets[inc_set]:
-            program_parts.append(self._get_incremental_prog_part(exp[0], exp[1], bound))
+            program_parts.append(self._get_incremental_prog_part(exp[0], list(exp[1]), bound))
 
         return program_parts
 
@@ -240,18 +239,17 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         # initialize dictionary for new incremental sets
         for inc_set in inc_sets:
             if inc_set not in self._incremental_sets:
-                self._incremental_sets[inc_set.string] = []
+                self._incremental_sets[inc_set.string] = set()
 
         # add incremental expressions
         for exp in inc_expressions:
             exp_type = exp.arguments[0].string
             exp_name = exp.arguments[1].string
             exp_set = exp.arguments[2].string
-            exp_args = exp.arguments[3].arguments
+            exp_args = tuple(exp.arguments[3].arguments)
 
             # first, add the expressions to the incremental_sets dictionary
-            if (exp_type, exp_args) not in self._incremental_sets[exp_set]:
-                self._incremental_sets[exp_set].append((exp_type, exp_args))
+            self._incremental_sets[exp_set].add((exp_type, exp_args))
 
             # second, add it to the set of all incremental expressions
             self._incremental_expressions.add(exp_name)
@@ -264,7 +262,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         The minimal bound is found when _prev_bound + 1 is equal to max_bound.
         """
         # unsat_bound and sat_bound give the range of the optimal bound
-        unsat_bound = self._prev_bound if self._prev_bound else -1
+        unsat_bound = -1 if self._prev_bound is None else self._prev_bound
         sat_bound = self.max_bound
         # last_bound stores the bound from the last solve call
         last_bound = self.max_bound
@@ -307,7 +305,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             else:
                 unsat_bound = current_bound
 
-    def _check_if_updates_inc_set(self, fact: str) -> Optional[str]:
+    def _check_if_updates_incremental_set(self, fact: str) -> Optional[str]:
         """
         Determine whether a fact updates an incremental set
 
@@ -340,8 +338,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
         if bound == 0:
             # add the incremental program parts corresponding to each incremental expression
-            for fact in incremental_expressions:
-                name, args = _get_fact_name_and_args(fact)
+            for name, args in incremental_expressions:
                 parts.append(self._get_incremental_prog_part(name, args, bound))
         else:
             # keep track of which incremental sets are updated,
@@ -351,7 +348,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             # collect program parts for all the new facts
             for fact in self._new_processed_facts:
                 # check whether the fact adds a new member to an incremental set
-                updated_set = self._check_if_updates_inc_set(fact)
+                updated_set = self._check_if_updates_incremental_set(fact)
                 if updated_set:
                     updated_inc_sets.add(updated_set)
 
@@ -360,7 +357,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
             # add the program parts belonging to every updated incremental set
             for inc_set in updated_inc_sets:
-                parts += self._get_prog_part_of_inc_set(inc_set, bound)
+                parts += self._get_prog_part_of_incremental_set(inc_set, bound)
 
         return parts
 
