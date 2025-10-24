@@ -65,8 +65,6 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
         self._new_processed_facts: List[str] = []
         """Processed facts added by current preprocessing step"""
-        self._new_incremental_facts: List[str] = []
-        """Incremental facts added by current preprocessing step"""
         self._processed_facts: List[str] = []
         """Processed facts from all previous preprocessing steps"""
 
@@ -100,8 +98,11 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         facts = preprocess(self._serialized_facts, max_bound=bound, discrete=True, multishot=True)
 
         # split into incremental and non-incremental facts
-        self._new_incremental_facts = [x for x in facts if x.startswith(("inc_set", "incremental"))]
-        self._new_processed_facts = _filter_facts(self._new_incremental_facts, facts)
+        incremental_facts = [x for x in facts if x.startswith(("inc_set", "incremental"))]
+        self._new_processed_facts = _filter_facts(incremental_facts, facts)
+
+        # update incremental data with results from preprocessing
+        self._update_incremental_data(incremental_facts)
 
         # filter out facts that were previously processed
         self._new_processed_facts = _filter_facts(self._processed_facts, self._new_processed_facts)
@@ -231,16 +232,16 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
         return program_part
 
-    def _update_incremental_data(self) -> None:
+    def _update_incremental_data(self, incremental_facts: List[str]) -> None:
         """
         Update internal data structures keeping track of the incremental sets and their expressions
         """
-        # self._new_incremental_facts contain predicates:
+        # incremental_facts contain predicates:
         # inc_set(S) indicating sets S with unbounded cardinalities, and
         # incremental(T,N,S,Arg) indicating an expression of type T with name N
         #                        belonging to set S, Arg are the arguments of the expression
-        inc_sets = [parse_term(x[:-1]).arguments[0] for x in self._new_incremental_facts if x.startswith("inc_set")]
-        inc_expressions = [parse_term(x[:-1]) for x in self._new_incremental_facts if x.startswith("incremental")]
+        inc_sets = [parse_term(x[:-1]).arguments[0] for x in incremental_facts if x.startswith("inc_set")]
+        inc_expressions = [parse_term(x[:-1]) for x in incremental_facts if x.startswith("incremental")]
 
         # initialize dictionary for new incremental sets
         for inc_set in inc_sets:
@@ -336,9 +337,6 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
                 # preprocessing
                 self._preprocess_new_bound(bound)
-
-                # update incremental data with results from preprocessing
-                self._update_incremental_data()
 
                 # collect program parts
                 parts = []
