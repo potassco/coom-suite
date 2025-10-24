@@ -2,7 +2,7 @@
 Clingo application class for solving COOM configuration problems with multi-shot solving.
 """
 
-from typing import Any, Dict, List, Optional, Sequence, Set, Tuple, TypeAlias
+from typing import Any, Dict, List, Optional, Sequence, Set, Tuple, TypeAlias, Iterator
 
 from clingo import Control
 from clingo.symbol import Function, Number, Symbol, parse_term
@@ -12,8 +12,6 @@ from coomsuite.preprocess import preprocess
 from coomsuite.utils import get_encoding
 
 from . import get_bound_iter, next_bound_converge
-
-ProgPart: TypeAlias = Tuple[str, List[Symbol]]
 
 
 def _filter_facts(facts: List[str], new_facts: List[str]) -> List[str]:
@@ -37,34 +35,12 @@ def _get_fact_name_and_args(fact: str) -> Tuple[str, List[Symbol]]:
     return (x.name, x.arguments)
 
 
-class COOMMultiSolverApp(COOMSolverApp):
+class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-attributes
     """
     Application class for multi-shot solving extending the standard COOM application class
     """
 
-    # pylint: disable=too-many-instance-attributes
-    # current max bound
-    max_bound: int = 0
-    # previous max bound
-    _prev_bound: Optional[int] = None
-
-    # preprocessed facts are stored split up into which are incremental and which not:
-    # first we need to save what are currently the new facts
-    _new_processed_facts: List[str] = []
-    _new_incremental_facts: List[str] = []
-    # and then also all the facts we previously encountered
-    _processed_facts: List[str] = []
-    _incremental_facts: List[str] = []
-
-    # data structure for incremental sets and expressions:
-    # which sets have unbounded cardinality and in which expressions are they used
-    _incremental_sets: Dict[str, List[Tuple[str, List[Symbol]]]] = {}
-    # all the incremental expressions in the program
-    _incremental_expressions: Set[str] = set()
-    # keep track of whether an incremental expression is already initialized
-    _is_initialized: Dict[str, bool] = {}
-    # store for which incremental sets program parts have to be added
-    _inc_sets_to_process: Set[str] = set()
+    ProgPart: TypeAlias = Tuple[str, List[Symbol]]
 
     def __init__(
         self,
@@ -76,12 +52,37 @@ class COOMMultiSolverApp(COOMSolverApp):
         istest: bool = False,
     ):  # pylint: disable=too-many-arguments,too-many-positional-arguments
         super().__init__(log_level, options, istest)
-        self._serialized_facts = serialized_facts
-        self.max_bound = initial_bound
-        self._bound_iter = get_bound_iter(algorithm, initial_bound)
 
-        if algorithm not in ["linear", "exponential"]:
-            raise ValueError(f"unknown algorithm option: {algorithm}")
+        self._serialized_facts: List[str] = serialized_facts
+        """The instance to solve given as serialized facts"""
+        self.max_bound: int = initial_bound
+        """The current max bound"""
+        self._bound_iter: Iterator[int] = get_bound_iter(algorithm, initial_bound)
+        """Iterator determining the bounds"""
+
+        self._prev_bound: Optional[int] = None
+        """The previous max bound"""
+
+        self._new_processed_facts: List[str] = []
+        """Processed facts added by current preprocessing step"""
+        self._new_incremental_facts: List[str] = []
+        """Incremental facts added by current preprocessing step"""
+        self._processed_facts: List[str] = []
+        """Processed facts from all previous preprocessing steps"""
+        self._incremental_facts: List[str] = []
+        """Incremental facts from all previous preprocessing steps"""
+
+        self._incremental_sets: Dict[str, List[Tuple[str, List[Symbol]]]] = {}
+        """
+        Keys are the incremental sets, the values are lists of expressions (binary, function, etc.) depending on the set
+        (represented by the name of the expressions and its arguments)
+        """
+        self._incremental_expressions: Set[str] = set()
+        """The set of all incremental expressions (represented by their name)"""
+        self._is_initialized: Dict[str, bool] = {}
+        """Keeps track of whether an incremental expressions is already initialized, by mapping its name to a bool """
+        self._inc_sets_to_process: Set[str] = set()
+        """Keeps track of which incremental sets were updated during a processing step and thus need to be processed"""
 
     def _update_bound(self) -> None:
         """
@@ -109,20 +110,6 @@ class COOMMultiSolverApp(COOMSolverApp):
         self._new_incremental_facts = _filter_facts(self._incremental_facts, self._new_incremental_facts)
         self._new_processed_facts = _filter_facts(self._processed_facts, self._new_processed_facts)
 
-    def _is_incremental_expression(self, name: str, args: List[Symbol]) -> bool:
-        """
-        Check if a predicate (given by name and arguments) is an incremental expression
-
-        Args:
-            name (str): The name of the predicate
-            args (List[Symbol]): The arguments of the predicate as clingo.Symbol's
-        """
-        return (name in ["function", "binary", "unary"] and args[0].string in self._incremental_expressions) or (
-            name == "constraint"
-            and args[1].string == "boolean"
-            and args[0].arguments[1].string in self._incremental_expressions
-        )
-
     def _remove_new_incremental_expressions(self) -> List[str]:
         """
         Remove all facts from new_incremental_facts that are incremental expressions
@@ -130,7 +117,19 @@ class COOMMultiSolverApp(COOMSolverApp):
         inc_expressions = []
         for fact in self._new_processed_facts:
             name, args = _get_fact_name_and_args(fact)
-            if self._is_incremental_expression(name, args):
+
+            # check if the fact is an incremental constraint
+            is_incremental_constraint = (
+                name == "constraint"
+                and args[1].string == "boolean"
+                and args[0].arguments[1].string in self._incremental_expressions
+            )
+            # check if the facts is an incremental expression
+            is_incremental_expression = (
+                name in ["function", "binary", "unary"] and args[0].string in self._incremental_expressions
+            )
+
+            if is_incremental_constraint or is_incremental_expression:
                 inc_expressions.append(fact)
 
         # move all inc_expressions from new_processed_facts to processed_facts
@@ -150,7 +149,7 @@ class COOMMultiSolverApp(COOMSolverApp):
         elif exp_type in ["constraint"]:
             name = args[0].arguments[1].string
         else:
-            raise ValueError(f"unknown type of incremental expression: {exp_type}")
+            raise ValueError(f"unknown type of incremental expression: {exp_type}")  # nocoverage
 
         # determine the name and arguments of the program part
         part_name = ""
@@ -215,7 +214,7 @@ class COOMMultiSolverApp(COOMSolverApp):
             "function",
             "allow",
         ]:
-            raise ValueError(f"unknown new fact (no corresponding program part exists): {fact}")
+            raise ValueError(f"unknown new fact (no corresponding program part exists): {fact}")  # nocoverage
 
         # some program parts need the current bound as an additional argument
         parts_with_bound = ["type", "constraint", "column"]
@@ -287,42 +286,43 @@ class COOMMultiSolverApp(COOMSolverApp):
         The minimal bound is found when _prev_bound + 1 is equal to max_bound.
         """
         # unsat_bound and sat_bound give the range of the optimal bound
-        unsat_bound = -1
-        if self._prev_bound is not None:
-            unsat_bound = self._prev_bound
+        unsat_bound = self._prev_bound if self._prev_bound else -1
         sat_bound = self.max_bound
-        # prev_bound stores the bound from the last solve call
-        prev_bound = self.max_bound
+        # last_bound stores the bound from the last solve call
+        last_bound = self.max_bound
 
         while True:
             # compute next bound to check
             current_bound = next_bound_converge(unsat_bound, sat_bound)
+
+            # check if we found the optimal bound
             if current_bound is None:
                 print("\nOptimal bound found")
                 self.max_bound = sat_bound
                 break
 
+            # if we do not have the optimal bound yet we do another solve
             print("\nOptimal bound not yet found")
             print(f"Solving with bound = {current_bound}\n")
 
             # set active externals
-            if current_bound < prev_bound:
-                # if the bound we want to solve at is smaller than the previous solve bound,
+            if current_bound < last_bound:
+                # if the bound we want to solve at is smaller than the last bound,
                 # the active externals have to be set to false
-                for i in range(current_bound + 1, prev_bound + 1):
+                for i in range(current_bound + 1, last_bound + 1):
                     control.assign_external(Function("active", [Number(i)]), False)
             else:
                 # otherwise they have to be set to true
-                for i in range(prev_bound + 1, current_bound + 1):
+                for i in range(last_bound + 1, current_bound + 1):
                     control.assign_external(Function("active", [Number(i)]), True)
 
             # set max_bound externals
-            control.assign_external(Function("max_bound", [Number(prev_bound)]), False)
+            control.assign_external(Function("max_bound", [Number(last_bound)]), False)
             control.assign_external(Function("max_bound", [Number(current_bound)]), True)
 
             ret = control.solve()
             # update bound of last solve call
-            prev_bound = current_bound
+            last_bound = current_bound
             # update sat/unsat bound depending on result of solve
             if ret.satisfiable:
                 sat_bound = current_bound
@@ -333,8 +333,8 @@ class COOMMultiSolverApp(COOMSolverApp):
         """
         Main function of the multishot application class
         """
-        if self._options["solver"] == "fclingo":
-            raise ValueError("multishot solving is currently not supported for the fclingo solver")
+        if self._options["solver"] == "flingo":
+            raise ValueError("multishot solving is currently not supported for the flingo solver")  # nocoverage
 
         encoding = get_encoding("encoding-base-clingo-multi.lp")
         show = get_encoding("show-clingo.lp")
