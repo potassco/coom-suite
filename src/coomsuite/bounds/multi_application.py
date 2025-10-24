@@ -103,7 +103,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         facts = preprocess(self._serialized_facts, max_bound=bound, discrete=True, multishot=True)
 
         # split into incremental and non-incremental facts
-        self._new_incremental_facts = self._get_incremental_facts(facts)
+        self._new_incremental_facts = [x for x in facts if x.startswith(("inc_set", "incremental"))]
         self._new_processed_facts = _filter_facts(self._new_incremental_facts, facts)
 
         # filter out facts that were previously processed
@@ -234,17 +234,6 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             self._inc_sets_to_process.add(args[0].string)
 
         return program_part
-
-    def _get_incremental_facts(self, facts: List[str]) -> List[str]:
-        """
-        Collect all incremental facts from a list of facts
-
-        Incremental facts are either predicate inc_set/1 or incremental/4
-        """
-        # get all facts inc_set/1 and incremental/4 from list of facts
-        incremental_facts = [x for x in facts if x.startswith(("inc_set", "incremental"))]
-
-        return incremental_facts
 
     def _update_incremental_data(self) -> None:
         """
