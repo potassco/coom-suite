@@ -7,12 +7,12 @@ on:
       - "v[0-9]+.[0-9]+.[0-9]+"
 
 jobs:
-  # test:
-  #   uses: ./.github/workflows/test.yml
+  test:
+    uses: ./.github/workflows/test.yml
 
   deploy:
     name: deploy
-    # needs: test
+    needs: test
     permissions:
       id-token: write
     environment: release
@@ -49,4 +49,4 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: "https://test.pypi.org/legacy/"
-          verbose: true
+          # verbose: true

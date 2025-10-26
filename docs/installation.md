@@ -11,7 +11,7 @@ hide:
 === "Pip"
 
 ```console
-pip install coomsuite
+pip install -i https://test.pypi.org/simple/ coomsuite
 ```
 
 === "Development mode"
