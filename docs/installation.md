@@ -11,7 +11,7 @@ hide:
 === "Pip"
 
 !!! warning
-    The above command is not (yet) working.
+    The below command is not (yet) working.
     For now install the COOM Suite by cloning and installing locally from source.
 
     ```console
