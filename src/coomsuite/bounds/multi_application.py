@@ -55,7 +55,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         super().__init__(log_level, options, istest)
 
         if self._options["solver"] == "flingo":
-            raise ValueError("multishot solving is currently not supported for the flingo solver")  # nocoverage
+            raise ValueError("multishot solving is currently not supported for the flingo solver")
 
         self._serialized_facts: List[str] = serialized_facts
         """The instance to solve given as serialized facts"""
@@ -145,7 +145,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         Get the incremental program part for an expression of type exp_type with arguments args
         """
         if exp_type not in ["function", "binary", "unary", "constraint"]:
-            raise ValueError(f"unknown type of incremental expression: {exp_type}")  # nocoverage
+            raise ValueError(f"unknown type of incremental expression: {exp_type}")
 
         # determine the name and arguments of the program part
         part_name = ""
@@ -207,7 +207,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             "function",
             "allow",
         ]:
-            raise ValueError(f"unknown new fact (no corresponding program part exists): {fact}")  # nocoverage
+            raise ValueError(f"unknown new fact (no corresponding program part exists): {fact}")
 
         # some program parts need the current bound as an additional argument
         parts_with_bound = ["type", "constraint", "column"]
