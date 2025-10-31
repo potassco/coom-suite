@@ -24,7 +24,7 @@ class TestMultiApplication(TestCase):
         """
         Test helper functions used in multishot application class.
         """
-        for existing, new, filtered in [(["p."], ["p.", "q.", "r."], ["q.", "r."])]:
+        for existing, new, filtered in [({"p."}, {"p.", "q.", "r."}, {"q.", "r."})]:
             self.assertEqual(_filter_existing_facts(existing, new), filtered)
 
         for fact, result in [
@@ -163,10 +163,10 @@ class TestMultiApplication(TestCase):
         app = COOMMultiSolverApp([])
 
         # initial value of processed facts
-        processed = ['allow(7,(0,0),"small").']
+        processed = {'allow(7,(0,0),"small").'}
 
         # initial value of new processed facts
-        new = [
+        new = {
             'domain("Size","small").',
             'constraint(("root.color",1),"lowerbound").',
             'constraint((7,"root.bags[0]"),"table").',
@@ -174,17 +174,17 @@ class TestMultiApplication(TestCase):
             'function("count(root.bags[0].pockets)","count","root.bags[0].pockets").',
             'binary("root.color[0]=Blue","root.color[0]","=","Blue").',
             'unary("-7","-","7").',
-        ]
+        }
         # incremental expressions part of the initial value of new processed facts
-        incremental = [
+        incremental = {
             'constraint((4,"5<count(root.bags.pockets)"),"boolean").',
             'function("count(root.bags.pockets)","count","root.bags.pockets").',
             'binary("5<count(root.bags.pockets)","5","<","count(root.bags.pockets)").',
             'unary("(count(root.bags.pockets))","()","count(root.bags.pockets)").',
-        ]
+        }
 
         # initialize attributes accordingly
-        app._new_processed_facts = new + incremental
+        app._new_processed_facts = new | incremental
         app._processed_facts = processed.copy()
         app._incremental_expressions = {
             "5<count(root.bags.pockets)",
@@ -198,9 +198,9 @@ class TestMultiApplication(TestCase):
         # note that return value has type List[Tuple[str, List[Symbol]]]
         self.assertCountEqual(removed, [_get_fact_name_and_args(f) for f in incremental])
         # check that processed facts are the initial value (processed) + incremental
-        self.assertCountEqual(app._processed_facts, processed + incremental)
+        self.assertEqual(app._processed_facts, processed | incremental)
         # check that new processed facts contains only new but not incremental
-        self.assertCountEqual(app._new_processed_facts, new)
+        self.assertEqual(app._new_processed_facts, new)
 
     def test_update_incremental_data(self) -> None:
         """
@@ -223,7 +223,7 @@ class TestMultiApplication(TestCase):
         app._incremental_expressions = inc_expressions.copy()
 
         # incremental facts for updating incremental data
-        incremental_facts = [
+        incremental_facts = {
             'inc_set("root.bags.size.volume").',
             'inc_set("root.bags.pockets").',
             (
@@ -238,7 +238,7 @@ class TestMultiApplication(TestCase):
                 'incremental("constraint","5<count(root.bags.pockets)","root.bags.pockets",'
                 '((4,"5<count(root.bags.pockets)"),"boolean")).'
             ),
-        ]
+        }
 
         app._update_incremental_data(incremental_facts)
 

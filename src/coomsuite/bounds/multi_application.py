@@ -17,11 +17,11 @@ from . import get_bound_iter, next_bound_converge
 ProgPart: TypeAlias = Tuple[str, List[Symbol]]
 
 
-def _filter_existing_facts(existing: List[str], new: List[str]) -> List[str]:
+def _filter_existing_facts(existing: Set[str], new: Set[str]) -> Set[str]:
     """
     Filter all existing facts from a list of new facts
     """
-    return [x for x in new if x not in existing]
+    return {x for x in new if x not in existing}
 
 
 def _get_fact_name_and_args(fact: str) -> Tuple[str, List[Symbol]]:
@@ -67,9 +67,9 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         self._prev_bound: Optional[int] = None
         """The previous max bound"""
 
-        self._new_processed_facts: List[str] = []
+        self._new_processed_facts: Set[str] = set()
         """Processed facts added by current preprocessing step"""
-        self._processed_facts: List[str] = []
+        self._processed_facts: Set[str] = set()
         """Processed facts from all previous preprocessing steps"""
 
         self._incremental_sets: Dict[str, Set[Tuple[str, Tuple[Symbol, ...]]]] = {}
@@ -96,14 +96,14 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         Preprocess the serialized facts for the given bound and update the fact data structures
         """
         # update facts that were already processed
-        self._processed_facts.extend(self._new_processed_facts)
+        self._processed_facts.update(self._new_processed_facts)
 
         # preprocess with bound
-        facts = preprocess(self._serialized_facts, max_bound=bound, discrete=True, multishot=True)
+        facts = set(preprocess(self._serialized_facts, max_bound=bound, discrete=True, multishot=True))
 
         # split facts into incremental and non-incremental facts
-        incremental_facts = [x for x in facts if x.startswith(("inc_set", "incremental"))]
-        non_incremental_facts = [x for x in facts if x not in incremental_facts]
+        incremental_facts = {x for x in facts if x.startswith(("inc_set", "incremental"))}
+        non_incremental_facts = {x for x in facts if x not in incremental_facts}
 
         # update incremental data with results from preprocessing
         self._update_incremental_data(incremental_facts)
@@ -133,7 +133,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             if is_incremental_constraint or is_incremental_expression:
                 inc_expressions.append((name, args))
                 # add the fact to the processed_facts
-                self._processed_facts.append(fact)
+                self._processed_facts.add(fact)
 
         # filter new_processed_facts to remove the incremental expressions
         self._new_processed_facts = _filter_existing_facts(self._processed_facts, self._new_processed_facts)
@@ -221,7 +221,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
         return program_part
 
-    def _update_incremental_data(self, incremental_facts: List[str]) -> None:
+    def _update_incremental_data(self, incremental_facts: Set[str]) -> None:
         """
         Update internal data structures keeping track of the incremental sets and their expressions
         """
@@ -229,8 +229,8 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         # inc_set(S) indicating sets S with unbounded cardinalities, and
         # incremental(T,N,S,Args) indicating an expression of type T with name N
         #                         belonging to set S, Args are the arguments of the expression
-        inc_sets = [parse_term(x[:-1]).arguments[0].string for x in incremental_facts if x.startswith("inc_set")]
-        inc_expressions = [parse_term(x[:-1]) for x in incremental_facts if x.startswith("incremental")]
+        inc_sets = {parse_term(x[:-1]).arguments[0].string for x in incremental_facts if x.startswith("inc_set")}
+        inc_expressions = {parse_term(x[:-1]) for x in incremental_facts if x.startswith("incremental")}
 
         # initialize dictionary for new incremental sets
         for inc_set in inc_sets:
