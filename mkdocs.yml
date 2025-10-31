@@ -140,7 +140,14 @@ nav:
       - reference/index.md
       - Translation: reference/translation/index.md
       - COOM: reference/coom/index.md
-      - Encodings: reference/encodings/index.md
+      - Encodings:
+          - reference/encodings/index.md
+          - Multi-shot Encodings:
+              - reference/encodings/multishot/index.md
+              - Multi-shot Preprocessing: reference/encodings/multishot/preprocessing.md
+              - New Object Encodings: reference/encodings/multishot/new-object.md
+              - New Simple Constraint Encodings: reference/encodings/multishot/simple-constraint.md
+              - New Incremental Constraint Encodings: reference/encodings/multishot/incremental-constraint.md
       - Python:
           - reference/python/index.md
           - Application: reference/python/application.md
