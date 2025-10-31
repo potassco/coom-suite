@@ -152,6 +152,10 @@ nav:
           - reference/python/index.md
           - Application: reference/python/application.md
           - Preprocessor: reference/python/preprocessor.md
+          - Bounds:
+              - reference/python/bounds/index.md
+              - Solver: reference/python/bounds/solver.md
+              - MultiApplication: reference/python/bounds/multi_application.md
   - Community:
       - community/index.md
       - Help: community/help.md
