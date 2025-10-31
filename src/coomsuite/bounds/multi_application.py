@@ -95,8 +95,13 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         facts = set(preprocess(self._serialized_facts, max_bound=bound, discrete=True, multishot=True))
 
         # split facts into incremental and non-incremental facts
-        incremental_facts = {x for x in facts if x.startswith(("inc_set", "incremental"))}
-        non_incremental_facts = {x for x in facts if x not in incremental_facts}
+        incremental_facts = set()
+        non_incremental_facts = set()
+        for x in facts:
+            if x.startswith(("inc_set", "incremental")):
+                incremental_facts.add(x)
+            else:
+                non_incremental_facts.add(x)
 
         # update incremental data with results from preprocessing
         self._update_incremental_data(incremental_facts)
@@ -145,17 +150,18 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         # to the arguments we just need to add the current max_bound
         args.append(Number(bound))
         # the name of the program part depends on the type of the expression
-        if exp_type in ["unary", "constraint"]:
-            part_name = "incremental_" + exp_type
-        else:
-            # determine the name of the expression
-            name = args[0].string
-            if exp_type == "function":
-                # for functions we need to check whether they are already initialized
+        match exp_type:
+            case "unary" | "constraint":
+                part_name = "incremental_" + exp_type
+            case "function":
+                # determine the name of the function
+                name = args[0].string
+                # to determine the part name we need to check if the function is initialized
                 prefix = "update_" if name in self._is_initialized else "new_"
-                self._is_initialized.add(name)
                 part_name = prefix + "incremental_function"
-            elif exp_type == "binary":
+                # mark the function as initialized
+                self._is_initialized.add(name)
+            case "binary":
                 # for binaries we need to check which of the subexpressions are incremental themselves
                 part_name = "incremental_binary"
                 lhs = args[1].string

@@ -24,12 +24,13 @@ def get_bound_iter(algorithm: str, start: int) -> Iterator[int]:
         start (int): value after which the iterator starts
     """
     iterator: Iterator[int]
-    if algorithm == "linear":
-        iterator = count(start + 1)
-    elif algorithm == "exponential":
-        iterator = dropwhile(lambda x: x <= start, _exponential_iter())
-    else:
-        raise ValueError(f"unknown algorithm for bound iter: {algorithm}")
+    match algorithm:
+        case "linear":
+            iterator = count(start + 1)
+        case "exponential":
+            iterator = dropwhile(lambda x: x <= start, _exponential_iter())
+        case _:
+            raise ValueError(f"unknown algorithm for bound iter: {algorithm}")
 
     return iterator
 
