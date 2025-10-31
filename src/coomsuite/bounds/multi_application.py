@@ -17,13 +17,6 @@ from . import get_bound_iter, next_bound_converge
 ProgPart: TypeAlias = Tuple[str, List[Symbol]]
 
 
-def _filter_existing_facts(existing: Set[str], new: Set[str]) -> Set[str]:
-    """
-    Filter all existing facts from a list of new facts
-    """
-    return {x for x in new if x not in existing}
-
-
 def _get_fact_name_and_args(fact: str) -> Tuple[str, List[Symbol]]:
     """
     Convert a fact given as a string to its name and arguments
@@ -109,7 +102,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         self._update_incremental_data(incremental_facts)
 
         # filter out facts that were previously processed
-        self._new_processed_facts = _filter_existing_facts(self._processed_facts, non_incremental_facts)
+        self._new_processed_facts = non_incremental_facts - self._processed_facts
 
     def _remove_new_incremental_expressions(self) -> List[Tuple[str, List[Symbol]]]:
         """
@@ -136,7 +129,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                 self._processed_facts.add(fact)
 
         # filter new_processed_facts to remove the incremental expressions
-        self._new_processed_facts = _filter_existing_facts(self._processed_facts, self._new_processed_facts)
+        self._new_processed_facts = self._new_processed_facts - self._processed_facts
 
         return inc_expressions
 

@@ -12,7 +12,7 @@ from unittest.mock import call, create_autospec
 from clingo import Control, SolveResult
 from clingo.symbol import Function, Number, String, parse_term, Symbol
 
-from coomsuite.bounds.multi_application import COOMMultiSolverApp, _filter_existing_facts, _get_fact_name_and_args
+from coomsuite.bounds.multi_application import COOMMultiSolverApp, _get_fact_name_and_args
 
 
 class TestMultiApplication(TestCase):
@@ -24,9 +24,6 @@ class TestMultiApplication(TestCase):
         """
         Test helper functions used in multishot application class.
         """
-        for existing, new, filtered in [({"p."}, {"p.", "q.", "r."}, {"q.", "r."})]:
-            self.assertEqual(_filter_existing_facts(existing, new), filtered)
-
         for fact, result in [
             (
                 'set("root.totalVolume","root.totalVolume[0]").',
