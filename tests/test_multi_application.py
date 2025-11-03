@@ -20,9 +20,9 @@ class TestMultiApplication(TestCase):
     Test cases for multishot application class.
     """
 
-    def test_multi_application_helper_functions(self) -> None:
+    def test_multi_application_helper_function(self) -> None:
         """
-        Test helper functions used in multishot application class.
+        Test helper function used in multishot application class.
         """
         for fact, result in [
             (
@@ -92,36 +92,38 @@ class TestMultiApplication(TestCase):
         bound = 3
         bound_term = Number(3)
 
+        # test unary, constraint and function
         for exp_type, args, part in [
             ("unary", [name], ("incremental_unary", [name, bound_term])),
             ("constraint", [name], ("incremental_constraint", [name, bound_term])),
+            # first the function prog parts has prefix new
             ("function", [name], ("new_incremental_function", [name, bound_term])),
+            # then it has prefix update
             ("function", [name], ("update_incremental_function", [name, bound_term])),
         ]:
             self.assertEqual(app._get_incremental_prog_part(exp_type, args, bound), part)
 
+        # test three cases for binary expression
         lhs_name = parse_term('"lhs"')
         op_name = parse_term('"op"')
         rhs_name = parse_term('"rhs"')
         binary_args = [name, lhs_name, op_name, rhs_name]
         part_args = binary_args.copy()
         part_args.append(bound_term)
-        app._incremental_expressions = {rhs_name.string}
-        self.assertEqual(
-            app._get_incremental_prog_part("binary", binary_args.copy(), bound),
-            ("incremental_binary_r", part_args),
-        )
-        app._incremental_expressions = {lhs_name.string}
-        self.assertEqual(
-            app._get_incremental_prog_part("binary", binary_args.copy(), bound),
-            ("incremental_binary_l", part_args),
-        )
-        app._incremental_expressions = {rhs_name.string, lhs_name.string}
-        self.assertEqual(
-            app._get_incremental_prog_part("binary", binary_args.copy(), bound),
-            ("incremental_binary", part_args),
-        )
+        for inc_expressions, part_name in [
+            # 1: only the right sub-expression is incremental
+            ({rhs_name.string}, "incremental_binary_r"),
+            # 2: only the left sub-expression is incremental
+            ({lhs_name.string}, "incremental_binary_l"),
+            # 3: both sub-expressions are incremental
+            ({rhs_name.string, lhs_name.string}, "incremental_binary"),
+        ]:
+            app._incremental_expressions = inc_expressions
+            self.assertEqual(
+                app._get_incremental_prog_part("binary", binary_args.copy(), bound), (part_name, part_args)
+            )
 
+        # test invalid incremental fact
         self.assertRaises(ValueError, app._get_incremental_prog_part, "number", [], 0)
 
     def test_check_if_updates_incremental_set(self) -> None:
@@ -159,10 +161,10 @@ class TestMultiApplication(TestCase):
         """
         app = COOMMultiSolverApp([])
 
-        # initial value of processed facts
+        # initial value of _processed_facts
         processed = {'allow(7,(0,0),"small").'}
 
-        # initial value of new processed facts
+        # initial value of _new_processed_facts
         new = {
             'domain("Size","small").',
             'constraint(("root.color",1),"lowerbound").',
@@ -172,7 +174,7 @@ class TestMultiApplication(TestCase):
             'binary("root.color[0]=Blue","root.color[0]","=","Blue").',
             'unary("-7","-","7").',
         }
-        # incremental expressions part of the initial value of new processed facts
+        # incremental expressions part of the initial value of _new_processed_facts
         incremental = {
             'constraint((4,"5<count(root.bags.pockets)"),"boolean").',
             'function("count(root.bags.pockets)","count","root.bags.pockets").',
@@ -189,14 +191,15 @@ class TestMultiApplication(TestCase):
             "(count(root.bags.pockets))",
         }
 
+        # remove the new incremental expressions
         removed = app._remove_new_incremental_expressions()
 
         # check that return value of function matches the incremental expressions
         # note that return value has type List[Tuple[str, List[Symbol]]]
         self.assertCountEqual(removed, [_get_fact_name_and_args(f) for f in incremental])
-        # check that processed facts are the initial value (processed) + incremental
+        # check that _processed_facts are the initial value (processed) + incremental
         self.assertEqual(app._processed_facts, processed | incremental)
-        # check that new processed facts contains only new but not incremental
+        # check that _new_processed_facts contains only new but not incremental
         self.assertEqual(app._new_processed_facts, new)
 
     def test_update_incremental_data(self) -> None:
@@ -260,7 +263,9 @@ class TestMultiApplication(TestCase):
         }
         inc_expressions.add("sum(root.bags.size.volume)")
 
+        # test value of _incremental_set dictionary
         self.assertEqual(app._incremental_sets, inc_sets_dict)
+        # test value of _incremental_expressions set
         self.assertEqual(app._incremental_expressions, inc_expressions)
 
     def test_get_prog_part_of_incremental_set(self) -> None:
@@ -302,7 +307,7 @@ class TestMultiApplication(TestCase):
 
     def _get_mock_control(self, solve_is_sat: List[bool]) -> Control:
         """
-        Create a mock control object.
+        Helper function to create a mock control object with a list of return values of solve.
 
         Args:
             solve_is_sat (List[bool]): list of returns values for solve calls (True/False for SAT/UNSAT)
