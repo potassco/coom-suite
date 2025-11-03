@@ -10,9 +10,9 @@ requires-python = ">=3.11"
 dependencies = [
     "antlr4-python3-runtime==4.13.2",
     "clingo==5.7.*",
-    "clingcon >= 5.2.1, == 5.2.*",    # requirement for flingo
-    # "fclingo@git+https://github.com/potassco/fclingo.git@6f4d7efc92bfac18465e2c95c4ef9ac99ef470b5",
-    "fclingo@https://test-files.pythonhosted.org/packages/82/06/ef25771583f892f30ccac59ea7c13fa3a4a32fef2c9bf4746fb0b4ba9adb/fclingo-0.1.1.tar.gz",
+    "clingcon >= 5.2.1, == 5.2.*",                                                                  # requirement for flingo
+    "fclingo@git+https://github.com/potassco/fclingo.git@84b949a2aed895c44dcbb2b58a2f29931135f3d9",
+    # "fclingo@https://test-files.pythonhosted.org/packages/82/06/ef25771583f892f30ccac59ea7c13fa3a4a32fef2c9bf4746fb0b4ba9adb/fclingo-0.1.1.tar.gz",
     "clinguin>=2.6.1",
 ]
 license-files = ["LICENSE"]
