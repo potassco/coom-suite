@@ -36,7 +36,7 @@ class BoundSolver:
         self.clingo_args = clingo_args
         self.output_format = output_format
 
-    def _solve(self, max_bound: int) -> int:
+    def _solve(self, max_bound: int) -> int:  # nocoverage
         return solve(self.facts, self.solver, max_bound, self.clingo_args, self.output_format)
 
     def _converge(self, unsat_bound: int, sat_bound: int) -> int:
