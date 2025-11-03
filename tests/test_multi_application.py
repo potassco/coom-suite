@@ -5,9 +5,9 @@ Test cases for multishot application class.
 # pylint: disable=protected-access
 
 from contextlib import redirect_stdout
-from typing import List, Any, Tuple, Dict, Set
+from typing import List, Any, Tuple, Dict, Set, Optional
 from unittest import TestCase
-from unittest.mock import call, create_autospec
+from unittest.mock import call, create_autospec, patch
 
 from clingo import Control, SolveResult
 from clingo.symbol import Function, Number, String, parse_term, Symbol
@@ -419,3 +419,144 @@ class TestMultiApplication(TestCase):
 
             # check what calls were made to the control object
             self.assertEqual(control.mock_calls, calls)  # type: ignore[attr-defined]
+
+    def test_preprocess_new_bound(self) -> None:
+        """
+        Test preprocessing and updates to data structures for a new bound.
+        """
+        # initial values for preocessed and new processed facts
+        initial_processed = {'domain("Color","Green").'}
+        initial_new_processed = {'domain("Color","Blue").'}
+
+        # new facts added by preprocessing (mocked below)
+        non_incremental = {'domain("Color","Red").'}
+        incremental = {
+            'inc_set("root.bags.pockets").',
+            (
+                'incremental("function","count(root.bags.pockets)","root.bags.pockets",'
+                '("count(root.bags.pockets)","count","root.bags.pockets"))'
+            ),
+        }
+
+        # define expected values after calling preprocess_new_bound
+        # expected processed facts
+        expected_processed = initial_processed | initial_new_processed
+        # expected new processed facts
+        expected_new_processed = non_incremental
+        # expected arguments to update incremental data method
+        expected_update_args = incremental
+
+        # bound to process at
+        bound = 2
+
+        # mock preprocess function
+        with patch("coomsuite.bounds.multi_application.preprocess", autospec=True) as mock_preprocess:
+            # mock return value
+            mock_preprocess.side_effect = [list(non_incremental | incremental)]
+
+            # initialize multi solver
+            app = COOMMultiSolverApp([])
+            app._processed_facts = initial_processed.copy()
+            app._new_processed_facts = initial_new_processed.copy()
+
+            # mock update incremental data function
+            with patch.object(app, "_update_incremental_data", autospec=True) as mock_update:
+                # call multi solver preprocess function
+                app._preprocess_new_bound(bound)
+
+                # check arguments of call to preprocess
+                self.assertEqual(mock_preprocess.call_args, call([], max_bound=bound, discrete=True, multishot=True))
+                # check _processed_facts
+                self.assertEqual(app._processed_facts, expected_processed)
+                # check _new_processed_facts
+                self.assertEqual(app._new_processed_facts, expected_new_processed)
+                # check arguments of call to _update_incremental_data
+                self.assertEqual(mock_update.call_args, call(expected_update_args))
+
+    def test_compute_prog_parts_at_zero(self) -> None:
+        """
+        Test compute program parts function for bound zero.
+        """
+        app = COOMMultiSolverApp([])
+
+        with (
+            patch.object(app, "_remove_new_incremental_expressions", autospec=True) as mock_remove,
+            patch.object(app, "_get_incremental_prog_part", autospec=True) as mock_get_inc_part,
+        ):
+            # mocked return value of _remove_new_incremental_expressions
+            mock_remove.side_effect = [[("function", ['"count"']), ("unary", ['"()"'])]]
+            # expected program parts
+            expected_parts = [
+                ("new_function", [String('"count"'), Number(0)]),
+                ("new_unary", [String('"()"'), Number(0)]),
+            ]
+            # mock the program parts as return values of _get_incremental_prog_part
+            mock_get_inc_part.side_effect = expected_parts.copy()
+            # expected calls to _get_incremental_prog_part
+            expected_get_inc_part_calls = [
+                call("function", ['"count"'], 0),
+                call("unary", ['"()"'], 0),
+            ]
+
+            # compute program parts for bound 0
+            parts = app._compute_prog_parts(0)
+
+            # check that correct parts are returned
+            self.assertEqual(parts, expected_parts)
+            # check call to _get_incremental_prog_part
+            self.assertEqual(mock_get_inc_part.call_args_list, expected_get_inc_part_calls)
+
+    def test_compute_prog_parts_at_non_zero(self) -> None:
+        """
+        Test compute program parts function for non-zero bound.
+        """
+        app = COOMMultiSolverApp([])
+
+        with (
+            patch.object(app, "_remove_new_incremental_expressions", autospec=True) as mock_remove,
+            patch.object(app, "_check_if_updates_incremental_set", autospec=True) as mock_check_updates,
+            patch.object(app, "_get_prog_part", autospec=True) as mock_get_part,
+            patch.object(app, "_get_prog_part_of_incremental_set", autospec=True) as mock_get_part_inc_set,
+        ):
+            # mocked return value of _remove_new_incremental_expressions
+            mock_remove.side_effect = [[]]
+
+            # mocked return value of _check_if_updates_incremental_set
+            def mock_check_updates_side_effect(fact: str) -> Optional[str]:
+                match fact:
+                    case 'set("root.bags","root.bags[1]").':
+                        return '"root.bags"'
+                    case _:
+                        return None
+
+            mock_check_updates.side_effect = mock_check_updates_side_effect
+
+            # mocked return value of _get_prog_part
+            non_inc_parts = [
+                ("new_set", [String('"root.color"'), String('"root.color[0]"')]),
+                ("new_set", [String('"root.bags"'), String('"root.bags[1]"')]),
+            ]
+            mock_get_part.side_effect = non_inc_parts.copy()
+
+            # mocked return value of _get_prog_part_of_incremental_set
+            inc_parts = [("update_incremental_function", [Number(1)]), ("incremental_unary", [Number(1)])]
+            mock_get_part_inc_set.side_effect = [inc_parts.copy()]
+
+            # initial value of _new_processed_facts
+            new_facts = [
+                'set("root.bags","root.bags[1]").',
+                'set("root.color","root.color[0]").',
+            ]
+            app._new_processed_facts = set(new_facts)
+
+            # compute all program parts for bound 1
+            parts = app._compute_prog_parts(1)
+
+            # check if the correct parts are returned
+            self.assertEqual(parts, non_inc_parts + inc_parts)
+            # check calls to _check_if_updates_incremental_set
+            self.assertCountEqual(mock_check_updates.call_args_list, [call(x) for x in new_facts])
+            # check calls to _get_prog_part
+            self.assertCountEqual(mock_get_part.call_args_list, [call(x, 1) for x in new_facts])
+            # check call to _get_part_of_incremental_set
+            self.assertEqual(mock_get_part_inc_set.call_args_list, [call('"root.bags"', 1)])
