@@ -6,7 +6,7 @@ from contextlib import contextmanager, redirect_stdout
 from os import close, devnull, dup, dup2
 from os.path import join
 from unittest import TestCase
-from unittest.mock import patch
+from unittest.mock import patch, call
 
 from coomsuite.bounds import get_bound_iter, next_bound_converge
 from coomsuite.bounds.solver import BoundSolver
@@ -106,9 +106,33 @@ class TestBound(TestCase):
                 (4, 8, [False, False], 8),
             ]:
                 returns = [10 if x else 20 for x in solve_returns]
-                with patch.object(BoundSolver, "_solve", side_effect=returns):
+                with patch.object(solver, "_solve", autospec=True, side_effect=returns):
                     ret = solver._converge(init_unsat, init_sat)  # pylint: disable=protected-access
                     self.assertEqual(ret, max_bound)
+
+    def test_get_bounds_singleshot(self) -> None:
+        for algorithm, initial_bound, solve_returns, converge_return, expected_converge_call in [
+            ("linear", 0, [True], 0, call(-1, 0)),
+            ("linear", 2, [False, True], 3, call(2, 3)),
+            ("exponential", 3, [True], 1, call(-1, 3)),
+            ("exponential", 3, [False, True], 4, call(3, 4)),
+        ]:
+            solver = BoundSolver([], solver="clingo", clingo_args=[], output_format="asp")
+
+            with (
+                patch.object(solver, "_solve", autospec=True) as mock_solve,
+                patch.object(solver, "_converge", autospec=True) as mock_converge,
+            ):
+                mock_solve.side_effect = [10 if x else 20 for x in solve_returns]
+                mock_converge.side_effect = [converge_return]
+
+                with redirect_stdout(None):
+                    minimal_bound = solver.get_bounds(algorithm, initial_bound, use_multishot=False)
+
+                fail_msg = f"failed with algorithm={algorithm}, initial_bound={initial_bound}, solve_returns={solve_returns}, converge_return={converge_return}, expected_converge_call={expected_converge_call}"
+
+                self.assertEqual(minimal_bound, converge_return, fail_msg)
+                self.assertEqual(mock_converge.call_args, expected_converge_call, fail_msg)
 
     def _compute_bound(self, fact_file: str, algorithm: str, initial_bound: int = 0, multishot: bool = False) -> int:
         with suppress_output_fd():
