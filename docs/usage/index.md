@@ -21,9 +21,9 @@ To solve a COOM model file which contains unbounded cardinalities, add the follo
 ```
 where <ALGORITHM\> is either `linear` or `exponential`.
 
-To change the starting bound add (replacing <N\>) `--initial-bound <N>`.
+For more information see the [cargo bike example][cargo-bike].
 
-To use multi-shot solving add the option `--mulitshot`.
+[cargo-bike]: ../examples/cargo-bike.md
 
 ## Convert COOM to ASP
 

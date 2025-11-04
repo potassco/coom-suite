@@ -3,6 +3,10 @@
 This section gives an overview of the encodings for solving an instance with unbounded cardinalities using multi-shot solving.
 These encodings mostly just reorganize the main coom encodings into specific program parts for multi-shot solving.
 
+For example usage information see the [cargo-bike example][cargo-bike].
+
+[cargo-bike]: ../../examples/cargo-bike.md
+
 We start by explaining some general concepts using a simplified version of the [cargo bike][cargo-bike] example.
 
 ```cpp
