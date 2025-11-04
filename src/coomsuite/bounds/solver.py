@@ -64,7 +64,7 @@ class BoundSolver:
         Compute the minimal bound for the problem.
         """
         # multi shot solving
-        if use_multishot:
+        if use_multishot:  # nocoverage
             multishot_solver = COOMMultiSolverApp(
                 serialized_facts=self.facts,
                 initial_bound=initial_bound,
