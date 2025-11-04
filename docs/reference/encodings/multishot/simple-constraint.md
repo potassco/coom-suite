@@ -7,32 +7,32 @@ The `active/1` externals is used here to only check for constraint violations of
 
 ::: src/coomsuite/encodings/multi/new-constraint.lp
     handler: asp
-    options: 
+    options:
         encodings: true
 
 ## Encodings for boolean constraints
 ::: src/coomsuite/encodings/multi/new-function.lp
     handler: asp
-    options: 
+    options:
         encodings: true
 
 ::: src/coomsuite/encodings/multi/new-unary.lp
     handler: asp
-    options: 
+    options:
         encodings: true
 
 ::: src/coomsuite/encodings/multi/new-binary.lp
     handler: asp
-    options: 
+    options:
         encodings: true
 
 ## Encodings for table constraints
 ::: src/coomsuite/encodings/multi/new-allow.lp
     handler: asp
-    options: 
+    options:
         encodings: true
 
 ::: src/coomsuite/encodings/multi/new-column.lp
     handler: asp
-    options: 
+    options:
         encodings: true

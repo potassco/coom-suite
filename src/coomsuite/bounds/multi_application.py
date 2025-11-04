@@ -2,7 +2,7 @@
 Clingo application class for solving COOM configuration problems with multi-shot solving.
 """
 
-from typing import Any, Dict, List, Optional, Sequence, Set, Tuple, TypeAlias, Iterator
+from typing import Any, Dict, Iterator, List, Optional, Sequence, Set, Tuple, TypeAlias
 
 from clingo import Control
 from clingo.symbol import Function, Number, Symbol, parse_term
@@ -12,7 +12,6 @@ from coomsuite.preprocess import preprocess
 from coomsuite.utils import get_encoding
 
 from . import get_bound_iter, next_bound_converge
-
 
 ProgPart: TypeAlias = Tuple[str, List[Symbol]]
 

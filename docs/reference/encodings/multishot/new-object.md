@@ -8,5 +8,5 @@ The inclusion of an object introduced at bound `n` is then only possible if `act
 
 ::: src/coomsuite/encodings/multi/new-object.lp
     handler: asp
-    options: 
+    options:
         encodings: true

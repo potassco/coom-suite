@@ -37,7 +37,7 @@ Facts of the first group are the predicates `parent`, `index`, `set`, and `type`
 These are added through respective program parts in the [`new-object`][new-object] encoding.
 
 [new-object]: new-object.md
-        
+
 The second group of facts (constraint facts) is made up of facts describing new constraints as well as their components (i.e. binaries, unaries, and functions).
 The constraints (and their components) are further divided into two categories: simple constraints and incremental constraints.
 
@@ -86,4 +86,3 @@ This is used in the evaluation of incremental constraints in the respective [enc
 The classification of which constraints and expressions are incremental is handled by a [multi-shot specific addition][multi-preprocessing] to the preprocessing encoding.
 
 [multi-preprocessing]: preprocessing.md
-

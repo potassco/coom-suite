@@ -2,5 +2,5 @@
 
 ::: src/coomsuite/encodings/preprocess/incremental.lp
     handler: asp
-    options: 
+    options:
         encodings: true
