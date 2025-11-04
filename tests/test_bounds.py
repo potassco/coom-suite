@@ -108,7 +108,14 @@ class TestBound(TestCase):
                 returns = [10 if x else 20 for x in solve_returns]
                 with patch.object(solver, "_solve", autospec=True, side_effect=returns):
                     ret = solver._converge(init_unsat, init_sat)  # pylint: disable=protected-access
-                    self.assertEqual(ret, max_bound)
+                    self.assertEqual(
+                        ret,
+                        max_bound,
+                        (
+                            f"failed with init_unsat={init_unsat}, init_sat={init_sat}, "
+                            f"solve_returns={solve_returns}, max_bound={max_bound}"
+                        ),
+                    )
 
     def test_get_bounds_singleshot(self) -> None:
         for algorithm, initial_bound, solve_returns, converge_return, expected_converge_call in [
@@ -129,7 +136,10 @@ class TestBound(TestCase):
                 with redirect_stdout(None):
                     minimal_bound = solver.get_bounds(algorithm, initial_bound, use_multishot=False)
 
-                fail_msg = f"failed with algorithm={algorithm}, initial_bound={initial_bound}, solve_returns={solve_returns}, converge_return={converge_return}, expected_converge_call={expected_converge_call}"
+                fail_msg = (
+                    f"failed with algorithm={algorithm}, initial_bound={initial_bound}, solve_returns={solve_returns}, "
+                    f"converge_return={converge_return}, expected_converge_call={expected_converge_call}"
+                )
 
                 self.assertEqual(minimal_bound, converge_return, fail_msg)
                 self.assertEqual(mock_converge.call_args, expected_converge_call, fail_msg)

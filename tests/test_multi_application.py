@@ -35,7 +35,7 @@ class TestMultiApplication(TestCase):
             ),
             ('allow(7,(1,0),"S").', ("allow", [parse_term("7"), parse_term("(1,0)"), parse_term('"S"')])),
         ]:
-            self.assertEqual(_get_fact_name_and_args(fact), result)
+            self.assertEqual(_get_fact_name_and_args(fact), result, f"failed with fact={fact}, result={result}")
 
         # test behavior when fact is not given with trailing "."
         self.assertRaises(RuntimeError, _get_fact_name_and_args, "p(0)")
@@ -77,7 +77,7 @@ class TestMultiApplication(TestCase):
                 ),
             ),
         ]:
-            self.assertEqual(app._get_prog_part(fact, 1), part)
+            self.assertEqual(app._get_prog_part(fact, 1), part, f"failed with fact={fact}, part={part}")
 
         # invalid program part
         self.assertRaises(ValueError, app._get_prog_part, 'number("5",5).', 0)
@@ -101,7 +101,11 @@ class TestMultiApplication(TestCase):
             # then it has prefix update
             ("function", [name], ("update_incremental_function", [name, bound_term])),
         ]:
-            self.assertEqual(app._get_incremental_prog_part(exp_type, args, bound), part)
+            self.assertEqual(
+                app._get_incremental_prog_part(exp_type, args, bound),
+                part,
+                f"failed with exp_type={exp_type}, args={args}, part={part}",
+            )
 
         # test three cases for binary expression
         lhs_name = parse_term('"lhs"')
@@ -120,7 +124,9 @@ class TestMultiApplication(TestCase):
         ]:
             app._incremental_expressions = inc_expressions
             self.assertEqual(
-                app._get_incremental_prog_part("binary", binary_args.copy(), bound), (part_name, part_args)
+                app._get_incremental_prog_part("binary", binary_args.copy(), bound),
+                (part_name, part_args),
+                f"failed with inc_expressions={inc_expressions}, part_name={part_name}",
             )
 
         # test invalid incremental fact
@@ -135,7 +141,9 @@ class TestMultiApplication(TestCase):
         app._incremental_sets["name"] = set()
 
         for fact, result in [('set("other",2).', None), ('set("name",1).', "name"), ("p.", None)]:
-            self.assertEqual(app._check_if_updates_incremental_set(fact), result)
+            self.assertEqual(
+                app._check_if_updates_incremental_set(fact), result, f"failed with fact={fact}, result={result}"
+            )
 
     def test_update_bound(self) -> None:
         """
@@ -144,15 +152,17 @@ class TestMultiApplication(TestCase):
         app = COOMMultiSolverApp([], algorithm="linear", initial_bound=3)
 
         for prev, current in [(None, 3), (3, 4), (4, 5)]:
-            self.assertEqual(app._prev_bound, prev)
-            self.assertEqual(app.max_bound, current)
+            fail_msg = f"failed with prev={prev}, current={current}"
+            self.assertEqual(app._prev_bound, prev, fail_msg)
+            self.assertEqual(app.max_bound, current, fail_msg)
             app._update_bound()
 
         app = COOMMultiSolverApp([], algorithm="exponential", initial_bound=3)
 
         for prev, current in [(None, 3), (3, 4), (4, 8)]:
-            self.assertEqual(app._prev_bound, prev)
-            self.assertEqual(app.max_bound, current)
+            fail_msg = f"failed with prev={prev}, current={current}"
+            self.assertEqual(app._prev_bound, prev, fail_msg)
+            self.assertEqual(app.max_bound, current, fail_msg)
             app._update_bound()
 
     def test_remove_new_incremental_expressions(self) -> None:
@@ -414,11 +424,16 @@ class TestMultiApplication(TestCase):
             with redirect_stdout(None):
                 app._find_minimal_bound(control)
 
+            fail_msg = (
+                f"failed with prev_init={prev_init}, max_init={max_init}, "
+                f"sat_values={sat_values}, max_return={max_return}"
+            )
+
             # check that the correct minimal bound was computed
-            self.assertEqual(app.max_bound, max_return)
+            self.assertEqual(app.max_bound, max_return, fail_msg)
 
             # check what calls were made to the control object
-            self.assertEqual(control.mock_calls, calls)  # type: ignore[attr-defined]
+            self.assertEqual(control.mock_calls, calls, fail_msg)  # type: ignore[attr-defined]
 
     def test_preprocess_new_bound(self) -> None:
         """
