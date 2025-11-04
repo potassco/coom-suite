@@ -118,6 +118,9 @@ class TestBound(TestCase):
                     )
 
     def test_get_bounds_singleshot(self) -> None:
+        """
+        Test get bounds function for singleshot solving.
+        """
         for algorithm, initial_bound, solve_returns, converge_return, expected_converge_call in [
             ("linear", 0, [True], 0, call(-1, 0)),
             ("linear", 2, [False, True], 3, call(2, 3)),
