@@ -5,12 +5,12 @@ Test cases for multishot application class.
 # pylint: disable=protected-access
 
 from contextlib import redirect_stdout
-from typing import List, Any, Tuple, Dict, Set, Optional
+from typing import Any, Dict, List, Optional, Set, Tuple
 from unittest import TestCase
-from unittest.mock import call, create_autospec, patch
+from unittest.mock import ANY, call, create_autospec, patch
 
 from clingo import Control, SolveResult
-from clingo.symbol import Function, Number, String, parse_term, Symbol
+from clingo.symbol import Function, Number, String, Symbol, parse_term
 
 from coomsuite.bounds.multi_application import COOMMultiSolverApp, _get_fact_name_and_args
 
@@ -575,3 +575,53 @@ class TestMultiApplication(TestCase):
             self.assertCountEqual(mock_get_part.call_args_list, [call(x, 1) for x in new_facts])
             # check call to _get_part_of_incremental_set
             self.assertEqual(mock_get_part_inc_set.call_args_list, [call('"root.bags"', 1)])
+
+    def test_main_control_calls(self) -> None:
+        """
+        Test calls to the control object in multi application main function.
+        """
+        app = COOMMultiSolverApp([], initial_bound=2)
+
+        control = self._get_mock_control([False, True])
+
+        with (
+            redirect_stdout(None),
+            patch.object(app, "_preprocess_new_bound", autospec=True),
+            patch.object(app, "_compute_prog_parts", autospec=True),
+            patch.object(app, "_find_minimal_bound", autospec=True),
+        ):
+            app.main(control, [])
+
+            expected_calls = [
+                call.load(ANY),
+                call.load(ANY),
+                # check that base program is grounded first
+                call.add("base", [], ANY),
+                call.ground([("base", [])]),
+                # ground each bound in 0..2 and set the active external
+                call.ground(ANY),
+                call.assign_external(Function("active", [Number(0)], True), True),
+                call.ground(ANY),
+                call.assign_external(Function("active", [Number(1)], True), True),
+                call.ground(ANY),
+                call.assign_external(Function("active", [Number(2)], True), True),
+                # check that max bound external is set correctly
+                call.assign_external(Function("max_bound", [Number(2)], True), True),
+                call.solve(),
+                # grounding and assigning active for next bound
+                call.ground(ANY),
+                call.assign_external(Function("active", [Number(3)], True), True),
+                # releasing previous max bound and assigning new max bound
+                call.assign_external(Function("max_bound", [Number(3)], True), True),
+                call.release_external(Function("max_bound", [Number(2)], True)),
+                call.solve(),
+            ]
+
+            self.assertEqual(
+                len(control.mock_calls),  # type: ignore[attr-defined]
+                len(expected_calls),
+                "number of calls to mock control does not match expected number of calls",
+            )
+
+            for i, (real, expected) in enumerate(zip(control.mock_calls, expected_calls)):  # type: ignore[attr-defined]
+                self.assertEqual(real, expected, f"the {i}th call to mock control does not match the expected call")
