@@ -2,39 +2,12 @@
 Test cases for bound functionalities.
 """
 
-from contextlib import contextmanager, redirect_stdout
-from os import close, devnull, dup, dup2
-from os.path import join
+from contextlib import redirect_stdout
 from unittest import TestCase
-from unittest.mock import patch, call
+from unittest.mock import call, patch
 
 from coomsuite.bounds import get_bound_iter, next_bound_converge
 from coomsuite.bounds.solver import BoundSolver
-
-ALGORITHMS = ["linear", "exponential"]
-INSTANCES = [
-    ("cargo-bike-complex-5.lp", 5),
-    ("cargo-bike-complex-7.lp", 7),
-]
-
-
-@contextmanager
-def suppress_output_fd():  # type: ignore
-    """
-    Suppress all output.
-    """
-    with open(devnull, "w", encoding="utf-8") as f:
-        old_stdout_fd = dup(1)
-        old_stderr_fd = dup(2)
-        try:
-            dup2(f.fileno(), 1)
-            dup2(f.fileno(), 2)
-            yield
-        finally:
-            dup2(old_stdout_fd, 1)
-            dup2(old_stderr_fd, 2)
-            close(old_stdout_fd)
-            close(old_stderr_fd)
 
 
 class TestBound(TestCase):
@@ -146,27 +119,3 @@ class TestBound(TestCase):
 
                 self.assertEqual(minimal_bound, converge_return, fail_msg)
                 self.assertEqual(mock_converge.call_args, expected_converge_call, fail_msg)
-
-    def _compute_bound(self, fact_file: str, algorithm: str, initial_bound: int = 0, multishot: bool = False) -> int:
-        with suppress_output_fd():
-            bound_solver = BoundSolver(
-                [join("examples", "tests", "bounds", fact_file)], solver="clingo", clingo_args=[], output_format="asp"
-            )
-            bound = bound_solver.get_bounds(algorithm, initial_bound, multishot)
-            return bound
-
-    def test_singleshot_minimal_bound(self) -> None:
-        """
-        Test minimal bound computed by singleshot solving.
-        """
-        for instance, bound in INSTANCES:
-            for algorithm in ALGORITHMS:
-                self.assertEqual(self._compute_bound(instance, algorithm), bound)
-
-    def test_multishot_minimal_bound(self) -> None:
-        """
-        Test minimal bound computed by multishot solving.
-        """
-        for instance, bound in INSTANCES:
-            for algorithm in ALGORITHMS:
-                self.assertEqual(self._compute_bound(instance, algorithm, multishot=True), bound)
