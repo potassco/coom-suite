@@ -14,7 +14,7 @@ including optional parts.
 <!-- !!! info "Acknowledgements"
     The City Bike example has been provided by [denkbares]. -->
 
-[poom]: ../reference/coom/bike/index.md#coomp
+[poom]: ../reference/coom/index.md#coomp
 <!-- [denkbares]: https://denkbares.com -->
 
 ## Usage

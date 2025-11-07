@@ -1,12 +1,16 @@
-% mark which objects have unbounded cardinalities
+% define incremental objects, i.e. instantiated objects of a component with unbounded cardinality
 inc_obj(@dotpath((F,(X,I)))) :- coom_feature(Ctx,F,T,Min,#sup), type_aux(X,Ctx), I = 0..Min+max_bound-1.
-% dummy incremental object when 0..* and max_bound = 0
+% for the special case that:
+% - the cardinality of the component is 0..*, and
+% - the current max bound is 0,
+% instantiate a dummy incremental object
 inc_obj(@dotpath((F,(X,-1)))) :- coom_feature(Ctx,F,T,0,#sup),  type_aux(X,Ctx), max_bound = 0.
 
-% helper rules for instantiating starting from 0..* objects with max_bound=0
+% helper rules to instantiate the subtree starting from a dummy incremental object
+% - base case: checking for 0..* and max bound 0
 help_aux((F,(X,-1)),T)            :- coom_feature(Ctx,F,T,Min,#sup),     type_aux(X,Ctx), Min = 0, max_bound = 0, T != "num".
 help_aux((F,(X,-1)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), type_aux(X,Ctx), Min = 0, max_bound = 0.
-% recursive definition for subtree starting from the help_aux elements
+% - recursive definition for subtree starting from the help_aux elements
 help_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,_,  Max),      help_aux(X,Ctx), I = 0..Max-1, T != "num".
 help_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,Min,#sup),     help_aux(X,Ctx), I = 0..Min+max_bound-1, T != "num".
 help_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",_,  Max),  help_aux(X,Ctx), I = 0..Max-1.
