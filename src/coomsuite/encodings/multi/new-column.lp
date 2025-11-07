@@ -1,5 +1,7 @@
-#program new_column(c,id,col,x).
+#program new_column(c,id,col,x,bound).
 column(c,id,col,x).
+
+table_bound(c,id,bound).
 
 undefined(c,id) :- column(c,id,_,x), not include(x).
 defined(c,id)   :- column(c,id,_,_), not undefined(c,id).

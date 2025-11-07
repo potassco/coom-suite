@@ -1,28 +1,54 @@
 % mark which objects have unbounded cardinalities
 inc_obj(@dotpath((F,(X,I)))) :- coom_feature(Ctx,F,T,Min,#sup), type_aux(X,Ctx), I = 0..Min+max_bound-1.
+% dummy incremental object when 0..* and max_bound = 0
+inc_obj(@dotpath((F,(X,-1)))) :- coom_feature(Ctx,F,T,0,#sup),  type_aux(X,Ctx), max_bound = 0.
 
-% TODO: improve incremental detection to also detect sets/expression for 0..* with max_bound 0
-% something like the following may work
-% inc_obj(@dotpath((F,(X,I)))) :- coom_feature(Ctx,F,T,Min,#sup), type_aux(X,Ctx), I = 0, Min = 0, max_bound = 0.
-% but then needs rules defining path_to/4 as this is dependent on type_aux ...
+% helper rules for instantiating starting from 0..* objects with max_bound=0
+help_aux((F,(X,-1)),T)            :- coom_feature(Ctx,F,T,Min,#sup),     type_aux(X,Ctx), Min = 0, max_bound = 0, T != "num".
+help_aux((F,(X,-1)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), type_aux(X,Ctx), Min = 0, max_bound = 0.
+% recursive definition for subtree starting from the help_aux elements
+help_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,_,  Max),      help_aux(X,Ctx), I = 0..Max-1, T != "num".
+help_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,Min,#sup),     help_aux(X,Ctx), I = 0..Min+max_bound-1, T != "num".
+help_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",_,  Max),  help_aux(X,Ctx), I = 0..Max-1.
+help_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), help_aux(X,Ctx), I = 0..Min+max_bound-1.
 
-% map path_to/4 atoms to path_out/2 by using output formatting (step index is discarded)
-path_out(@join(X,P),@dotpath(X')) :- path_to(X,P,_,X').
+% rules to instantiate a helper version of path_to/4 atoms based on help_aux/2
+% - start by projecting out the original path_to/4 atoms
+% - path index is not needed here
+help_path_to(X,P,X')  :- path_to(X,P,_,X').
+% - then define the paths for any new help_aux atoms
+help_path_to(X,P,X')  :- coom_path(P,0,N), path_start(X,P),
+                         help_aux(X',_), X' =(N,(X,_)).
+help_path_to(X,P,X')  :- coom_path(P,0,"root"), coom_path(P,1,N), path_start(X,P),
+                         help_aux(X',_), X' =(N,((),_)).
+help_path_to(X,P,X'') :- coom_path(P,I,N), help_path_to(X,P,X'),
+                         help_aux(X'',_), X''=(N,(X',_)).
+
+% map path_to/4 atoms to path_step/2 by using output formatting
+% - needs to be filtered by help_aux to remove sets belonging to the helper objects
+path_step(@join(X,P),@dotpath(X')) :- help_path_to(X,P,X'), not help_aux(X,_).
+
+% compute sets used in the column of a table
+table_column((C,@dotpath(X)),@join(X,P)) :- table(C,X), coom_combinations(C,_,P).
 
 % incremental sets: a set is incremental if:
 % - there is a path from an unbounded object to the set
-% - limit to only sets used in functions
-inc_set(P) :- function(_,_,P), path_out(P,X'), inc_obj(X').
+% - limit to only sets used in functions or as part of a table
+inc_set(P) :- function(_,_,P),   path_step(P,X'), inc_obj(X').
+inc_set(P) :- table_column(_,P), path_step(P,X'), inc_obj(X').
 
 #show inc_set/1.
 
-% incremental expressions
-% TODO: what about sum(count(...))
+% incremental expressions are defined recursively
+% - base case: functions over incremental sets are incremental
 incremental("function",  X,P,(X,F,P))            :- function(X,F,P),              inc_set(P).
-incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,L,P,_).
-incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,R,P,_).
+% - base case: table constraints over incremental sets are incremental
+incremental("constraint",X,P,((ID,X),"table"))   :- table_column((ID,X),P),       inc_set(P).
+% - recursive: if a sub-expression of X is incremental, then X is also incremental
+% incremental("function",  X,P,(X,F,Y))            :- function(X,F,Y),              incremental(_,Y ,P,_).
+incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,L ,P,_).
+incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,R ,P,_).
 incremental("unary",     X,P,(X,O,X'))           :- unary(X,O,X'),                incremental(_,X',P,_).
-incremental("constraint",X,P,((ID,X),"boolean")) :- constraint((ID,X),"boolean"), incremental(_,X,P,_).
-incremental("constraint",X,P,((ID,X),"table"))   :- constraint((ID,X),"table"),
-                                                    column((ID,X),_,_,E), set(P,E), inc_set(P).
+incremental("constraint",X,P,((ID,X),"boolean")) :- constraint((ID,X),"boolean"), incremental(_,X ,P,_).
+
 #show incremental/4.
