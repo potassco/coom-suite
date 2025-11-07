@@ -1,7 +1,7 @@
 product {
             num /l  0-200   totalVolume
             num /l  0-200   requestedVolume
-    2..*    Bag             bags
+    0..*    Bag             bags
             Color           color
 }
 
@@ -22,9 +22,9 @@ enumeration Size {
     attribute num weight
     attribute num volume
 
-    small   = ( 10 12 )
-    medium  = ( 15 16 )
-    large   = ( 25 20 )
+    Small   = ( 10 12 )
+    Medium  = ( 15 16 )
+    Large   = ( 25 20 )
 }
 
 behavior {
@@ -36,38 +36,33 @@ behavior {
 }
 
 behavior {
-    require color = Blue
-}
-
-// behavior {
-//     require color = Green
-// }
-
-behavior {
-    condition color = Blue
-    require 3 <= count(bags)
-}
-
-behavior {
-    require bags.color = Green
+   explanation "The bike should have at least five pockets."
+   require 5 < count(bags.pockets)
 }
 
 behavior Bag {
+    explanation "A small bag should have at least 2 pockets."
+    condition size = Small
     require 2 <= count(pockets)
+
+    explanation "A medium bag should have at least 4 pockets."
+    condition size = Medium
+    require 4 <= count(pockets)
+
+    explanation "A large bag should have at least 6 pockets."
+    condition size = Large
+    require 6 <= count(pockets)
 }
 
 behavior Bag {
     explanation "The size of the pockets of a bag have to match the size of the bag."
     combinations (size     pockets)
-    allow        (small    S      )
-    allow        (medium   M      )
-    allow        (large    (L,XL) )
+    allow        (Small    S      )
+    allow        (Medium   M      )
+    allow        (Large    (L,XL) )
 }
 
 behavior Bag {
+    explanation "Each bag should have at least two openings."
     require 2 <= count(openings)
-}
-
-behavior {
-   require 5 < count(bags.pockets)
 }
