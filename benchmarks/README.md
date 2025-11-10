@@ -33,5 +33,6 @@ The COOM Suite contains the following four benchmark sets.
 
 ## Unbounded Cardinalities
 
-- Several benchmarks sets for the **COOM[X*]** language
-- See the [unbounded cardinalities readme](unbounded-cardinalities/README.md) for details
+- Several benchmarks sets for the **COOM[X\*]** language
+- See the [unbounded cardinalities readme](unbounded-cardinalities/README.md)
+  for details
