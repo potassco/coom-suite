@@ -1,0 +1,2 @@
+set person[0].numShortThings[0] = 5
+set person[0].numLongThings[0] = 5
