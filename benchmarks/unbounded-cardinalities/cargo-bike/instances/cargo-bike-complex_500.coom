@@ -1,8 +1,8 @@
 product {
-            num /l  0-200   totalVolume
-            num /l  0-200   requestedVolume
-    0..*    Bag             bags
-            Color           color
+            num   0-500   totalVolume
+            num   0-500   requestedVolume
+    0..*    Bag           bags
+            Color         color
 }
 
 structure Bag {

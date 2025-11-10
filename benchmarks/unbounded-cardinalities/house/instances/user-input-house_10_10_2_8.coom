@@ -1,0 +1,4 @@
+set person[0].numShortThings[0] = 8
+set person[0].numLongThings[0] = 8
+set person[1].numShortThings[0] = 8
+set person[1].numLongThings[0] = 8

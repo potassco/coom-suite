@@ -30,3 +30,9 @@ The COOM Suite contains the following four benchmark sets.
 - Makes use of partonomy as well as simple numeric constraints
 - Scalable factor is the total number of tables and the number of chairs to be
   assigned
+
+## Unbounded Cardinalities
+
+- Several benchmarks sets for the **COOM[X\*]** language
+- See the [unbounded cardinalities readme](unbounded-cardinalities/README.md)
+  for details

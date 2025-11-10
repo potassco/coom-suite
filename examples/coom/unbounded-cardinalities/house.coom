@@ -1,0 +1,61 @@
+// House configuration problem
+// Friedrich et al.: (Re)configuration based on model generation (2011)
+
+product {
+    num  0-10      numRooms
+    3    Person    person
+}
+
+structure Person {
+    num   0-10    numLongThings
+    num   0-10    numShortThings
+    0..*  Room    room
+}
+
+structure Room {
+   0..4   Cabinet   cabinet
+}
+
+structure Cabinet {
+          CabinetType type
+    0..5  Thing       thing
+}
+
+enumeration CabinetType {
+    attribute num space
+
+    Small = ( 1 )
+    High  = ( 2 )
+}
+
+enumeration Thing {
+    attribute num isShort
+    attribute num isLong
+
+    Short = ( 1 0 )
+    Long  = ( 0 1 )
+}
+
+behavior {
+    explanation "In total there can be at most numRooms many rooms."
+    require count(person.room) <= numRooms
+}
+
+behavior Person {
+    explanation "The number of short things of a person must match the requirement."
+    require numShortThings = sum(room.cabinet.thing.isShort)
+
+    explanation "The number of long things of a person must match the requirement."
+    require numLongThings  = sum(room.cabinet.thing.isLong)
+}
+
+behavior Room {
+    explanation "The cabinets in a room can take up at most 4 spaces."
+    require 4 >= sum(cabinet.type.space)
+}
+
+behavior Cabinet {
+    explanation "A long thing can only be put into a high cabinet."
+    condition sum(thing.isLong) > 1
+    require type = High
+}
