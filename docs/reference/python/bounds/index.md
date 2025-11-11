@@ -6,8 +6,10 @@ This `max_bound` is increased (and possibly also decreased) until a (minimal) bo
 
 This can be done using standard single-shot solving or multi-shot solving.
 Both approaches use a common [solver class][solver].
+For multi-shot solving a specific [multi-shot application class][multi-application] is used.
 
 [solver]: solver.md
+[multi-application]: multi_application.md
 
 The `max_bound` can either be increased in a `linear` or `exponential` fashion.
 In both approaches it is possible to supply an initial value.
