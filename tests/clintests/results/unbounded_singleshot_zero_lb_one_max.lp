@@ -71,8 +71,9 @@ constraint((2,"root.color[0]=Blue"),"boolean").
 constraint((3,"root.bags[0].color[0]=Green"),"boolean").
 constraint((0,"root.totalVolume[0]=sum(root.bags.size.volume)"),"boolean").
 constraint((4,"5<count(root.bags.pockets)"),"boolean").
-constraint((5,"2<=count(root.bags[0].pockets)"),"boolean").
-constraint((6,"2<=count(root.bags[0].closures)"),"boolean").
+constraint((5,"!count(root.bags[0])=1||2<=count(root.bags[0].pockets)"),"boolean").
+constraint((6,"!count(root.bags[0])=1||2<=count(root.bags[0].closures)"),"boolean").
+unary("!count(root.bags[0])=1","!","count(root.bags[0])=1").
 binary("2<=count(root.bags[0].closures)","2","<=","count(root.bags[0].closures)").
 binary("2<=count(root.bags[0].pockets)","2","<=","count(root.bags[0].pockets)").
 binary("5<count(root.bags.pockets)","5","<","count(root.bags.pockets)").
@@ -80,6 +81,9 @@ binary("root.totalVolume[0]=sum(root.bags.size.volume)","root.totalVolume[0]","=
 binary("root.bags[0].color[0]=Green","root.bags[0].color[0]","=","Green").
 binary("root.color[0]=Blue","root.color[0]","=","Blue").
 binary("root.totalVolume[0]>=root.requestedVolume[0]","root.totalVolume[0]",">=","root.requestedVolume[0]").
+binary("count(root.bags[0])=1","count(root.bags[0])","=","1").
+binary("!count(root.bags[0])=1||2<=count(root.bags[0].pockets)","!count(root.bags[0])=1","||","2<=count(root.bags[0].pockets)").
+binary("!count(root.bags[0])=1||2<=count(root.bags[0].closures)","!count(root.bags[0])=1","||","2<=count(root.bags[0].closures)").
 column(("Size","root.bags[0].size[0]"),0,1,"root.bags[0].size[0].volume[0]").
 column(("Size","root.bags[0].size[0]"),0,0,"root.bags[0].size[0]").
 column((7,"root.bags[0]"),("root.bags[0].size[0]",("root.bags[0].pockets[0]",())),0,"root.bags[0].size[0]").
@@ -113,6 +117,7 @@ function("sum(root.bags.size.volume)","sum","root.bags.size.volume").
 function("count(root.bags.pockets)","count","root.bags.pockets").
 function("count(root.bags[0].pockets)","count","root.bags[0].pockets").
 function("count(root.bags[0].closures)","count","root.bags[0].closures").
+function("count(root.bags[0])","count","root.bags[0]").
 set("root.totalVolume","root.totalVolume[0]").
 set("root.requestedVolume","root.requestedVolume[0]").
 set("root.bags","root.bags[0]").
@@ -126,9 +131,11 @@ set("root.bags[0].closures","root.bags[0].closures[2]").
 set("root.bags[0].size[0].volume","root.bags[0].size[0].volume[0]").
 set("root.bags.size.volume","root.bags[0].size[0].volume[0]").
 set("root.bags.pockets","root.bags[0].pockets[0]").
+set("root.bags[0]","root.bags[0]").
 part("product").
 part("Bag").
 constant("Blue").
 constant("Green").
 number("5",5).
 number("2",2).
+number("1",1).
