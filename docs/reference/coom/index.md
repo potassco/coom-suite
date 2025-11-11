@@ -75,7 +75,7 @@ This extension corresponds to the N-LIN profile.
 ### Configuration tree / Product hierarchy
 
 - Features can be numeric, eg. `num .#/g 1-10000 totalWeight`
-  with their range specified or left open (only for fclingo).
+  with their range specified or left open (only for flingo).
 
 ### Constraints
 
@@ -85,7 +85,7 @@ This extension corresponds to the N-LIN profile.
     - Unary: `()`, `+`, `-`
     - Binary: `+`, `-`, `*`
       - no support yet for `/` and `^`
-      - fclingo only supports linear calculations (no multiplication of two
+      - flingo only supports linear calculations (no multiplication of two
         variables)
 
 ## Unbounded Cardinalities

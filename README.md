@@ -7,7 +7,7 @@ experimentation with **industrial-scale product configuration problems**. It
 includes a (customizable) [ANTLR v4](https://www.antlr.org/) parser to convert
 COOM specifications into facts, and currently contains two ASP encodings for
 solving: one for [clingo](https://potassco.org/clingo) and one for hybrid
-solver [fclingo](https://github.com/potassco/fclingo).
+solver [flingo](https://github.com/potassco/fclingo).
 
 In addition, a prototypical UI, a range of examples and a benchmark collection
 with four scalable benchmark sets is provided.

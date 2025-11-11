@@ -21,15 +21,15 @@ def NumModels(n: int) -> Test:  # pylint: disable=invalid-name
     return Assert(Exact(n), True_())
 
 
-def StableModels(*args: set[Symbol | str], fclingo: bool = False) -> Test:  # pylint: disable=invalid-name
+def StableModels(*args: set[Symbol | str], flingo: bool = False) -> Test:  # pylint: disable=invalid-name
     """
     clintest.Test for checking that a program has a certain set of stable models
 
     Args:
         args: The set of stable models as a set of sets of strings or clingo symbols
-        fclingo (bool): Whether to prepare the test for use with the fclingo solver
+        flingo (bool): Whether to prepare the test for use with the flingo solver
     """
-    if not fclingo:
+    if not flingo:
         return And(NumModels(len(args)), *(Assert(Exact(1), Equals(a)) for a in args))
     return And(NumModels(len(args)), *(Assert(Exact(1), SupersetOfTheory(a, check_theory=True)) for a in args))
 

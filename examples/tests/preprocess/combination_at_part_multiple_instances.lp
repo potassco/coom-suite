@@ -24,9 +24,9 @@ coom_allow(0,(1,0),"Carbon").
 coom_allow(0,(0,1),"W30").
 coom_allow(0,(1,1),"Aluminum").
 
-coom_behavior(1).
-coom_context(1,"Bike").
-coom_require(1,"wheel=wheel").
-coom_binary("wheel=wheel","wheel","=","wheel").
-coom_path("wheel",0,"wheel").
-coom_path("wheel",0,"wheel").
+% coom_behavior(1).
+% coom_context(1,"Bike").
+% coom_require(1,"wheel=wheel").
+% coom_binary("wheel=wheel","wheel","=","wheel").
+% coom_path("wheel",0,"wheel").
+% coom_path("wheel",0,"wheel").

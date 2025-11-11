@@ -4,8 +4,8 @@ and the corresponding files or programs they should be run with.
 
 The key of the dictionary corresponds to the name of the test.
 
-Some tests contain a "ftest" entry which is a test modified especially to work with fclingo.
-All other tests work with both clingo and fclingo.
+Some tests contain a "ftest" entry which is a test modified especially to work with flingo.
+All other tests work with both clingo and flingo.
 """
 
 from typing import Any
@@ -122,7 +122,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
     },
     "simple_integer": {
         "test": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
-        "ftest": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}, fclingo=True),
+        "ftest": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}, flingo=True),
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -138,7 +138,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
         "test": StableModels(set(), {'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
         "ftest": And(
             NumModels(3),
-            # Assert(Exact(1), SubsetOf({})), # How to check empty set for fclingo (with regards to output atoms)?
+            # Assert(Exact(1), SubsetOf({})), # How to check empty set for flingo (with regards to output atoms)?
             Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)'}, check_theory=True)),
             Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",2)'}, check_theory=True)),
         ),
@@ -163,7 +163,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             {'value("root.a[0]",1)', 'value("root.a[1]",2)'},
             {'value("root.a[0]",2)', 'value("root.a[1]",1)'},
             {'value("root.a[0]",2)', 'value("root.a[1]",2)'},
-            fclingo=True,
+            flingo=True,
         ),
         "program": """
             type("root","product").
@@ -182,7 +182,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
     },
     "unbounded_integer": {
         "test": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
-        "ftest": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}, fclingo=True),  # fclingo only
+        "ftest": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}, flingo=True),  # flingo only
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -201,7 +201,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
     },
     "unbounded_integer_below": {
         "test": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
-        "ftest": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}, fclingo=True),  # fclingo only
+        "ftest": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}, flingo=True),  # flingo only
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -218,7 +218,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
     },
     "unbounded_integer_above": {
         "test": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
-        "ftest": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}, fclingo=True),  # fclingo only
+        "ftest": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}, flingo=True),  # flingo only
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -433,7 +433,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             {'value("root.x[0]",1)', 'value("root.y[0]",3)'},
             {'value("root.x[0]",2)', 'value("root.y[0]",1)'},
             {'value("root.x[0]",3)', 'value("root.y[0]",2)'},
-            fclingo=True,
+            flingo=True,
         ),
         "files": ["table_integer.lp"],
     },
@@ -449,7 +449,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             {'value("root.x[0]","A1")', 'value("root.y[0]",3)'},
             {'value("root.x[0]","A2")', 'value("root.y[0]",1)'},
             {'value("root.x[0]","A3")', 'value("root.y[0]",2)'},
-            fclingo=True,
+            flingo=True,
         ),
         "files": ["table_mixed.lp"],
     },
@@ -654,7 +654,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
         "ftest": StableModels(
             {'value("root.x[0]",1)', 'value("root.x[1]",2)'},
             {'value("root.x[0]",2)', 'value("root.x[1]",1)'},
-            fclingo=True,
+            flingo=True,
         ),
         "files": ["sum.lp"],
     },
@@ -668,13 +668,13 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             {'value("root.x[0]",4)', 'value("root.x[1]",3)'},
             {'value("root.x[0]",3)', 'value("root.x[1]",3)'},
             {'value("root.x[0]",3)', 'value("root.x[1]",4)'},
-            fclingo=True,
+            flingo=True,
         ),
         "files": ["min.lp"],
     },
     "max": {
         "test": StableModels({'value("root.x[0]",3)', 'value("root.x[1]",3)'}),
-        "ftest": StableModels({'value("root.x[0]",3)', 'value("root.x[1]",3)'}, fclingo=True),
+        "ftest": StableModels({'value("root.x[0]",3)', 'value("root.x[1]",3)'}, flingo=True),
         "files": ["max.lp"],
     },
     "add_part": {
@@ -717,7 +717,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
     },
     "set_value_integer": {
         "test": StableModels({'value("root.a[0]",1)'}),
-        "ftest": StableModels({'value("root.a[0]",1)'}, fclingo=True),
+        "ftest": StableModels({'value("root.a[0]",1)'}, flingo=True),
         "program": """
             type("root","product").
             type("root.a[0]","A").

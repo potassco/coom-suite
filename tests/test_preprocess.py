@@ -54,6 +54,7 @@ class TestPreprocess(TestCase):
         self.run_test("multiple_conditions")
 
         self.run_test("require_multiple_instances")
+        self.run_test("require_with_optional_part")
         self.run_test("require_with_partonomy")
         self.run_test("require_with_partonomy2")
         self.run_test("require_with_partonomy_multiple_instances")
