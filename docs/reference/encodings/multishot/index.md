@@ -1,14 +1,14 @@
 # Encodings for multi-shot solving
 
 This section gives an overview of the encodings for solving an instance with unbounded cardinalities using multi-shot solving.
-These encodings mostly just reorganize the main [coom encoding][coom-encoding] into specific program parts for multi-shot solving.
+These encodings mostly just reorganize the main [COOM encoding][coom-encoding] into specific program parts for multi-shot solving.
 
-For example usage information see the [cargo-bike example][cargo-bike].
+For example usage information see the [Cargo bike example][cargo-bike].
 
 [coom-encoding]: ../index.md
 [cargo-bike]: ../../examples/cargo-bike.md
 
-We start by explaining some general concepts using a simplified version of the [cargo bike][cargo-bike] example.
+We start by explaining some general concepts using a simplified version of the [Cargo bike][cargo-bike] example.
 
 ```cpp
 product {
@@ -95,7 +95,7 @@ behavior Bag {
 ```
 
 With `max_bound` of 1, a first instance of the table constraint is added constraining `bags[0].pockets[0]`.
-When the `max_bound` is increased to 2 a new instance of the same table is added constraining `bags[0].pokcets[1]`.
+When the `max_bound` is increased to 2 a new instance of the same table is added constraining `bags[0].pockets[1]`.
 The different instantiations of a table are distinguished by the second argument of the `column/4` predicate.
 However, note that each instance of the table constraints itself behaves like a simple constraint from above.
 This is used in the evaluation of incremental constraints in the respective [encoding][incremental-table].
