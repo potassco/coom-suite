@@ -23,7 +23,7 @@ Homepage = "https://github.com/potassco/coom-suite.git/"
 
 [project.optional-dependencies]
 format = ["black", "isort", "autoflake"]
-lint_pylint = ["pylint==3.3.9"]
+lint_pylint = ["pylint"]
 typecheck = ["types-setuptools", "mypy"]
 test = ["coverage[toml]", "clintest>=0.2.0"]
 doc = [
