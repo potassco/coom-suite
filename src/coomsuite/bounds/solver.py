@@ -54,10 +54,13 @@ class BoundSolver:
             print(f"Solving with bound = {current_bound}\n")
 
             ret = self._solve(current_bound)
-            if ret_dict[ret] == "SAT":
-                sat_bound = current_bound
-            else:
-                unsat_bound = current_bound
+            try:
+                if ret_dict[ret] == "SAT":
+                    sat_bound = current_bound
+                else:
+                    unsat_bound = current_bound
+            except KeyError:
+                pass
 
     def get_bounds(self, algorithm: str = "linear", initial_bound: int = 0, use_multishot: bool = False) -> int:
         """
