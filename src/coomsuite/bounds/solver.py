@@ -100,7 +100,7 @@ class BoundSolver:
             try:
                 if ret_dict[ret] == "SAT":
                     return self._converge(prev_bound, max_bound)
-                elif ret_dict[ret] == "UNSAT":
+                if ret_dict[ret] == "UNSAT":
                     pass
                 else:
                     print(f"\n Some error occured during solving with max bound = {max_bound}\n")
