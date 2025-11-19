@@ -54,6 +54,7 @@ class TestMultiApplication(TestCase):
 
         for fact, part in [
             ('allow(7,(1,0),"S").', ("new_allow", [parse_term("7"), parse_term("(1,0)"), parse_term('"S"')])),
+            ('number("5",5).', ("new_number", [parse_term('"5"'), parse_term("5")])),
             # program parts that get the bound added to arguments
             (
                 'type("root.bags[1]","Bags").',
@@ -80,7 +81,7 @@ class TestMultiApplication(TestCase):
             self.assertEqual(app._get_prog_part(fact, 1), part, f"failed with fact={fact}, part={part}")
 
         # invalid program part
-        self.assertRaises(ValueError, app._get_prog_part, 'number("5",5).', 0)
+        self.assertRaises(ValueError, app._get_prog_part, 'part("test").', 0)
 
     def test_get_incremental_prog_part(self) -> None:
         """
