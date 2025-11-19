@@ -2,7 +2,7 @@
 Contains a module for solving problems with open bounds/cardinalities.
 """
 
-from typing import List
+from typing import List, Optional
 
 from clingo.application import clingo_main
 
@@ -11,7 +11,7 @@ from coomsuite import solve
 from . import get_bound_iter, next_bound_converge
 from .multi_application import COOMMultiSolverApp
 
-ret_dict = {10: "SAT", 20: "UNSAT"}
+ret_dict = {0: "UNKNOWN", 1: "INTERRUPT", 10: "SAT", 20: "UNSAT", 33: "MEMORY", 65: "ERROR", 128: "NO_RUN"}
 
 
 class BoundSolver:
@@ -39,7 +39,7 @@ class BoundSolver:
     def _solve(self, max_bound: int) -> int:  # nocoverage
         return solve(self.facts, self.solver, max_bound, self.clingo_args, self.output_format)
 
-    def _converge(self, unsat_bound: int, sat_bound: int) -> int:
+    def _converge(self, unsat_bound: int, sat_bound: int) -> Optional[int]:
         """
         Converge to the minimal bound given lower bound (unsat_bound) and upper bound (sat_bound)
         """
@@ -54,12 +54,20 @@ class BoundSolver:
             print(f"Solving with bound = {current_bound}\n")
 
             ret = self._solve(current_bound)
-            if ret_dict[ret] == "SAT":
-                sat_bound = current_bound
-            else:
-                unsat_bound = current_bound
+            try:
+                if ret_dict[ret] == "SAT":
+                    sat_bound = current_bound
+                elif ret_dict[ret] == "UNSAT":
+                    unsat_bound = current_bound
+                else:
+                    print(f"\n Some error occured during solving with max bound = {current_bound}\n")
+                    return None
+            except KeyError as exc:
+                raise KeyError("Unknown exit code.") from exc
 
-    def get_bounds(self, algorithm: str = "linear", initial_bound: int = 0, use_multishot: bool = False) -> int:
+    def get_bounds(
+        self, algorithm: str = "linear", initial_bound: int = 0, use_multishot: bool = False
+    ) -> Optional[int]:
         """
         Compute the minimal bound for the problem.
         """
@@ -89,7 +97,15 @@ class BoundSolver:
         while True:
             print(f"\nSolving with max_bound = {max_bound}\n")
             ret = self._solve(max_bound)
-            if ret_dict[ret] == "SAT":
-                return self._converge(prev_bound, max_bound)
+            try:
+                if ret_dict[ret] == "SAT":
+                    return self._converge(prev_bound, max_bound)
+                if ret_dict[ret] == "UNSAT":
+                    pass
+                else:
+                    print(f"\n Some error occured during solving with max bound = {max_bound}\n")
+                    return None
+            except KeyError as exc:
+                raise KeyError("Unknown exit code.") from exc
             prev_bound = max_bound
             max_bound = next(bounds_iter)
