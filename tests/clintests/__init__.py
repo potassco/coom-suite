@@ -34,6 +34,13 @@ def StableModels(*args: set[Symbol | str], flingo: bool = False) -> Test:  # pyl
     return And(NumModels(len(args)), *(Assert(Exact(1), SupersetOfTheory(a, check_theory=True)) for a in args))
 
 
+def Supersets(*args: set[Symbol | str]) -> Test:  # pylint: disable=invalid-name
+    """
+    clintest.Test for checking models of a program against a set of models using superset relation
+    """
+    return And(NumModels(len(args)), *(Assert(Exact(1), SupersetOf(a)) for a in args))
+
+
 class SupersetOfTheory(SupersetOf):
     """
     A clintest SupersetOf assertion that can also check theory atoms.

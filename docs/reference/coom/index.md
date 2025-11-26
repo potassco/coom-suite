@@ -91,7 +91,7 @@ This extension corresponds to the N-LIN profile.
 ## Unbounded Cardinalities
 
 The fragments **COOM\[P\]** and **COOM\[X\]**, respectively,
-have extensions which allow for unbounded cardinalities.
+have extensions which allow for unbounded cardinalities (e.g. `0..*`).
 This extension corresponds to the C-OPEN profile.
 
 We call these fragments **COOM\[P*\]** and **COOM\[X*\]**, respectively.

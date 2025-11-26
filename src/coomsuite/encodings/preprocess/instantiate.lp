@@ -11,6 +11,7 @@ type_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,Min,#sup),     type_aux
 type_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",_,  Max),  type_aux(X,Ctx), I = 0..Max-1.
 type_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), type_aux(X,Ctx), I = 0..Min+max_bound-1.
 
+
 % Create auxiliary prediate for attribute variables
 type_aux((A,(X,0)),A) :- type_aux(X,T), coom_enumeration(T), coom_attribute_value(T,_,A,_).
 
@@ -117,8 +118,6 @@ combinations_tuple((C,Ctx),Col,(X',X)) :- combinations_tuple((C,Ctx),Col+1,X),
                                           coom_combinations(C,Col,P), Col >= 0,
                                           path_to(Ctx,P,X').
 combinations_tuple(C,CT) :- combinations_tuple(C,0,CT).
-
-tuple_order(C,CT,ID) :-  combinations_tuple(C,CT), ID = #count{ CT': combinations_tuple(C,CT'), CT'<CT }.
 
 in_tuple((X,CT'),CT',X) :- combinations_tuple(_,CT), CT=(X,CT').
 in_tuple(CT,CT',X)      :- in_tuple(CT,(X,CT'),_).

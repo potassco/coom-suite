@@ -5,7 +5,7 @@ icon: "material/chart-bar"
 
 # Benchmarks
 
-The COOM suite includes four scalable benchmark sets. More information can be
-found in the [Benchmarks folder][benchmarks].
+The COOM suite includes various scalable benchmark sets.
+More information can be found in the [COOM Benchmarks repository][benchmarks].
 
-[benchmarks]: https://github.com/potassco/coom-suite/tree/master/benchmarks
+[benchmarks]: https://github.com/potassco/coom-benchmarks

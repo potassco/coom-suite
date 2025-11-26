@@ -149,8 +149,8 @@ unary("atan(((125-root.grundmerkmale[0].eingabeBreite[0])/((90-root.grundmerkmal
 unary("((((90-root.grundmerkmale[0].durchgangshoehe[0]))^2)+((125-root.grundmerkmale[0].eingabeBreite[0])^2))","()","(((90-root.grundmerkmale[0].durchgangshoehe[0]))^2)+((125-root.grundmerkmale[0].eingabeBreite[0])^2)").
 unary("(atan(((125-root.grundmerkmale[0].eingabeBreite[0])/((90-root.grundmerkmale[0].durchgangshoehe[0])))))","()","atan(((125-root.grundmerkmale[0].eingabeBreite[0])/((90-root.grundmerkmale[0].durchgangshoehe[0]))))").
 unary("sqrt(((((90-root.grundmerkmale[0].durchgangshoehe[0]))^2)+((125-root.grundmerkmale[0].eingabeBreite[0])^2)))","sqrt","((((90-root.grundmerkmale[0].durchgangshoehe[0]))^2)+((125-root.grundmerkmale[0].eingabeBreite[0])^2))").
-column(("Cover","root.cover[0]"),0,1,"root.cover[0].weight[0]").
-column(("Cover","root.cover[0]"),0,0,"root.cover[0]").
+column(("Cover","root.cover[0]"),("root.cover[0]","root.cover[0].weight[0]"),1,"root.cover[0].weight[0]").
+column(("Cover","root.cover[0]"),("root.cover[0]","root.cover[0].weight[0]"),0,"root.cover[0]").
 allow("Cover",(0,1),"_AcrylLumera").
 allow("Cover",(0,2),"_AcrylPerfora").
 allow("Cover",(0,0),"_AcrylAllWeather").

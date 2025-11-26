@@ -22,7 +22,7 @@ head to the [Encodings][encodings] section.
 === "COOM model"
 
     ```cpp title="model.coom"
-    --8<-- "examples/coom/travel-bike-simplified.coom:5:"
+    --8<-- "examples/coom/bike/travel-bike-simplified.coom:5:"
     ```
 
 === "Serialization"
