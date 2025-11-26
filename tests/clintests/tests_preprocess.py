@@ -1160,6 +1160,56 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         ),
         "files": ["sum.lp"],
     },
+    "minimize": {
+        "test": StableModels(
+            {
+                'integer("product.totalWeight")',
+                'range("product.totalWeight",1,10)',
+                'type("root","product")',
+                'type("root.totalWeight[0]","product.totalWeight")',
+                'index("root.totalWeight[0]",0)',
+                'parent("root.totalWeight[0]","root")',
+                'constraint(("root.totalWeight",1),"lowerbound")',
+                'set("root.totalWeight","root.totalWeight[0]")',
+                'part("product")',
+                'minimize("root.totalWeight[0]")',
+            }
+        ),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","totalWeight","num",1,1).
+            coom_range("product","totalWeight",1,10).
+            coom_behavior(0).
+            coom_context(0,"product").
+            coom_minimize(0,"totalWeight").
+            coom_path("totalWeight",0,"totalWeight").
+            """,
+    },
+    "maximize": {
+        "test": StableModels(
+            {
+                'integer("product.totalOutput")',
+                'range("product.totalOutput",1,10)',
+                'type("root","product")',
+                'type("root.totalOutput[0]","product.totalOutput")',
+                'index("root.totalOutput[0]",0)',
+                'parent("root.totalOutput[0]","root")',
+                'constraint(("root.totalOutput",1),"lowerbound")',
+                'set("root.totalOutput","root.totalOutput[0]")',
+                'part("product")',
+                'maximize("root.totalOutput[0]")',
+            }
+        ),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","totalOutput","num",1,1).
+            coom_range("product","totalOutput",1,10).
+            coom_behavior(0).
+            coom_context(0,"product").
+            coom_maximize(0,"totalOutput").
+            coom_path("totalOutput",0,"totalOutput").
+            """,
+    },
     "set_constant": {
         "test": StableModels({'user_value("root.color[0]","Yellow")'}),
         "program": 'coom_user_value("root.color[0]","Yellow").',

@@ -119,9 +119,16 @@ class TestClingo(TestCase):
         self.run_test("min")
         self.run_test("max")
 
+    def test_optimization(self):
+        """
+        Test solving optimization statements (clingo)
+        """
+        self.run_test("minimize")
+        self.run_test("maximize")
+
     def test_user_input(self) -> None:
         """
-        Test solving user input
+        Test solving user input (clingo)
         """
         self.run_test("add_part")
         self.run_test("add_attribute")
@@ -247,9 +254,16 @@ class TestFlingo(TestCase):
         self.run_test("min")
         self.run_test("max")
 
+    def test_optimization(self):
+        """
+        Test solving optimization statements (flingo)
+        """
+        self.run_test("minimize")
+        self.run_test("maximize")
+
     def test_user_input(self) -> None:
         """
-        Test solving user input
+        Test solving user input (flingo)
         """
         self.run_test("add_part")
         self.run_test("add_attribute")

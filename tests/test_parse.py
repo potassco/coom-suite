@@ -973,3 +973,28 @@ class TestCOOMModelParser(TestCase):
                 'path("b",0,"b").',
             ],
         )
+
+    def test_optimization(self) -> None:
+        """
+        Test parsing behavior with optimization statements
+        """
+
+        self.assertEqual(
+            parse_coom("behavior{minimize totalWeight}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'minimize(0,"totalWeight").',
+                'path("totalWeight",0,"totalWeight").',
+            ],
+        )
+
+        self.assertEqual(
+            parse_coom("behavior{maximize totalOutput}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'maximize(0,"totalOutput").',
+                'path("totalOutput",0,"totalOutput").',
+            ],
+        )
