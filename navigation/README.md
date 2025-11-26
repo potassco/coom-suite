@@ -9,17 +9,6 @@
 - narrowing operations allow us to narrow down the solution space towards
   desired solutions
 
-- example: exploring bike configuration
-
-  - get diverse models to obtain an overview of different types of bikes
-  - identify desirable features such as bike lights, a specific color
-  - enforce these features through the use of assumptions
-  - repeat getting diverse models
-  - add further restrictions such as an upper limit on the bike weight
-  - ...
-  - if at some point no solution remain, or the remaining solutions do not
-    comply with some desired feature we may want to backtrack
-
 - the goal is to implement a general navigation library to be used in different
   applications/projects:
 
@@ -70,6 +59,10 @@
 - history
   - retract added assumptions/rules/other changes to solution space
   - return to an earlier solution set
+  - how fine grained should history be?
+  - should history include earlier computed models?
+  - ability to retract changes needs modification of certain operations (e.g.
+    adding rules would need the option to deactivate the rule later on)
 
 ## Material
 
