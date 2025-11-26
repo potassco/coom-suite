@@ -1,7 +1,0 @@
-
-// set color[0] = Yellow
-// set size[0] = 14
-// add basket[0]
-// add carrier[0].bag[0]
-// add carrier[0].bag[1]
-set requestedVolume[0] = 95

@@ -4,8 +4,8 @@ and the corresponding files or programs they should be run with.
 
 The key of the dictionary corresponds to the name of the test.
 
-Some tests contain a "ftest" entry which is a test modified especially to work with fclingo.
-All other tests work with both clingo and fclingo.
+Some tests contain a "ftest" entry which is a test modified especially to work with flingo.
+All other tests work with both clingo and flingo.
 """
 
 from typing import Any
@@ -122,7 +122,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
     },
     "simple_integer": {
         "test": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
-        "ftest": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}, fclingo=True),
+        "ftest": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}, flingo=True),
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -138,7 +138,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
         "test": StableModels(set(), {'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
         "ftest": And(
             NumModels(3),
-            # Assert(Exact(1), SubsetOf({})), # How to check empty set for fclingo (with regards to output atoms)?
+            # Assert(Exact(1), SubsetOf({})), # How to check empty set for flingo (with regards to output atoms)?
             Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)'}, check_theory=True)),
             Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",2)'}, check_theory=True)),
         ),
@@ -163,7 +163,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             {'value("root.a[0]",1)', 'value("root.a[1]",2)'},
             {'value("root.a[0]",2)', 'value("root.a[1]",1)'},
             {'value("root.a[0]",2)', 'value("root.a[1]",2)'},
-            fclingo=True,
+            flingo=True,
         ),
         "program": """
             type("root","product").
@@ -179,6 +179,59 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             set("root.a","root.a[0]").
             set("root.a","root.a[1]").
             part("product").""",
+    },
+    "unbounded_integer": {
+        "test": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
+        "ftest": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}, flingo=True),  # flingo only
+        "program": """
+            type("root","product").
+            type("root.a[0]","A").
+            integer("A").
+            index("root.a[0]",0).
+            parent("root.a[0]","root").
+            constraint(("root.a",1),"lowerbound").
+            set("root.a","root.a[0]").
+            part("product").
+            constraint((0,"root.a[0]<3"),"boolean").
+            binary("root.a[0]<3","root.a[0]","<","3").
+            number("3",3).
+            constraint((1,"root.a[0]>0"),"boolean").
+            binary("root.a[0]>0","root.a[0]",">","0").
+            number("0",0).""",
+    },
+    "unbounded_integer_below": {
+        "test": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
+        "ftest": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}, flingo=True),  # flingo only
+        "program": """
+            type("root","product").
+            type("root.a[0]","A").
+            integer("A").
+            range("A",#inf,2).
+            index("root.a[0]",0).
+            parent("root.a[0]","root").
+            constraint(("root.a",1),"lowerbound").
+            set("root.a","root.a[0]").
+            part("product").
+            constraint((1,"root.a[0]>0"),"boolean").
+            binary("root.a[0]>0","root.a[0]",">","0").
+            number("0",0).""",
+    },
+    "unbounded_integer_above": {
+        "test": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
+        "ftest": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}, flingo=True),  # flingo only
+        "program": """
+            type("root","product").
+            type("root.a[0]","A").
+            integer("A").
+            range("A",1,#sup).
+            index("root.a[0]",0).
+            parent("root.a[0]","root").
+            constraint(("root.a",1),"lowerbound").
+            set("root.a","root.a[0]").
+            part("product").
+            constraint((0,"root.a[0]<3"),"boolean").
+            binary("root.a[0]<3","root.a[0]","<","3").
+            number("3",3).""",
     },
     "eq_sat": {
         "test": TEST_EMPTY,
@@ -380,7 +433,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             {'value("root.x[0]",1)', 'value("root.y[0]",3)'},
             {'value("root.x[0]",2)', 'value("root.y[0]",1)'},
             {'value("root.x[0]",3)', 'value("root.y[0]",2)'},
-            fclingo=True,
+            flingo=True,
         ),
         "files": ["table_integer.lp"],
     },
@@ -396,7 +449,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             {'value("root.x[0]","A1")', 'value("root.y[0]",3)'},
             {'value("root.x[0]","A2")', 'value("root.y[0]",1)'},
             {'value("root.x[0]","A3")', 'value("root.y[0]",2)'},
-            fclingo=True,
+            flingo=True,
         ),
         "files": ["table_mixed.lp"],
     },
@@ -601,7 +654,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
         "ftest": StableModels(
             {'value("root.x[0]",1)', 'value("root.x[1]",2)'},
             {'value("root.x[0]",2)', 'value("root.x[1]",1)'},
-            fclingo=True,
+            flingo=True,
         ),
         "files": ["sum.lp"],
     },
@@ -615,16 +668,39 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             {'value("root.x[0]",4)', 'value("root.x[1]",3)'},
             {'value("root.x[0]",3)', 'value("root.x[1]",3)'},
             {'value("root.x[0]",3)', 'value("root.x[1]",4)'},
-            fclingo=True,
+            flingo=True,
         ),
         "files": ["min.lp"],
     },
     "max": {
         "test": StableModels({'value("root.x[0]",3)', 'value("root.x[1]",3)'}),
-        "ftest": StableModels({'value("root.x[0]",3)', 'value("root.x[1]",3)'}, fclingo=True),
+        "ftest": StableModels({'value("root.x[0]",3)', 'value("root.x[1]",3)'}, flingo=True),
         "files": ["max.lp"],
     },
-    "user_value_discrete": {
+    "add_part": {
+        "test": StableModels({'include("root.a[0]")'}),
+        "program": """
+            type("root","product").
+            type("root.a[0]","A").
+            index("root.a[0]",0).
+            parent("root.a[0]","root").
+            part("product").
+            part("A").
+            user_include("root.a[0]").""",
+    },
+    "add_attribute": {
+        "test": StableModels({'value("root.basket[0]","White")'}, {'value("root.basket[0]","Black")'}),
+        "program": """
+            part("product").
+            discrete("Basket").
+            domain("Basket","Black").
+            domain("Basket","White").
+            type("root.basket[0]","Basket").
+            parent("root.basket[0]","root").
+            index("root.basket[0]",0).
+            user_include("root.basket[0]").""",
+    },
+    "set_value_discrete": {
         "test": StableModels({'value("root.a[0]","A1")'}),
         "program": """
             type("root","product").
@@ -639,9 +715,9 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             part("product").
             user_value("root.a[0]","A1").""",
     },
-    "user_value_integer": {
+    "set_value_integer": {
         "test": StableModels({'value("root.a[0]",1)'}),
-        "ftest": StableModels({'value("root.a[0]",1)'}, fclingo=True),
+        "ftest": StableModels({'value("root.a[0]",1)'}, flingo=True),
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -654,23 +730,12 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             part("product").
             user_value("root.a[0]",1).""",
     },
-    "user_include": {
-        "test": StableModels({'include("root.a[0]")'}),
-        "program": """
-            type("root","product").
-            type("root.a[0]","A").
-            index("root.a[0]",0).
-            parent("root.a[0]","root").
-            part("product").
-            part("A").
-            user_include("root.a[0]").""",
-    },
-    "set_invalid_variable": {"test": StableModels(set()), "program": """user_value("root.color[0]","Yellow")."""},
     "add_invalid_variable": {
         "test": StableModels(set()),
         "program": """
             user_include("root.basket[0]").""",
     },
+    "set_invalid_variable": {"test": StableModels(set()), "program": """user_value("root.color[0]","Yellow")."""},
     "set_invalid_type": {
         "test": StableModels(set(), {'include("root.basket[0]")'}),
         "program": """
@@ -680,16 +745,6 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             parent("root.basket[0]","root").
             index("root.basket[0]",0).
             user_value("root.basket[0]","Yellow").""",
-    },
-    "add_invalid_type": {
-        "test": StableModels(set()),
-        "program": """
-            part("product").
-            discrete("Basket").
-            type("root.basket[0]","Basket").
-            parent("root.basket[0]","root").
-            index("root.basket[0]",0).
-            user_include("root.basket[0]").""",
     },
     "set_invalid_value_discrete": {
         "test": StableModels({'value("root.color[0]","Red")'}),
@@ -710,11 +765,12 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             part("product").
             integer("product.size").
             range("product.size",1,3).
+            type("root","product").
             type("root.size[0]","product.size").
             parent("root.size[0]","root").
             index("root.size[0]",0).
-            user_value("root.size[0]",11).
             constraint(("root.size",1),"lowerbound").
-            set("root.size","root.size[0]").""",
+            set("root.size","root.size[0]").
+            user_value("root.size[0]",11).""",
     },
 }

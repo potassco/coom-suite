@@ -1,0 +1,42 @@
+// Cargo Bike example
+// Adapted from example provided by denkbares GmbH
+// see Baumeister et al.: Towards Industrial-scale Product Configuration (2025).
+
+product {
+            num /l  0-200   totalVolume
+            num /l  0-200   requestedVolume
+    0..*    Bag             bags
+}
+
+structure Bag {
+            Color color
+            Size  size
+    0..*    Bag             bags
+}
+
+enumeration Color { Green Blue Red }
+
+enumeration Size {
+    attribute num weight
+    attribute num volume
+
+    small   = ( 10 12 )
+    medium  = ( 15 16 )
+    large   = ( 25 20 )
+}
+
+behavior {
+    explanation "The total volume is equal to the sum of the volumes of all bags."
+    require totalVolume = sum(bags.size.volume) + sum(bags.bags.size.volume)
+
+    explanation "The total volume must be greater than or equal to the requested volume."
+    require totalVolume >= requestedVolume
+}
+
+behavior Bag {
+    require bags.color = bags.color
+}
+
+// behavior {
+//     minimize count(bags)
+// }

@@ -23,19 +23,17 @@ domain("Capacity", "B20").
 domain("Capacity", "B50").
 domain("Capacity", "B100").
 
-integer("Capacity.volume").
-range("Capacity.volume",10,100).
-% domain("Capacity.volume",10).
-% domain("Capacity.volume",20).
-% domain("Capacity.volume",50).
-% domain("Capacity.volume",100).
+discrete("Capacity.volume").
+domain("Capacity.volume",10).
+domain("Capacity.volume",20).
+domain("Capacity.volume",50).
+domain("Capacity.volume",100).
 
-integer("Capacity.weight").
-range("Capacity.weight",100,1200).
-% domain("Capacity.weight",100).
-% domain("Capacity.weight",250).
-% domain("Capacity.weight",600).
-% domain("Capacity.weight",1200).
+discrete("Capacity.weight").
+domain("Capacity.weight",100).
+domain("Capacity.weight",250).
+domain("Capacity.weight",600).
+domain("Capacity.weight",1200).
 
 discrete("Material").
 domain("Material", "Cotton").
@@ -49,21 +47,19 @@ domain("Wheel", "W24").
 domain("Wheel", "W26").
 domain("Wheel", "W28").
 
-integer("Wheel.size").
-range("Wheel.size",20,28).
-% domain("Wheel.size",20).
-% domain("Wheel.size",22).
-% domain("Wheel.size",24).
-% domain("Wheel.size",26).
-% domain("Wheel.size",28).
+discrete("Wheel.size").
+domain("Wheel.size",20).
+domain("Wheel.size",22).
+domain("Wheel.size",24).
+domain("Wheel.size",26).
+domain("Wheel.size",28).
 
-integer("Wheel.weight").
-range("Wheel.weight",650,1000).
-% domain("Wheel.weight",650).
-% domain("Wheel.weight",700).
-% domain("Wheel.weight",800).
-% domain("Wheel.weight",900).
-% domain("Wheel.weight",1000).
+discrete("Wheel.weight").
+domain("Wheel.weight",650).
+domain("Wheel.weight",700).
+domain("Wheel.weight",800).
+domain("Wheel.weight",900).
+domain("Wheel.weight",1000).
 
 discrete("Color").
 domain("Color", "Red").
@@ -227,6 +223,7 @@ index("root.frame[0].bag[1].material[0]",0).
 parent("root.frame[0].bag[1].material[0]", "root.frame[0].bag[1]").
 
 % Instantiated constraints
+explanation(0,"The bike can have a maximum of 4 bags.").
 constraint((0,"count(root.carrier.bag)+count(root.frame.bag)<=4"),"boolean").
 binary("count(root.carrier.bag)+count(root.frame.bag)<=4","count(root.carrier.bag)+count(root.frame.bag)","<=","4").
 binary("count(root.carrier.bag)+count(root.frame.bag)","count(root.carrier.bag)","+","count(root.frame.bag)").
@@ -239,6 +236,8 @@ set("root.frame.bag","root.frame[0].bag[0]").
 set("root.frame.bag","root.frame[0].bag[1]").
 number("4",4).
 
+
+explanation(1,"The total weight is equal to the weight of the front wheel plus the weight of the rear wheel plus the sum of the weights of all bags on the carrier and the frame.").
 constraint((1,"root.totalWeight[0]=root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)"),"boolean").
 binary("root.totalWeight[0]=root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)","root.totalWeight[0]","=","root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)").
 binary("root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)","root.frontWheel[0].weight[0]","+","root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)").
@@ -252,11 +251,13 @@ function("sum(root.frame.bag.capacity.weight)","sum","root.frame.bag.capacity.we
 set("root.frame.bag.capacity.weight","root.frame[0].bag[0].capacity[0].weight[0]").
 set("root.frame.bag.capacity.weight","root.frame[0].bag[1].capacity[0].weight[0]").
 
+explanation(2,"The total weight must not exceed the maximum weight.").
 constraint((2,"root.totalWeight[0]<=root.maxWeight[0]*1000"),"boolean").
 binary("root.totalWeight[0]<=root.maxWeight[0]*1000","root.totalWeight[0]","<=","root.maxWeight[0]*1000").
 binary("root.maxWeight[0]*1000","root.maxWeight[0]","*","1000").
 number("1000",1000).
 
+explanation(3,"The total volume is equal to the sum of the volumes of all bags on the carrier and the frame.").
 constraint((3,"root.totalVolume[0]=sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)"),"boolean").
 binary("root.totalVolume[0]=sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)","root.totalVolume[0]","=","sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)").
 binary("sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)","sum(root.carrier.bag.capacity.volume)","+","sum(root.frame.bag.capacity.volume)").
@@ -268,9 +269,11 @@ function("sum(root.frame.bag.capacity.volume)","sum","root.frame.bag.capacity.vo
 set("root.frame.bag.capacity.volume","root.frame[0].bag[0].capacity[0].volume[0]").
 set("root.frame.bag.capacity.volume","root.frame[0].bag[1].capacity[0].volume[0]").
 
+explanation(4,"The total volume must be greater than or equal to the requested volume.").
 constraint((4,"root.totalVolume[0]>=root.requestedVolume[0]"),"boolean").
 binary("root.totalVolume[0]>=root.requestedVolume[0]","root.totalVolume[0]",">=","root.requestedVolume[0]").
 
+explanation(5,"If the color is red, then the size of the front wheel must be 20.").
 constraint((5,"!root.color[0]=Red||root.frontWheel[0].size[0]=20"),"boolean").
 binary("!root.color[0]=Red||root.frontWheel[0].size[0]=20","!root.color[0]=Red","||","root.frontWheel[0].size[0]=20").
 unary("!root.color[0]=Red","!","root.color[0]=Red").
@@ -279,6 +282,7 @@ constant("Red").
 binary("root.frontWheel[0].size[0]=20","root.frontWheel[0].size[0]","=","20").
 number("20",20).
 
+explanation(6,"If the material of the bag is leather, then the capacity must be B10.").
 constraint((6,"!root.carrier[0].bag[0].material[0]=Leather||root.carrier[0].bag[0].capacity[0]=B10"),"boolean").
 binary("!root.carrier[0].bag[0].material[0]=Leather||root.carrier[0].bag[0].capacity[0]=B10","!root.carrier[0].bag[0].material[0]=Leather","||","root.carrier[0].bag[0].capacity[0]=B10").
 unary("!root.carrier[0].bag[0].material[0]=Leather","!","root.carrier[0].bag[0].material[0]=Leather").

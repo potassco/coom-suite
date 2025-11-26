@@ -1,0 +1,44 @@
+// Kids Bike example
+// Provided by denkbares GmbH
+// see Baumeister et al.: Towards Industrial-scale Product Configuration (2025).
+
+product {
+	Color   color
+    Bool    wheelSupport
+	Wheel	frontWheel
+	Wheel	rearWheel
+}
+
+enumeration Color {
+	Red
+	Green
+	Yellow
+	Blue
+}
+
+enumeration Wheel {
+	attribute	num/inch	size
+
+	W14	= (	 14	)
+	W16	= (	 16	)
+	W18	= (	 18	)
+	W20	= (	 20	)
+}
+
+behavior {
+	explanation "If the color is yellow, then the size of the front wheel must be greater than 16."
+	condition color = Yellow
+	require frontWheel.size > 16
+}
+
+behavior {
+	explanation "A wheel support can only be used with rear wheels of type W14 or W16."
+	combinations  (wheelSupport	 rearWheel)
+	allow         (True          (W14, W16))
+	allow         (False         (W18, W20))
+}
+
+behavior {
+	explanation "The size of the front wheel must be equal to the size of the rear wheel."
+	require frontWheel.size = rearWheel.size
+}

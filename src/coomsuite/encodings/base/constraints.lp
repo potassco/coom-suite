@@ -1,7 +1,7 @@
-#include "clingo/violated.lp".
-#include "clingo/formulas.lp".
+% A lower bound (cardinality) constraint is violated if less than the minimum number of objects are included
+% (objects are included in ascending order of indices)
+% (maximum does not need to be checked)
+violated((X',P)) :- constraint((P,Min),"lowerbound"), set(P,X), index(X,Min-1), not include(X), parent(X,X'), include(X').
 
-% A row of a table is not satisfied if any of its entries is not satisfied.
-% Note that a table entry can contain multiple values.
-% This is incompatible with fclingo (mixed check of values).
-not_hit(C,ID,Row) :- allow(Idx,(Col,Row),_), column(C,ID,Col,X), C=(Idx,_), not value(X,V) : allow(Idx,(Col,Row),V).
+% Constraints cannot be violated
+:- violated(C).

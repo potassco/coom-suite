@@ -4,32 +4,37 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "coomsuite"
-authors = [
-    { name = "Nicolas Rühling", email = "nicolas.ruehling@uni-potsdam.de" },
-]
+authors = [{ name = "Nicolas Rühling", email = "nruehling@uni-potsdam.de" }]
 description = "Python package to parse and solve COOM configuration instances using ASP."
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 dependencies = [
-    "antlr4-tools",
-    "antlr4-python3-runtime==4.9.3",
+    "antlr4-python3-runtime==4.13.2",
     "clingo==5.7.*",
-    "clingcon >= 5.2.1, == 5.2.*",                                                                  # requirement for fclingo
+    "clingcon >= 5.2.1, == 5.2.*",                                                                  # requirement for flingo
     "fclingo@git+https://github.com/potassco/fclingo.git@6f4d7efc92bfac18465e2c95c4ef9ac99ef470b5",
+    "clinguin>=2.6.1",
 ]
-license = { file = "LICENSE" }
+license-files = ["LICENSE"]
 dynamic = ["version"]
 readme = "README.md"
 
 [project.urls]
-Hompage = "https://github.com/krr-up/coom-suite.git/"
+Homepage = "https://github.com/potassco/coom-suite.git/"
 
 [project.optional-dependencies]
 format = ["black", "isort", "autoflake"]
 lint_pylint = ["pylint"]
 typecheck = ["types-setuptools", "mypy"]
 test = ["coverage[toml]", "clintest>=0.2.0"]
-doc = ["sphinx", "furo", "nbsphinx", "sphinx_copybutton", "myst-parser"]
-dev = ["coomsuite[test,typecheck,lint_pylint]"]
+doc = [
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings[python]",
+    "mkdoclingo",
+    "tree_sitter",
+]
+grammar = ["antlr4-tools"]
+dev = ["coomsuite[test,typecheck,lint_pylint,grammar]"]
 
 [project.scripts]
 coomsuite = "coomsuite.__main__:main"
@@ -80,10 +85,15 @@ ignore = ["coom_grammar"]
 
 [tool.coverage.run]
 source = ["coomsuite", "tests"]
-omit = ["*/coomsuite/__main__.py", "*/coom_grammar/*", "*/tests/__init__.py"]
+omit = [
+    "*/coomsuite/__main__.py",
+    "*/coom_grammar/*",
+    "*/tests/__init__.py",
+    "ui_backend.py",
+]
 
 [tool.coverage.report]
 exclude_lines = ["assert", "nocoverage"]
 
 [tool.mypy]
-exclude = ['coom_grammar', '/coomsuite/__main__.py']
+exclude = ['coom_grammar'] # , '/coomsuite/__main__.py']

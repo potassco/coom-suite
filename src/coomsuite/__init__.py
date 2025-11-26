@@ -3,16 +3,20 @@ The coomsuite project.
 """
 
 from os.path import basename, join, splitext
-from typing import Optional
+from tempfile import NamedTemporaryFile
+from typing import List, Optional
 
 from antlr4 import FileStream
+from clingo.application import clingo_main
 
+from .application import COOMSolverApp
+from .preprocess import check_user_input, preprocess
 from .utils import run_antlr4_visitor
 from .utils.logging import get_logger
 
 log = get_logger("main")
 
-SOLVERS = ["clingo", "fclingo"]
+SOLVERS = ["clingo", "flingo"]
 
 
 def convert_instance(coom_file: str, grammar: str, outdir: Optional[str] = None) -> str:  # nocoverage
@@ -41,3 +45,37 @@ def convert_instance(coom_file: str, grammar: str, outdir: Optional[str] = None)
         return output_lp_file
 
     return asp_instance
+
+
+def solve(
+    serialized_facts: List[str],
+    solver: str,
+    max_bound: int,
+    clingo_args: List[str],
+    output: str,
+) -> int:  # nocoverage
+    """
+    Preprocesses and solves a serialized COOM instance.
+    """
+    # Preprocess serialized ASP facts
+    processed_facts = preprocess(
+        serialized_facts,
+        max_bound=max_bound,
+        discrete=solver == "clingo",
+    )
+    check_user_input(processed_facts)
+
+    with NamedTemporaryFile(mode="w", delete=False) as tmp:
+        tmp_name = tmp.name
+        tmp.write("".join(processed_facts))
+
+    # Solve the ASP instance
+    return clingo_main(
+        COOMSolverApp(
+            options={
+                "solver": solver,
+                "output_format": output,
+            }
+        ),
+        [tmp_name] + clingo_args,
+    )
