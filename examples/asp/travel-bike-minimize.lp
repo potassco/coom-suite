@@ -344,3 +344,11 @@ constant("Red").
 constant("Leather").
 constant("B10").
 minimize("root.totalWeight[0]").
+explanation(0,"The bike can have a maximum of 4 bags.").
+explanation(1,"The total weight is equal to the weight of the front wheel plus the weight of the rear wheel plus the sum of the weights of all bags on the carrier and the frame.").
+explanation(2,"The total volume is equal to the sum of the volumes of all bags on the carrier and the frame.").
+explanation(3,"The total volume must be greater than or equal to the requested volume.").
+explanation(4,"If the color is red, then the size of the front wheel must be 20.").
+explanation(5,"Minimize the total weight of the bike").
+explanation(6,"If the material of the bag is leather, then the capacity must be B10.").
+user_value("root.requestedVolume[0]",160).
