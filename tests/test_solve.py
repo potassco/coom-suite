@@ -119,7 +119,7 @@ class TestClingo(TestCase):
         self.run_test("min")
         self.run_test("max")
 
-    def test_optimization(self):
+    def test_optimization(self) -> None:
         """
         Test solving optimization statements (clingo)
         """
@@ -254,7 +254,7 @@ class TestFlingo(TestCase):
         self.run_test("min")
         self.run_test("max")
 
-    def test_optimization(self):
+    def test_optimization(self) -> None:
         """
         Test solving optimization statements (flingo)
         """
