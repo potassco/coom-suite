@@ -2,5 +2,5 @@
 // set color[0] = Red
 // add carrier[0].bag[0]
 // add carrier[0].bag[1]
-set requestedVolume[0] = 200
+set requestedVolume[0] = 160
 set maxWeight[0] = 10
