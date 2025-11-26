@@ -1,6 +1,6 @@
 // Travel Bike example with minimization
 // Provided by denkbares GmbH
-// see Baumeister et al.: Towards Industrial-scale Product Configuration (2024).
+// see Baumeister et al.: Towards Industrial-scale Product Configuration (2025).
 
 product {
     num .#/g	1-10000 totalWeight

@@ -1,7 +1,29 @@
+discrete("Capacity.volume").
+discrete("Capacity.weight").
+discrete("Wheel.size").
+discrete("Wheel.weight").
 discrete("Capacity").
 discrete("Material").
 discrete("Wheel").
 discrete("Color").
+domain("Capacity.volume",10).
+domain("Capacity.weight",100).
+domain("Capacity.volume",20).
+domain("Capacity.weight",250).
+domain("Capacity.volume",50).
+domain("Capacity.weight",600).
+domain("Capacity.volume",100).
+domain("Capacity.weight",1200).
+domain("Wheel.size",20).
+domain("Wheel.weight",650).
+domain("Wheel.size",22).
+domain("Wheel.weight",700).
+domain("Wheel.size",24).
+domain("Wheel.weight",800).
+domain("Wheel.size",26).
+domain("Wheel.weight",900).
+domain("Wheel.size",28).
+domain("Wheel.weight",1000).
 domain("Capacity","B10").
 domain("Capacity","B20").
 domain("Capacity","B50").
@@ -21,17 +43,9 @@ domain("Color","Blue").
 integer("product.totalWeight").
 integer("product.totalVolume").
 integer("product.requestedVolume").
-integer("Capacity.volume").
-integer("Capacity.weight").
-integer("Wheel.size").
-integer("Wheel.weight").
 range("product.totalWeight",1,10000).
 range("product.totalVolume",0,200).
 range("product.requestedVolume",0,200).
-range("Capacity.volume",10,100).
-range("Capacity.weight",100,1200).
-range("Wheel.size",20,28).
-range("Wheel.weight",650,1000).
 type("root","product").
 type("root.totalWeight[0]","product.totalWeight").
 type("root.totalVolume[0]","product.totalVolume").
@@ -351,4 +365,3 @@ explanation(3,"The total volume must be greater than or equal to the requested v
 explanation(4,"If the color is red, then the size of the front wheel must be 20.").
 explanation(5,"Minimize the total weight of the bike").
 explanation(6,"If the material of the bag is leather, then the capacity must be B10.").
-user_value("root.requestedVolume[0]",160).

@@ -118,6 +118,7 @@ maximize(X') :- coom_maximize(C,P), coom_context(C,Ctx), type_aux(X,Ctx), path_t
 
 #show minimize/1.
 #show maximize/1.
+
 % Explanations
 explanation(C,E) :- coom_explanation(C,E).
 #show explanation/2.
