@@ -85,6 +85,14 @@ class TestPreprocess(TestCase):
         self.run_test("count")
         self.run_test("sum")
 
+    def test_optimization(self) -> None:
+        """
+        Test optimization in COOM
+        """
+
+        self.run_test("minimize")
+        self.run_test("maximize")
+
     def test_user_input(self) -> None:
         """
         Test preprocessing COOM user input.

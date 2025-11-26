@@ -13,7 +13,7 @@ from typing import Any
 from clintest.quantifier import Exact
 from clintest.test import And, Assert
 
-from . import TEST_EMPTY, TEST_UNSAT, NumModels, StableModels, SupersetOfTheory
+from . import TEST_EMPTY, TEST_UNSAT, NumModels, OptimalModel, StableModels, SupersetOfTheory
 
 TESTS_SOLVE: dict[str, dict[str, Any]] = {
     "empty": {"test": TEST_EMPTY, "program": ""},
@@ -676,6 +676,36 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
         "test": StableModels({'value("root.x[0]",3)', 'value("root.x[1]",3)'}),
         "ftest": StableModels({'value("root.x[0]",3)', 'value("root.x[1]",3)'}, flingo=True),
         "files": ["max.lp"],
+    },
+    "minimize": {
+        "test": OptimalModel({'value("root.totalWeight[0]",1)'}),
+        "ftest": OptimalModel({'value("root.totalWeight[0]",1)'}, flingo=True),
+        "program": """
+            integer("product.totalWeight").
+            range("product.totalWeight",1,10).
+            type("root","product").
+            type("root.totalWeight[0]","product.totalWeight").
+            index("root.totalWeight[0]",0).
+            parent("root.totalWeight[0]","root").
+            constraint(("root.totalWeight",1),"lowerbound").
+            set("root.totalWeight","root.totalWeight[0]").
+            part("product").
+            minimize("root.totalWeight[0]").""",
+    },
+    "maximize": {
+        "test": OptimalModel({'value("root.totalOutput[0]",10)'}),
+        "ftest": OptimalModel({'value("root.totalOutput[0]",10)'}, flingo=True),
+        "program": """
+            integer("product.totalOutput").
+            range("product.totalOutput",1,10).
+            type("root","product").
+            type("root.totalOutput[0]","product.totalOutput").
+            index("root.totalOutput[0]",0).
+            parent("root.totalOutput[0]","root").
+            constraint(("root.totalOutput",1),"lowerbound").
+            set("root.totalOutput","root.totalOutput[0]").
+            part("product").
+            maximize("root.totalOutput[0]").""",
     },
     "add_part": {
         "test": StableModels({'include("root.a[0]")'}),

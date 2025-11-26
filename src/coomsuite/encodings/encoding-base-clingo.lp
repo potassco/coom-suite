@@ -9,6 +9,8 @@
 #include "base/clingo/table.lp".
 #include "base/constraints.lp".
 
+#include "base/clingo/optimization.lp".
+
 #include "base/clingo/user.lp".
 
 #include "doc.lp".

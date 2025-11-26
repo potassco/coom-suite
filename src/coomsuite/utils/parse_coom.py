@@ -268,6 +268,10 @@ class ASPModelVisitor(ModelVisitor):
             #     self.output_asp.append(f'binary("{complete_prop}","{complete}","&&","{right_prop}").')
         super().visitCondition_compare(ctx)
 
+    def visitOptimize(self, ctx: ModelParser.OptimizeContext):
+        self.output_asp.append(f'{ctx.op.text}({self.constraint_idx},"{ctx.path().getText()}").')
+        return super().visitOptimize(ctx)
+
     def visitFormula_add(self, ctx: ModelParser.Formula_addContext):
         form_sub: ModelParser.Formula_subContext = ctx.formula_sub()
         for i in range(len(form_sub) - 1):

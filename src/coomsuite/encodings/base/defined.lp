@@ -24,5 +24,8 @@
 #defined function/3.
 #defined set/2.
 
+#defined minimize/1.
+#defined maximize/1.
+
 #defined user_include/1.
 #defined user_value/2.
