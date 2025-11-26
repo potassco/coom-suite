@@ -8,4 +8,4 @@ icon: "material/chart-bar"
 The COOM suite includes various scalable benchmark sets.
 More information can be found in the [COOM Benchmarks repository][benchmarks].
 
-[benchmarks]: https://github.com/krr-up/coom-benchmarks
+[benchmarks]: https://github.com/potassco/coom-benchmarks
