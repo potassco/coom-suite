@@ -1,12 +1,22 @@
 % TODO: FIx recursive removal of attributes when removing object
 #script(python)
-from clingo.symbol import Function
-def name(a):
+from clingo.symbol import Function, Number
+parts = {}
+def name(a, capitalize=None):
     """
     Takes the name form the path bu removing the prefix and the index
     """
     name = str(a).split(".")[-1].split("[")[0]
+    if capitalize is not None:
+        name = name.upper()
     return Function(name, [])
+def part_id(a):
+    """
+    Takes the name form the path bu removing the prefix and the index
+    """
+    if not a in parts:
+        parts[a] = len(parts)+1
+    return Number( parts[a] )
 #end.
 
 % ============ Auxiliaries
@@ -40,7 +50,11 @@ included_value(I,V) :- included_attr(I,_), value(I,V), _clinguin_browsing.
 elem(window, window, root).
 
 % Main container for root part, other parts are added below recursively
-elem(part_container("root"), container, window).
+elem(all_parts, container, window).
+% attr(all_parts, class, ("w-50")).
+attr(all_parts, width, ("fit-content")).
+
+elem(part_container("root"), container, all_parts).
 
 
     % +++++++ TITLE
@@ -51,28 +65,29 @@ elem(part_container("root"), container, window).
 
         % Title label name
         elem(part_title_l(I), label, part_title(I)) :- included_part(I).
-        attr(part_title_l(I), label,@name(I))       :- included_part(I).
+        attr(part_title_l(I), label,@name(I,1))       :- included_part(I).
         attr(part_title_l(I), class, ("h4"))        :- included_part(I).
         attr(part_title_l(I), order, 1)             :- included_part(I).
 
         % Title label type
         elem(part_title_t(I), label, part_title(I))               :- included_part(I).
         attr(part_title_t(I), label,  @format("({0})",T))         :- included_part(I), type(I,T).
-        attr(part_title_t(I), class, ("px-1";"m-1";"fw-lighter")) :- included_part(I).
+        attr(part_title_t(I), class, ("px-1";"m-1";"fw-lighter";"text-primary")) :- included_part(I).
         attr(part_title_t(I), order, 2)                           :- included_part(I).
 
         % Title container to remove the part
         elem(part_title_bc(I), container, part_title(I)) :- included_part(I).
-        attr(part_title_bc(I), class,  ("ms-auto"))      :- included_part(I).
+        % attr(part_title_bc(I), class,  ("ms-auto"))      :- included_part(I).
         attr(part_title_bc(I), order,  3)                :- included_part(I).
 
             % Title button to remove the part
             elem(part_title_b(I), button, part_title_bc(I))                    :- included_part(I).
-            attr(part_title_b(I), icon,  "fa-trash")                           :- included_part(I).
-            attr(part_title_b(I), class,  ("border-0"))                        :- included_part(I).
-            attr(part_title_b(I), class,  ("btn-outline-danger";"border-0"))   :- included_part_by_assumption(I), not has_larger_part(I).
+            attr(part_title_b(I), icon,  "fa-xmark")                           :- included_part(I).
+            attr(part_title_b(I), "font-size",  "8pt")                           :- included_part(I).
+            attr(part_title_b(I), class,  ("border-0";"btn-sm"))                        :- included_part(I).
+            attr(part_title_b(I), class,  ("btn-danger";"text-danger";"bg-light"))   :- included_part_by_assumption(I), not has_larger_part(I).
             attr(part_title_b(I), class,  ("btn-outline-info";"disabled"))     :- included_part(I), not included_part_by_assumption(I).
-            attr(part_title_b(I), tooltip,  "Can't remove inferred object")    :- included_part(I), not included_part_by_assumption(I).
+            attr(part_title_b(I), tooltip,  "Can't remove necessary object")    :- included_part(I), not included_part_by_assumption(I).
             attr(part_title_b(I), class,  ("btn-outline-info";"disabled"))     :- included_part(I), has_larger_part(I).
             attr(part_title_b(I), tooltip, @format("Remove other {} first",T)) :- included_part(I), type(I,T), has_larger_part(I).
             % Recursive removal of parts, attributes and enumerations
@@ -81,6 +96,10 @@ elem(part_container("root"), container, window).
             child_assumption(I,include(I'))                                     :- child_remove(I,I').
             child_assumption(I,value(I',any))                                   :- child_remove(I,I'), included_attr(I',_).
             when(part_title_b(I), click,  call, remove_assumption_signature(A)) :- child_remove(I,I), child_assumption(I, A).
+            % when(part_title_b(I), mouseenter,  update, (part_container(I),class,"bg-primary")) :- included_part(I).
+            % when(part_title_b(I), mouseenter,  call, next_solution) :- included_part(I).
+            when(part_title_b(I), mouseenter,  update, (part_container(I),filter,"opacity(0.5)")) :- included_part(I).
+            when(part_title_b(I), mouseleave,  update, (part_container(I),filter,"opacity(1)")) :- included_part(I).
 
     % +++++++ Parts
 
@@ -91,12 +110,15 @@ elem(part_container("root"), container, window).
 
         % Container per part
         elem(part_container(I), container, parts_container(P))                                :- included_part(I), parent(I,P).
-        attr(part_container(I), class, ("m-3";"p-3"))                                         :- included_part(I).
-        attr(part_container(I), width, ("95%"))                                               :- included_part(I).
-        attr(part_container(I), class, ("shadow"))                                            :- included_part(I).
-        attr(part_container(I), class, ("bg-info";"bg-opacity-10"))                           :- included_part(I).
-        attr(part_container(I), class, ("bd-highlight";"d-inline-flex";"flex-col";"rounded")) :- included_part(I).
-        attr(part_container(I), class, ("border";"border-dark";"border-1"))                   :- included_part(I).
+        attr(part_container(I), class, ("m-2";"p-2";"ms-4"))                                         :- included_part(I).
+        attr(part_container(I), order, @part_id(I))                                         :- included_part(I).
+
+        % attr(part_container(I), width, ("95%"))                                               :- included_part(I).
+        % attr(part_container(I), class, ("shadow"))                                            :- included_part(I).
+        attr(part_container(I), class, ("bg-light"))                           :- included_part(I).
+        attr(part_container(I), class, ("bd-highlight";"d-inline-flex";"flex-col")) :- included_part(I).
+        % attr(part_container(I), class, ("container-light"))                   :- included_part(I).
+        attr(part_container(I), class, ("border-start";"border-2";"border-primary"))                   :- included_part(I).
         % attr(part_container(I), "border-style", "dotted") :- included_part(I), _clinguin_browsing, not _all(include(I)).
 
             % Containier for button to add a new part
@@ -105,12 +127,12 @@ elem(part_container("root"), container, window).
             attr(possible_parts(I), class, ("mx-2";"d-inline-flex";"flex-row")) :- included_part(I).
 
                 % One container per part type to include
-                elem(possible_part(I), container, possible_parts(P)) :- possibly_included_part(I), parent(I,P), #false: possibly_included_part(I'), set(X,I), set(X,I'), I'<I.
+                elem(possible_part(I), container, possible_parts(P)) :- not _clinguin_browsing, possibly_included_part(I), parent(I,P), #false: possibly_included_part(I'), set(X,I), set(X,I'), I'<I.
 
                     elem(possible_part_b(I), button, possible_part(I))                :- elem(possible_part(I),_,_).
                     attr(possible_part_b(I), label, @name(I))                         :- elem(possible_part(I),_,_).
                     attr(possible_part_b(I), icon, "fa-circle-plus")                  :- elem(possible_part(I),_,_).
-                    attr(possible_part_b(I), class, ("btn-outline-dark";"border-0"))  :- elem(possible_part(I),_,_).
+                    attr(possible_part_b(I), class, ("btn-outline-secondary";"border-0"))  :- elem(possible_part(I),_,_).
                     when(possible_part_b(I), click, call, add_assumption(include(I))) :- elem(possible_part(I),_,_).
 
     % +++++++ ENUMERATIONS AND ATTRIBUTES
@@ -119,7 +141,7 @@ elem(part_container("root"), container, window).
     elem(attrs_container(I), container, part_container(I))                            :- included_part(I).
     attr(attrs_container(I), order, 2)                                                :- included_part(I).
     attr(attrs_container(I), heigth, 50)                                              :- included_part(I).
-    attr(attrs_container(I), class, ("align-items-start";"d-inline-flex";"flex-row")) :- included_part(I).
+    attr(attrs_container(I), class, ("align-items-start";"d-inline-flex";"flex-col";"ms-3")) :- included_part(I).
 
         % Part container for Numeric Enumerations
         elem(num_attrs_container(I), container, attrs_container(I))                           :- included_part(I).
@@ -131,15 +153,17 @@ elem(part_container("root"), container, window).
         elem(dis_attrs_container(I), container, attrs_container(I))                           :- included_part(I).
         attr(dis_attrs_container(I), order, 2)                                                :- included_part(I).
         attr(dis_attrs_container(I), heigth, 50)                                              :- included_part(I).
-        attr(dis_attrs_container(I), class, ("align-items-start";"d-inline-flex";"flex-row")) :- included_part(I).
+        attr(dis_attrs_container(I), class, ("align-items-start";"d-inline-flex";"flex-col")) :- included_part(I).
+        attr(dis_attrs_container(I), class, ("mx-1";"my-1";"px-1";"rounded")) :- included_part(I).
+        attr(dis_attrs_container(I), class, ("bg-tertiary-300")) :- included_part(I).
 
 
             % Container per discrete attribute
             % If we want to make it general then this should alsobe work if the parent is an attribute
             elem(discrete_container(I), container, dis_attrs_container(P))       :- discrete_main_attr(I), parent(I,P).
-            attr(discrete_container(I), class, ("mx-3";"my-1";"px-2";"rounded")) :- discrete_main_attr(I).
+            % attr(discrete_container(I), class, ("mx-3";"my-1";"px-2";"rounded")) :- discrete_main_attr(I).
             attr(discrete_container(I), class, ("d-inline-flex";"flex-col"))     :- discrete_main_attr(I).
-            attr(discrete_container(I), class, ("bg-secondary";"bg-opacity-10")) :- discrete_main_attr(I).
+            % attr(discrete_container(I), class, ("bg-tertiary-300")) :- discrete_main_attr(I).
             attr(discrete_container(I), order, N) :- discrete_main_attr(I), #count{I':discrete_main_attr(I'), I'>I}=N.
 
 
@@ -147,6 +171,9 @@ elem(part_container("root"), container, window).
                 attr(discrete_main_attr(I), order, 1)                         :- elem(discrete_container(I),_,_).
                 elem(discrete_sub_attr(I), container, discrete_container(I))  :- elem(discrete_container(I),_,_).
                 attr(discrete_sub_attr(I), order, 2)                          :- elem(discrete_container(I),_,_).
+                % attr(discrete_sub_attr(I), visibility, hidden)                          :- elem(discrete_container(I),_,_).
+                attr(discrete_sub_attr(I), display, none)                          :- elem(discrete_container(I),_,_).
+                % attr(discrete_sub_attr(I), class, ("ms-4";"border-start"))                          :- elem(discrete_container(I),_,_).
 
 
                 % Container for title and options of enumerations and attributes
@@ -159,13 +186,15 @@ elem(part_container("root"), container, window).
                     elem(attr_value_title(I), container, attr_value(I))            :- included_attr(I,_).
                     attr(attr_value_title(I), class, ("d-inline-flex";"flex-row")) :- included_attr(I,_).
                     attr(attr_value_title(I), width, 190)                          :- included_attr(I,_).
+                    when(attr_value_title(I), click, update, (discrete_sub_attr(I), display, block))                          :- included_attr(I,_), elem(_,_,discrete_sub_attr(I)).
+                    when(attr_value_title(I), dblclick, update, (discrete_sub_attr(I), display, none))                          :- included_attr(I,_).
 
                         elem(attr_value_l(I), label, attr_value_title(I)) :- included_attr(I,_).
                         attr(attr_value_l(I), label, @name(I))            :- included_attr(I,_).
                         attr(attr_value_l(I), order, 1)                   :- included_attr(I,_).
-                        attr(attr_value_l(I), class, ("fst-italic"))      :- included_attr(I,_).
+                        % attr(attr_value_l(I), class, ("fst-italic"))      :- included_attr(I,_).
                         attr(attr_value_l(I), class, ("h6";"fw-medium"))  :- discrete_main_attr(I).
-                        attr(attr_value_l(I), class, ("h7";"px-4";"fst-italic";"fw-light")) :- included_attr(I,_), not discrete_main_attr(I).
+                        attr(attr_value_l(I), class, ("h6";"px-4";"fst-italic";"fw-light";"border-start")) :- included_attr(I,_), not discrete_main_attr(I).
 
                         % Added type to title only for discrete enumerations
                         elem(attr_value_t(I), label, attr_value_title(I))           :- discrete_main_attr(I).
@@ -192,10 +221,11 @@ elem(part_container("root"), container, window).
                         % attr(attr_value_title_o_dd(I), class, ("btn-danger")) :- _clinguin_mus(value(I,V)).
 
 
+                        attr(attr_value_title_o_dd(I), class, ("btn-sm")) :- included_attr(I,_).
                         attr(attr_value_title_o_dd(I), class, ("disabled")) :- included_attr(I,_), _clinguin_browsing.
                         attr(attr_value_title_o_dd(I), class, ("fw-bold"))  :- included_attr(I,_), _clinguin_browsing, not _all(value(I,_)).
                         attr(attr_value_title_o_dd(I), class, ("fw-light";"opacity-50")) :- included_value(I,V), _all(value(I,V)),not _clinguin_assume(value(I,V),true).
-                        attr(attr_value_title_o_dd(I), class, ("btn-secondary")) :- included_attr(I,discrete), not included_value(I,_).
+                        attr(attr_value_title_o_dd(I), class, ("btn-primary")) :- included_attr(I,discrete), not included_value(I,_).
                         attr(attr_value_title_o_dd(I), class, ("btn-secondary")) :- included_attr(I,discrete), _clinguin_assume(value(I,_),true).
                         attr(attr_value_title_o_dd(I), class, ("btn-primary")) :- included_attr(I,integer),  not included_value(I,_).
                         attr(attr_value_title_o_dd(I), class, ("btn-primary")) :- included_attr(I,integer), _clinguin_assume(value(I,_),true).
@@ -252,23 +282,27 @@ elem(part_container("root"), container, window).
 
         elem(menu_bar_upload, button, menu_bar).
         attr(menu_bar_upload, label, "Upload").
+        attr(menu_bar_upload, class, "btn-text-dark").
         attr(menu_bar_upload, icon, "fa-upload").
         when(menu_bar_upload, click, update, (upload_modal, visibility, shown)).
 
 
         elem(menu_bar_download, button, menu_bar).
         attr(menu_bar_download, label, "Download").
+        attr(menu_bar_download, class, "btn-text-dark").
         attr(menu_bar_download, icon, "fa-download").
         when(menu_bar_download, click, call, download("#show . #show include(I) : include(I), type(I,T), part(T).#show value(X,V) : value(X,V), type(X,T), integer(T). #show value(X,V) : value(X,V), type(X,T), discrete(T).", "current_solution.coom")).
 
 
         elem(menu_bar_select, button, menu_bar).
         attr(menu_bar_select, label, "Pick current solution").
+        attr(menu_bar_select, class, "btn-text-dark").
         attr(menu_bar_select, icon, "fa-hand-pointer").
         when(menu_bar_select, click, call, select("#show . #show include(I) : include(I), type(I,T), part(T). #show value(X,V) : value(X,V), type(X,T), integer(T). #show value(X,V) : value(X,V), type(X,T), discrete(T).")).
 
         elem(menu_bar_next, button, menu_bar).
         attr(menu_bar_next, label, "Find next solution").
+        attr(menu_bar_next, class, "btn-text-dark").
         attr(menu_bar_next, icon, "fa-forward-step").
         when(menu_bar_next, click, call, next_solution).
 
