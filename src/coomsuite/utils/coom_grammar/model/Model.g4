@@ -114,7 +114,7 @@ assign_default:
 assign_imply: op = 'imply' path '=' formula;
 
 optimize:
-	op = ('minimize' | 'maximize') ('/' priority = INTEGER)? path;
+	op = ('minimize' | 'maximize') ('/' priority = INTEGER)? formula;
 
 interaction:
 	directive = ('readwrite' | 'readonly' | 'hide') (
