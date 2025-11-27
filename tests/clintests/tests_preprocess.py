@@ -1181,7 +1181,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_range("product","totalWeight",1,10).
             coom_behavior(0).
             coom_context(0,"product").
-            coom_minimize(0,"totalWeight").
+            coom_minimize(0,1,"totalWeight").
             coom_path("totalWeight",0,"totalWeight").
             """,
     },
@@ -1206,7 +1206,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_range("product","totalOutput",1,10).
             coom_behavior(0).
             coom_context(0,"product").
-            coom_maximize(0,"totalOutput").
+            coom_maximize(0,1,"totalOutput").
             coom_path("totalOutput",0,"totalOutput").
             """,
     },
@@ -1239,7 +1239,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_range("Bag","weight",0,10).
             coom_behavior(0).
             coom_context(0,"product").
-            coom_minimize(0,"bags.weight").
+            coom_minimize(0,1,"bags.weight").
             coom_path("bags.weight",0,"bags").
             coom_path("bags.weight",1,"weight").
             """,
@@ -1273,7 +1273,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_range("Bag","volume",0,10).
             coom_behavior(0).
             coom_context(0,"product").
-            coom_minimize(0,"bags.volume").
+            coom_minimize(0,1,"bags.volume").
             coom_path("bags.volume",0,"bags").
             coom_path("bags.volume",1,"volume").
             """,

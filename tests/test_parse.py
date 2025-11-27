@@ -984,7 +984,7 @@ class TestCOOMModelParser(TestCase):
             [
                 "behavior(0).",
                 'context(0,"product").',
-                'minimize(0,"totalWeight").',
+                'minimize(0,1,"totalWeight").',
                 'path("totalWeight",0,"totalWeight").',
             ],
         )
@@ -994,7 +994,17 @@ class TestCOOMModelParser(TestCase):
             [
                 "behavior(0).",
                 'context(0,"product").',
-                'maximize(0,"totalOutput").',
+                'maximize(0,1,"totalOutput").',
                 'path("totalOutput",0,"totalOutput").',
+            ],
+        )
+
+        self.assertEqual(
+            parse_coom("behavior{minimize /3 totalWeight}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'minimize(0,3,"totalWeight").',
+                'path("totalWeight",0,"totalWeight").',
             ],
         )
