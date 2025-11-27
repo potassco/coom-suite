@@ -80,7 +80,10 @@ class TestBound(TestCase):
                 (4, 8, [65], None),
             ]:
                 # returns = [10 if x else 20 for x in solve_returns]
-                with patch.object(solver, "_solve", autospec=True, side_effect=solve_returns):
+                with (
+                    patch.object(solver, "_solve", autospec=True, side_effect=solve_returns),
+                    redirect_stdout(None),
+                ):
                     ret = solver._converge(init_unsat, init_sat)  # pylint: disable=protected-access
                     self.assertEqual(
                         ret,
@@ -92,7 +95,7 @@ class TestBound(TestCase):
                     )
         # Test exception for invalid error code
         with self.assertRaises(KeyError, msg="failed with exit code=99"):
-            with patch.object(solver, "_solve", autospec=True, side_effect=[99]):
+            with patch.object(solver, "_solve", autospec=True, side_effect=[99]), redirect_stdout(None):
                 ret = solver._converge(4, 8)  # pylint: disable=protected-access
 
     def test_get_bounds_singleshot(self) -> None:
