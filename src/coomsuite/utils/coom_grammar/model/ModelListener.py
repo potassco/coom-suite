@@ -1,4 +1,4 @@
-# Generated from /home/ruehling/projects/coom-suite/src/coomsuite/utils/coom_grammar/model/Model.g4 by ANTLR 4.13.2
+# Generated from /home/heuer/tools/coom-suite/src/coomsuite/utils/coom_grammar/model/Model.g4 by ANTLR 4.13.2
 from antlr4 import *
 if "." in __name__:
     from .ModelParser import ModelParser

@@ -1,4 +1,4 @@
-# Generated from /home/ruehling/projects/coom-suite/src/coomsuite/utils/coom_grammar/model/Model.g4 by ANTLR 4.13.2
+# Generated from /home/heuer/tools/coom-suite/src/coomsuite/utils/coom_grammar/model/Model.g4 by ANTLR 4.13.2
 # encoding: utf-8
 from antlr4 import *
 from io import StringIO
@@ -180,7 +180,7 @@ def serializedATN():
         5,12,0,0,428,429,3,76,38,0,429,51,1,0,0,0,430,431,5,68,0,0,431,432,
         3,98,49,0,432,433,5,12,0,0,433,434,3,76,38,0,434,53,1,0,0,0,435,
         438,7,5,0,0,436,437,5,8,0,0,437,439,5,73,0,0,438,436,1,0,0,0,438,
-        439,1,0,0,0,439,440,1,0,0,0,440,441,3,98,49,0,441,55,1,0,0,0,442,
+        439,1,0,0,0,439,440,1,0,0,0,440,441,3,76,38,0,441,55,1,0,0,0,442,
         445,7,6,0,0,443,444,5,8,0,0,444,446,5,73,0,0,445,443,1,0,0,0,445,
         446,1,0,0,0,446,447,1,0,0,0,447,451,3,98,49,0,448,450,3,104,52,0,
         449,448,1,0,0,0,450,453,1,0,0,0,451,449,1,0,0,0,451,452,1,0,0,0,
@@ -2763,8 +2763,8 @@ class ModelParser ( Parser ):
             self.op = None # Token
             self.priority = None # Token
 
-        def path(self):
-            return self.getTypedRuleContext(ModelParser.PathContext,0)
+        def formula(self):
+            return self.getTypedRuleContext(ModelParser.FormulaContext,0)
 
 
         def INTEGER(self):
@@ -2816,7 +2816,7 @@ class ModelParser ( Parser ):
 
 
             self.state = 440
-            self.path()
+            self.formula()
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
