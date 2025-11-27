@@ -1210,6 +1210,74 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_path("totalOutput",0,"totalOutput").
             """,
     },
+    "minimize_non_root": {
+        "test": StableModels(
+            {
+                'integer("Bag.weight")',
+                'range("Bag.weight",0,10)',
+                'type("root","product")',
+                'type("root.bags[0]","Bag")',
+                'type("root.bags[0].weight[0]","Bag.weight")',
+                'index("root.bags[0]",0)',
+                'index("root.bags[0].weight[0]",0)',
+                'parent("root.bags[0]","root")',
+                'parent("root.bags[0].weight[0]","root.bags[0]")',
+                'constraint(("root.bags",1),"lowerbound")',
+                'constraint(("root.bags[0].weight",1),"lowerbound")',
+                'set("root.bags","root.bags[0]")',
+                'set("root.bags[0].weight","root.bags[0].weight[0]")',
+                'part("product")',
+                'part("Bag")',
+                'minimize("root.bags[0].weight[0]")',
+            }
+        ),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","bags","Bag",1,1).
+            coom_structure("Bag").
+            coom_feature("Bag","weight","num",1,1).
+            coom_range("Bag","weight",0,10).
+            coom_behavior(0).
+            coom_context(0,"product").
+            coom_minimize(0,"bags.weight").
+            coom_path("bags.weight",0,"bags").
+            coom_path("bags.weight",1,"weight").
+            """,
+    },
+    "maximize_non_root": {
+        "test": StableModels(
+            {
+                'integer("Bag.volume")',
+                'range("Bag.volume",0,10)',
+                'type("root","product")',
+                'type("root.bags[0]","Bag")',
+                'type("root.bags[0].volume[0]","Bag.volume")',
+                'index("root.bags[0]",0)',
+                'index("root.bags[0].volume[0]",0)',
+                'parent("root.bags[0]","root")',
+                'parent("root.bags[0].volume[0]","root.bags[0]")',
+                'constraint(("root.bags",1),"lowerbound")',
+                'constraint(("root.bags[0].volume",1),"lowerbound")',
+                'set("root.bags","root.bags[0]")',
+                'set("root.bags[0].volume","root.bags[0].volume[0]")',
+                'part("product")',
+                'part("Bag")',
+                'minimize("root.bags[0].volume[0]")',
+            }
+        ),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","bags","Bag",1,1).
+            coom_structure("Bag").
+            coom_feature("Bag","volume","num",1,1).
+            coom_range("Bag","volume",0,10).
+            coom_behavior(0).
+            coom_context(0,"product").
+            coom_minimize(0,"bags.volume").
+            coom_path("bags.volume",0,"bags").
+            coom_path("bags.volume",1,"volume").
+            """,
+    },
     "set_constant": {
         "test": StableModels({'user_value("root.color[0]","Yellow")'}),
         "program": 'coom_user_value("root.color[0]","Yellow").',

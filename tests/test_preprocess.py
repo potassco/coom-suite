@@ -92,6 +92,8 @@ class TestPreprocess(TestCase):
 
         self.run_test("minimize")
         self.run_test("maximize")
+        self.run_test("minimize_non_root")
+        self.run_test("maximize_non_root")
 
     def test_user_input(self) -> None:
         """
