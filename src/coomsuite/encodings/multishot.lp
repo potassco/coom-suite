@@ -7,6 +7,7 @@
 #include "multi/new-allow.lp".
 #include "multi/new-constant.lp".
 #include "multi/new-number.lp".
+#include "multi/new-optimize.lp".
 
 #defined value/3.
 #include "multi/inc-function.lp".
