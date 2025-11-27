@@ -1,2 +1,2 @@
-#minimize { V : value(X,V), minimize(X) }.
-#maximize { V : value(X,V), maximize(X) }.
+#minimize { V@P : value(X,V), minimize(X,P) }.
+#maximize { V@P : value(X,V), maximize(X,P) }.

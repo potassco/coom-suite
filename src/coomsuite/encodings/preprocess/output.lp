@@ -113,8 +113,8 @@ number(C,N) :- coom_number(C,N).
 #show number/2.
 
 % Optimization
-minimize(X') :- coom_minimize(C,_,P), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X').
-maximize(X') :- coom_maximize(C,_,P), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X').
+minimize(X',V) :- coom_minimize(C,V,P), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X').
+maximize(X',V) :- coom_maximize(C,V,P), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X').
 
 #show minimize/1.
 #show maximize/1.

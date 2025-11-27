@@ -1,7 +1,7 @@
-#program new_minimize(x).
-minimize(x).
-#minimize { V : value(x,V), minimize(x) }.
+#program new_minimize(x,p).
+minimize(x,p).
+#minimize { V@p : value(x,V), minimize(x,p) }.
 
 #program new_maximize(x).
-maximize(x).
-#maximize { V : value(x,V), maximize(x) }.
+maximize(x,p).
+#maximize { V@p : value(x,V), maximize(x,p) }.

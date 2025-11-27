@@ -1,2 +1,2 @@
-&minimize{ X : minimize(X) }.
-&maximize{ X : maximize(X) }.
+&minimize{ X : minimize(X,_) }.
+&maximize{ X : maximize(X,_) }.
