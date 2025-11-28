@@ -125,6 +125,8 @@ class TestClingo(TestCase):
         """
         self.run_test("minimize")
         self.run_test("maximize")
+        self.run_test("minimize_priority")
+        self.run_test("maximize_priority")
 
     def test_user_input(self) -> None:
         """
