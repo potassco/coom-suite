@@ -1172,7 +1172,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint(("root.totalWeight",1),"lowerbound")',
                 'set("root.totalWeight","root.totalWeight[0]")',
                 'part("product")',
-                'minimize("root.totalWeight[0]")',
+                'minimize("root.totalWeight[0]",1)',
             }
         ),
         "program": """
@@ -1197,7 +1197,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint(("root.totalOutput",1),"lowerbound")',
                 'set("root.totalOutput","root.totalOutput[0]")',
                 'part("product")',
-                'maximize("root.totalOutput[0]")',
+                'maximize("root.totalOutput[0]",1)',
             }
         ),
         "program": """
@@ -1228,7 +1228,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'set("root.bags[0].weight","root.bags[0].weight[0]")',
                 'part("product")',
                 'part("Bag")',
-                'minimize("root.bags[0].weight[0]")',
+                'minimize("root.bags[0].weight[0]",1)',
             }
         ),
         "program": """
@@ -1262,7 +1262,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'set("root.bags[0].volume","root.bags[0].volume[0]")',
                 'part("product")',
                 'part("Bag")',
-                'minimize("root.bags[0].volume[0]")',
+                'minimize("root.bags[0].volume[0]",1)',
             }
         ),
         "program": """
