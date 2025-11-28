@@ -2,6 +2,8 @@
 Test cases for the parser from COOM to ASP.
 """
 
+# pylint: disable=too-many-lines
+
 from unittest import TestCase
 
 from . import parse_coom
