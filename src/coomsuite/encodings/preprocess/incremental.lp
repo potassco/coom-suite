@@ -54,5 +54,7 @@ incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),            
 incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,R ,P,_).
 incremental("unary",     X,P,(X,O,X'))           :- unary(X,O,X'),                incremental(_,X',P,_).
 incremental("constraint",X,P,((ID,X),"boolean")) :- constraint((ID,X),"boolean"), incremental(_,X ,P,_).
+incremental("minimize",  X,P,(X,V))              :- minimize(X,V),                incremental(_,X ,P,_).
+incremental("maximize",  X,P,(X,V))              :- maximize(X,V),                incremental(_,X ,P,_).
 
 #show incremental/4.
