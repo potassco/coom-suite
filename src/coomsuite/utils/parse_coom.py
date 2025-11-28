@@ -269,7 +269,7 @@ class ASPModelVisitor(ModelVisitor):
         super().visitCondition_compare(ctx)
 
     def visitOptimize(self, ctx: ModelParser.OptimizeContext):
-        priority = 1
+        priority = 0
         if ctx.priority:
             priority = int(ctx.priority.text)
         self.output_asp.append(f'{ctx.op.text}({self.constraint_idx},{priority},"{ctx.formula().getText()}").')

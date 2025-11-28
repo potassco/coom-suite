@@ -984,7 +984,7 @@ class TestCOOMModelParser(TestCase):
             [
                 "behavior(0).",
                 'context(0,"product").',
-                'minimize(0,1,"totalWeight").',
+                'minimize(0,0,"totalWeight").',
                 'path("totalWeight",0,"totalWeight").',
             ],
         )
@@ -994,7 +994,7 @@ class TestCOOMModelParser(TestCase):
             [
                 "behavior(0).",
                 'context(0,"product").',
-                'maximize(0,1,"totalOutput").',
+                'maximize(0,0,"totalOutput").',
                 'path("totalOutput",0,"totalOutput").',
             ],
         )
