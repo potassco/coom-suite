@@ -690,7 +690,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constraint(("root.totalWeight",1),"lowerbound").
             set("root.totalWeight","root.totalWeight[0]").
             part("product").
-            minimize("root.totalWeight[0]").""",
+            minimize("root.totalWeight[0]",0).""",
     },
     "maximize": {
         "test": OptimalModel({'value("root.totalOutput[0]",10)'}),
@@ -705,7 +705,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constraint(("root.totalOutput",1),"lowerbound").
             set("root.totalOutput","root.totalOutput[0]").
             part("product").
-            maximize("root.totalOutput[0]").""",
+            maximize("root.totalOutput[0]",0).""",
     },
     "minimize_priority": {
         "test": OptimalModel({'include("root.bags[0]")', 'value("root.bags[0].volume[0]",0) '}),
@@ -730,7 +730,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             maximize("root.bags[0].volume[0]",0).""",
     },
     "maximize_priority": {
-        "test": OptimalModel({'include("root.bags[0]")', 'value("root.bags[0].volume[0]",10) '}),
+        "test": OptimalModel({'include("root.bags[0]")', 'value("root.bags[0].volume[0]",10)'}),
         "ftest": OptimalModel({'include("root.bags[0]")', 'value("root.bags[0].volume[0]",10) '}, flingo=True),
         "program": """
             integer("Bag.volume").
