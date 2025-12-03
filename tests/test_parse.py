@@ -1010,3 +1010,14 @@ class TestCOOMModelParser(TestCase):
                 'path("totalWeight",0,"totalWeight").',
             ],
         )
+
+        self.assertEqual(
+            parse_coom("behavior{maximize count(bags)}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'maximize(0,0,"count(bags)").',
+                'function("product","count(bags)","count","bags").',
+                'path("bags",0,"bags").',
+            ],
+        )
