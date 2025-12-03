@@ -2,7 +2,7 @@
 Test cases for solving.
 """
 
-from typing import List
+from typing import List, Optional
 from unittest import TestCase
 
 from . import run_test, unpack_test
@@ -14,11 +14,13 @@ class TestClingo(TestCase):
     Test cases for the clingo encoding.
     """
 
-    def run_test(self, test_name: str, extra_ctl_args: List[str] = []) -> None:
+    def run_test(self, test_name: str, extra_ctl_args: Optional[List[str]] = None) -> None:
         """
         Runs a clintest test with the clingo encoding.
         """
-        ctl_args = ["0"] + extra_ctl_args
+        ctl_args = ["0"]
+        if extra_ctl_args:
+            ctl_args += extra_ctl_args
         test, program, files = unpack_test(test_name, TESTS_SOLVE)
         run_test(test, files=files, program=program, ctl_args=ctl_args, solver="clingo")
 
@@ -153,11 +155,13 @@ class TestFlingo(TestCase):
     Test cases for the flingo encoding.
     """
 
-    def run_test(self, test_name: str, extra_ctl_args: List[str] = []) -> None:
+    def run_test(self, test_name: str, extra_ctl_args: Optional[List[str]] = None) -> None:
         """
         Runs a clintest test with the flingo encoding.
         """
-        ctl_args = ["0"] + extra_ctl_args
+        ctl_args = ["0"]
+        if extra_ctl_args:
+            ctl_args += extra_ctl_args
         test, program, files = unpack_test(test_name, TESTS_SOLVE, flingo=True)
         run_test(test, files=files, program=program, ctl_args=ctl_args, solver="flingo", preprocess="False")
 
@@ -265,7 +269,6 @@ class TestFlingo(TestCase):
         """
         Test solving optimization statements (flingo)
         """
-        # TODO: testing not correct
         self.run_test("minimize", extra_ctl_args=["--opt-mode=optN"])
         self.run_test("maximize", extra_ctl_args=["--opt-mode=optN"])
         self.run_test("minimize_priority", extra_ctl_args=["--opt-mode=optN"])
