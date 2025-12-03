@@ -113,6 +113,7 @@ class TestPreprocess(TestCase):
         self.run_test("unbounded_singleshot_zero_lb_one_max", max_bound=1)
         self.run_test("unbounded_singleshot_two_lb_zero_max", max_bound=0)
         self.run_test("unbounded_singleshot_two_lb_one_max", max_bound=1)
+        self.run_test("unbounded_singleshot_optimize", max_bound=0)
 
     def test_unbounded_cardinalities_multishot(self) -> None:
         """
@@ -123,9 +124,11 @@ class TestPreprocess(TestCase):
         self.run_test("unbounded_multishot_zero_lb_one_max_superset", max_bound=1, multishot=True)
         self.run_test("unbounded_multishot_two_lb_zero_max_superset", max_bound=0, multishot=True)
         self.run_test("unbounded_multishot_two_lb_one_max_superset", max_bound=1, multishot=True)
+        self.run_test("unbounded_multishot_optimize_superset", max_bound=0, multishot=True)
 
         # test models of multishot preprocessing
         self.run_test("unbounded_multishot_zero_lb_zero_max", max_bound=0, multishot=True)
         self.run_test("unbounded_multishot_zero_lb_one_max", max_bound=1, multishot=True)
         self.run_test("unbounded_multishot_two_lb_zero_max", max_bound=0, multishot=True)
         self.run_test("unbounded_multishot_two_lb_one_max", max_bound=1, multishot=True)
+        self.run_test("unbounded_multishot_optimize", max_bound=0, multishot=True)

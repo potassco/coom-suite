@@ -1397,6 +1397,10 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "test": StableModels(get_model_from_file("unbounded_singleshot_two_lb_one_max.lp")),
         "files": ["unbounded_two_lb.lp"],
     },
+    "unbounded_singleshot_optimize": {
+        "test": StableModels(get_model_from_file("unbounded_singleshot_optimize.lp")),
+        "files": ["unbounded_optimize.lp"],
+    },
     "unbounded_multishot_zero_lb_zero_max_superset": {
         "test": Supersets(get_model_from_file("unbounded_singleshot_zero_lb_zero_max.lp")),
         "files": ["unbounded_zero_lb.lp"],
@@ -1412,6 +1416,21 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "unbounded_multishot_two_lb_one_max_superset": {
         "test": Supersets(get_model_from_file("unbounded_singleshot_two_lb_one_max.lp")),
         "files": ["unbounded_two_lb.lp"],
+    },
+    "unbounded_multishot_optimize_superset": {
+        "test": Supersets(get_model_from_file("unbounded_singleshot_optimize.lp")),
+        "files": ["unbounded_optimize.lp"],
+    },
+    "unbounded_multishot_optimize": {
+        "test": StableModels(
+            get_model_from_file("unbounded_singleshot_optimize.lp")
+            | {
+                'inc_set("root.bags")',
+                'incremental("function","count(root.bags)","root.bags",("count(root.bags)","count","root.bags"))',
+                'incremental("minimize","count(root.bags)","root.bags",("count(root.bags)",0))',
+            }
+        ),
+        "files": ["unbounded_optimize.lp"],
     },
     "unbounded_multishot_zero_lb_zero_max": {
         "test": StableModels(
