@@ -42,4 +42,7 @@ behavior {
 
 	explanation "The total price is equal to the price of the wheels plus the price of the baskets"
 	require totalPrice = frontWheel.price + rearWheel.price + frontBasket.price + rearBasket.price
+
+	explanation "Minimize the price"
+	minimize totalPrice
 }
