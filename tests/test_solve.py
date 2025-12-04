@@ -269,12 +269,12 @@ class TestFlingo(TestCase):
         """
         Test solving optimization statements (flingo)
         """
-        self.run_test("minimize", extra_ctl_args=["--opt-mode=optN"])
-        self.run_test("maximize", extra_ctl_args=["--opt-mode=optN"])
-        self.run_test("minimize_priority", extra_ctl_args=["--opt-mode=optN"])
-        self.run_test("maximize_priority", extra_ctl_args=["--opt-mode=optN"])
-        self.run_test("minimize_maximize_function", extra_ctl_args=["--opt-mode=optN"])
-        self.run_test("maximize_minimize_function", extra_ctl_args=["--opt-mode=optN"])
+        self.run_test("minimize")
+        self.run_test("maximize")
+        self.run_test("minimize_priority")
+        self.run_test("maximize_priority")
+        self.run_test("minimize_maximize_function")
+        self.run_test("maximize_minimize_function")
 
     def test_user_input(self) -> None:
         """

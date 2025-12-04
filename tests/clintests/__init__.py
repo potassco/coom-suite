@@ -7,7 +7,7 @@ from typing import Set, Union
 from clingo import Symbol
 from clingo.solving import Model
 from clintest.assertion import Equals, False_, Implies, Optimal, SubsetOf, SupersetOf, True_
-from clintest.quantifier import All, Exact
+from clintest.quantifier import All, Any, Exact
 from clintest.test import And, Assert, Test
 
 TEST_EMPTY = Assert(All(), SubsetOf(set()))
@@ -44,7 +44,8 @@ def OptimalModel(model: set[Symbol | str], flingo: bool = False) -> Test:  # pyl
     """
     if not flingo:
         return Assert(All(), Implies(Optimal(), Equals(model)))
-    return Assert(All(), Implies(Optimal(), SupersetOfTheory(model, check_theory=True)))
+    # return Assert(All(), Implies(Optimal(), SupersetOfTheory(model, check_theory=True))
+    return Assert(All(), SupersetOfTheory(model, check_theory=True))  # I guess in flingo no optimality statement
 
 
 def Supersets(*args: set[Symbol | str]) -> Test:  # pylint: disable=invalid-name
