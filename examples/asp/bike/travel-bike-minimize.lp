@@ -199,16 +199,17 @@ constraint(("Capacity","root.frame[0].bag[1].capacity[0]"),"table").
 constraint(("Capacity","root.frame[0].bag[0].capacity[0]"),"table").
 constraint(("Wheel","root.frontWheel[0]"),"table").
 constraint(("Wheel","root.rearWheel[0]"),"table").
-constraint((4,"!root.color[0]=Red||root.frontWheel[0].size[0]=20"),"boolean").
-constraint((6,"!root.frame[0].bag[0].material[0]=Leather||root.frame[0].bag[0].capacity[0]=B10"),"boolean").
-constraint((6,"!root.frame[0].bag[1].material[0]=Leather||root.frame[0].bag[1].capacity[0]=B10"),"boolean").
-constraint((6,"!root.carrier[0].bag[0].material[0]=Leather||root.carrier[0].bag[0].capacity[0]=B10"),"boolean").
-constraint((6,"!root.carrier[0].bag[1].material[0]=Leather||root.carrier[0].bag[1].capacity[0]=B10"),"boolean").
-constraint((6,"!root.carrier[0].bag[2].material[0]=Leather||root.carrier[0].bag[2].capacity[0]=B10"),"boolean").
-constraint((0,"count(root.carrier.bag)+count(root.frame.bag)<=4"),"boolean").
-constraint((1,"root.totalWeight[0]=root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)"),"boolean").
-constraint((2,"root.totalVolume[0]=sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)"),"boolean").
-constraint((3,"root.totalVolume[0]>=root.requestedVolume[0]"),"boolean").
+constraint((5,"!root.color[0]=Red||root.frontWheel[0].size[0]=20"),"boolean").
+constraint((7,"!root.frame[0].bag[0].material[0]=Leather||root.frame[0].bag[0].capacity[0]=B10"),"boolean").
+constraint((7,"!root.frame[0].bag[1].material[0]=Leather||root.frame[0].bag[1].capacity[0]=B10"),"boolean").
+constraint((7,"!root.carrier[0].bag[0].material[0]=Leather||root.carrier[0].bag[0].capacity[0]=B10"),"boolean").
+constraint((7,"!root.carrier[0].bag[1].material[0]=Leather||root.carrier[0].bag[1].capacity[0]=B10"),"boolean").
+constraint((7,"!root.carrier[0].bag[2].material[0]=Leather||root.carrier[0].bag[2].capacity[0]=B10"),"boolean").
+constraint((0,"root.frontWheel[0].size[0]=root.rearWheel[0].size[0]"),"boolean").
+constraint((1,"count(root.carrier.bag)+count(root.frame.bag)<=4"),"boolean").
+constraint((2,"root.totalWeight[0]=root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)"),"boolean").
+constraint((3,"root.totalVolume[0]=sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)"),"boolean").
+constraint((4,"root.totalVolume[0]>=root.requestedVolume[0]"),"boolean").
 function("count(root.carrier.bag)","count","root.carrier.bag").
 function("count(root.frame.bag)","count","root.frame.bag").
 function("sum(root.carrier.bag.capacity.weight)","sum","root.carrier.bag.capacity.weight").
@@ -282,6 +283,7 @@ binary("root.carrier[0].bag[0].material[0]=Leather","root.carrier[0].bag[0].mate
 binary("root.frame[0].bag[1].material[0]=Leather","root.frame[0].bag[1].material[0]","=","Leather").
 binary("root.frame[0].bag[0].material[0]=Leather","root.frame[0].bag[0].material[0]","=","Leather").
 binary("root.color[0]=Red","root.color[0]","=","Red").
+binary("root.frontWheel[0].size[0]=root.rearWheel[0].size[0]","root.frontWheel[0].size[0]","=","root.rearWheel[0].size[0]").
 binary("root.totalVolume[0]>=root.requestedVolume[0]","root.totalVolume[0]",">=","root.requestedVolume[0]").
 binary("root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)","root.rearWheel[0].weight[0]","+","sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)").
 binary("root.totalVolume[0]=sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)","root.totalVolume[0]","=","sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)").
@@ -358,10 +360,11 @@ constant("Red").
 constant("Leather").
 constant("B10").
 minimize("root.totalWeight[0]").
-explanation(0,"The bike can have a maximum of 4 bags.").
-explanation(1,"The total weight is equal to the weight of the front wheel plus the weight of the rear wheel plus the sum of the weights of all bags on the carrier and the frame.").
-explanation(2,"The total volume is equal to the sum of the volumes of all bags on the carrier and the frame.").
-explanation(3,"The total volume must be greater than or equal to the requested volume.").
-explanation(4,"If the color is red, then the size of the front wheel must be 20.").
-explanation(5,"Minimize the total weight of the bike").
-explanation(6,"If the material of the bag is leather, then the capacity must be B10.").
+explanation(0,"The front and rear wheel have to have the same size").
+explanation(1,"The bike can have a maximum of 4 bags.").
+explanation(2,"The total weight is equal to the weight of the front wheel plus the weight of the rear wheel plus the sum of the weights of all bags on the carrier and the frame.").
+explanation(3,"The total volume is equal to the sum of the volumes of all bags on the carrier and the frame.").
+explanation(4,"The total volume must be greater than or equal to the requested volume.").
+explanation(5,"If the color is red, then the size of the front wheel must be 20.").
+explanation(6,"Minimize the total weight of the bike").
+explanation(7,"If the material of the bag is leather, then the capacity must be B10.").

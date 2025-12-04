@@ -61,6 +61,9 @@ enumeration Color {
 }
 
 behavior {
+	explanation "The front and rear wheel have to have the same size"
+	require frontWheel.size = rearWheel.size
+
 	explanation "The bike can have a maximum of 4 bags."
     require count(carrier.bag) + count(frame.bag) <= 4
 

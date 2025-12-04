@@ -1,0 +1,45 @@
+// Demo Bike example
+
+product {
+		num 0-300 	totalPrice
+			Color	color
+			Wheel	frontWheel
+			Wheel	rearWheel
+	0..1    Basket	frontBasket
+	0..1    Basket	rearBasket
+}
+
+enumeration Color {
+	Black
+	Blue
+	Red
+}
+
+enumeration Wheel {
+	attribute	num	size
+	attribute	num	price
+
+	W14	= (	 14 , 50	)
+	W16	= (	 16 , 70	)
+	W18	= (	 18 , 90	)
+	W20	= (	 20 , 110	)
+}
+
+structure Basket {
+    num 30-30	price
+    Color		color
+}
+
+behavior {
+	explanation "The size of the front wheel must be equal to the size of the rear wheel."
+	require frontWheel.size = rearWheel.size
+
+	explanation "The rear basket's color should match that of the bike."
+	require rearBasket.color = color
+
+	explanation "The front basket's color should match that of the bike."
+	require frontBasket.color = color
+
+	explanation "The total price is equal to the price of the wheels plus the price of the baskets"
+	require totalPrice = frontWheel.price + rearWheel.price + frontBasket.price + rearBasket.price
+}
