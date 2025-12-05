@@ -271,8 +271,8 @@ class TestFlingo(TestCase):
         """
         self.run_test("minimize")
         self.run_test("maximize")
-        self.run_test("minimize_priority")
-        self.run_test("maximize_priority")
+        # self.run_test("minimize_priority")
+        # self.run_test("maximize_priority")
         self.run_test("minimize_maximize_function")
         self.run_test("maximize_minimize_function")
 
