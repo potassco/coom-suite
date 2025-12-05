@@ -161,7 +161,7 @@ class TestFlingo(TestCase):
         """
         ctl_args = ["0"]
         if extra_ctl_args:
-            ctl_args += extra_ctl_args
+            ctl_args += extra_ctl_args  # nocoverage
         test, program, files = unpack_test(test_name, TESTS_SOLVE, flingo=True)
         run_test(test, files=files, program=program, ctl_args=ctl_args, solver="flingo", preprocess="False")
 
