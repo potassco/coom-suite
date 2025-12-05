@@ -690,7 +690,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constraint(("root.totalWeight",1),"lowerbound").
             set("root.totalWeight","root.totalWeight[0]").
             part("product").
-            minimize("root.totalWeight[0]").""",
+            minimize("root.totalWeight[0]",0).""",
     },
     "maximize": {
         "test": OptimalModel({'value("root.totalOutput[0]",10)'}),
@@ -705,7 +705,138 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constraint(("root.totalOutput",1),"lowerbound").
             set("root.totalOutput","root.totalOutput[0]").
             part("product").
-            maximize("root.totalOutput[0]").""",
+            maximize("root.totalOutput[0]",0).""",
+    },
+    "minimize_priority": {
+        "test": OptimalModel({'include("root.bags[0]")', 'value("root.bags[0].volume[0]",0) '}),
+        "ftest": OptimalModel({'include("root.bags[0]")', 'value("root.bags[0].volume[0]",0) '}, flingo=True),
+        "program": """
+            integer("Bag.volume").
+            range("Bag.volume",0,10).
+            type("root","product").
+            type("root.bags[0]","Bag").
+            type("root.bags[0].volume[0]","Bag.volume").
+            index("root.bags[0]",0).
+            index("root.bags[0].volume[0]",0).
+            parent("root.bags[0]","root").
+            parent("root.bags[0].volume[0]","root.bags[0]").
+            constraint(("root.bags",1),"lowerbound").
+            constraint(("root.bags[0].volume",1),"lowerbound").
+            set("root.bags","root.bags[0]").
+            set("root.bags[0].volume","root.bags[0].volume[0]").
+            part("product").
+            part("Bag").
+            minimize("root.bags[0].volume[0]",1).
+            maximize("root.bags[0].volume[0]",0).""",
+    },
+    "maximize_priority": {
+        "test": OptimalModel({'include("root.bags[0]")', 'value("root.bags[0].volume[0]",10)'}),
+        "ftest": OptimalModel({'include("root.bags[0]")', 'value("root.bags[0].volume[0]",10) '}, flingo=True),
+        "program": """
+            integer("Bag.volume").
+            range("Bag.volume",0,10).
+            type("root","product").
+            type("root.bags[0]","Bag").
+            type("root.bags[0].volume[0]","Bag.volume").
+            index("root.bags[0]",0).
+            index("root.bags[0].volume[0]",0).
+            parent("root.bags[0]","root").
+            parent("root.bags[0].volume[0]","root.bags[0]").
+            constraint(("root.bags",1),"lowerbound").
+            constraint(("root.bags[0].volume",1),"lowerbound").
+            set("root.bags","root.bags[0]").
+            set("root.bags[0].volume","root.bags[0].volume[0]").
+            part("product").
+            part("Bag").
+            minimize("root.bags[0].volume[0]",0).
+            maximize("root.bags[0].volume[0]",1).""",
+    },
+    "minimize_maximize_function": {
+        "test": OptimalModel({'include("root.bags[0]")', 'value("root.bags[0].volume[0]",10)'}),
+        "ftest": OptimalModel({'include("root.bags[0]")', 'value("root.bags[0].volume[0]",10)'}, flingo=True),
+        "program": """
+            integer("Bag.volume").
+            range("Bag.volume",0,10).
+            type("root","product").
+            type("root.bags[0]","Bag").
+            type("root.bags[1]","Bag").
+            type("root.bags[1].volume[0]","Bag.volume").
+            type("root.bags[0].volume[0]","Bag.volume").
+            index("root.bags[0]",0).
+            index("root.bags[1]",1).
+            index("root.bags[1].volume[0]",0).
+            index("root.bags[0].volume[0]",0).
+            parent("root.bags[0]","root").
+            parent("root.bags[1]","root").
+            parent("root.bags[1].volume[0]","root.bags[1]").
+            parent("root.bags[0].volume[0]","root.bags[0]").
+            constraint(("root.bags",1),"lowerbound").
+            constraint(("root.bags[0].volume",1),"lowerbound").
+            constraint(("root.bags[1].volume",1),"lowerbound").
+            function("count(root.bags)","count","root.bags").
+            function("sum(root.bags.volume)","sum","root.bags.volume").
+            set("root.bags","root.bags[0]").
+            set("root.bags","root.bags[1]").
+            set("root.bags[0].volume","root.bags[0].volume[0]").
+            set("root.bags[1].volume","root.bags[1].volume[0]").
+            set("root.bags.volume","root.bags[1].volume[0]").
+            set("root.bags.volume","root.bags[0].volume[0]").
+            part("product").
+            part("Bag").
+            minimize("count(root.bags)",1).
+            maximize("sum(root.bags.volume)",0).
+        """,
+    },
+    "maximize_minimize_function": {
+        "test": OptimalModel(
+            {
+                'include("root.bags[0]")',
+                'include("root.bags[1]")',
+                'value("root.bags[0].volume[0]",10)',
+                'value("root.bags[1].volume[0]",10)',
+            }
+        ),
+        "ftest": OptimalModel(
+            {
+                'include("root.bags[0]")',
+                'include("root.bags[1]")',
+                'value("root.bags[0].volume[0]",10)',
+                'value("root.bags[1].volume[0]",10)',
+            },
+            flingo=True,
+        ),
+        "program": """
+            integer("Bag.volume").
+            range("Bag.volume",0,10).
+            type("root","product").
+            type("root.bags[0]","Bag").
+            type("root.bags[1]","Bag").
+            type("root.bags[1].volume[0]","Bag.volume").
+            type("root.bags[0].volume[0]","Bag.volume").
+            index("root.bags[0]",0).
+            index("root.bags[1]",1).
+            index("root.bags[1].volume[0]",0).
+            index("root.bags[0].volume[0]",0).
+            parent("root.bags[0]","root").
+            parent("root.bags[1]","root").
+            parent("root.bags[1].volume[0]","root.bags[1]").
+            parent("root.bags[0].volume[0]","root.bags[0]").
+            constraint(("root.bags",1),"lowerbound").
+            constraint(("root.bags[0].volume",1),"lowerbound").
+            constraint(("root.bags[1].volume",1),"lowerbound").
+            function("count(root.bags)","count","root.bags").
+            function("sum(root.bags.volume)","sum","root.bags.volume").
+            set("root.bags","root.bags[0]").
+            set("root.bags","root.bags[1]").
+            set("root.bags[0].volume","root.bags[0].volume[0]").
+            set("root.bags[1].volume","root.bags[1].volume[0]").
+            set("root.bags.volume","root.bags[1].volume[0]").
+            set("root.bags.volume","root.bags[0].volume[0]").
+            part("product").
+            part("Bag").
+            minimize("count(root.bags)",0).
+            maximize("sum(root.bags.volume)",1).
+        """,
     },
     "add_part": {
         "test": StableModels({'include("root.a[0]")'}),

@@ -130,7 +130,8 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             )
             # check if the facts is an incremental expression
             is_incremental_expression = (
-                name in ["function", "binary", "unary"] and args[0].string in self._incremental_expressions
+                name in ["function", "binary", "unary", "minimize", "maximize"]
+                and args[0].string in self._incremental_expressions
             )
 
             if is_incremental_constraint or is_incremental_expression:
@@ -155,7 +156,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         Returns:
             ProgPart: the program part containing the rules to update the incremental expression
         """
-        if exp_type not in ["function", "binary", "unary", "constraint"]:
+        if exp_type not in ["function", "binary", "unary", "constraint", "minimize", "maximize"]:
             raise ValueError(f"unknown type of incremental expression: {exp_type}")
 
         # determine the name and arguments of the program part
@@ -164,7 +165,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         args.append(Number(bound))
         # the name of the program part depends on the type of the expression
         match exp_type:
-            case "unary" | "constraint":
+            case "unary" | "constraint" | "minimize" | "maximize":
                 part_name = "incremental_" + exp_type
             case "function":
                 # determine the name of the function
@@ -231,6 +232,8 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             "allow",
             "number",
             "constant",
+            "minimize",
+            "maximize",
         ]:
             raise ValueError(f"unknown new fact (no corresponding program part exists): {fact}")
 

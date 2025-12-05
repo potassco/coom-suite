@@ -269,7 +269,10 @@ class ASPModelVisitor(ModelVisitor):
         super().visitCondition_compare(ctx)
 
     def visitOptimize(self, ctx: ModelParser.OptimizeContext):
-        self.output_asp.append(f'{ctx.op.text}({self.constraint_idx},"{ctx.path().getText()}").')
+        priority = 0
+        if ctx.priority:
+            priority = int(ctx.priority.text)
+        self.output_asp.append(f'{ctx.op.text}({self.constraint_idx},{priority},"{ctx.formula().getText()}").')
         return super().visitOptimize(ctx)
 
     def visitFormula_add(self, ctx: ModelParser.Formula_addContext):

@@ -2,6 +2,8 @@
 Test cases for the parser from COOM to ASP.
 """
 
+# pylint: disable=too-many-lines
+
 from unittest import TestCase
 
 from . import parse_coom
@@ -984,7 +986,7 @@ class TestCOOMModelParser(TestCase):
             [
                 "behavior(0).",
                 'context(0,"product").',
-                'minimize(0,"totalWeight").',
+                'minimize(0,0,"totalWeight").',
                 'path("totalWeight",0,"totalWeight").',
             ],
         )
@@ -994,7 +996,28 @@ class TestCOOMModelParser(TestCase):
             [
                 "behavior(0).",
                 'context(0,"product").',
-                'maximize(0,"totalOutput").',
+                'maximize(0,0,"totalOutput").',
                 'path("totalOutput",0,"totalOutput").',
+            ],
+        )
+
+        self.assertEqual(
+            parse_coom("behavior{minimize /3 totalWeight}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'minimize(0,3,"totalWeight").',
+                'path("totalWeight",0,"totalWeight").',
+            ],
+        )
+
+        self.assertEqual(
+            parse_coom("behavior{maximize count(bags)}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'maximize(0,0,"count(bags)").',
+                'function("product","count(bags)","count","bags").',
+                'path("bags",0,"bags").',
             ],
         )

@@ -25,4 +25,7 @@
 #defined coom_user_include/1.
 #defined coom_user_value/2.
 
+#defined coom_minimize/3.
+#defined coom_maximize/3.
+
 #defined discrete/0.
