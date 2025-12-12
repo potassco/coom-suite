@@ -82,6 +82,7 @@ class Navigator:
         self._control.configuration.solve.models = num_models
 
     def _solve(self, num_models: int = 1) -> Model | List[Model]:
+        # TODO: support for timeouts
         browsing = self._reasoning_mode == "browse"
 
         if not browsing:
@@ -224,6 +225,7 @@ class Navigator:
         self._ground([(name, [])])
 
     def add_constraint(self, constraint: str) -> None:
+        # TODO: should argument be the whole constraint or just the constraint body?
         self._updated_solution_space()
         name = self._get_new_program_name()
         self._control.add(name, [], constraint)
