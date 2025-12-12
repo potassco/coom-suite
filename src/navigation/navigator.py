@@ -45,6 +45,16 @@ class Navigator:
         self._grounded = False
         self._control.load(file_path)
 
+    def _updated_solution_space(self) -> None:
+        self._clear_browsing()
+        self._clear_consequences()
+
+    def _clear_browsing(self) -> None:
+        if self._solve_handle:
+            self._solve_handle.cancel()
+            self._solve_handle = None
+            self._model_iterator = None
+
     def _clear_consequences(self) -> None:
         # needs to be called whenever solution space is changed
         self._brave = None
@@ -72,12 +82,15 @@ class Navigator:
         self._control.configuration.solve.models = num_models
 
     def _solve(self, num_models: int = 1) -> Model | List[Model]:
-        self._update_configuration(num_models)
+        browsing = self._reasoning_mode == "browse"
 
+        if not browsing:
+            self._clear_browsing()
+
+        self._update_configuration(num_models)
         self._ground()
 
         result = None
-        browsing = self._reasoning_mode == "browse"
         if not browsing or self._model_iterator is None:
             handle = self._control.solve(assumptions=self._assumptions, yield_=True)
 
@@ -108,34 +121,31 @@ class Navigator:
         return result
 
     def enable_optimization(self) -> None:
-        self._clear_consequences()
+        self._updated_solution_space()
         self._control.configuration.opt_mode = "optN"
 
     def disable_optimization(self) -> None:
-        self._clear_consequences()
+        self._updated_solution_space()
         self._control.configuration.opt_mode = "ignore"
 
     def compute_models(self, num_models: int = 1) -> List[Model]:
+        self._reasoning_mode = "auto"
         return self._solve(num_models)
 
     def browse_models(self) -> Model:
         self._reasoning_mode = "browse"
-        model = self._solve(0)
-        self._reasoning_mode = "auto"
-        return model
+        return self._solve(0)
 
     def compute_brave_consequences(self) -> Model:
         if self._brave is None:
             self._reasoning_mode = "brave"
             self._brave = set(self._solve(0))
-            self._reasoning_mode = "auto"
         return self._brave
 
     def compute_cautious_consequences(self) -> Model:
         if self._cautious is None:
             self._reasoning_mode = "cautious"
             self._cautious = set(self._solve(0))
-            self._reasoning_mode = "auto"
         return self._cautious
 
     def compute_facets(self) -> Model:
@@ -144,6 +154,8 @@ class Navigator:
             cautious = self.compute_cautious_consequences()
             self._facets = brave - cautious
         return self._facets
+
+    # TODO: diverse and similar models
 
     def compute_diverse_models(self, num_models: int = 1) -> List[Model]:
         pass
@@ -165,16 +177,16 @@ class Navigator:
 
     def add_assumption(self, symbol: str | Symbol, value: bool) -> None:
         symbol = self._as_symbol(symbol)
-        self._clear_consequences()
+        self._updated_solution_space()
         self._assumptions.add((symbol, value))
 
     def remove_assumption(self, symbol: str | Symbol, value: bool) -> None:
         symbol = self._as_symbol(symbol)
-        self._clear_consequences()
+        self._updated_solution_space()
         self._assumptions.discard((symbol, value))
 
     def clear_assumptions(self) -> None:
-        self._clear_consequences()
+        self._updated_solution_space()
         self._assumptions = set()
 
     def get_assumptions(self) -> Set[Tuple[Symbol, bool]]:
@@ -182,7 +194,7 @@ class Navigator:
 
     def set_external(self, symbol: str | Symbol, value: bool | None) -> None:
         symbol = self._as_symbol(symbol)
-        self._clear_consequences()
+        self._updated_solution_space()
         self._externals[symbol] = value
         if value is not None:
             self._control.assign_external(symbol, value)
@@ -190,7 +202,7 @@ class Navigator:
             self._control.release_external(symbol)
 
     def clear_externals(self) -> None:
-        self._clear_consequences()
+        self._updated_solution_space()
         for symbol in self._externals:
             self.set_external(symbol, None)
 
@@ -205,14 +217,14 @@ class Navigator:
         return name
 
     def add_rule(self, rule: str) -> None:
-        self._clear_consequences()
+        self._updated_solution_space()
         # TODO: check that head is a new atom to avoid redefinition error
         name = self._get_new_program_name()
         self._control.add(name, [], rule)
         self._ground([(name, [])])
 
     def add_constraint(self, constraint: str) -> None:
-        self._clear_consequences()
+        self._updated_solution_space()
         name = self._get_new_program_name()
         self._control.add(name, [], constraint)
         self._ground([(name, [])])
