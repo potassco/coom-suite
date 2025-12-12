@@ -30,7 +30,8 @@
 - diverse or similar models
 
   - analogous operations to solving
-  - custom diversity/similarity measures
+  - custom diversity/similarity measures (numeric features, weighted based on
+    tree depth)
   - representative models with respect to some set of target atoms
 
 ### Narrowing operations

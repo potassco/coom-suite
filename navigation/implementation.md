@@ -7,19 +7,22 @@
   the control object once a model was found)
 - maybe take inspiration from clinguin backends? (ui-independent functionality)
 
-## Possible methods
+## API
 
+- initialize: optionally with existing control object
+- load: load further files into the control object
+- enable/disable optimization
 - compute n models
-- enter a browsing state (computing models stepwise)
-- compute diverse/similar models (number of models analogous to normal solving
-  operations)
+- browse models: iteratively compute models
+- compute brave/cautious/facets
+- similar/diverse: same operations as for normals models (n or iteratively,
+  iteratively may not work with every strategy from the literature)
 - add assumption
 - remove assumption
-- get all assumptions
+- clear assumptions
+- get assumptions
 - set external
-- get values of externals
-- compute brave consequences
-- compute cautious consequences
-- turn on/off optimisation
-- add a rule to the program
-- methods for ground boolean or non-ground queries analogous to assumptions
+- clear externals
+- get externals
+- add rule
+- add constraint (can avoid checks needed for adding rules)
