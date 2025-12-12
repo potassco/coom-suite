@@ -68,5 +68,7 @@
 ## Material
 
 - [use cases](use-cases.md)
-- [implementation ideas](implementation.md)
+- [implementation ideas](implementation.md), current implementation in
+  `coomsuite/src/navigation`
+- python notebooks showcasing current navigation API in `examples` folder
 - [relevant literature](literature.md)
