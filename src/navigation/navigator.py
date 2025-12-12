@@ -8,6 +8,7 @@ from clingo.control import Control
 from clingo.symbol import Symbol, parse_term
 
 Model = Set[Symbol]
+ProgPart = Tuple[str, List[str]]
 
 
 class Navigator:
@@ -36,6 +37,9 @@ class Navigator:
         self._assumptions: Set[Tuple[Symbol, bool]] = set()
         self._externals: Dict[Symbol, Optional[bool]] = {}
 
+        self._program_name = "add"
+        self._program_counter = 0
+
     def load(self, file_path: str) -> None:
         self._clear_consequences()
         self._grounded = False
@@ -47,15 +51,14 @@ class Navigator:
         self._cautious = None
         self._facets = None
 
-        if self._solve_handle:
-            self._solve_handle.cancel()
-            self._solve_handle = None
-        self._model_iterator = None
-
-    def _ground(self) -> None:
+    def _ground(self, parts: Optional[List[ProgPart]] = None) -> None:
         if not self._grounded:
-            self._control.ground()
+            if ("base", []) not in parts:
+                parts.append(("base", []))
             self._grounded = True
+
+        if parts:
+            self._control.ground(parts)
 
     def _update_configuration(self, num_models: int = 1) -> None:
         match self._reasoning_mode:
@@ -194,14 +197,22 @@ class Navigator:
     def get_externals(self) -> Dict[Symbol, Optional[bool]]:
         return self._externals
 
+    # TODO: add a function to get all the externals from the program?
+
+    def _get_new_program_name(self) -> str:
+        name = self._program_name + str(self._program_counter)
+        self._program_counter += 1
+        return name
+
     def add_rule(self, rule: str) -> None:
         self._clear_consequences()
         # TODO: check that head is a new atom to avoid redefinition error
-        # add new rules to new program parts?
-        self._control.add(rule)
-        self._grounded = False
+        name = self._get_new_program_name()
+        self._control.add(name, [], rule)
+        self._ground([(name, [])])
 
     def add_constraint(self, constraint: str) -> None:
         self._clear_consequences()
-        self._control.add(constraint)
-        self._grounded = False
+        name = self._get_new_program_name()
+        self._control.add(name, [], constraint)
+        self._ground([(name, [])])
