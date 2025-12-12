@@ -40,3 +40,6 @@ site
 .antlr
 
 default.profraw
+
+# notebooks
+*.ipynb_checkpoints*

@@ -34,7 +34,8 @@ doc = [
     "tree_sitter",
 ]
 grammar = ["antlr4-tools"]
-dev = ["coomsuite[test,typecheck,lint_pylint,grammar]"]
+navigation = ["notebook"]
+dev = ["coomsuite[test,typecheck,lint_pylint,grammar,navigation]"]
 
 [project.scripts]
 coomsuite = "coomsuite.__main__:main"
