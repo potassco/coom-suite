@@ -39,6 +39,11 @@ parent(@dotpath(X),@dotpath(P)) :- type_aux(X,_), X=(_,(P,_)).
 #show index/2.
 #show parent/2.
 
+% Associations
+association(@dotpath(X),T,Min,Max) :- association_aux(X,_,T,Min,Max).
+
+#show association/4.
+
 %%% Constraints
 % Formulas
 % Constraints at root and without conditions can be instantiated "as is"
@@ -101,7 +106,7 @@ set(@join(X,P),X')                       :- function(X,_,_,P), path_to(X,P,X').
 part(T) :- coom_structure(T).
 
 constraint((@join(X,N),Min),"lowerbound") :- cardinality_aux(X,N,Min).
-set(@join(X,N),X')                       :- cardinality_aux(X,N,_), path_to(X,N,X').
+set(@join(X,N),X')                        :- cardinality_aux(X,N,_), path_to(X,N,X').
 
 #show part/1.
 

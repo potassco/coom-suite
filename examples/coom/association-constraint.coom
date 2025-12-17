@@ -1,0 +1,32 @@
+product{
+    2x   Element     elements
+    2x Module modules
+}
+
+structure Module {
+    ModuleType type
+}
+
+enumeration ModuleType {
+    I
+    II
+}
+
+
+structure Element {
+    reference   Module      modules
+                ElementType type
+}
+
+enumeration ElementType {
+    A
+    B
+}
+
+behavior Element {
+    condition type = A
+    require modules.type=I
+
+    condition type = B
+    require modules.type=II
+}

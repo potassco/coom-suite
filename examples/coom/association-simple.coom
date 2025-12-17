@@ -1,0 +1,11 @@
+product{
+    2x   Element     elements
+    0..4 Module modules
+}
+
+structure Module {}
+
+
+structure Element {
+    reference 2x  Module      modules
+}

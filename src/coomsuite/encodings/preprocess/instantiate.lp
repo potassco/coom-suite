@@ -36,14 +36,14 @@ formula_context(F',Ctx) :- coom_binary(F',_,_,_), coom_unary(F,_,F'), formula_co
 formula_context(F',Ctx) :- coom_unary(F',_,_),    coom_unary(F,_,F'), formula_context(F,Ctx).
 
 % Instantiate paths
-path_start(X,P)  :- coom_binary(F,P,_,_),     coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
-path_start(X,P)  :- coom_binary(F,_,_,P),     coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
-path_start(X,P)  :- coom_unary(F,_,P),        coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
-path_start(X,P)  :- coom_combinations(C,_,P), coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
-path_start(X,P)  :- coom_function(Ctx,_,_,P), coom_path(P,0,_), type_aux(X,Ctx).
-path_start(X,P)  :- coom_imply(C,P,_),        coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
-path_start(X,P)  :- coom_minimize(C,_,P),     coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
-path_start(X,P)  :- coom_maximize(C,_,P),     coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
+path_start(X,P) :- coom_binary(F,P,_,_),     coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
+path_start(X,P) :- coom_binary(F,_,_,P),     coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
+path_start(X,P) :- coom_unary(F,_,P),        coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
+path_start(X,P) :- coom_combinations(C,_,P), coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
+path_start(X,P) :- coom_function(Ctx,_,_,P), coom_path(P,0,_), type_aux(X,Ctx).
+path_start(X,P) :- coom_imply(C,P,_),        coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
+path_start(X,P) :- coom_minimize(C,_,P),     coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
+path_start(X,P) :- coom_maximize(C,_,P),     coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
 
 % Determine all ground paths
 path_to(X,P,0,X')  :- coom_path(P,0,N),
@@ -54,8 +54,13 @@ path_to(X,P,1,X')  :- coom_path(P,0,"root"), coom_path(P,1,N),
 path_to(X,P,I,X'') :- coom_path(P,I,N),
                       path_to(X,P,I-1,X'), type_aux(X'',_), X''=(N,(X',_)).
 
-path_to(X,P,@dotpath(X')) :- not coom_path(P,I+1,_), path_to(X,P,I,X').
+path_to(X,P,0,X')  :- coom_path(P,0,N),
+                      path_start(X,P),     type_aux(X',T),  association_aux(X,N,T,_,_).
+path_to(X,P,I,X'') :- coom_path(P,I,N),
+                      path_to(X,P,I-1,X'), type_aux(X'',T), association_aux(X,N,T,_,_).
 
+path_to(X,P,@dotpath(X')) :- not coom_path(P,I+1,_), path_to(X,P,I,X').
+% #show path_to/3.
 % Constants and numbers
 path_to(X,P,P) :- coom_binary(F,_,_,P), coom_constant(P), formula_context(F,T), type_aux(X,T).
 path_to(X,P,P) :- coom_binary(F,P,_,_), coom_constant(P), formula_context(F,T), type_aux(X,T).
@@ -136,6 +141,9 @@ attribute_constraint_column(T,Col+1,A) :- coom_attribute(T,A,_), Col = #count{ A
 % Instantiate cardinality constraints
 cardinality_aux(X,N,Min) :- coom_feature(C,N,_,Min,_), type_aux(X,C).
 cardinality_aux(X,A,1)   :- coom_attribute(T,A,_),     type_aux(X,T).
+
+% Instantiate associations
+association_aux(X,N,T,Min,Max) :- coom_reference(C,N,T,Min,Max), type_aux(X,C).
 
 % Include boolean enumeration if needed
 coom_enumeration("Bool")     :- coom_feature(_,_,"Bool",_,_).

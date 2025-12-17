@@ -1,5 +1,6 @@
 #defined coom_structure/1.
 #defined coom_feature/5.
+#defined coom_reference/5.
 #defined coom_range/4.
 #defined coom_enumeration/1.
 #defined coom_option/2.

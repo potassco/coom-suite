@@ -1,0 +1,78 @@
+product{
+    0..1    Rack        racks
+    0..11   Element     elements
+}
+
+structure Rack {
+            // RackType    type
+    1..1    Frame       frames
+}
+
+// enumeration RackType {
+//     _RackSingle
+//     _RackDouble
+// }
+
+structure Frame {
+    0..5 Module modules
+}
+
+structure Module {
+    ModuleType type
+}
+
+enumeration ModuleType {
+    I
+    II
+    III
+    IV
+    // V
+}
+
+structure Element {
+                    ElementType type
+    reference 1..4  Module      modules
+}
+
+enumeration ElementType {
+    A
+    B
+    C
+    D
+}
+
+
+// behavior Rack {
+//     explanation "A RackSingle has exactly 4 frames"
+//     condition type = _RackSingle
+//     require count(frames) = 4
+
+//     explanation "A RackSingle has exactly 8 frames"
+//     condition type = _RackDouble
+//     require count(frames) = 8
+// }
+
+// behavior Frame {
+//     explanation "A Frame containing a ModuleII must also contain exactly one ModuleV"
+//     condition exists II in modules.type
+//     require exists V in modules.type
+//     // require count(modules if modules.type is V)=1
+// }
+
+behavior Element {
+    explanation "An ElementA requires exactly one ModuleI"
+    condition type = A
+    require count(modules) = 1 && modules.type = I
+
+    // explanation "An ElementB requires exactly two ModuleII"
+    // condition type = B
+    // require count(modules) = 2 && modules.type = II
+
+    // explanation "An ElementC requires exactly two ModuleIII"
+    // condition type = C
+    // require count(modules) = 3 && modules.type = III
+
+    // explanation "An ElementD requires exactly two ModuleIV"
+    // condition type = D
+    // require count(modules) = 4 && modules.type = IV
+}

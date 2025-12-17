@@ -117,14 +117,20 @@ class ASPModelVisitor(ModelVisitor):
             c_max = c_min
             if cardinality.max_ is not None:
                 c_max = cardinality.max_.text.replace("x", "").replace("*", "#sup")
-
-        self.output_asp.append(f'feature("{self.structure_name}","{feature_name}","{type_name}",{c_min},{c_max}).')
-        if type_name == "num":
-            num: ModelParser.Number_defContext = field.number_def()
-            if num.min_ is not None or num.max_ is not None:
-                r_min = "#inf" if num.min_.getText() == "-\u221e" else num.min_.getText()  # negative infinity symbol
-                r_max = "#sup" if num.max_.getText() == "\u221e" else num.max_.getText()  # infinity symbol
-                self.output_asp.append(f'range("{self.structure_name}","{feature_name}",{r_min},{r_max}).')
+        if ctx.ref is not None:
+            self.output_asp.append(
+                f'reference("{self.structure_name}","{feature_name}","{type_name}",{c_min},{c_max}).'
+            )
+        else:
+            self.output_asp.append(f'feature("{self.structure_name}","{feature_name}","{type_name}",{c_min},{c_max}).')
+            if type_name == "num":
+                num: ModelParser.Number_defContext = field.number_def()
+                if num.min_ is not None or num.max_ is not None:
+                    r_min = (
+                        "#inf" if num.min_.getText() == "-\u221e" else num.min_.getText()
+                    )  # negative infinity symbol
+                    r_max = "#sup" if num.max_.getText() == "\u221e" else num.max_.getText()  # infinity symbol
+                    self.output_asp.append(f'range("{self.structure_name}","{feature_name}",{r_min},{r_max}).')
 
     def visitAttribute(self, ctx: ModelParser.AttributeContext):
         # if self.parent_enum is None:
@@ -347,11 +353,11 @@ class ASPModelVisitor(ModelVisitor):
         if self.print_path:
             full_path = f"{ctx.getText()}"
 
-            if full_path[0].isupper():
-                self.output_asp.append(f'constant("{full_path}").')
-            else:
+            if full_path[0].islower():  # Path
                 for i, p in enumerate(ctx.path_item()):
                     self.output_asp.append(f'path("{full_path}",{i},"{p.getText()}").')
+            else:
+                self.output_asp.append(f'constant("{full_path}").')
 
     def visitFloating(self, ctx: ModelParser.FloatingContext):
         # if ctx.FLOATING() is not None:
