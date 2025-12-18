@@ -45,22 +45,26 @@ path_start(X,P) :- coom_imply(C,P,_),        coom_path(P,0,_), type_aux(X,Ctx), 
 path_start(X,P) :- coom_minimize(C,_,P),     coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
 path_start(X,P) :- coom_maximize(C,_,P),     coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
 
-% Determine all ground paths
-path_to(X,P,0,X')  :- coom_path(P,0,N),
-                      path_start(X,P),     type_aux(X',_),  X' =(N,(X,_)).
-path_to(X,P,1,X')  :- coom_path(P,0,"root"), coom_path(P,1,N),
-                      path_start(X,P),     type_aux(X',_),  X' =(N,((),_)).
+% Determine all ground paths while tracking associations
+path_to(X,P,0,X',())   :- coom_path(P,0,N),
+                          path_start(X,P), type_aux(X',_),  X' =(N,(X,_)).
+path_to(X,P,1,X',())   :- coom_path(P,0,"root"), coom_path(P,1,N),
+                          path_start(X,P), type_aux(X',_),  X' =(N,((),_)).
+path_to(X,P,0,X',(X',())) :- coom_path(P,0,N),
+                          path_start(X,P), type_aux(X',T),  association_aux(X,N,T,_,_).
 
-path_to(X,P,I,X'') :- coom_path(P,I,N),
-                      path_to(X,P,I-1,X'), type_aux(X'',_), X''=(N,(X',_)).
 
-path_to(X,P,0,X')  :- coom_path(P,0,N),
-                      path_start(X,P),     type_aux(X',T),  association_aux(X,N,T,_,_).
-path_to(X,P,I,X'') :- coom_path(P,I,N),
-                      path_to(X,P,I-1,X'), type_aux(X'',T), association_aux(X,N,T,_,_).
+path_to(X,P,I,X'',A)       :- coom_path(P,I,N),
+                              path_to(X,P,I-1,X',A), type_aux(X'',_), X''=(N,(X',_)).
+path_to(X,P,I,X'',(X'',A)) :- coom_path(P,I,N),
+                              path_to(X,P,I-1,X',A), type_aux(X'',T), association_aux(X,N,T,_,_).
 
-path_to(X,P,@dotpath(X')) :- not coom_path(P,I+1,_), path_to(X,P,I,X').
-% #show path_to/3.
+path_to(X,P,@dotpath(X'),A) :- not coom_path(P,I+1,_), path_to(X,P,I,X',A).
+path_to(X,P,X')             :- path_to(X,P,X',_).
+
+% Extract associations in paths
+path_association(X,P,X',(@dotpath(X),@dotpath(A))) :- path_to(X,P,X',(A,_)).
+
 % Constants and numbers
 path_to(X,P,P) :- coom_binary(F,_,_,P), coom_constant(P), formula_context(F,T), type_aux(X,T).
 path_to(X,P,P) :- coom_binary(F,P,_,_), coom_constant(P), formula_context(F,T), type_aux(X,T).
@@ -78,6 +82,11 @@ unary(X,F,@unary(X',Op),Op,X') :- coom_unary(F,Op,F'),
 
 ground_formula(X,F,G)  :- binary(X,F,G,_,_,_).
 ground_formula(X,F,G)  :- unary(X,F,G,_,_).
+
+% Extract associations in formulas
+formula_association(X,F,G,A) :- binary(X,F,G,XL,_,_), path_association(X,_,XL,A).
+formula_association(X,F,G,A) :- binary(X,F,G,_,_,XR), path_association(X,_,XR,A).
+formula_association(X,F,G,A) :- unary(X,F,G,_,X')   , path_association(X,_,X',A).
 
 % Default binaries for arithmetics if one side is undefined
 % TODO: Does this always give desired behavior?
@@ -114,6 +123,11 @@ conditions(C,X,@unary(G,"()")) :- conditions_binary(C,X,G,_,_,()).
 
 conditional_requirement(C,G,G') :- coom_context(C,Ctx), type_aux(X,Ctx), conditions(C,X,G),
                                    coom_require(C,F'),  ground_formula(X,F',G').
+
+% Extract associations from conditions
+conditions_association(C,X,A) :- conditions_aux(C,X,_,(G,_)), formula_association(X,_,G,A).
+% condreg_association(C,G,G',A) :- conditional_requirement(C,G,G').
+#show conditional_requirement/3.
 
 % Instantiate combination tables
 table(C,X) :- coom_combinations(C,_,_), coom_context(C,Ctx), type_aux(X,Ctx).

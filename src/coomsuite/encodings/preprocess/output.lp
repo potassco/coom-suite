@@ -48,6 +48,7 @@ association(@dotpath(X),T,Min,Max) :- association_aux(X,_,T,Min,Max).
 % Formulas
 % Constraints at root and without conditions can be instantiated "as is"
 constraint((C,G),"boolean") :- coom_require(C,F), ground_formula((),F,G), not coom_condition(C,_,_).
+% TODO: Can there be associations at root?
 
 % Local constraints without conditions get converted into conditional requirement
 % to add an "definedness" condition on their context variable
@@ -58,6 +59,7 @@ binary(@binary(Fun,"=","1"),Fun,"=","1")  :- local_constraint(_,X,_), function(F
 number("1",1)                             :- local_constraint(_,_,_).
 conditional_requirement(C,Con,G)          :- local_constraint(C,X,G), function(Fun,"count",X), binary(Con,Fun,"=","1").
 
+constraint_association(C,X,G,A) :- coom_require(C,F), formula_association(X,F,G,A), not coom_condition(C,_,_), X != ().
 
 % Conditional requirements get converted into a disjuction
 constraint((C,@implication(Con,Req)),"boolean")        :- conditional_requirement(C,Con,Req).
