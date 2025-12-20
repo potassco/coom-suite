@@ -6,6 +6,7 @@
 #defined parent/2.
 
 #defined association/4.
+#defined replace/2.
 
 #defined discrete/1.
 #defined domain/2.

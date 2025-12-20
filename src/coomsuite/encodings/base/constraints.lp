@@ -4,4 +4,4 @@
 violated((X',P)) :- constraint((P,Min),"lowerbound"), set(P,X), index(X,Min-1), not include(X), parent(X,X'), include(X').
 
 % Constraints cannot be violated
-:- violated(C), not association(C,_).
+:- violated(C).

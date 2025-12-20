@@ -42,7 +42,11 @@ parent(@dotpath(X),@dotpath(P)) :- type_aux(X,_), X=(_,(P,_)).
 % Associations
 association(@dotpath(X),T,Min,Max) :- association_aux(X,_,T,Min,Max).
 
+% Replace paths/variables based on associations
+replace(R,(@dotpath(X),@dotpath(X'))) :- replace_aux(R,A,_), A = (X,X').
+
 #show association/4.
+#show replace/2.
 
 %%% Constraints
 % Formulas
@@ -58,8 +62,6 @@ set(X,X)                                  :- local_constraint(_,X,_).
 binary(@binary(Fun,"=","1"),Fun,"=","1")  :- local_constraint(_,X,_), function(Fun,"count",X).
 number("1",1)                             :- local_constraint(_,_,_).
 conditional_requirement(C,Con,G)          :- local_constraint(C,X,G), function(Fun,"count",X), binary(Con,Fun,"=","1").
-
-constraint_association(C,X,G,A) :- coom_require(C,F), formula_association(X,F,G,A), not coom_condition(C,_,_), X != ().
 
 % Conditional requirements get converted into a disjuction
 constraint((C,@implication(Con,Req)),"boolean")        :- conditional_requirement(C,Con,Req).

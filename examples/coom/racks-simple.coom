@@ -4,7 +4,7 @@ product{
 }
 
 structure Rack {
-    4x    Frame       frames
+    4    Frame       frames
 }
 
 
@@ -15,5 +15,5 @@ structure Frame {
 structure Module {}
 
 structure Element {
-    reference 2x  Module      modules
+    reference 2  Module      modules
 }
