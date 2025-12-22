@@ -12,7 +12,11 @@ Model = Set[Symbol]
 ProgPart = Tuple[str, List[str]]
 
 
-class Navigator:
+class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-attributes
+    """
+    Class to navigate solution spaces of logic programs.
+    """
+
     def __init__(self, control: Optional[Control] = None, grounded: Optional[bool] = None):
         """
         Args:
@@ -21,7 +25,7 @@ class Navigator:
         """
         if control:
             self._control = control
-            self._base_ground = True if grounded else False
+            self._base_ground = bool(grounded)
         else:
             self._control = Control()
             self._base_ground = False
@@ -49,6 +53,9 @@ class Navigator:
         self._non_ground_rules: Set[str] = set()
 
     def load(self, file_path: str) -> None:
+        """
+        Load a file into the logic program.
+        """
         self._clear_consequences()
         self._base_ground = False
         self._control.load(file_path)
@@ -69,7 +76,10 @@ class Navigator:
         self._cautious = None
         self._facets = None
 
-    def ground(self, parts: List[ProgPart] = [("base", [])]) -> None:
+    def ground(self, parts: List[ProgPart] = [("base", [])]) -> None:  # pylint: disable=dangerous-default-value
+        """
+        Ground the specified program parts.
+        """
         if ("base", []) in parts:
             self._base_ground = True
         self._control.ground(parts)
@@ -168,34 +178,55 @@ class Navigator:
         return result
 
     def enable_optimization(self) -> None:
+        """
+        Enable optimization while solving.
+        """
         self._updated_solution_space()
         self._optimization = True
 
     def disable_optimization(self) -> None:
+        """
+        Disable optimization while solving.
+        """
         self._updated_solution_space()
         self._optimization = False
 
     def compute_models(self, num_models: int = 1) -> List[Model]:
+        """
+        Compute num_models many models.
+        """
         self._reasoning_mode = "auto"
         return self._solve(num_models)
 
     def browse_models(self) -> Model:
+        """
+        Compute model iteratively.
+        """
         self._reasoning_mode = "browse"
         return self._solve(0)
 
     def compute_brave_consequences(self) -> Model:
+        """
+        Compute the brave consequences.
+        """
         if self._brave is None:
             self._reasoning_mode = "brave"
             self._brave = set(self._solve(0))
         return self._brave
 
     def compute_cautious_consequences(self) -> Model:
+        """
+        Compute the cautious consequences.
+        """
         if self._cautious is None:
             self._reasoning_mode = "cautious"
             self._cautious = set(self._solve(0))
         return self._cautious
 
     def compute_facets(self) -> Model:
+        """
+        Compute the facets of the program.
+        """
         if self._facets is None:
             brave = self.compute_brave_consequences()
             cautious = self.compute_cautious_consequences()
@@ -205,16 +236,24 @@ class Navigator:
     # TODO: diverse and similar models
 
     def compute_diverse_models(self, num_models: int = 1) -> List[Model]:
-        pass
+        """
+        Compute num_models many diverse models.
+        """
 
     def compute_similar_models(self, num_models: int = 1) -> List[Model]:
-        pass
+        """
+        Compute num_models many similar models.
+        """
 
     def browse_diverse_models(self) -> Model:
-        pass
+        """
+        Compute diverse models iteratively.
+        """
 
     def browse_similar_models(self) -> Model:
-        pass
+        """
+        Compute similar models iteratively.
+        """
 
     def _as_symbol(self, symbol: str | Symbol) -> Symbol:
         if isinstance(symbol, str):
@@ -223,23 +262,38 @@ class Navigator:
         return symbol
 
     def add_assumption(self, symbol: str | Symbol, value: bool) -> None:
+        """
+        Add an assumption to the logic program.
+        """
         symbol = self._as_symbol(symbol)
         self._updated_solution_space()
         self._assumptions.add((symbol, value))
 
     def remove_assumption(self, symbol: str | Symbol, value: bool) -> None:
+        """
+        Remove an assumption from the logic program.
+        """
         symbol = self._as_symbol(symbol)
         self._updated_solution_space()
         self._assumptions.discard((symbol, value))
 
     def clear_assumptions(self) -> None:
+        """
+        Remove all assumptions from the logic program.
+        """
         self._updated_solution_space()
         self._assumptions = set()
 
     def get_assumptions(self) -> Set[Tuple[Symbol, bool]]:
+        """
+        Get the current assumptions.
+        """
         return self._assumptions
 
     def set_external(self, symbol: str | Symbol, value: bool | None) -> None:
+        """
+        Set the value of an external.
+        """
         symbol = self._as_symbol(symbol)
         self._updated_solution_space()
         self._externals[symbol] = value
@@ -249,11 +303,17 @@ class Navigator:
             self._control.release_external(symbol)
 
     def clear_externals(self) -> None:
+        """
+        Release all externals.
+        """
         self._updated_solution_space()
         for symbol in self._externals:
             self.set_external(symbol, None)
 
     def get_externals(self) -> Dict[Symbol, Optional[bool]]:
+        """
+        Get the current values of the externals.
+        """
         return self._externals
 
     # TODO: add a function to get all the externals from the program?
@@ -291,6 +351,9 @@ class Navigator:
         self._control.add(name, [], rule)
 
     def add_rule(self, rule: str, permanent=False) -> None:
+        """
+        Add a rule to the logic program.
+        """
         # TODO: check that head is a new atom to avoid redefinition error
         self._add_rule(rule, permanent)
 
@@ -302,14 +365,26 @@ class Navigator:
             self._control.assign_external(external, value)
 
     def deactivate_rule(self, rule: str) -> None:
+        """
+        Deactivate a rule of the logic program.
+        """
         self._set_value_of_rule(rule, False)
 
     def activate_rule(self, rule: str) -> None:
+        """
+        Activate a rule of the logic program.
+        """
         self._set_value_of_rule(rule, True)
 
     def get_rules(self) -> Dict[str, bool]:
+        """
+        Get all added rules and their activation status.
+        """
         return self._rules
 
     def add_constraint(self, constraint: str, permanent: False) -> None:
+        """
+        Add a constraint to the logic program.
+        """
         # TODO: should argument be the whole constraint or just the constraint body?
         self._add_rule(constraint, permanent)
