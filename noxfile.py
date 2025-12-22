@@ -53,7 +53,7 @@ def lint_pylint(session):
     Run pylint.
     """
     session.install("-e", ".[lint_pylint,test]")
-    session.run("pylint", "coomsuite", "tests")
+    session.run("pylint", "coomsuite", "tests", "navigation")
 
 
 @nox.session
@@ -62,7 +62,7 @@ def typecheck(session):
     Typecheck the code using mypy.
     """
     session.install("-e", ".[typecheck,test]")
-    session.run("mypy", "--strict", "-p", "coomsuite", "-p", "tests", "--ignore-missing-imports")
+    session.run("mypy", "--strict", "-p", "coomsuite", "-p", "tests", "-p", "navigation", "--ignore-missing-imports")
 
 
 @nox.session(python=PYTHON_VERSIONS)

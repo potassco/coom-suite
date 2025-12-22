@@ -1,5 +1,5 @@
 """
-Library for navigating solution spaces
+Module defining the navigator class.
 """
 
 from typing import Dict, List, Optional, Set, Tuple
