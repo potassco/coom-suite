@@ -39,9 +39,11 @@ class Navigator:
 
         self._program_name = "add"
         self._program_counter = 0
-        # TODO: filter externals from output (should already be done in cases where user provides show statements)
+        # keep track of whether a rule is active or not
         self._rules: Dict[str, bool] = {}
+        # the external belonging to a rule to activate/deactivate it (also the program part name)
         self._rule_map: Dict[str, Symbol] = {}
+        # keep track of which rules are not ground yet
         self._non_ground_rules: Set[str] = set()
 
     def load(self, file_path: str) -> None:
@@ -70,6 +72,12 @@ class Navigator:
             self._base_ground = True
         self._control.ground(parts)
 
+    def _activate_rules(self, rules: List[str]) -> None:
+        for rule in rules:
+            if rule in self._rules:
+                external = self._rule_map[rule]
+                self._control.assign_external(external, self._rules[rule])
+
     def _ground(self, parts: Optional[List[ProgPart]] = None) -> None:
         if parts is None:
             parts = []
@@ -85,10 +93,7 @@ class Navigator:
         if parts:
             self.ground(parts)
 
-        for rule in self._non_ground_rules:
-            if rule in self._rules:
-                external = self._rule_map[rule]
-                self._control.assign_external(external, self._rules[rule])
+        self._activate_rules(self._non_ground_rules)
         self._non_ground_rules = set()
 
     def _update_configuration(self, num_models: int = 1) -> None:
