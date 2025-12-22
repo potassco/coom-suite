@@ -27,6 +27,7 @@ class Navigator:
             self._base_ground = False
 
         self._reasoning_mode = "auto"
+        self._optimization = False
 
         self._brave = None
         self._cautious = None
@@ -108,6 +109,11 @@ class Navigator:
 
         self._control.configuration.solve.models = num_models
 
+        if self._optimization:
+            self._control.configuration.solve.opt_mode = "optN"
+        else:
+            self._control.configuration.solve.opt_mode = "ignore"
+
     def _solve(self, num_models: int = 1) -> Model | List[Model]:
         # TODO: support for timeouts
         browsing = self._reasoning_mode == "browse"
@@ -127,6 +133,8 @@ class Navigator:
                 self._model_iterator = iter(handle)
             else:
                 for m in handle:
+                    if self._optimization and not m.optimality_proven:
+                        continue
                     model = self._on_model(m)
                     if self._reasoning_mode == "auto":
                         if result is None:
@@ -139,6 +147,7 @@ class Navigator:
 
         if browsing:
             try:
+                # TODO: only return optimal model if self._optimization
                 model = next(self._model_iterator)
                 result = self._on_model(model)
             except StopIteration:
@@ -160,12 +169,11 @@ class Navigator:
 
     def enable_optimization(self) -> None:
         self._updated_solution_space()
-        self._control.configuration.solve.opt_mode = "optN"
-        # TODO: if optimization is enabled we should only return optimal models
+        self._optimization = True
 
     def disable_optimization(self) -> None:
         self._updated_solution_space()
-        self._control.configuration.solve.opt_mode = "ignore"
+        self._optimization = False
 
     def compute_models(self, num_models: int = 1) -> List[Model]:
         self._reasoning_mode = "auto"
