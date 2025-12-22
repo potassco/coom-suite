@@ -123,11 +123,12 @@ class Navigator:
 
     def enable_optimization(self) -> None:
         self._updated_solution_space()
-        self._control.configuration.opt_mode = "optN"
+        self._control.configuration.solve.opt_mode = "optN"
+        # TODO: if optimization is enabled we should only return optimal models
 
     def disable_optimization(self) -> None:
         self._updated_solution_space()
-        self._control.configuration.opt_mode = "ignore"
+        self._control.configuration.solve.opt_mode = "ignore"
 
     def compute_models(self, num_models: int = 1) -> List[Model]:
         self._reasoning_mode = "auto"
