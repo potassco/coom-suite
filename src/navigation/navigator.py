@@ -20,10 +20,10 @@ class Navigator:
         """
         if control:
             self._control = control
-            self._grounded = True if grounded else False
+            self._base_ground = True if grounded else False
         else:
             self._control = Control()
-            self._grounded = False
+            self._base_ground = False
 
         self._reasoning_mode = "auto"
 
@@ -42,10 +42,11 @@ class Navigator:
         # TODO: filter externals from output (should already be done in cases where user provides show statements)
         self._rules: Dict[str, bool] = {}
         self._rule_map: Dict[str, Symbol] = {}
+        self._non_ground_rules: Set[str] = set()
 
     def load(self, file_path: str) -> None:
         self._clear_consequences()
-        self._grounded = False
+        self._base_ground = False
         self._control.load(file_path)
 
     def _updated_solution_space(self) -> None:
@@ -64,14 +65,31 @@ class Navigator:
         self._cautious = None
         self._facets = None
 
+    def ground(self, parts: List[ProgPart] = [("base", [])]) -> None:
+        if ("base", []) in parts:
+            self._base_ground = True
+        self._control.ground(parts)
+
     def _ground(self, parts: Optional[List[ProgPart]] = None) -> None:
-        if not self._grounded:
+        if parts is None:
+            parts = []
+
+        if not self._base_ground:
             if ("base", []) not in parts:
                 parts.append(("base", []))
-            self._grounded = True
+
+        for rule in self._non_ground_rules:
+            part = self._rule_map[rule]
+            parts.append((str(part), []))
 
         if parts:
-            self._control.ground(parts)
+            self.ground(parts)
+
+        for rule in self._non_ground_rules:
+            if rule in self._rules:
+                external = self._rule_map[rule]
+                self._control.assign_external(external, self._rules[rule])
+        self._non_ground_rules = set()
 
     def _update_configuration(self, num_models: int = 1) -> None:
         match self._reasoning_mode:
@@ -91,11 +109,11 @@ class Navigator:
         if not browsing:
             self._clear_browsing()
 
-        self._update_configuration(num_models)
-        self._ground()
-
         result = None
         if not browsing or self._model_iterator is None:
+            self._update_configuration(num_models)
+            self._ground()
+
             handle = self._control.solve(assumptions=self._assumptions, yield_=True)
 
             if browsing:
@@ -237,20 +255,16 @@ class Navigator:
         self._updated_solution_space()
 
         name = self._get_new_program_name()
+        self._non_ground_rules.add(rule)
 
+        external = self._as_symbol(name)
+        self._rule_map[rule] = external
         # add the activation external to the rule
         if not permanent:
-            external = self._as_symbol(name)
             self._rules[rule] = True
-            self._rule_map[rule] = external
             rule = self._add_external_to_rule(rule, external)
 
         self._control.add(name, [], rule)
-        self._ground([(name, [])])
-
-        # activate the rule
-        if not permanent:
-            self._control.assign_external(external, True)
 
     def add_rule(self, rule: str, permanent=False) -> None:
         # TODO: check that head is a new atom to avoid redefinition error
@@ -259,8 +273,9 @@ class Navigator:
     def _set_value_of_rule(self, rule: str, value: bool) -> None:
         self._updated_solution_space()
         self._rules[rule] = value
-        external = self._rule_map[rule]
-        self._control.assign_external(external, value)
+        if rule not in self._non_ground_rules:
+            external = self._rule_map[rule]
+            self._control.assign_external(external, value)
 
     def deactivate_rule(self, rule: str) -> None:
         self._set_value_of_rule(rule, False)
