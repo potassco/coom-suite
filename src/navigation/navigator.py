@@ -4,6 +4,7 @@ Library for navigating solution spaces
 
 from typing import Dict, List, Optional, Set, Tuple
 
+import clingo
 from clingo.control import Control
 from clingo.symbol import Symbol, parse_term
 
@@ -126,7 +127,7 @@ class Navigator:
                 self._model_iterator = iter(handle)
             else:
                 for m in handle:
-                    model = set(m.symbols(shown=True))
+                    model = self._on_model(m)
                     if self._reasoning_mode == "auto":
                         if result is None:
                             result = [model]
@@ -139,12 +140,22 @@ class Navigator:
         if browsing:
             try:
                 model = next(self._model_iterator)
-                result = set(model.symbols(shown=True))
+                result = self._on_model(model)
             except StopIteration:
                 self._solve_handle.cancel()
                 self._solve_handle = None
                 self._model_iterator = None
 
+        return result
+
+    def _is_auxiliary(self, symbol: Symbol) -> bool:
+        return symbol in self._rule_map.values()
+
+    def _on_model(self, model: clingo.Model) -> Model:
+        result = set()
+        for s in model.symbols(shown=True):
+            if not self._is_auxiliary(s):
+                result.add(s)
         return result
 
     def enable_optimization(self) -> None:
