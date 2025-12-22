@@ -39,6 +39,9 @@ class Navigator:
 
         self._program_name = "add"
         self._program_counter = 0
+        # TODO: filter externals from output (should already be done in cases where user provides show statements)
+        self._rules: Dict[str, bool] = {}
+        self._rule_map: Dict[str, Symbol] = {}
 
     def load(self, file_path: str) -> None:
         self._clear_consequences()
@@ -218,16 +221,56 @@ class Navigator:
         self._program_counter += 1
         return name
 
-    def add_rule(self, rule: str) -> None:
+    def _add_external_to_rule(self, rule: str, external: Symbol) -> str:
+        has_body = ":-" in rule
+
+        external_statement = f"#external {external}.\n"
+
+        if has_body:
+            new_rule = rule[:-1] + f", {external}."
+        else:
+            new_rule = rule[:-1] + f" :- {external}."
+
+        return external_statement + new_rule
+
+    def _add_rule(self, rule: str, permanent=False) -> None:
         self._updated_solution_space()
-        # TODO: check that head is a new atom to avoid redefinition error
+
         name = self._get_new_program_name()
+
+        # add the activation external to the rule
+        if not permanent:
+            external = self._as_symbol(name)
+            self._rules[rule] = True
+            self._rule_map[rule] = external
+            rule = self._add_external_to_rule(rule, external)
+
         self._control.add(name, [], rule)
         self._ground([(name, [])])
 
-    def add_constraint(self, constraint: str) -> None:
-        # TODO: should argument be the whole constraint or just the constraint body?
+        # activate the rule
+        if not permanent:
+            self._control.assign_external(external, True)
+
+    def add_rule(self, rule: str, permanent=False) -> None:
+        # TODO: check that head is a new atom to avoid redefinition error
+        self._add_rule(rule, permanent)
+
+    def _set_value_of_rule(self, rule: str, value: bool) -> None:
         self._updated_solution_space()
-        name = self._get_new_program_name()
-        self._control.add(name, [], constraint)
-        self._ground([(name, [])])
+        self._rules[rule] = value
+        external = self._rule_map[rule]
+        self._control.assign_external(external, value)
+
+    def deactivate_rule(self, rule: str) -> None:
+        self._set_value_of_rule(rule, False)
+
+    def activate_rule(self, rule: str) -> None:
+        self._set_value_of_rule(rule, True)
+
+    def get_rules(self) -> Dict[str, bool]:
+        return self._rules
+
+    def add_constraint(self, constraint: str, permanent: False) -> None:
+        # TODO: should argument be the whole constraint or just the constraint body?
+        self._add_rule(constraint, permanent)
