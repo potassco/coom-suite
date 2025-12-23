@@ -2,14 +2,13 @@
 Module defining the navigator class.
 """
 
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, Iterator, List, Optional, Set, Tuple
 
-import clingo
 from clingo.control import Control
+from clingo.solving import Model, SolveHandle
 from clingo.symbol import Symbol, parse_term
 
-Model = Set[Symbol]
-ProgPart = Tuple[str, List[str]]
+ProgPart = Tuple[str, List[Symbol]]
 
 
 class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-attributes
@@ -37,8 +36,8 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         self._cautious = None
         self._facets = None
 
-        self._solve_handle = None
-        self._model_iterator = None
+        self._solve_handle: Optional[SolveHandle] = None
+        self._model_iterator: Optional[Iterator[Model]] = None
 
         self._assumptions: Set[Tuple[Symbol, bool]] = set()
         self._externals: Dict[Symbol, Optional[bool]] = {}
@@ -84,7 +83,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
             self._base_ground = True
         self._control.ground(parts)
 
-    def _activate_rules(self, rules: List[str]) -> None:
+    def _activate_rules(self, rules: Set[str]) -> None:
         for rule in rules:
             if rule in self._rules:
                 external = self._rule_map[rule]
@@ -124,19 +123,20 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         else:
             self._control.configuration.solve.opt_mode = "ignore"
 
-    def _solve(self, num_models: int = 1) -> Model | List[Model]:
+    def _solve(self, num_models: int = 1) -> Set[Symbol] | List[Set[Symbol]]:
         # TODO: support for timeouts
         browsing = self._reasoning_mode == "browse"
 
         if not browsing:
             self._clear_browsing()
 
-        result = None
+        all_models: List[Set[Symbol]] = []
+        last_model: Set[Symbol]
         if not browsing or self._model_iterator is None:
             self._update_configuration(num_models)
             self._ground()
 
-            handle = self._control.solve(assumptions=self._assumptions, yield_=True)
+            handle = self._control.solve(assumptions=list(self._assumptions), yield_=True)
 
             if browsing:
                 self._solve_handle = handle
@@ -147,30 +147,31 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
                         continue
                     model = self._on_model(m)
                     if self._reasoning_mode == "auto":
-                        if result is None:
-                            result = [model]
-                        else:
-                            result.append(model)
+                        all_models.append(model)
                     else:
-                        result = model
+                        last_model = model
                 handle.cancel()
 
         if browsing:
             try:
                 # TODO: only return optimal model if self._optimization
-                model = next(self._model_iterator)
-                result = self._on_model(model)
+                m = next(self._model_iterator)  # type: ignore [arg-type]
+                last_model = self._on_model(m)
             except StopIteration:
-                self._solve_handle.cancel()
+                self._solve_handle.cancel()  # type: ignore [union-attr]
                 self._solve_handle = None
                 self._model_iterator = None
 
-        return result
+        match self._reasoning_mode:
+            case "auto":
+                return all_models
+            case _:
+                return last_model
 
     def _is_auxiliary(self, symbol: Symbol) -> bool:
         return symbol in self._rule_map.values()
 
-    def _on_model(self, model: clingo.Model) -> Model:
+    def _on_model(self, model: Model) -> Set[Symbol]:
         result = set()
         for s in model.symbols(shown=True):
             if not self._is_auxiliary(s):
@@ -191,66 +192,66 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         self._updated_solution_space()
         self._optimization = False
 
-    def compute_models(self, num_models: int = 1) -> List[Model]:
+    def compute_models(self, num_models: int = 1) -> List[Set[Symbol]]:
         """
         Compute num_models many models.
         """
         self._reasoning_mode = "auto"
-        return self._solve(num_models)
+        return self._solve(num_models)  # type: ignore [return-value]
 
-    def browse_models(self) -> Model:
+    def browse_models(self) -> Set[Symbol]:
         """
         Compute model iteratively.
         """
         self._reasoning_mode = "browse"
-        return self._solve(0)
+        return self._solve(0)  # type: ignore [return-value]
 
-    def compute_brave_consequences(self) -> Model:
+    def compute_brave_consequences(self) -> Set[Symbol]:
         """
         Compute the brave consequences.
         """
         if self._brave is None:
             self._reasoning_mode = "brave"
-            self._brave = set(self._solve(0))
-        return self._brave
+            self._brave = set(self._solve(0))  # type: ignore [assignment]
+        return self._brave  # type: ignore [return-value]
 
-    def compute_cautious_consequences(self) -> Model:
+    def compute_cautious_consequences(self) -> Set[Symbol]:
         """
         Compute the cautious consequences.
         """
         if self._cautious is None:
             self._reasoning_mode = "cautious"
-            self._cautious = set(self._solve(0))
-        return self._cautious
+            self._cautious = set(self._solve(0))  # type: ignore [assignment]
+        return self._cautious  # type: ignore [return-value]
 
-    def compute_facets(self) -> Model:
+    def compute_facets(self) -> Set[Symbol]:
         """
         Compute the facets of the program.
         """
         if self._facets is None:
             brave = self.compute_brave_consequences()
             cautious = self.compute_cautious_consequences()
-            self._facets = brave - cautious
-        return self._facets
+            self._facets = brave - cautious  # type: ignore [assignment]
+        return self._facets  # type: ignore [return-value]
 
     # TODO: diverse and similar models
 
-    def compute_diverse_models(self, num_models: int = 1) -> List[Model]:
+    def compute_diverse_models(self, num_models: int = 1) -> List[Set[Symbol]]:
         """
         Compute num_models many diverse models.
         """
 
-    def compute_similar_models(self, num_models: int = 1) -> List[Model]:
+    def compute_similar_models(self, num_models: int = 1) -> List[Set[Symbol]]:
         """
         Compute num_models many similar models.
         """
 
-    def browse_diverse_models(self) -> Model:
+    def browse_diverse_models(self) -> Set[Symbol]:
         """
         Compute diverse models iteratively.
         """
 
-    def browse_similar_models(self) -> Model:
+    def browse_similar_models(self) -> Set[Symbol]:
         """
         Compute similar models iteratively.
         """
@@ -335,7 +336,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
         return external_statement + new_rule
 
-    def _add_rule(self, rule: str, permanent=False) -> None:
+    def _add_rule(self, rule: str, permanent: bool = False) -> None:
         self._updated_solution_space()
 
         name = self._get_new_program_name()
@@ -350,7 +351,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
         self._control.add(name, [], rule)
 
-    def add_rule(self, rule: str, permanent=False) -> None:
+    def add_rule(self, rule: str, permanent: bool = False) -> None:
         """
         Add a rule to the logic program.
         """
@@ -382,7 +383,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
         return self._rules
 
-    def add_constraint(self, constraint: str, permanent: False) -> None:
+    def add_constraint(self, constraint: str, permanent: bool = False) -> None:
         """
         Add a constraint to the logic program.
         """
