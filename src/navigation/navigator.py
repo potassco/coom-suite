@@ -123,7 +123,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         else:
             self._control.configuration.solve.opt_mode = "ignore"
 
-    def _solve(self, num_models: int = 1) -> Set[Symbol] | List[Set[Symbol]]:
+    def _solve(self, num_models: int = 1) -> Optional[Set[Symbol]] | List[Set[Symbol]]:
         # TODO: support for timeouts
         browsing = self._reasoning_mode == "browse"
 
@@ -131,7 +131,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
             self._clear_browsing()
 
         all_models: List[Set[Symbol]] = []
-        last_model: Set[Symbol]
+        last_model: Optional[Set[Symbol]] = None
         if not browsing or self._model_iterator is None:
             self._update_configuration(num_models)
             self._ground()
@@ -212,7 +212,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
         if self._brave is None:
             self._reasoning_mode = "brave"
-            self._brave = set(self._solve(0))  # type: ignore [assignment]
+            self._brave = self._solve(0)  # type: ignore [assignment]
         return self._brave  # type: ignore [return-value]
 
     def compute_cautious_consequences(self) -> Set[Symbol]:
@@ -221,7 +221,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
         if self._cautious is None:
             self._reasoning_mode = "cautious"
-            self._cautious = set(self._solve(0))  # type: ignore [assignment]
+            self._cautious = self._solve(0)  # type: ignore [assignment]
         return self._cautious  # type: ignore [return-value]
 
     def compute_facets(self) -> Set[Symbol]:
