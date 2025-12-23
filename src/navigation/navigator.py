@@ -60,17 +60,25 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         self._control.load(file_path)
 
     def _updated_solution_space(self) -> None:
+        """
+        Called whenever the solution space of the program changes.
+        """
         self._clear_browsing()
         self._clear_consequences()
 
     def _clear_browsing(self) -> None:
+        """
+        Cancel the solve handle and clear the model iterator.
+        """
         if self._solve_handle:
             self._solve_handle.cancel()
             self._solve_handle = None
             self._model_iterator = None
 
     def _clear_consequences(self) -> None:
-        # needs to be called whenever solution space is changed
+        """
+        Clear brave/cautious consequences and facets.
+        """
         self._brave = None
         self._cautious = None
         self._facets = None
@@ -84,12 +92,18 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         self._control.ground(parts)
 
     def _activate_rules(self, rules: Set[str]) -> None:
+        """
+        Activate a set of rules by setting their activation externals.
+        """
         for rule in rules:
             if rule in self._rules:
                 external = self._rule_map[rule]
                 self._control.assign_external(external, self._rules[rule])
 
     def _ground(self, parts: Optional[List[ProgPart]] = None) -> None:
+        """
+        Ground program parts, if base was not grounded yet it is added to the parts.
+        """
         if parts is None:
             parts = []
 
@@ -108,6 +122,9 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         self._non_ground_rules = set()
 
     def _update_configuration(self, num_models: int = 1) -> None:
+        """
+        Update the configuration of the control object by setting enum_mode, number of models, opt_mode.
+        """
         match self._reasoning_mode:
             case "auto" | "browse":
                 self._control.configuration.solve.enum_mode = "auto"
@@ -124,6 +141,13 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
             self._control.configuration.solve.opt_mode = "ignore"
 
     def _solve(self, num_models: int = 1) -> Optional[Set[Symbol]] | List[Set[Symbol]]:
+        """
+        Solve the logic program.
+
+        Depending on the current reasoning mode the return is either a list of models (auto reasoning mode)
+        or a single model (brave, cautious or browsing reasoning mode).
+        Note that models here are just sets of Symbols.
+        """
         # TODO: support for timeouts
         browsing = self._reasoning_mode == "browse"
 
@@ -170,9 +194,15 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
                 return last_model
 
     def _is_auxiliary(self, symbol: Symbol) -> bool:
+        """
+        Check if a symbol is auxiliary (used to control activation of rules).
+        """
         return symbol in self._rule_map.values()
 
     def _on_model(self, model: Model) -> Set[Symbol]:
+        """
+        Convert a model to a set of symbols filtering auxiliary symbols.
+        """
         result = set()
         for s in model.symbols(shown=True):
             if not self._is_auxiliary(s):
@@ -258,6 +288,9 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
 
     def _as_symbol(self, symbol: str | Symbol) -> Symbol:
+        """
+        Convert a symbol or string to a symbol.
+        """
         if isinstance(symbol, str):
             symbol = parse_term(symbol)
 
@@ -321,11 +354,17 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
     # TODO: add a function to get all the externals from the program?
 
     def _get_new_program_name(self) -> str:
+        """
+        Get a new program part name.
+        """
         name = self._program_name + str(self._program_counter)
         self._program_counter += 1
         return name
 
     def _add_external_to_rule(self, rule: str, external: Symbol) -> str:
+        """
+        Add an external to a the rule body in order to control activation of the rule.
+        """
         has_body = ":-" in rule
 
         external_statement = f"#external {external}.\n"
@@ -338,6 +377,9 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         return external_statement + new_rule
 
     def _add_rule(self, rule: str, permanent: bool = False) -> None:
+        """
+        Internal function to add a rule to the logic program.
+        """
         self._updated_solution_space()
 
         name = self._get_new_program_name()
@@ -360,6 +402,9 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         self._add_rule(rule, permanent)
 
     def _set_value_of_rule(self, rule: str, value: bool) -> None:
+        """
+        Set the activation external of a rule to the specified value.
+        """
         self._updated_solution_space()
         self._rules[rule] = value
         if rule not in self._non_ground_rules:
