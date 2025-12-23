@@ -154,8 +154,9 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
         if browsing:
             try:
-                # TODO: only return optimal model if self._optimization
                 m = next(self._model_iterator)  # type: ignore [arg-type]
+                while self._optimization and not m.optimality_proven:
+                    m = next(self._model_iterator)  # type: ignore [arg-type]
                 last_model = self._on_model(m)
             except StopIteration:
                 self._solve_handle.cancel()  # type: ignore [union-attr]
