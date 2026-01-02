@@ -1,6 +1,6 @@
 product{
     1x   Element     elements
-    2x   Module modules
+    1x   Module modules
 }
 
 structure Module {

@@ -8,6 +8,7 @@ Some tests contain a "ftest" entry which is a test modified especially to work w
 All other tests work with both clingo and flingo.
 """
 
+# pylint: disable=line-too-long, too-many-lines
 from typing import Any
 
 from clintest.quantifier import Exact
@@ -781,6 +782,16 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
                 'associate(("root.elements[0]","root.modules[1]"),1)',
             },
         ),
+        # "ftest": StableModels(
+        #     {
+        #         'include("root.elements[0]")',
+        #         'include("root.modules[0]")',
+        #         'include("root.modules[1]")',
+        #         'associate(("root.elements[0]","root.modules[0]"),0)',
+        #         'associate(("root.elements[0]","root.modules[1]"),1)',
+        #     },
+        #     flingo=True,
+        # ),
         "files": ["association_count.lp"],
     },
     "minimize": {

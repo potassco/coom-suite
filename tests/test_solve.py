@@ -275,6 +275,16 @@ class TestFlingo(TestCase):
         self.run_test("min")
         self.run_test("max")
 
+    def test_associations(self) -> None:
+        """
+        Test associations (flingo)
+        """
+        self.run_test("simple_association")
+        self.run_test("association_boolean")
+        self.run_test("association_boolean_user")
+        self.run_test("association_table")
+        self.run_test("association_count")
+
     def test_optimization(self) -> None:
         """
         Test solving optimization statements (flingo)
