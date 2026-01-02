@@ -37,7 +37,8 @@ class TestPreprocess(TestCase):
         Test preprocessing COOM references
         """
         self.run_test("simple_reference")
-        self.run_test("reference_constraint")
+        self.run_test("reference_require")
+        self.run_test("reference_table")
         self.run_test("reference_count")
 
     def test_enumeration(self) -> None:

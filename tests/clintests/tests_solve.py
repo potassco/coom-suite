@@ -677,6 +677,112 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
         "ftest": StableModels({'value("root.x[0]",3)', 'value("root.x[1]",3)'}, flingo=True),
         "files": ["max.lp"],
     },
+    "simple_association": {
+        "test": StableModels(
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'associate(("root.elements[0]","root.modules[0]"),0)',
+            },
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'associate(("root.elements[0]","root.modules[0]"),0)',
+            },
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'associate(("root.elements[0]","root.modules[1]"),0)',
+            },
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'associate(("root.elements[0]","root.modules[0]"),0)',
+                'associate(("root.elements[0]","root.modules[1]"),1)',
+            },
+        ),
+        "files": ["simple_association.lp"],
+    },
+    "association_boolean": {
+        "test": StableModels(
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'associate(("root.elements[0]","root.modules[0]"),0)',
+                'value("root.modules[0].type[0]","I")',
+            },
+        ),
+        "files": ["association_boolean.lp"],
+    },
+    "association_boolean_user": {
+        "test": StableModels(
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'associate(("root.elements[0]","root.modules[1]"),0)',
+                'value("root.modules[0].type[0]","II")',
+                'value("root.modules[1].type[0]","I")',
+            },
+        ),
+        "files": ["association_boolean_user.lp"],
+    },
+    "association_table": {
+        "test": StableModels(
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'value("root.elements[0].type[0]","A")',
+                'associate(("root.elements[0]","root.modules[0]"),0)',
+                'value("root.modules[0].type[0]","I")',
+                'value("root.modules[1].type[0]","I")',
+            },
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'value("root.elements[0].type[0]","A")',
+                'associate(("root.elements[0]","root.modules[0]"),0)',
+                'value("root.modules[0].type[0]","I")',
+                'value("root.modules[1].type[0]","II")',
+            },
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'value("root.elements[0].type[0]","A")',
+                'associate(("root.elements[0]","root.modules[1]"),0)',
+                'value("root.modules[0].type[0]","I")',
+                'value("root.modules[1].type[0]","I")',
+            },
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'value("root.elements[0].type[0]","A")',
+                'associate(("root.elements[0]","root.modules[1]"),0)',
+                'value("root.modules[0].type[0]","II")',
+                'value("root.modules[1].type[0]","I")',
+            },
+        ),
+        "files": ["association_table.lp"],
+    },
+    "association_count": {
+        "test": StableModels(
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'associate(("root.elements[0]","root.modules[0]"),0)',
+                'associate(("root.elements[0]","root.modules[1]"),1)',
+            },
+        ),
+        "files": ["association_count.lp"],
+    },
     "minimize": {
         "test": OptimalModel({'value("root.totalWeight[0]",1)'}),
         "ftest": OptimalModel({'value("root.totalWeight[0]",1)'}, flingo=True),
