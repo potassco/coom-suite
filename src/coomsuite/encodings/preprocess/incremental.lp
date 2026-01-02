@@ -17,9 +17,9 @@ help_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",_,  Max),  help_aux
 help_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), help_aux(X,Ctx), I = 0..Min+max_bound-1.
 
 % rules to instantiate a helper version of path_to/4 atoms based on help_aux/2
-% - start by projecting out the original path_to/4 atoms
+% - start by projecting out the original path_to/6 atoms
 % - path index is not needed here
-help_path_to(X,P,X')  :- path_to(X,P,_,X').
+help_path_to(X,P,X')  :- path_to(X,P,_,X',_,_).
 % - then define the paths for any new help_aux atoms
 help_path_to(X,P,X')  :- coom_path(P,0,N), path_start(X,P),
                          help_aux(X',_), X' =(N,(X,_)).

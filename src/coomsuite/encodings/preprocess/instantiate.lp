@@ -6,9 +6,9 @@
 type_aux((),"product") :- coom_structure("product").
 
 % Create auxiliary predicate for every feature
-type_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,_,  Max),      type_aux(X,Ctx), I = 0..Max-1, T != "num".
-type_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,Min,#sup),     type_aux(X,Ctx), I = 0..Min+max_bound-1, T != "num".
-type_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",_,  Max),  type_aux(X,Ctx), I = 0..Max-1.
+type_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,   _,   Max),  type_aux(X,Ctx), I = 0..Max-1, Max != #sup, T != "num".
+type_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,   Min, #sup), type_aux(X,Ctx), I = 0..Min+max_bound-1,    T != "num".
+type_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",_,  Max),  type_aux(X,Ctx), I = 0..Max-1, Max != #sup.
 type_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), type_aux(X,Ctx), I = 0..Min+max_bound-1.
 
 

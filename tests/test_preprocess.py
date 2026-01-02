@@ -32,6 +32,14 @@ class TestPreprocess(TestCase):
         self.run_test("structure_nested")
         self.run_test("structure_nested_optional")
 
+    def test_reference(self) -> None:
+        """
+        Test preprocessing COOM references
+        """
+        self.run_test("simple_reference")
+        self.run_test("reference_constraint")
+        self.run_test("reference_count")
+
     def test_enumeration(self) -> None:
         """
         Test preprocessing COOM enumerations.

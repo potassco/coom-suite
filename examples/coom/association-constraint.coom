@@ -1,6 +1,6 @@
 product{
-    2x   Element     elements
-    2x   Module modules
+    1x   Element     elements
+    1x   Module modules
 }
 
 structure Module {
@@ -15,18 +15,18 @@ enumeration ModuleType {
 
 structure Element {
     reference   Module      modules
-                ElementType type
+                // ElementType type
 }
 
-enumeration ElementType {
-    A
-    B
-}
+// enumeration ElementType {
+//     A
+//     B
+// }
 
 behavior Element {
-    condition type = A
+    // condition type = A
     require modules.type=I
 
-    condition type = B
-    require modules.type=II
+    // condition type = B
+    // require modules.type=II
 }

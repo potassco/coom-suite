@@ -1,38 +1,38 @@
 product{
     0..2   Module modules
-    0..2   Element     elements
+    1x   Element     elements
 }
 
 
 structure Module {
-    ModuleType type
+    // ModuleType type
 }
 
-enumeration ModuleType {
-    I
-    II
-}
+// enumeration ModuleType {
+//     I
+//     II
+// }
 
 structure Element {
-                    ElementType type
+                    // ElementType type
     reference 1..2  Module      modules
 }
 
-enumeration ElementType {
-    A
-    B
-}
+// enumeration ElementType {
+//     A
+//     B
+// }
 
 behavior Element {
-    explanation "An ElementA requires exactly one ModuleI"
-    condition type = A
-    require count(modules) = 1 && modules.type = I
-    // require count(modules) = 1
+    // explanation "An ElementA requires exactly one ModuleI"
+    // condition type = A
+    // require count(modules) = 1 && modules.type = I
+    // // require count(modules) = 1
 
-    explanation "An ElementB requires exactly two ModuleII"
-    condition type = B
+    // explanation "An ElementB requires exactly two ModuleII"
+    // condition type = B
     require count(modules) = 2 // && modules.type = II
 
-    condition type = B
-    require modules.type = II
+    // condition type = B
+    // require modules.type = II
 }

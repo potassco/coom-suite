@@ -65,7 +65,7 @@ class TestCOOMModelParser(TestCase):
 
     def test_feature(self) -> None:
         """
-        Test parsing the 'feature' keyword.
+        Test parsing the COOM features
         """
         self.assertEqual(
             parse_coom("product{Wheel wheel Frame frame}"),
@@ -121,6 +121,11 @@ class TestCOOMModelParser(TestCase):
         )
 
         self.assertEqual(parse_coom("product{string id}"), ['structure("product").'])
+
+        self.assertEqual(
+            parse_coom("product{ reference 1..2 Module modules }"),
+            ['structure("product").', 'reference("product","modules","Module",1,2).'],
+        )
 
     def test_enumeration(self) -> None:
         """
