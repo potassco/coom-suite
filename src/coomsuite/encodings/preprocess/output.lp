@@ -43,7 +43,7 @@ parent(@dotpath(X),@dotpath(P)) :- type_aux(X,_), X=(_,(P,_)).
 association(@dotpath(X),T,Min,Max) :- association_aux(X,_,T,Min,Max).
 
 % Replace paths/variables based on associations
-replace(R,(@dotpath(X),@dotpath(X'))) :- replace_aux(R,A,_), A = (X,X').
+replace(R,((@dotpath(X),@dotpath(X')),I)) :- replace_aux(R,A,_), A = ((X,X'),I).
 
 #show association/4.
 #show replace/2.

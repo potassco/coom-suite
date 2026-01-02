@@ -48,25 +48,25 @@ path_start(X,P) :- coom_minimize(C,_,P),     coom_path(P,0,_), type_aux(X,Ctx), 
 path_start(X,P) :- coom_maximize(C,_,P),     coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
 
 % Determine all ground paths while tracking associations used
-path_to(X,P,0,X',X',())          :- coom_path(P,0,N),
-                                    path_start(X,P), type_aux(X',_),  X' = (N,(X,_)).
-path_to(X,P,0,AP,X',((X,X'),())) :- coom_path(P,0,N),
-                                    path_start(X,P), type_aux(X',T),  association_aux(X,N,T,_,Max), AP = (N,(X,0..Max-1)).
-path_to(X,P,1,X',X',())          :- coom_path(P,0,"root"), coom_path(P,1,N),
-                                    path_start(X,P), type_aux(X',_),  X' = (N,((),_)).
+path_to(X,P,0,X',X',())               :- coom_path(P,0,N),
+                                         path_start(X,P), type_aux(X',_),  X' = (N,(X,_)).
+path_to(X,P,0,AP,X',(((X,X'),AI),())) :- coom_path(P,0,N),
+                                         path_start(X,P), type_aux(X',T),  association_aux(X,N,T,_,Max), AP = (N,(X,AI)), AI=0..Max-1.
+path_to(X,P,1,X',X',())               :- coom_path(P,0,"root"), coom_path(P,1,N),
+                                         path_start(X,P), type_aux(X',_),  X' = (N,((),_)).
 % TODO: Associations starting at root?
 
-path_to(X,P,I,AP',X'',A)            :- coom_path(P,I,N),
-                                       path_to(X,P,I-1,AP,X',A), type_aux(X'',_), X''=(N,(X',J)), AP' = (N,(AP,J)).
-path_to(X,P,I,AP',X'',((X',X''),A)) :- coom_path(P,I,N),
-                                       path_to(X,P,I-1,AP,X',A), type_aux(X'',T), association_aux(X',N,T,_,Max), AP' = (N,(AP,0..Max-1)).
+path_to(X,P,I,AP',X'',A)                 :- coom_path(P,I,N),
+                                            path_to(X,P,I-1,AP,X',A), type_aux(X'',_), X''=(N,(X',J)), AP' = (N,(AP,J)).
+path_to(X,P,I,AP',X'',(((X',X''),AI),A)) :- coom_path(P,I,N),
+                                            path_to(X,P,I-1,AP,X',A), type_aux(X'',T), association_aux(X',N,T,_,Max), AP' = (N,(AP,AI)), AI=0..Max-1.
 
-path_to(X,P,@dotpath(AP),@dotpath(X'),A) :- not coom_path(P,I+1,_), path_to(X,P,I,AP,X',A).
-path_to(X,P,X') :- path_to(X,P,X',_,_).
+path_to(X,P,AP,X',A) :- not coom_path(P,I+1,_), path_to(X,P,I,AP,X',A).
+path_to(X,P,@dotpath(X')) :- path_to(X,P,X',_,_).
 
 % Replace variables based on associations
-replace_aux((AP,X'),A,AT) :- path_to(X,P,AP,X',(A,AT)), AP != X'.
-replace_aux(R,A,AT)       :- replace_aux(R,_,(A,AT)), AT != ().
+replace_aux((@dotpath(AP),@dotpath(X')),A,AT) :- path_to(X,P,AP,X',(A,AT)), AP != X'.
+replace_aux(R,A,AT)                           :- replace_aux(R,_,(A,AT)), AT != ().
 
 % Constants and numbers
 path_to(X,P,P) :- coom_binary(F,_,_,P), coom_constant(P), formula_context(F,T), type_aux(X,T).

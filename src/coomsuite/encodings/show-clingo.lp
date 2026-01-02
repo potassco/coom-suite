@@ -5,4 +5,4 @@
 #show value(X,V) : value(X,V), type(X,T), discrete(T).
 #show value(X,V) : value(X,V), type(X,T), integer(T).
 
-#show associate/1.
+#show associate/2.

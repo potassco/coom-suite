@@ -1,6 +1,6 @@
 product{
     0..1    Rack        racks
-    0..11   Element     elements
+    0..1   Element     elements
 }
 
 structure Rack {
@@ -62,17 +62,18 @@ behavior Rack {
 behavior Element {
     explanation "An ElementA requires exactly one ModuleI"
     condition type = A
-    require count(modules) = 1 && modules.type = I
+    // require count(modules) = 1 && modules.type = I
+    require count(modules) = 1
 
-    explanation "An ElementB requires exactly two ModuleII"
-    condition type = B
-    require count(modules) = 2 && modules.type = II
+//     explanation "An ElementB requires exactly two ModuleII"
+//     condition type = B
+//     require count(modules) = 2 && modules.type = II
 
-    explanation "An ElementC requires exactly two ModuleIII"
-    condition type = C
-    require count(modules) = 3 && modules.type = III
+//     explanation "An ElementC requires exactly two ModuleIII"
+//     condition type = C
+//     require count(modules) = 3 && modules.type = III
 
-    explanation "An ElementD requires exactly two ModuleIV"
-    condition type = D
-    require count(modules) = 4 && modules.type = IV
+//     explanation "An ElementD requires exactly two ModuleIV"
+//     condition type = D
+//     require count(modules) = 4 && modules.type = IV
 }
