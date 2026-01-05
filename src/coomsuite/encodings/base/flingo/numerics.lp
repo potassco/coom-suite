@@ -1,8 +1,8 @@
 % Evaluate functions in flingo (aggregates)
 &sus{ 1,X : set(P,X), include(X) } =: F :- function(F,"count",P).
 &sus{   X : set(P,X), include(X) } =: F :- function(F,"sum",  P).
-&min{   X : set(P,X), include(X) } = F :- function(F,"min",  P).
-&max{   X : set(P,X), include(X) } = F :- function(F,"max",  P).
+&min{   X : set(P,X), include(X) } = F  :- function(F,"min",  P).
+&max{   X : set(P,X), include(X) } = F  :- function(F,"max",  P).
 
 % Arithmetics in flingo
 &sum{ XL;  XR } = F :- binary(F,XL,"+",XR).
@@ -17,3 +17,7 @@
 &sus{  X } =: F :- unary(F,"()",X). % Definedness check because there exist parenthesis around Boolean formulas as well
 &sum{  X } = F :- unary(F,"+", X).
 &sum{ -X } = F :- unary(F,"-", X).
+
+% #show include/1.
+#show satisfied/1.
+&show { F : function(F,"sum",_) }.

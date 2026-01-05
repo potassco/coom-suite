@@ -1,0 +1,17 @@
+product{
+    2..2   Module modules
+    1x   Element     elements
+}
+
+structure Module {
+    num 10-10 size
+}
+
+structure Element {
+    reference 1..2  Module      modules
+}
+
+
+behavior Element {
+    require sum(modules.size) < 15
+}
