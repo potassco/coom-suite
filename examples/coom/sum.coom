@@ -1,0 +1,8 @@
+product {
+    num 1-2 a
+    num 1-2 b
+}
+
+behavior {
+    require a+b=3
+}
