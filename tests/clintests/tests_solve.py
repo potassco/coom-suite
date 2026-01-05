@@ -10,10 +10,7 @@ All other tests work with both clingo and flingo.
 
 from typing import Any
 
-from clintest.quantifier import Exact
-from clintest.test import And, Assert
-
-from . import TEST_EMPTY, TEST_UNSAT, NumModels, OptimalModel, StableModels, SupersetOfTheory
+from . import TEST_EMPTY, TEST_UNSAT, OptimalModel, StableModels
 
 TESTS_SOLVE: dict[str, dict[str, Any]] = {
     "empty": {"test": TEST_EMPTY, "program": ""},
@@ -122,7 +119,6 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
     },
     "simple_integer": {
         "test": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
-        "ftest": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}, flingo=True),
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -136,12 +132,6 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
     },
     "optional_integer": {
         "test": StableModels(set(), {'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
-        "ftest": And(
-            NumModels(3),
-            # Assert(Exact(1), SubsetOf({})), # How to check empty set for flingo (with regards to output atoms)?
-            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",1)'}, check_theory=True)),
-            Assert(Exact(1), SupersetOfTheory({'value("root.a[0]",2)'}, check_theory=True)),
-        ),
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -157,13 +147,6 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             {'value("root.a[0]",1)', 'value("root.a[1]",2)'},
             {'value("root.a[0]",2)', 'value("root.a[1]",1)'},
             {'value("root.a[0]",2)', 'value("root.a[1]",2)'},
-        ),
-        "ftest": StableModels(
-            {'value("root.a[0]",1)', 'value("root.a[1]",1)'},
-            {'value("root.a[0]",1)', 'value("root.a[1]",2)'},
-            {'value("root.a[0]",2)', 'value("root.a[1]",1)'},
-            {'value("root.a[0]",2)', 'value("root.a[1]",2)'},
-            flingo=True,
         ),
         "program": """
             type("root","product").
@@ -182,7 +165,6 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
     },
     "unbounded_integer": {
         "test": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
-        "ftest": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}, flingo=True),  # flingo only
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -201,7 +183,6 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
     },
     "unbounded_integer_below": {
         "test": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
-        "ftest": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}, flingo=True),  # flingo only
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -218,7 +199,6 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
     },
     "unbounded_integer_above": {
         "test": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
-        "ftest": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}, flingo=True),  # flingo only
         "program": """
             type("root","product").
             type("root.a[0]","A").
@@ -428,13 +408,6 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             {'value("root.x[0]",2)', 'value("root.y[0]",1)'},
             {'value("root.x[0]",3)', 'value("root.y[0]",2)'},
         ),
-        "ftest": StableModels(
-            {'value("root.x[0]",1)', 'value("root.y[0]",2)'},
-            {'value("root.x[0]",1)', 'value("root.y[0]",3)'},
-            {'value("root.x[0]",2)', 'value("root.y[0]",1)'},
-            {'value("root.x[0]",3)', 'value("root.y[0]",2)'},
-            flingo=True,
-        ),
         "files": ["table_integer.lp"],
     },
     "table_mixed": {
@@ -443,13 +416,6 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             {'value("root.x[0]","A1")', 'value("root.y[0]",3)'},
             {'value("root.x[0]","A2")', 'value("root.y[0]",1)'},
             {'value("root.x[0]","A3")', 'value("root.y[0]",2)'},
-        ),
-        "ftest": StableModels(
-            {'value("root.x[0]","A1")', 'value("root.y[0]",2)'},
-            {'value("root.x[0]","A1")', 'value("root.y[0]",3)'},
-            {'value("root.x[0]","A2")', 'value("root.y[0]",1)'},
-            {'value("root.x[0]","A3")', 'value("root.y[0]",2)'},
-            flingo=True,
         ),
         "files": ["table_mixed.lp"],
     },
@@ -651,11 +617,6 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
         "test": StableModels(
             {'value("root.x[0]",1)', 'value("root.x[1]",2)'}, {'value("root.x[0]",2)', 'value("root.x[1]",1)'}
         ),
-        "ftest": StableModels(
-            {'value("root.x[0]",1)', 'value("root.x[1]",2)'},
-            {'value("root.x[0]",2)', 'value("root.x[1]",1)'},
-            flingo=True,
-        ),
         "files": ["sum.lp"],
     },
     "min": {
@@ -664,17 +625,10 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             {'value("root.x[0]",3)', 'value("root.x[1]",3)'},
             {'value("root.x[0]",3)', 'value("root.x[1]",4)'},
         ),
-        "ftest": StableModels(
-            {'value("root.x[0]",4)', 'value("root.x[1]",3)'},
-            {'value("root.x[0]",3)', 'value("root.x[1]",3)'},
-            {'value("root.x[0]",3)', 'value("root.x[1]",4)'},
-            flingo=True,
-        ),
         "files": ["min.lp"],
     },
     "max": {
         "test": StableModels({'value("root.x[0]",3)', 'value("root.x[1]",3)'}),
-        "ftest": StableModels({'value("root.x[0]",3)', 'value("root.x[1]",3)'}, flingo=True),
         "files": ["max.lp"],
     },
     "minimize": {
@@ -878,7 +832,6 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
     },
     "set_value_integer": {
         "test": StableModels({'value("root.a[0]",1)'}),
-        "ftest": StableModels({'value("root.a[0]",1)'}, flingo=True),
         "program": """
             type("root","product").
             type("root.a[0]","A").

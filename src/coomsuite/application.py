@@ -140,7 +140,6 @@ class COOMSolverApp(Application):
                 if not (atom.name == self.config.defined and len(atom.arguments) == 1)
             ]
             output_symbols.extend(_get_valuation(model))
-
         print(_sym_to_prg(output_symbols, self._options["output_format"]))
 
     def main(self, control: Control, files: Sequence[str]) -> None:

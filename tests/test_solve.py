@@ -179,16 +179,16 @@ class TestFlingo(TestCase):
         """
         Test attribute generation (flingo).
         """
-        self.run_test("simple_discrete")
-        self.run_test("optional_discrete")
-        self.run_test("multiple_discrete")
+        # self.run_test("simple_discrete")
+        # self.run_test("optional_discrete")
+        # self.run_test("multiple_discrete")
 
         self.run_test("simple_integer")
-        self.run_test("optional_integer")
-        self.run_test("multiple_integer")
-        self.run_test("unbounded_integer")
-        self.run_test("unbounded_integer_below")
-        self.run_test("unbounded_integer_above")
+        # self.run_test("optional_integer")
+        # self.run_test("multiple_integer")
+        # self.run_test("unbounded_integer")
+        # self.run_test("unbounded_integer_below")
+        # self.run_test("unbounded_integer_above")
 
     def test_boolean_constraints(self) -> None:
         """

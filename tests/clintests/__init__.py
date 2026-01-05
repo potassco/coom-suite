@@ -21,17 +21,18 @@ def NumModels(n: int) -> Test:  # pylint: disable=invalid-name
     return Assert(Exact(n), True_())
 
 
-def StableModels(*args: set[Symbol | str], flingo: bool = False) -> Test:  # pylint: disable=invalid-name
+def StableModels(*args: set[Symbol | str]) -> Test:  # pylint: disable=invalid-name
     """
-    clintest.Test for checking that a program has a certain set of stable models
+    clintest.Test for checking that a program has a certain set of stable models.
+    Works with clingo or flingo
 
     Args:
         args: The set of stable models as a set of sets of strings or clingo symbols
-        flingo (bool): Whether to prepare the test for use with the flingo solver
     """
-    if not flingo:
-        return And(NumModels(len(args)), *(Assert(Exact(1), Equals(a)) for a in args))
-    return And(NumModels(len(args)), *(Assert(Exact(1), SupersetOfTheory(a, check_theory=True)) for a in args))
+    # if not flingo:
+    #     return And(NumModels(len(args)), *(Assert(Exact(1), Equals(a)) for a in args))
+    # return And(NumModels(len(args)), *(Assert(Exact(1), SupersetOfTheory(a, check_theory=True)) for a in args))
+    return And(NumModels(len(args)), *(Assert(Exact(1), EqualsFlingo(a)) for a in args))
 
 
 def OptimalModel(model: set[Symbol | str], flingo: bool = False) -> Test:  # pylint: disable=invalid-name
@@ -44,8 +45,7 @@ def OptimalModel(model: set[Symbol | str], flingo: bool = False) -> Test:  # pyl
     """
     if not flingo:
         return Assert(All(), Implies(Optimal(), Equals(model)))
-    # return Assert(All(), Implies(Optimal(), SupersetOfTheory(model, check_theory=True))
-    return Assert(Last(), SupersetOfTheory(model, check_theory=True))  # I guess in flingo no optimality statement
+    return Assert(Last(), EqualsFlingo(model))  # I guess in flingo no optimality statement
 
 
 def Supersets(*args: set[Symbol | str]) -> Test:  # pylint: disable=invalid-name
@@ -55,29 +55,28 @@ def Supersets(*args: set[Symbol | str]) -> Test:  # pylint: disable=invalid-name
     return And(NumModels(len(args)), *(Assert(Exact(1), SupersetOf(a)) for a in args))
 
 
-class SupersetOfTheory(SupersetOf):
+class EqualsFlingo(Equals):
     """
-    A clintest SupersetOf assertion that can also check theory atoms.
+    A clintest Equals assertion that can also check theory atoms and removes auxiliary flingo atoms.
 
     Args:
         symbol (Symbol): A clingo symbol.
-        check_theory (bool): Whether to include theory atoms in the check
+        # check_theory (bool): Whether to include theory atoms in the check
     """
 
-    def __init__(self, symbols: Set[Union[Symbol, str]], check_theory: bool = False) -> None:
+    def __init__(self, symbols: Set[Union[Symbol, str]]) -> None:
         super().__init__(symbols)
-        self.__symbols = self._SupersetOf__symbols  # type: ignore # pylint: disable=no-member
-        self.__check_theory = check_theory
+        self.__symbols = self._Equals__symbols  # type: ignore # pylint: disable=no-member
 
     def holds_for(self, model: Model) -> bool:
-        if self.__check_theory:
-            return set(model.symbols(shown=True, theory=True)).issuperset(self.__symbols)
-        return super().holds_for(model)  # nocoverage
+        return self.__symbols == set(
+            [s for s in model.symbols(shown=True, theory=True) if s.name not in ["__csp", "__def"]]
+        )
 
 
-# class EqualsTheory(Equals):
+# class SupersetOfTheory(SupersetOf):
 #     """
-#     A clintest Equals assertion that can also check theory atoms.
+#     A clintest SupersetOf assertion that can also check theory atoms.
 
 #     Args:
 #         symbol (Symbol): A clingo symbol.
@@ -86,13 +85,13 @@ class SupersetOfTheory(SupersetOf):
 
 #     def __init__(self, symbols: Set[Union[Symbol, str]], check_theory: bool = False) -> None:
 #         super().__init__(symbols)
-#         self.__symbols = self._Equals__symbols  # type: ignore # pylint: disable=no-member
+#         self.__symbols = self._SupersetOf__symbols  # type: ignore # pylint: disable=no-member
 #         self.__check_theory = check_theory
 
 #     def holds_for(self, model: Model) -> bool:
 #         if self.__check_theory:
-#             return self.__symbols == set(model.symbols(shown=True, theory=True))
-#         return super().holds_for(model)
+#             return set(model.symbols(shown=True, theory=True)).issuperset(self.__symbols)
+#         return super().holds_for(model)  # nocoverage
 
 
 # class ContainsTheory(Contains):
