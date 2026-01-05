@@ -132,6 +132,7 @@ class TestClingo(TestCase):
         self.run_test("association_boolean_user")
         self.run_test("association_table")
         self.run_test("association_count")
+        self.run_test("association_sum")
 
     def test_optimization(self) -> None:
         """
@@ -284,6 +285,7 @@ class TestFlingo(TestCase):
         self.run_test("association_boolean_user")
         self.run_test("association_table")
         self.run_test("association_count")
+        self.run_test("association_sum")
 
     def test_optimization(self) -> None:
         """

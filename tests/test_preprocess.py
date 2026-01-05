@@ -40,6 +40,7 @@ class TestPreprocess(TestCase):
         self.run_test("reference_require")
         self.run_test("reference_table")
         self.run_test("reference_count")
+        self.run_test("reference_sum")
 
     def test_enumeration(self) -> None:
         """

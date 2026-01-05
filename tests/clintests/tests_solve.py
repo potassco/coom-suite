@@ -782,17 +782,47 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
                 'associate(("root.elements[0]","root.modules[1]"),1)',
             },
         ),
-        # "ftest": StableModels(
-        #     {
-        #         'include("root.elements[0]")',
-        #         'include("root.modules[0]")',
-        #         'include("root.modules[1]")',
-        #         'associate(("root.elements[0]","root.modules[0]"),0)',
-        #         'associate(("root.elements[0]","root.modules[1]"),1)',
-        #     },
-        #     flingo=True,
-        # ),
         "files": ["association_count.lp"],
+    },
+    "association_sum": {
+        "test": StableModels(
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'associate(("root.elements[0]","root.modules[0]"),0)',
+                'value("root.modules[0].size[0]",10)',
+                'value("root.modules[1].size[0]",10)',
+            },
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'associate(("root.elements[0]","root.modules[1]"),0)',
+                'value("root.modules[0].size[0]",10)',
+                'value("root.modules[1].size[0]",10)',
+            },
+        ),
+        "ftest": StableModels(
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'associate(("root.elements[0]","root.modules[0]"),0)',
+                'value("root.modules[0].size[0]",10)',
+                'value("root.modules[1].size[0]",10)',
+            },
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'associate(("root.elements[0]","root.modules[1]"),0)',
+                'value("root.modules[0].size[0]",10)',
+                'value("root.modules[1].size[0]",10)',
+            },
+            flingo=True,
+        ),
+        "files": ["association_sum.lp"],
     },
     "minimize": {
         "test": OptimalModel({'value("root.totalWeight[0]",1)'}),
