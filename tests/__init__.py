@@ -26,7 +26,7 @@ def parse_coom(coom_input: str, grammar: str = "model") -> List[str]:
     return [a for a in asp_facts if a != ""]
 
 
-def unpack_test(test_name: str, tests: dict[str, Any], flingo: bool = False) -> Tuple[Any, Any, Any]:
+def unpack_test(test_name: str, tests: dict[str, Any]) -> Tuple[Any, Any, Any]:
     """
     Unpacks a clintest.Test with parameters in a dictionary.
 
@@ -36,12 +36,7 @@ def unpack_test(test_name: str, tests: dict[str, Any], flingo: bool = False) -> 
     test_dict = tests[test_name]
     program = test_dict.get("program", None)
     files = test_dict.get("files", None)
-    if flingo:
-        # test = test_dict.get("ftest", test_dict["test"])
-        test = test_dict["test"]
-        # print(type(test))
-    else:
-        test = test_dict["test"]
+    test = test_dict["test"]
     test_with_name = Context(test, str_=lambda test: f"{test_name} \n\n {str(test)}")
     return test_with_name, program, files
 

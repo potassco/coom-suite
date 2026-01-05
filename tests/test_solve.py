@@ -162,7 +162,7 @@ class TestFlingo(TestCase):
         ctl_args = ["0"]
         if extra_ctl_args:
             ctl_args += extra_ctl_args  # nocoverage
-        test, program, files = unpack_test(test_name, TESTS_SOLVE, flingo=True)
+        test, program, files = unpack_test(test_name, TESTS_SOLVE)
         run_test(test, files=files, program=program, ctl_args=ctl_args, solver="flingo", preprocess="False")
 
     def test_structure(self) -> None:
@@ -179,16 +179,16 @@ class TestFlingo(TestCase):
         """
         Test attribute generation (flingo).
         """
-        # self.run_test("simple_discrete")
-        # self.run_test("optional_discrete")
-        # self.run_test("multiple_discrete")
+        self.run_test("simple_discrete")
+        self.run_test("optional_discrete")
+        self.run_test("multiple_discrete")
 
         self.run_test("simple_integer")
-        # self.run_test("optional_integer")
-        # self.run_test("multiple_integer")
-        # self.run_test("unbounded_integer")
-        # self.run_test("unbounded_integer_below")
-        # self.run_test("unbounded_integer_above")
+        self.run_test("optional_integer")
+        self.run_test("multiple_integer")
+        self.run_test("unbounded_integer")
+        self.run_test("unbounded_integer_below")
+        self.run_test("unbounded_integer_above")
 
     def test_boolean_constraints(self) -> None:
         """
@@ -289,4 +289,4 @@ class TestFlingo(TestCase):
         self.run_test("add_invalid_variable")
         self.run_test("set_invalid_type")
         self.run_test("set_invalid_value_discrete")
-        # self.run_test("set_invalid_value_num")
+        self.run_test("set_invalid_value_num")

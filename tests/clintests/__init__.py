@@ -69,9 +69,7 @@ class EqualsFlingo(Equals):
         self.__symbols = self._Equals__symbols  # type: ignore # pylint: disable=no-member
 
     def holds_for(self, model: Model) -> bool:
-        return self.__symbols == set(
-            [s for s in model.symbols(shown=True, theory=True) if s.name not in ["__csp", "__def"]]
-        )
+        return self.__symbols == {s for s in model.symbols(shown=True, theory=True) if s.name not in ["__csp", "__def"]}
 
 
 # class SupersetOfTheory(SupersetOf):
