@@ -1,6 +1,6 @@
 product{
     0..*    Rack        racks
-    0..*   Element     elements
+    0..40   Element     elements
 }
 
 structure Rack {

@@ -1,0 +1,35 @@
+// TODO: Implement user associations
+
+add elements[0]
+add elements[1]
+add elements[2]
+add elements[3]
+add elements[4]
+add elements[5]
+add elements[6]
+add elements[7]
+add elements[8]
+add elements[9]
+add elements[10]
+add elements[11]
+add elements[12]
+add elements[13]
+add elements[14]
+add elements[15]
+
+set elements[0].type[0] = A
+set elements[1].type[0] = B
+set elements[2].type[0] = C
+set elements[3].type[0] = D
+set elements[4].type[0] = A
+set elements[5].type[0] = B
+set elements[6].type[0] = C
+set elements[7].type[0] = D
+set elements[8].type[0] = A
+set elements[9].type[0] = B
+set elements[10].type[0] = C
+set elements[11].type[0] = D
+set elements[12].type[0] = A
+set elements[13].type[0] = B
+set elements[14].type[0] = C
+set elements[15].type[0] = D
