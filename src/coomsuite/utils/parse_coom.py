@@ -53,6 +53,11 @@ class ASPUserInputVisitor(UserInputVisitor):
         self.output_asp.append(f'user_include("root.{path}").')
         super().visitAdd_instance(ctx)
 
+    def visitAssociate(self, ctx: UserInputParser.AssociateContext):
+        source, target = [p.getText() for p in ctx.path()]
+        self.output_asp.append(f'user_associate(("root.{source}","root.{target}")).')
+        return super().visitAssociate(ctx)
+
 
 class ASPModelVisitor(ModelVisitor):
     """

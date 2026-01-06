@@ -1,61 +1,78 @@
-// Hardware racks problem
-// Falkner et al.: OOASP: Connecting Object-Oriented and Logic Programming (2015)
+product{
+    0..*    Rack        racks
+    0..*   Element     elements
+}
 
-product {
-    0..*  Frame       frame
-          num 0-10    numA
-          num 0-10    numB
+structure Rack {
+            RackType    type
+    4..8    Frame       frames
+}
 
+enumeration RackType {
+    _RackSingle
+    _RackDouble
 }
 
 structure Frame {
-    0..5  Module      module
+    0..5 Module modules
 }
 
 structure Module {
-          ModuleType  type
-          Element     element
-          num 1-5     position
+    ModuleType type
 }
 
-enumeration ModuleType { A B }
-
-enumeration Element {
-    attribute num isA
-    attribute num isB
-
-    A = ( 1 0 )
-    B = ( 0 1 )
+enumeration ModuleType {
+    I
+    II
+    III
+    IV
+    // V
 }
 
-behavior {
-    explanation "The number of elements of type A has to equal the required number."
-    require numA = sum(frame.module.element.isA)
-
-    explanation "The number of elements of type B has to equal the required number."
-    require numB = sum(frame.module.element.isB)
+structure Element {
+                    ElementType type
+    reference 1..4  Module      modules
 }
 
-behavior Module {
-    explanation "Elements of type A require a module of type A"
-    condition element = A
-    require   type = A
-
-    explanation "Elements of type B require a module of type B"
-    condition element = B
-    require   type = B
+enumeration ElementType {
+    A
+    B
+    C
+    D
 }
 
-behavior Frame {
-    explanation "Modules must occupy different positions in a frame"
-    require module[0].position != module[1].position
-    require module[0].position != module[2].position
-    require module[0].position != module[3].position
-    require module[0].position != module[4].position
-    require module[1].position != module[2].position
-    require module[1].position != module[3].position
-    require module[1].position != module[4].position
-    require module[2].position != module[3].position
-    require module[2].position != module[4].position
-    require module[3].position != module[4].position
+
+behavior Rack {
+    explanation "A RackSingle has exactly 4 frames"
+    condition type = _RackSingle
+    require count(frames) = 4
+
+    explanation "A RackSingle has exactly 8 frames"
+    condition type = _RackDouble
+    require count(frames) = 8
+}
+
+// TODO: Need to extend COOM language respectively our encoding
+// behavior Frame {
+//     explanation "A Frame containing a ModuleII must also contain exactly one ModuleV"
+//     condition exists II in modules.type
+//     require count(modules if modules.type is V)=1
+// }
+
+behavior Element {
+    explanation "An ElementA requires exactly one ModuleI"
+    condition type = A
+    require count(modules) = 1 && modules.type = I
+
+    explanation "An ElementB requires exactly two ModuleII"
+    condition type = B
+    require count(modules) = 2 && modules.type = II
+
+    explanation "An ElementC requires exactly two ModuleIII"
+    condition type = C
+    require count(modules) = 3 && modules.type = III
+
+    explanation "An ElementD requires exactly two ModuleIV"
+    condition type = D
+    require count(modules) = 4 && modules.type = IV
 }

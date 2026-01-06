@@ -36,6 +36,16 @@ class TestCOOMUserParser(TestCase):
             ['user_include("root.wheels[0]").', 'user_include("root.wheels[1]").'],
         )
 
+    def test_associate(self) -> None:
+        """
+        Test parsing for the 'associate' keyword
+        used for associating instances of objects
+        """
+        self.assertEqual(
+            parse_coom("associate elements[0] modules[0]", grammar="user"),
+            ['user_associate(("root.elements[0]","root.modules[0]")).'],
+        )
+
     def test_blockinput(self) -> None:
         """
         Test parsing a user input block.

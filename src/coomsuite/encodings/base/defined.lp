@@ -32,3 +32,4 @@
 
 #defined user_include/1.
 #defined user_value/2.
+#defined user_associate/1.

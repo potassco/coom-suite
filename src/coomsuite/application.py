@@ -122,7 +122,6 @@ class COOMSolverApp(Application):
                 # this slows down solving considerably but makes tests for clingo and flingo uniform
                 # better way?
                 model.extend(_get_valuation(model))
-
         # log.debug("------- Full model -----") # disabled because makes solving much slower
         # log.debug("\n".join([str(s) for s in model.symbols(atoms=True, shown=True, theory=True)]))
 

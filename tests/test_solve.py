@@ -156,9 +156,16 @@ class TestClingo(TestCase):
 
         self.run_test("set_invalid_variable")
         self.run_test("add_invalid_variable")
+        self.run_test("associate_invalid_variable")
+        self.run_test("associate_invalid_variable2")
         self.run_test("set_invalid_type")
         self.run_test("set_invalid_value_discrete")
         self.run_test("set_invalid_value_num")
+
+        self.run_test("associate")
+        self.run_test("association_boolean_user")
+        self.run_test("invalid_association")
+        self.run_test("too_many_associations")
 
 
 class TestFlingo(TestCase):
@@ -282,7 +289,6 @@ class TestFlingo(TestCase):
         """
         self.run_test("simple_association")
         self.run_test("association_boolean")
-        self.run_test("association_boolean_user")
         self.run_test("association_table")
         self.run_test("association_count")
         self.run_test("association_sum")

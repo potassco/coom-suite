@@ -1038,17 +1038,75 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             part("product").
             user_value("root.a[0]",1).""",
     },
+    "associate": {
+        "test": StableModels(
+            {
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'include("root.elements[0]")',
+                'associate(("root.elements[0]","root.modules[0]"),0)',
+            },
+        ),
+        "program": """
+            type("root","product").
+            type("root.modules[0]","Module").
+            type("root.modules[1]","Module").
+            type("root.elements[0]","Element").
+            index("root.modules[0]",0).
+            index("root.modules[1]",1).
+            index("root.elements[0]",0).
+            parent("root.modules[0]","root").
+            parent("root.modules[1]","root").
+            parent("root.elements[0]","root").
+            association("root.elements[0]","Module",1,1).
+            constraint(("root.modules",2),"lowerbound").
+            constraint(("root.elements",1),"lowerbound").
+            set("root.modules","root.modules[0]").
+            set("root.modules","root.modules[1]").
+            set("root.elements","root.elements[0]").
+            part("product").
+            part("Module").
+            part("Element").
+            user_associate(("root.elements[0]","root.modules[0]")).""",
+    },
     "add_invalid_variable": {
         "test": StableModels(set()),
         "program": """
             user_include("root.basket[0]").""",
     },
     "set_invalid_variable": {"test": StableModels(set()), "program": """user_value("root.color[0]","Yellow")."""},
+    "associate_invalid_variable": {
+        "test": StableModels({'include("root.modules[0]")'}),
+        "program": """
+            type("root","product").
+            type("root.modules[0]","Module").
+            index("root.modules[0]",0).
+            parent("root.modules[0]","root").
+            constraint(("root.modules",1),"lowerbound").
+            set("root.modules","root.modules[0]").
+            part("product").
+            part("Module").
+            user_associate(("root.basket[0]","root.modules[0]")).""",
+    },
+    "associate_invalid_variable2": {
+        "test": StableModels({'include("root.modules[0]")'}),
+        "program": """
+            type("root","product").
+            type("root.modules[0]","Module").
+            index("root.modules[0]",0).
+            parent("root.modules[0]","root").
+            constraint(("root.modules",1),"lowerbound").
+            set("root.modules","root.modules[0]").
+            part("product").
+            part("Module").
+            user_associate(("root.modules[0]","root.basket[0]")).""",
+    },
     "set_invalid_type": {
         "test": StableModels(set(), {'include("root.basket[0]")'}),
         "program": """
             part("product").
             part("Basket").
+            type("root","product").
             type("root.basket[0]","Basket").
             parent("root.basket[0]","root").
             index("root.basket[0]",0).
@@ -1080,5 +1138,67 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constraint(("root.size",1),"lowerbound").
             set("root.size","root.size[0]").
             user_value("root.size[0]",11).""",
+    },
+    "invalid_association": {
+        "test": StableModels(
+            {
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'include("root.elements[0]")',
+                'associate(("root.elements[0]","root.modules[0]"),0)',
+            },
+            {
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'include("root.elements[0]")',
+                'associate(("root.elements[0]","root.modules[1]"),0)',
+            },
+        ),
+        "program": """
+            type("root","product").
+            type("root.modules[0]","Module").
+            type("root.modules[1]","Module").
+            type("root.elements[0]","Element").
+            index("root.modules[0]",0).
+            index("root.modules[1]",1).
+            index("root.elements[0]",0).
+            parent("root.modules[0]","root").
+            parent("root.modules[1]","root").
+            parent("root.elements[0]","root").
+            association("root.elements[0]","Module",1,1).
+            constraint(("root.modules",2),"lowerbound").
+            constraint(("root.elements",1),"lowerbound").
+            set("root.modules","root.modules[0]").
+            set("root.modules","root.modules[1]").
+            set("root.elements","root.elements[0]").
+            part("product").
+            part("Module").
+            part("Element").
+            user_associate(("root.elements[0]","root.elements[0]")).""",
+    },
+    "too_many_associations": {
+        "test": TEST_UNSAT,
+        "program": """
+            type("root","product").
+            type("root.modules[0]","Module").
+            type("root.modules[1]","Module").
+            type("root.elements[0]","Element").
+            index("root.modules[0]",0).
+            index("root.modules[1]",1).
+            index("root.elements[0]",0).
+            parent("root.modules[0]","root").
+            parent("root.modules[1]","root").
+            parent("root.elements[0]","root").
+            association("root.elements[0]","Module",1,1).
+            constraint(("root.modules",2),"lowerbound").
+            constraint(("root.elements",1),"lowerbound").
+            set("root.modules","root.modules[0]").
+            set("root.modules","root.modules[1]").
+            set("root.elements","root.elements[0]").
+            part("product").
+            part("Module").
+            part("Element").
+            user_associate(("root.elements[0]","root.modules[0]")).
+            user_associate(("root.elements[0]","root.modules[1]")).""",
     },
 }

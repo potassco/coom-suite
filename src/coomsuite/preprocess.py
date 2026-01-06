@@ -62,22 +62,30 @@ def _parse_user_input_warnings(warning: Symbol) -> str:
     warning_type = warning.arguments[0].string
     info = warning.arguments[1]
 
-    if warning_type == "not exists":
-        variable = info.string
-        msg = f"Variable {variable} does not exist."
-    # elif warning_type == "not part":
-    #     variable = info.string
-    #     msg = f"Variable {variable} cannot be added: Not a part."
-    elif warning_type == "not attribute":
-        variable = info.string
-        msg = f"No value can be set for variable {variable}. Variable exists but is a part."
-    elif warning_type == "outside domain":
-        variable = info.arguments[0].string
-        if str(info.arguments[1].type) == "SymbolType.Number":
-            value = str(info.arguments[1].number)
-        else:
-            value = info.arguments[1].string
-        msg = f"Value '{value}' is not in domain of variable {variable}."
-    else:
-        raise ValueError(f"Unknown warning type: {warning_type}")  # nocoverage
-    return msg
+    match warning_type:
+        case "not exists":
+            variable = info.string
+            return f'Variable "{variable}" does not exist.'
+        # case "not part":
+        #     variable = info.string
+        #     return f"Variable {variable} cannot be added: Not a part."
+        case "not attribute":
+            variable = info.string
+            return f'No value can be set for variable "{variable}". Variable exists but is a part.'
+        case "outside domain":
+            variable = info.arguments[0].string
+            if str(info.arguments[1].type) == "SymbolType.Number":
+                value = str(info.arguments[1].number)
+            else:
+                value = info.arguments[1].string
+            return f'Value "{value}" is not in domain of variable "{variable}".'
+        case "invalid association":
+            var1, var2 = [a.string for a in info.arguments]
+            return f'No possible association between "{var1}" and "{var2}" exists.'
+        case "too many associations":
+            variable = info.arguments[0].string
+            target_type = info.arguments[1].string
+            maximum = info.arguments[2].number
+            return f'Too many user association between variable "{variable}" and variables of type "{target_type}". Has to be at most {maximum}.'  # pylint: disable=line-too-long
+        case _:  # nocoverage
+            raise ValueError(f"Unknown warning type: {warning_type}")
