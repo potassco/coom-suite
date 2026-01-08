@@ -1,4 +1,4 @@
-# Generated from /home/heuer/tools/coom-suite/src/coomsuite/utils/coom_grammar/model/Model.g4 by ANTLR 4.13.2
+# Generated from Model.g4 by ANTLR 4.13.2
 from antlr4 import *
 if "." in __name__:
     from .ModelParser import ModelParser
@@ -167,6 +167,15 @@ class ModelListener(ParseTreeListener):
 
     # Exit a parse tree produced by ModelParser#exists.
     def exitExists(self, ctx:ModelParser.ExistsContext):
+        pass
+
+
+    # Enter a parse tree produced by ModelParser#alldiff.
+    def enterAlldiff(self, ctx:ModelParser.AlldiffContext):
+        pass
+
+    # Exit a parse tree produced by ModelParser#alldiff.
+    def exitAlldiff(self, ctx:ModelParser.AlldiffContext):
         pass
 
 

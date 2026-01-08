@@ -81,12 +81,15 @@ conditioned:
 		| combinations
 		| message
 		| exists
+		| alldiff
 	);
 
 exists:
 	op = 'exists' name 'in' path (','? name 'in' path)* '{' (
 		define stmt_end
 	)* (conditioned (stmt_end conditioned)*)? '}';
+
+alldiff: 'alldiff' path;
 
 explanation: 'explanation' name;
 
@@ -158,6 +161,7 @@ formula_sign: ('-' neg = formula_sign)
 	| formula_func
 	| formula_atom;
 formula_func: fun = FUNCTION '(' formula (',' formula)* ')';
+// formula_func: fun = FUNCTION '(' formula ( 'for' name 'in' path ( 'if' condition)? )? ')';
 formula_atom:
 	atom_true = 'true'
 	| atom_false = 'false'
