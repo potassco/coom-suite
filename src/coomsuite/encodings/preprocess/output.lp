@@ -58,8 +58,8 @@ conditional_requirement(C,Con,G)          :- local_constraint(C,X,G), function(F
 constraint((C,@implication(Con,Req)),"boolean")        :- conditional_requirement(C,Con,Req).
 binary(@implication(Con,Req),@unary(Con,"!"),"||",Req) :- conditional_requirement(_,Con,Req).
 unary(@unary(Con,"!"),"!",Con)                         :- conditional_requirement(_,Con,_).
-unary(@unary(G,"()"),"()",G)                           :- conditions_binary(_,_,G,_,_,()).
-binary(G,L,"&&",R)                                     :- conditions_binary(_,_,G,L,R,_).
+unary(@unary(G,"()"),"()",G)                           :- conditional_requirement(C,_,_), conditions_binary(C,_,G,_,_,()).
+binary(G,L,"&&",R)                                     :- conditional_requirement(C,_,_), conditions_binary(C,_,G,L,R,_).
 
 binary(G,L,Op,R) :- binary(_,_,G,L,Op,R).
 unary(G,Op,F)    :- unary(_,_,G,Op,F).
@@ -101,7 +101,7 @@ set(@join(X,P),X')                       :- function(X,_,_,P), path_to(X,P,X').
 part(T) :- coom_structure(T).
 
 constraint((@join(X,N),Min),"lowerbound") :- cardinality_aux(X,N,Min).
-set(@join(X,N),X')                       :- cardinality_aux(X,N,_), path_to(X,N,X').
+set(@join(X,N),X')                        :- cardinality_aux(X,N,_), path_to(X,N,X').
 
 #show part/1.
 

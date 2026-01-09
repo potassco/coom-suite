@@ -1075,6 +1075,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'type("root","product")',
                 'type("root.b[0]","product.b")',
                 'range("product.b",1,3)',
+                'unary("-2","-","2")',
             }
         ),
         "files": ["simple_arithmetic_minus_default_left.lp"],
