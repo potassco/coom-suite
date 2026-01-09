@@ -1,0 +1,11 @@
+product {
+    3 Semester semester
+}
+
+structure Semester {
+    num 1-4 id
+}
+
+behavior {
+    alldiff semester.id
+}

@@ -1,0 +1,16 @@
+product {
+    2..2 Semester semester
+}
+
+structure Semester {
+         Type type
+}
+
+enumeration Type {
+    Summer
+    Winter
+}
+
+behavior Semester {
+    require previous.type != type
+}

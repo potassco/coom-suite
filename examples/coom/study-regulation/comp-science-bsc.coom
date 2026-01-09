@@ -1,0 +1,208 @@
+product {
+    1..12 Semester semester
+    1..2 Specialization specialization
+    num totalECTS
+}
+
+structure Semester {
+        Type type
+    0..5 Module module
+    num semesterECTS
+    num previousECTS
+}
+
+enumeration Type {
+    Summer
+    Winter
+}
+
+enumeration Specialization {
+    Bioinformatics
+    Chemistry
+    Geoscience
+    CognitiveScience
+    Physics
+}
+
+enumeration Module {
+    attribute num ects
+    attribute str type
+    attribute str specialization_group
+    attribute str group
+
+    Biobm105    =   ( 6, winter, bb, iii )
+    Biobm107    =   ( 6, summer, ba, iv )
+    Biobm108    =   ( 6, summer, ba, iv )
+    Bioam212    =   ( 6, summer, ba, iv )
+    Bioam302    =   ( 6, each,   ba, iv )
+    Bioam314    =   ( 6, winter, ba, iv )
+
+    Chea1nf     =   ( 6, winter, c, iii )
+    Cheocgee    =   ( 6, each, ca, iv )
+    Cheawp23    =   ( 6, summer, ca, iv )
+    Cheawp3     =   ( 6, summer, ca, iv )
+    Chea8cs     =   ( 6, summer, ca, iv )
+
+    Gewbp01     =   ( 6, winter, ge, iii )
+    Gewbp02     =   ( 6, summer, gea, iv )
+    Gewgis1     =   ( 6, winter, gea, iv )
+    Geekl       =   ( 6, each, gea, iv )
+    Geehy       =   ( 6, each, gea, iv )
+    Gewbwp01    =   ( 6, winter, gea, iv )
+    Gewbwp02    =   ( 6, summer, gea, iv )
+    Gewbwp05    =   ( 6, winter, gea, iv )
+
+    Psybs013    =   ( 9, each, k, iii )
+    Psybs011    =   ( 9, each, ka, iv )
+    Psybs012    =   ( 9, each, ka, iv )
+    Linbs101    =   ( 6, winter, ka, iv )
+    Linbs102    =   ( 6, each, ka, iv )
+    Linbs103    =   ( 6, summer, ka, iv )
+    Linbs061    =   ( 6, each, ka, iv )
+
+    Phy131c     =   ( 6, winter, p, iii )
+    Phy131d     =   ( 6, winter, pa, iv )
+    Phy511las   =   ( 6, winter, pa, iv )
+    Phy611las   =   ( 6, summer, pa, iv )
+    Phy101geo   =   ( 6, winter, pa, iv )
+    Phy201geo   =   ( 6, summer, pa, iv )
+    Phy531      =   ( 6, each, pa, iv )
+
+    Matd230cs   =   ( 6, winter, none, v)
+
+    Inf1010     =   ( 6, winter, none, i )
+    Inf1011     =   ( 6, summer, none, i )
+    Inf1020     =   ( 6, winter, none, i )
+    Inf1021     =   ( 6, summer, none, i )
+    Inf1030     =   ( 6, winter, none, i )
+    Inf1031     =   ( 6, winter, none, i )
+    Inf1040     =   ( 6, summer, none, i )
+    Inf1050     =   ( 6, summer, none, i )
+    Inf1060     =   ( 6, winter, none, i )
+    Inf1070     =   ( 6, summer, none, i )
+    Inf1080     =   ( 6, winter, none, i )
+    Mat1100     =   ( 6, winter, none, i )
+    Mat1101     =   ( 6, winter, none, i )
+    Mat1102     =   ( 6, summer, none, i )
+    Mat1103     =   ( 6, summer, none, i )
+    Inf6010     =   ( 6, summer, none, i )
+    Inf6030     =   ( 6, each, none, i )
+
+    Inf2010     =   ( 6, summer, none, ii )
+    Inf2020     =   ( 6, winter, none, ii )
+    Inf2021     =   ( 6, winter, none, ii )
+    Inf2030     =   ( 6, summer, none, ii )
+    Inf2031     =   ( 6, winter, none, ii )
+    Inf2040     =   ( 6, summer, none, ii )
+    Inf2041     =   ( 6, winter, none, ii )
+    Inf2050     =   ( 6, summer, none, ii )
+    Inf2060     =   ( 6, summer, none, ii )
+    Inf2061     =   ( 6, winter, none, ii )
+    Inf2070     =   ( 6, summer, none, ii )
+    Inf2080     =   ( 6, summer, none, ii )
+    Inf2090     =   ( 6, each, none, ii )
+    Inf2091     =   ( 6, each, none, ii )
+
+    Inf6020     =   ( 12, each, none, vi )
+    BamaO1      =   ( 6, each, none, vi )
+    BamaO2      =   ( 6, each, none, vi )
+    BamaO3      =   ( 6, each, none, vi )
+
+    BSc         =   ( 12, each, none, m )
+
+}
+
+// General constraints
+behavior {
+    explanation "Each module can only be taken once in the whole program."
+    alldiff semester.module
+
+    explanation "The total ECTS is the sum of the ECTS of all taken modules."
+    imply totalECTS = sum(semester.module.ects)
+
+    // explanation "Summer and winter semesters alternate."
+    // require semester[i].type != semester[i+1].type
+}
+
+behavior Semester {
+    explanation "Summer and winter semesters alternate."
+    require next.type != type
+
+    explanation "A module can only be taken in the semesters it is offered."
+    combinations ( type     module.type    )
+    allow        ( Summer   (summer, each) )
+    allow        ( Winter   (winter, each) )
+
+    explanation "The number of ECTS taken in one semester is equal to the sum of the ECTS of all modules in that semester."
+    imply semesterECTS = sum(module.ects)
+
+    explanation "The number of previously achieved ECTS is equal to the sum of the ECTS of all semesters before this one."
+    imply previousECTS = sum(s.ects for s in root.semester if s.id < id)
+}
+
+// Programme specific constraints
+behavior Semester {
+    condition previousECTS < 126
+    require module != Thesis
+}
+
+behavior {
+    explanation "If more than one specialization is chosen, they have to be different."
+    alldiff specialization
+
+    explanation "The number of total ECTS has to be equal to 120."
+    require 180 = totalECTS
+
+    explanation "The number of ECTS in group I has to be equal to 102."
+    require 102 = sum(m.ects for m in semester.module if m.group = i)
+
+    explanation "The number of ECTS in group II has to be equal to 12."
+    require 12 = sum(m.ects for m in semester.module if m.group = ii)
+
+    //require 30 = sum(m.ects for m in semester.module if m.group = x)
+    explanation "The number of ECTS in groups III and IV together has to be equal to 30."
+    require 30 = sum(m.ects for m in semester.module if m.group = iii || m.group = iv )
+
+    explanation "The number of ECTS in group III has to be at least 6."
+    require 6 <= sum(m.ects for m in semester.module if m.group = iii )
+
+    explanation "The number of ECTS in group III has to be at most 15."
+    require 15 >= sum(m.ects for m in semester.module if m.group = iii )
+
+    explanation "The number of ECTS in group IV has to be at least 15."
+    require 15 <= sum(m.ects for m in semester.module if m.group = iv )
+
+    explanation "The number of ECTS in group IV has to be at most 24."
+    require 24 >= sum(m.ects for m in semester.module if m.group = iv )
+
+    explanation "The number of ECTS in group V has to be equal to 6."
+    require 6 = sum(m.ects for m in semester.module if m.group = v)
+
+    explanation "The number of ECTS in group VI has to be equal to 18."
+    require 18 = sum(m.ects for m in semester.module if m.group = vi)
+
+    explanation "The thesis has to be taken."
+    exists m in semester.module { m = Thesis }
+}
+
+behavior Module {
+    explanation "Only modules from the chosen specialization can be taken."
+    condition specialization_group = b || specialization_group = ba
+    exists s in root.specialization { s = Bioinformatics }
+
+    explanation "Only modules from the chosen specialization can be taken."
+    condition specialization_group = c || specialization_group = ca
+    exists s in root.specialization { s = Chemistry }
+
+    explanation "Only modules from the chosen specialization can be taken."
+    condition specialization_group = ge || specialization_group = gea
+    exists s in root.specialization { s = Geoscience }
+
+    explanation "Only modules from the chosen specialization can be taken."
+    condition specialization_group = k || specialization_group = ka
+    exists s in root.specialization { s = CognitiveScience }
+
+    explanation "Only modules from the chosen specialization can be taken."
+    condition specialization_group = p || specialization_group = pa
+    exists s in root.specialization { s = Physics }
+}

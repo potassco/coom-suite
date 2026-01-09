@@ -1,0 +1,14 @@
+product {
+    1..2 Module modules
+}
+
+enumeration Module {
+    BM1
+    BM2
+    Thesis
+}
+
+
+behavior {
+     exists Thesis in modules {} // Why the empty braces?
+}
