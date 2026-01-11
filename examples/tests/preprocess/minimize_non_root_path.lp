@@ -1,0 +1,10 @@
+coom_structure("product").
+coom_feature("product","bags","Bag",1,1).
+coom_structure("Bag").
+coom_feature("Bag","weight","num",1,1).
+coom_range("Bag","weight",0,10).
+coom_behavior(0).
+coom_context(0,"product").
+coom_minimize(0,1,"bags.weight").
+coom_path("bags.weight",0,"bags").
+coom_path("bags.weight",1,"weight").
