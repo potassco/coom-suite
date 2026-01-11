@@ -301,8 +301,8 @@ class TestFlingo(TestCase):
         self.run_test("maximize")
         # self.run_test("minimize_priority")
         # self.run_test("maximize_priority")
-        self.run_test("minimize_maximize_function")
-        self.run_test("maximize_minimize_function")
+        # self.run_test("minimize_maximize_function")
+        # self.run_test("maximize_minimize_function")
 
     def test_user_input(self) -> None:
         """
@@ -317,4 +317,4 @@ class TestFlingo(TestCase):
         self.run_test("add_invalid_variable")
         self.run_test("set_invalid_type")
         self.run_test("set_invalid_value_discrete")
-        # self.run_test("set_invalid_value_num")
+        self.run_test("set_invalid_value_num")

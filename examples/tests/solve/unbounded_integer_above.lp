@@ -1,0 +1,12 @@
+type("root","product").
+type("root.a[0]","A").
+integer("A").
+range("A",1,#sup).
+index("root.a[0]",0).
+parent("root.a[0]","root").
+constraint(("root.a",1),"lowerbound").
+set("root.a","root.a[0]").
+part("product").
+constraint((0,"root.a[0]<3"),"boolean").
+binary("root.a[0]<3","root.a[0]","<","3").
+number("3",3).

@@ -1,0 +1,10 @@
+part("product").
+integer("product.size").
+range("product.size",1,3).
+type("root","product").
+type("root.size[0]","product.size").
+parent("root.size[0]","root").
+index("root.size[0]",0).
+constraint(("root.size",1),"lowerbound").
+set("root.size","root.size[0]").
+user_value("root.size[0]",11).
