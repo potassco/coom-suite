@@ -1,0 +1,16 @@
+discrete("Color").
+domain("Color","Red").
+domain("Color","Green").
+domain("Color","Blue").
+type("root","product").
+type("root.color[0]","Color").
+type("root.color[1]","Color").
+index("root.color[0]",0).
+index("root.color[1]",1).
+parent("root.color[0]","root").
+parent("root.color[1]","root").
+constraint(("root.color",2),"lowerbound").
+constraint("root.color","alldiff").
+set("root.color","root.color[0]").
+set("root.color","root.color[1]").
+part("product").

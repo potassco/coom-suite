@@ -1,0 +1,13 @@
+product {
+    2 Color color
+}
+
+enumeration Color {
+    Red
+    Green
+    Blue
+}
+
+behavior {
+    alldiff color
+}

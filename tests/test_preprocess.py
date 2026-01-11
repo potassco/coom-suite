@@ -88,6 +88,13 @@ class TestPreprocess(TestCase):
         self.run_test("count")
         self.run_test("sum")
 
+    def test_other_constraints(self) -> None:
+        """
+        Test preprocessing other types of constraints in COOM
+        """
+        self.run_test("alldiff_integer")
+        self.run_test("alldiff_discrete")
+
     def test_optimization(self) -> None:
         """
         Test optimization in COOM

@@ -8,6 +8,7 @@
 #include "base/flingo/boolean.lp".
 #include "base/flingo/numerics.lp".
 #include "base/flingo/table.lp".
+#include "base/flingo/alldiff.lp".
 #include "base/constraints.lp".
 
 #include "base/flingo/optimization.lp".

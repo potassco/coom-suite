@@ -90,6 +90,10 @@ allow(T,(Col,Row),V) :- attribute_constraint((T,_)), allow(T,(0,Row),O), coom_at
 constraint((C,@binary(X',"=",G)),"boolean") :- imply(C,X',G).
 binary(@binary(X',"=",G),X',"=",G)          :- imply(C,X',G).
 
+% Alldiff constraints
+constraint(@join(X,P),"alldiff") :- alldiff(X,P).
+set(@join(X,P),X')               :- alldiff(X,P), path_to(X,P,X').
+
 % Functions
 function(@aggregate(T,X,P),T,@join(X,P)) :- function(X,_,T,P).
 set(@join(X,P),X')                       :- function(X,_,_,P), path_to(X,P,X').

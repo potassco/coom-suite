@@ -3,5 +3,8 @@
 % (maximum does not need to be checked)
 violated((X',P)) :- constraint((P,Min),"lowerbound"), set(P,X), index(X,Min-1), not include(X), parent(X,X'), include(X').
 
+% All-different constraints
+violated((S,(X1,X2))) :- constraint(S,"alldiff"), set(S,X1), set(S,X2), X1 != X2, value(X1,V), value(X2,V).
+
 % Constraints cannot be violated
 :- violated(C).

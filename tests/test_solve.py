@@ -89,6 +89,13 @@ class TestClingo(TestCase):
         self.run_test("table_undef2")
         self.run_test("empty_table")
 
+    def test_other_constraints(self) -> None:
+        """
+        Test other types of constraints (clingo)
+        """
+        self.run_test("alldiff_integer")
+        self.run_test("alldiff_discrete")
+
     def test_arithmetics(self) -> None:
         """
         Test arithmetic formulas (clingo).
@@ -232,6 +239,13 @@ class TestFlingo(TestCase):
         self.run_test("table_undef")
         self.run_test("table_undef2")
         self.run_test("empty_table")
+
+    def test_other_constraints(self) -> None:
+        """
+        Test other types of constraints (flingo)
+        """
+        self.run_test("alldiff_integer")
+        self.run_test("alldiff_discrete")
 
     def test_arithmetics(self) -> None:
         """
