@@ -1,0 +1,9 @@
+part("product").
+discrete("Color").
+domain("Color","Red").
+type("root.color[0]","Color").
+parent("root.color[0]","root").
+index("root.color[0]",0).
+user_value("root.color[0]","Yellow").
+constraint(("root.color",1),"lowerbound").
+set("root.color","root.color[0]").

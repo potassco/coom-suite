@@ -1,0 +1,10 @@
+integer("product.totalWeight").
+range("product.totalWeight",1,10).
+type("root","product").
+type("root.totalWeight[0]","product.totalWeight").
+index("root.totalWeight[0]",0).
+parent("root.totalWeight[0]","root").
+constraint(("root.totalWeight",1),"lowerbound").
+set("root.totalWeight","root.totalWeight[0]").
+part("product").
+minimize("root.totalWeight[0]",0).

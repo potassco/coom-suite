@@ -2,6 +2,7 @@
 Test cases for checking the user input for validity.
 """
 
+from os.path import join
 from unittest import TestCase
 
 from coomsuite.preprocess import check_user_input
@@ -21,8 +22,15 @@ class TestUserInputCheck(TestCase):
         """
         Runs a test checking the user input for validity.
         """
+        test_dict = TESTS_SOLVE[test]
+        program = test_dict.get("program", None)
+        if not program:
+            program = []
+            for test_file in test_dict["files"]:
+                with open(join("examples", "tests", "solve", test_file), encoding="utf-8") as f:
+                    program.extend(f.readlines())
         with self.assertLogs(log, level="WARNING") as ctx:
-            check_user_input(TESTS_SOLVE[test]["program"])
+            check_user_input(program)
         self.assertEqual(ctx.output, [f"WARNING:main:{expected_msg}"])
 
     def test_user_input_check(self) -> None:
