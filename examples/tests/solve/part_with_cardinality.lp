@@ -1,0 +1,12 @@
+type("root","product").
+type("root.a[0]","A").
+type("root.a[1]","A").
+index("root.a[0]",0).
+index("root.a[1]",1).
+parent("root.a[0]","root").
+parent("root.a[1]","root").
+constraint(("root.a",1),"lowerbound").
+set("root.a","root.a[0]").
+set("root.a","root.a[1]").
+part("product").
+part("A").

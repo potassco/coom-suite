@@ -1,0 +1,10 @@
+integer("product.totalOutput").
+range("product.totalOutput",1,10).
+type("root","product").
+type("root.totalOutput[0]","product.totalOutput").
+index("root.totalOutput[0]",0).
+parent("root.totalOutput[0]","root").
+constraint(("root.totalOutput",1),"lowerbound").
+set("root.totalOutput","root.totalOutput[0]").
+part("product").
+maximize("root.totalOutput[0]",0).

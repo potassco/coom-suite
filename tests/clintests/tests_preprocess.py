@@ -438,20 +438,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'part("A")',
             }
         ),
-        "program": """
-        coom_structure("product").
-        coom_feature("product","a","A",0,1).
-        coom_structure("A").
-        coom_feature("A","b","num",1,1).
-        coom_range("A","b",1,2).
-        coom_behavior(0).
-        coom_context(0,"A").
-        coom_require(0,"sum(b)>1").
-        coom_binary("sum(b)>1","sum(b)",">","1").
-        coom_function("A","sum(b)","sum","b").
-        coom_path("b",0,"b").
-        coom_number("1",1).
-        """,
+        "files": ["require_with_optional_part.lp"],
     },
     "conditional_require_undef": {
         "test": StableModels(
@@ -1333,15 +1320,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'minimize("root.totalWeight[0]",0)',
             }
         ),
-        "program": """
-            coom_structure("product").
-            coom_feature("product","totalWeight","num",1,1).
-            coom_range("product","totalWeight",1,10).
-            coom_behavior(0).
-            coom_context(0,"product").
-            coom_minimize(0,0,"totalWeight").
-            coom_path("totalWeight",0,"totalWeight").
-            """,
+        "files": ["minimize.lp"],
     },
     "maximize": {
         "test": StableModels(
@@ -1358,15 +1337,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'maximize("root.totalOutput[0]",1)',
             }
         ),
-        "program": """
-            coom_structure("product").
-            coom_feature("product","totalOutput","num",1,1).
-            coom_range("product","totalOutput",1,10).
-            coom_behavior(0).
-            coom_context(0,"product").
-            coom_maximize(0,1,"totalOutput").
-            coom_path("totalOutput",0,"totalOutput").
-            """,
+        "files": ["maximize.lp"],
     },
     "minimize_non_root_path": {
         "test": StableModels(
@@ -1389,18 +1360,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'minimize("root.bags[0].weight[0]",1)',
             }
         ),
-        "program": """
-            coom_structure("product").
-            coom_feature("product","bags","Bag",1,1).
-            coom_structure("Bag").
-            coom_feature("Bag","weight","num",1,1).
-            coom_range("Bag","weight",0,10).
-            coom_behavior(0).
-            coom_context(0,"product").
-            coom_minimize(0,1,"bags.weight").
-            coom_path("bags.weight",0,"bags").
-            coom_path("bags.weight",1,"weight").
-            """,
+        "files": ["minimize_non_root_path.lp"],
     },
     "maximize_non_root_path": {
         "test": StableModels(
@@ -1423,18 +1383,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'minimize("root.bags[0].volume[0]",1)',
             }
         ),
-        "program": """
-            coom_structure("product").
-            coom_feature("product","bags","Bag",1,1).
-            coom_structure("Bag").
-            coom_feature("Bag","volume","num",1,1).
-            coom_range("Bag","volume",0,10).
-            coom_behavior(0).
-            coom_context(0,"product").
-            coom_minimize(0,1,"bags.volume").
-            coom_path("bags.volume",0,"bags").
-            coom_path("bags.volume",1,"volume").
-            """,
+        "files": ["maximize_non_root_path.lp"],
     },
     "minimize_function": {
         "test": StableModels(
@@ -1467,18 +1416,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'minimize("count(root.bags)",0)',
             }
         ),
-        "program": """
-            coom_structure("product").
-            coom_feature("product","bags","Bag",0,2).
-            coom_structure("Bag").
-            coom_feature("Bag","volume","num",1,1).
-            coom_range("Bag","volume",0,10).
-            coom_behavior(0).
-            coom_context(0,"product").
-            coom_minimize(0,0,"count(bags)").
-            coom_function("product","count(bags)","count","bags").
-            coom_path("bags",0,"bags").
-        """,
+        "files": ["minimize_function.lp"],
     },
     "maximize_function": {
         "test": StableModels(
@@ -1513,19 +1451,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'maximize("sum(root.bags.volume)",0)',
             }
         ),
-        "program": """
-            coom_structure("product").
-            coom_feature("product","bags","Bag",0,2).
-            coom_structure("Bag").
-            coom_feature("Bag","volume","num",1,1).
-            coom_range("Bag","volume",0,10).
-            coom_behavior(0).
-            coom_context(0,"product").
-            coom_maximize(0,0,"sum(bags.volume)").
-            coom_function("product","sum(bags.volume)","sum","bags.volume").
-            coom_path("bags.volume",0,"bags").
-            coom_path("bags.volume",1,"volume").
-        """,
+        "files": ["maximize_function.lp"],
     },
     "set_constant": {
         "test": StableModels({'user_value("root.color[0]","Yellow")'}),

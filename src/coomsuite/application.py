@@ -122,7 +122,6 @@ class COOMSolverApp(Application):
                 # this slows down solving considerably but makes tests for clingo and flingo uniform
                 # better way?
                 model.extend(_get_valuation(model))
-
         # log.debug("------- Full model -----") # disabled because makes solving much slower
         # log.debug("\n".join([str(s) for s in model.symbols(atoms=True, shown=True, theory=True)]))
 
@@ -140,7 +139,6 @@ class COOMSolverApp(Application):
                 if not (atom.name == self.config.defined and len(atom.arguments) == 1)
             ]
             output_symbols.extend(_get_valuation(model))
-
         print(_sym_to_prg(output_symbols, self._options["output_format"]))
 
     def main(self, control: Control, files: Sequence[str]) -> None:
