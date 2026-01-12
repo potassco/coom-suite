@@ -1,9 +1,9 @@
 #defined type/1.
 #defined part/1.
 
-#defined discrete/1.
+#defined discrete/2.
 #defined domain/2.
-#defined integer/1.
+#defined numeric/2.
 #defined range/3.
 
 #defined type/2.

@@ -1,8 +1,8 @@
-discrete("Color").
-discrete("Pocket").
-discrete("Closure").
-discrete("Size").
-discrete("Size.volume").
+discrete("Color",str).
+discrete("Pocket",str).
+discrete("Closure",str).
+discrete("Size",str).
+discrete("Size.volume",int).
 domain("Color","Green").
 domain("Color","Blue").
 domain("Color","Red").
@@ -18,8 +18,8 @@ domain("Size","large").
 domain("Size.volume",12).
 domain("Size.volume",16).
 domain("Size.volume",20).
-integer("product.totalVolume").
-integer("product.requestedVolume").
+numeric("product.totalVolume",int).
+numeric("product.requestedVolume",int).
 range("product.totalVolume",0,200).
 range("product.requestedVolume",0,200).
 type("root","product").

@@ -1,5 +1,5 @@
 part("product").
-integer("X").
+numeric("X",int).
 range("X",1,2).
 type("root.x[0]","X").
 type("root.x[1]","X").

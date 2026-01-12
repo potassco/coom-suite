@@ -1,4 +1,4 @@
-discrete("Bag").
+discrete("Bag",str).
 part("product").
 constraint(("root.bags",0),"lowerbound").
 domain("Bag","Small").

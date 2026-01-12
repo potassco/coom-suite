@@ -1,4 +1,4 @@
-integer("Bag.volume").
+numeric("Bag.volume",int).
 range("Bag.volume",0,10).
 type("root","product").
 type("root.bags[0]","Bag").

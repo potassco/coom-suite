@@ -130,6 +130,18 @@ class TestClingo(TestCase):
         self.run_test("min")
         self.run_test("max")
 
+    def test_imply(self) -> None:
+        """
+        Test imply statements (clingo).
+        """
+        self.run_test("imply_with_number")
+        self.run_test("imply_with_variable")
+        self.run_test("imply_with_binary")
+        self.run_test("imply_with_unary")
+        self.run_test("imply_with_sum")
+        self.run_test("conditional_imply")
+        self.run_test("multiple_conditions_imply")
+
     def test_optimization(self) -> None:
         """
         Test solving optimization statements (clingo)
@@ -278,6 +290,18 @@ class TestFlingo(TestCase):
         self.run_test("sum")
         self.run_test("min")
         self.run_test("max")
+
+    def test_imply(self) -> None:
+        """
+        Test imply statements (flingo).
+        """
+        self.run_test("imply_with_number")
+        self.run_test("imply_with_variable")
+        self.run_test("imply_with_binary")
+        self.run_test("imply_with_unary")
+        self.run_test("imply_with_sum")
+        self.run_test("conditional_imply")
+        self.run_test("multiple_conditions_imply")
 
     def test_optimization(self) -> None:
         """

@@ -1,4 +1,4 @@
-integer("product.totalWeight").
+numeric("product.totalWeight",int).
 range("product.totalWeight",1,10).
 type("root","product").
 type("root.totalWeight[0]","product.totalWeight").

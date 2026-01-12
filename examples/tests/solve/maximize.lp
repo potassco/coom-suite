@@ -1,4 +1,4 @@
-integer("product.totalOutput").
+numeric("product.totalOutput",int).
 range("product.totalOutput",1,10).
 type("root","product").
 type("root.totalOutput[0]","product.totalOutput").

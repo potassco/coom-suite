@@ -1,5 +1,5 @@
 part("product").
-discrete("Color").
+discrete("Color",str).
 domain("Color","Red").
 type("root.color[0]","Color").
 parent("root.color[0]","root").

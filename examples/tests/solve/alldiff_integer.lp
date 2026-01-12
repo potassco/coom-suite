@@ -1,4 +1,4 @@
-integer("Semester.id").
+numeric("Semester.id",int).
 range("Semester.id",1,3).
 type("root","product").
 type("root.semester[0]","Semester").

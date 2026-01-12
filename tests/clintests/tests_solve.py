@@ -556,6 +556,59 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
         "test": StableModels({'value("root.x[0]",3)', 'value("root.x[1]",3)'}),
         "files": ["max.lp"],
     },
+    "imply_with_number": {
+        "test": StableModels({'value("root.wheel[0]","W27")', 'value("root.wheel[0].size[0]",27)'}),
+        "files": ["imply_with_number.lp"],
+    },
+    "imply_with_variable": {
+        "test": StableModels(
+            {'value("root.a[0]",1)', 'value("root.b[0]",1)'},
+            {'value("root.a[0]",2)', 'value("root.b[0]",2)'},
+            {'value("root.a[0]",3)', 'value("root.b[0]",3)'},
+        ),
+        "files": ["imply_with_variable.lp"],
+    },
+    "imply_with_binary": {
+        "test": StableModels(
+            {'value("root.a[0]",4)', 'value("root.b[0]",1)'},
+            {'value("root.a[0]",5)', 'value("root.b[0]",2)'},
+            {'value("root.a[0]",6)', 'value("root.b[0]",3)'},
+        ),
+        "files": ["imply_with_binary.lp"],
+    },
+    "imply_with_unary": {
+        "test": StableModels(
+            {'value("root.a[0]",-1)', 'value("root.b[0]",1)'},
+            {'value("root.a[0]",-2)', 'value("root.b[0]",2)'},
+            {'value("root.a[0]",-3)', 'value("root.b[0]",3)'},
+        ),
+        "files": ["imply_with_unary.lp"],
+    },
+    "imply_with_sum": {
+        "test": StableModels(
+            {'value("root.a[0]",2)', 'value("root.b[0]",1)', 'value("root.b[1]",1)'},
+            {'value("root.a[0]",3)', 'value("root.b[0]",2)', 'value("root.b[1]",1)'},
+            {'value("root.a[0]",3)', 'value("root.b[0]",1)', 'value("root.b[1]",2)'},
+            {'value("root.a[0]",4)', 'value("root.b[0]",2)', 'value("root.b[1]",2)'},
+        ),
+        "files": ["imply_with_sum.lp"],
+    },
+    "conditional_imply": {
+        "test": StableModels(
+            {'value("root.color[0]","Blue")', 'value("root.option[0]",2)'},
+            {'value("root.color[0]","Red")', 'value("root.option[0]",1)'},
+        ),
+        "files": ["conditional_imply.lp"],
+    },
+    "multiple_conditions_imply": {
+        "test": StableModels(
+            {'value("root.color[0]","Blue")', 'value("root.option[0]",3)', 'value("root.size[0]","Big")'},
+            {'value("root.color[0]","Blue")', 'value("root.option[0]",4)', 'value("root.size[0]","Small")'},
+            {'value("root.color[0]","Red")', 'value("root.option[0]",1)', 'value("root.size[0]","Small")'},
+            {'value("root.color[0]","Red")', 'value("root.option[0]",2)', 'value("root.size[0]","Big")'},
+        ),
+        "files": ["multiple_conditions_imply.lp"],
+    },
     "minimize": {
         "test": OptimalModel({'value("root.totalWeight[0]",1)'}),
         "ftest": OptimalModel({'value("root.totalWeight[0]",1)'}, flingo=True),

@@ -1,5 +1,5 @@
 part("product").
-discrete("A").
+discrete("A",str).
 domain("A",("A1";"A2")).
 type("root.x[0]","A").
 parent("root.x[0]","root").

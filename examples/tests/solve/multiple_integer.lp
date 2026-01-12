@@ -1,7 +1,7 @@
 type("root","product").
 type("root.a[0]","A").
 type("root.a[1]","A").
-integer("A").
+numeric("A",int).
 range("A",1,2).
 index("root.a[0]",0).
 index("root.a[1]",1).

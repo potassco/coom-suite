@@ -1,4 +1,4 @@
-discrete("Color").
+discrete("Color",str).
 domain("Color","Red").
 domain("Color","Green").
 domain("Color","Blue").

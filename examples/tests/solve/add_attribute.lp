@@ -1,5 +1,5 @@
 part("product").
-discrete("Basket").
+discrete("Basket",str).
 domain("Basket","Black").
 domain("Basket","White").
 type("root.basket[0]","Basket").

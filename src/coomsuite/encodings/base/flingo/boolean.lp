@@ -1,3 +1,6 @@
+% Auxiliary values for constants.
+&sum{N} = Path :- number(Path,N).
+
 % Satisfaction of binary comparison relations for numeric values in flingo
 satisfied(F) :- binary(F,X1,"=", X2), &sum{X1} =  X2.
 satisfied(F) :- binary(F,X1,"!=",X2), &sum{X1} != X2.

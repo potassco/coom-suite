@@ -1,0 +1,17 @@
+part("product").
+constraint(("root.a",1),"lowerbound").
+constraint(("root.b",1),"lowerbound").
+imply((0,"root.a[0]"),"root.b[0]").
+index("root.a[0]",0).
+index("root.b[0]",0).
+numeric("product.a",int).
+numeric("product.b",int).
+parent("root.a[0]","root").
+parent("root.b[0]","root").
+set("root.a","root.a[0]").
+set("root.b","root.b[0]").
+type("root","product").
+type("root.a[0]","product.a").
+type("root.b[0]","product.b").
+range("product.a",1,3).
+range("product.b",1,3).

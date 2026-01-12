@@ -49,7 +49,7 @@ def main() -> None:
             )
 
             if args.show_facts:
-                print("\n".join(preprocess(serialized_facts, discrete=True)))  # nocoverage
+                print("\n".join(preprocess(serialized_facts)))  # nocoverage
             elif args.bounds:
                 bound_solver = BoundSolver(serialized_facts, args.solver, solver_args, args.output)
                 bound = bound_solver.get_bounds(

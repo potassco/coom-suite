@@ -1,5 +1,5 @@
 part("product").
-integer("product.size").
+numeric("product.size",int).
 range("product.size",1,3).
 type("root","product").
 type("root.size[0]","product.size").

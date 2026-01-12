@@ -3,6 +3,10 @@ defined(X) :- value(X,_).
 defined(F) :- binary(F,XL,_,XR), defined(XL), defined(XR).
 defined(F) :- unary(F,_,F'), defined(F').
 
+% Auxiliary values for constants
+value(P,P) :- constant(P).
+value(P,N) :- number(P,N).
+
 % Satisfaction of binary comparison relations
 satisfied(F) :- binary(F,XL,"=", XR), VL =  VR, value(XL,VL), value(XR,VR).
 satisfied(F) :- binary(F,XL,"!=",XR), VL != VR, value(XL,VL), value(XR,VR).

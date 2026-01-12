@@ -1,7 +1,7 @@
 part("product").
-discrete("A").
+discrete("A",str).
 domain("A",("A1";"A2";"A3")).
-integer("B").
+numeric("B",int).
 range("B",1,3).
 type("root.x[0]","A").
 type("root.y[0]","B").

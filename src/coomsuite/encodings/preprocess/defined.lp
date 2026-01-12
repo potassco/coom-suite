@@ -29,5 +29,3 @@
 
 #defined coom_minimize/3.
 #defined coom_maximize/3.
-
-#defined discrete/0.
