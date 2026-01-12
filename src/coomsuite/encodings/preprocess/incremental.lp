@@ -37,9 +37,13 @@ table_column((C,@dotpath(X)),@join(X,P)) :- table(C,X), coom_combinations(C,_,P)
 
 % incremental sets: a set is incremental if:
 % - there is a path from an unbounded object to the set
-% - limit to only sets used in functions or as part of a table
+% - limit to only sets used in:
+%   a function,
 inc_set(P) :- function(_,_,P),   path_step(P,X), inc_obj(X).
+%   or as part of a table,
 inc_set(P) :- table_column(_,P), path_step(P,X), inc_obj(X).
+%   or in an association
+inc_set(P) :- replace(_,((_,X),_)), set(P,X), inc_obj(X).
 
 #show inc_set/1.
 
@@ -48,6 +52,8 @@ inc_set(P) :- table_column(_,P), path_step(P,X), inc_obj(X).
 incremental("function",  X,P,(X,F,P))            :- function(X,F,P),              inc_set(P).
 % - base case: table constraints over incremental sets are incremental
 incremental("constraint",X,P,((ID,X),"table"))   :- table_column((ID,X),P),       inc_set(P).
+% - base case: association with an unbounded object
+incremental("association",A,P,(X,T,L,U)) :- replace((A,B),((X,Y),I)), set(P,Y), inc_set(P), association(X,T,L,U).
 % - recursive: if a sub-expression of X is incremental, then X is also incremental
 % incremental("function",  X,P,(X,F,Y))            :- function(X,F,Y),              incremental(_,Y ,P,_).
 incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,L ,P,_).
