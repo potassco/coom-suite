@@ -94,7 +94,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         self._processed_facts.update(self._new_processed_facts)
 
         # preprocess with bound
-        facts = set(preprocess(self._serialized_facts, max_bound=bound, discrete=True, multishot=True))
+        facts = set(preprocess(self._serialized_facts, max_bound=bound, multishot=True))
 
         # split facts into incremental and non-incremental facts
         incremental_facts = set()

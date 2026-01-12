@@ -9,4 +9,4 @@ coom_require(0,"sum(b)>1").
 coom_binary("sum(b)>1","sum(b)",">","1").
 coom_function("A","sum(b)","sum","b").
 coom_path("b",0,"b").
-coom_number("1",1).
+coom_constant("1",int).

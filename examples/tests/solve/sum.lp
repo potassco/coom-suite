@@ -13,6 +13,6 @@ binary("sum(root.x)=3","sum(root.x)","=","3").
 function("sum(root.x)","sum","root.x").
 set("root.x","root.x[0]").
 set("root.x","root.x[1]").
-number("3",3).
+constant(("3",3),int).
 
 constraint(("root.x",2),"lowerbound").

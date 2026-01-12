@@ -42,11 +42,10 @@ path_start(X,P) :- coom_unary(F,_,P),        coom_path(P,0,_), type_aux(X,Ctx), 
 path_start(X,P) :- coom_combinations(C,_,P), coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
 path_start(X,P) :- coom_function(Ctx,_,_,P), coom_path(P,0,_), type_aux(X,Ctx).
 path_start(X,P) :- coom_imply(C,P,_),        coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
-path_start(X,P) :- coom_exists(C,P,_),       coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
+% path_start(X,P) :- coom_exists(C,P,_),       coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
 path_start(X,P) :- coom_alldiff(C,P),        coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
 path_start(X,P) :- coom_minimize(C,_,P),     coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
 path_start(X,P) :- coom_maximize(C,_,P),     coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
-
 
 % Determine all ground paths
 path_to(X,P,0,X)  :- path_start(X,P), not coom_path(P,0,"root").
@@ -57,30 +56,14 @@ path_to(X,P,I+1,X'') :- coom_path(P,I,N),          path_to(X,P,I,X'), type_aux(X
 path_to(X,P,I+1,X'') :- coom_path(P,I,"next"),     path_to(X,P,I,X'), type_aux(X'',_), X' = (N,(Parent,Idx)), X'' =(N,(Parent,Idx+1)).
 path_to(X,P,I+1,X'') :- coom_path(P,I,"previous"), path_to(X,P,I,X'), type_aux(X'',_), X' = (N,(Parent,Idx)), X'' =(N,(Parent,Idx-1)).
 
-% path_to_aux(X,P,X') :- not coom_path(P,I,_), path_to(X,P,I,X').
 path_to(X,P,@dotpath(X')) :- not coom_path(P,I,_), path_to(X,P,I,X').
 
-% path_to(X,P,0,X')  :- coom_path(P,0,N),
-%                       path_start(X,P),     type_aux(X',_),  X' =(N,(X,_)).
-% path_to(X,P,1,X')  :- coom_path(P,0,"root"), coom_path(P,1,N),
-%                       path_start(X,P),     type_aux(X',_),  X' =(N,((),_)).
-
-
-% path_to(X,P,I,X'') :- coom_path(P,I,N),
-%                       path_to(X,P,I-1,X'), type_aux(X'',_), X''=(N,(X',_)).
-
-% path_to(X,P,@dotpath(X')) :- not coom_path(P,I+1,_), path_to(X,P,I,X').
 
 % Constants and numbers
-path_to(X,P,P) :- coom_binary(F,_,_,P), coom_constant(P), formula_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_binary(F,P,_,_), coom_constant(P), formula_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_unary(F,_,P),    coom_constant(P), formula_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_imply(C,_,P),    coom_constant(P), coom_context(C,T),    type_aux(X,T).
-path_to(X,P,P) :- coom_binary(F,_,_,P), coom_number(P,_), formula_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_binary(F,P,_,_), coom_number(P,_), formula_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_unary(F,_,P),    coom_number(P,_), formula_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_imply(C,_,P),    coom_number(P,_), coom_context(C,T),    type_aux(X,T).
-
+path_to(X,P,P) :- coom_binary(F,_,_,P), coom_constant(P,_), formula_context(F,T), type_aux(X,T).
+path_to(X,P,P) :- coom_binary(F,P,_,_), coom_constant(P,_), formula_context(F,T), type_aux(X,T).
+path_to(X,P,P) :- coom_unary(F,_,P),    coom_constant(P,_), formula_context(F,T), type_aux(X,T).
+path_to(X,P,P) :- coom_imply(C,_,P),    coom_constant(P,_), coom_context(C,T),    type_aux(X,T).
 
 % Instantiate binaries and unaries
 binary(X,F,@binary(XL,Op,XR),XL,Op,XR) :- coom_binary(F,L,Op,R),
@@ -107,9 +90,6 @@ ground_formula(X,F,XR) :- coom_binary(F,L,"+",R),
 
 % Instantiate functions
 function(X,F,T,P) :- coom_function(C,F,T,P), type_aux(X,C).
-
-% Instantiate alldiff constraints
-alldiff(X,P) :- coom_alldiff(C,P), coom_context(C,Ctx), type_aux(X,Ctx).
 
 % Auxiliary paths for formulas and functions
 path_to(X,F,G) :- ground_formula(X,F,G).
@@ -156,6 +136,13 @@ in_tuple(CT,X)          :- in_tuple(CT,_,X).
 imply((C,X),X',G)                  :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), ground_formula(X,F,G).
 imply((C,X),X',@aggregate(T,X,P')) :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), function(X,F,T,P').
 imply((C,X),X',G)                  :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), path_to(X,F,G), not ground_formula(X,F,G). % TODO: Check if this is enough if there are aggreagates
+
+
+% Instantiate alldiff constraints
+alldiff(X,P) :- coom_alldiff(C,P), coom_context(C,Ctx), type_aux(X,Ctx).
+
+% % Instantiate exists constraints
+% exists(X,N,P) :- coom_exists(C,N,P), coom_context(C,Ctx), type_aux(X,Ctx).
 
 % Instantiate attribute constraints
 attribute_constraint((T,@dotpath(X)))  :- coom_attribute(T,_,_), type_aux(X,T).

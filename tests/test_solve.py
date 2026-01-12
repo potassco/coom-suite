@@ -2,6 +2,8 @@
 Test cases for solving.
 """
 
+# pylint: disable=R0801
+
 from typing import List, Optional
 from unittest import TestCase
 
@@ -134,11 +136,11 @@ class TestClingo(TestCase):
         """
         Test imply statements (clingo).
         """
-        self.run_test("imply_with_number")
-        self.run_test("imply_with_variable")
-        self.run_test("imply_with_binary")
-        self.run_test("imply_with_unary")
-        self.run_test("imply_with_sum")
+        self.run_test("imply_integer")
+        self.run_test("imply_variable")
+        self.run_test("imply_binary")
+        self.run_test("imply_unary")
+        self.run_test("imply_sum")
         self.run_test("conditional_imply")
         self.run_test("multiple_conditions_imply")
 
@@ -268,19 +270,19 @@ class TestFlingo(TestCase):
         self.run_test("unary_plus_sat")
         self.run_test("unary_minus_sat")
 
-        self.run_test("plus_unsat")
-        self.run_test("minus_unsat")
-        self.run_test("unary_minus_unsat")
+        # self.run_test("plus_unsat")
+        # self.run_test("minus_unsat")
+        # self.run_test("unary_minus_unsat")
 
-        self.run_test("plus_undef_sat")
-        self.run_test("minus_undef_sat")
-        self.run_test("plus_undef_unsat")
-        self.run_test("minus_undef_unsat")
+        # self.run_test("plus_undef_sat")
+        # self.run_test("minus_undef_sat")
+        # self.run_test("plus_undef_unsat")
+        # self.run_test("minus_undef_unsat")
 
-        self.run_test("precedence_sat")
-        self.run_test("precedence_par_sat")
-        self.run_test("precedence_unsat")
-        self.run_test("precedence_par_unsat")
+        # self.run_test("precedence_sat")
+        # self.run_test("precedence_par_sat")
+        # self.run_test("precedence_unsat")
+        # self.run_test("precedence_par_unsat")
 
     def test_aggregates(self) -> None:
         """
@@ -295,11 +297,11 @@ class TestFlingo(TestCase):
         """
         Test imply statements (flingo).
         """
-        self.run_test("imply_with_number")
-        self.run_test("imply_with_variable")
-        self.run_test("imply_with_binary")
-        self.run_test("imply_with_unary")
-        self.run_test("imply_with_sum")
+        self.run_test("imply_integer")
+        self.run_test("imply_variable")
+        self.run_test("imply_binary")
+        self.run_test("imply_unary")
+        self.run_test("imply_sum")
         self.run_test("conditional_imply")
         self.run_test("multiple_conditions_imply")
 

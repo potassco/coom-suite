@@ -481,7 +481,7 @@ class TestMultiApplication(TestCase):
                 app._preprocess_new_bound(bound)
 
                 # check arguments of call to preprocess
-                self.assertEqual(mock_preprocess.call_args, call([], max_bound=bound, discrete=True, multishot=True))
+                self.assertEqual(mock_preprocess.call_args, call([], max_bound=bound, multishot=True))
                 # check _processed_facts
                 self.assertEqual(app._processed_facts, expected_processed)
                 # check _new_processed_facts

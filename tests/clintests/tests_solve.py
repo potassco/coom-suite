@@ -87,91 +87,91 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
         "program": """
             constraint((0,"10=10"),"boolean").
             binary("10=10","10","=","10").
-            number("10",10).""",
+            constant(("10",10),int).""",
     },
     "neq_sat": {
         "test": TEST_EMPTY,
         "program": """
             constraint((0,"10!=11"),"boolean").
             binary("10!=11","10","!=","11").
-            number("10",10).
-            number("11",11).""",
+            constant(("10",10),int).
+            constant(("11",11),int).""",
     },
     "le_sat": {
         "test": TEST_EMPTY,
         "program": """
             constraint((0,"9<10"),"boolean").
             binary("9<10","9","<","10").
-            number("9",9).
-            number("10",10).""",
+            constant(("9",9),int).
+            constant(("10",10),int).""",
     },
     "leq_sat": {
         "test": TEST_EMPTY,
         "program": """
             constraint((0,"10<=10"),"boolean").
             binary("10<=10","10","<=","10").
-            number("10",10).""",
+            constant(("10",10),int).""",
     },
     "ge_sat": {
         "test": TEST_EMPTY,
         "program": """
             constraint((0,"12>10"),"boolean").
             binary("12>10","12",">","10").
-            number("10",10).
-            number("12",12).""",
+            constant(("10",10),int).
+            constant(("12",12),int).""",
     },
     "geq_sat": {
         "test": TEST_EMPTY,
         "program": """
             constraint((0,"10>=8"),"boolean").
             binary("10>=8","10",">=","8").
-            number("10",10).
-            number("8",8).""",
+            constant(("10",10),int).
+            constant(("8",8),int).""",
     },
     "eq_unsat": {
         "test": TEST_UNSAT,
         "program": """
             constraint((0,"10=11"),"boolean").
             binary("10=11","10","=","11").
-            number("10",10).
-            number("11",11).""",
+            constant(("10",10),int).
+            constant(("11",11),int).""",
     },
     "neq_unsat": {
         "test": TEST_UNSAT,
         "program": """
             constraint((0,"10!=10"),"boolean").
             binary("10!=10","10","!=","10").
-            number("10",10).""",
+            constant(("10",10),int).""",
     },
     "le_unsat": {
         "test": TEST_UNSAT,
         "program": """
             constraint((0,"10<10"),"boolean").
             binary("10<10","10","<","10").
-            number("10",10).""",
+            constant(("10",10),int).""",
     },
     "leq_unsat": {
         "test": TEST_UNSAT,
         "program": """
             constraint((0,"11<=10"),"boolean").
             binary("11<=10","11","<=","10").
-            number("10",10).
-            number("11",11).""",
+            constant(("10",10),int).
+            constant(("11",11),int).""",
     },
     "ge_unsat": {
         "test": TEST_UNSAT,
         "program": """
             constraint((0,"10>10"),"boolean").
             binary("10>10","10",">","10").
-            number("10",10).""",
+            constant(("10",10),int).""",
     },
     "geq_unsat": {
         "test": TEST_UNSAT,
         "program": """
             constraint((0,"10>=11"),"boolean").
             binary("10>=11","10",">=","11").
-            number("10",10).
-            number("11",11).""",
+            constant(("10",10),int).
+            constant(("11",11),int).""",
     },
     "neg_sat": {
         "test": TEST_EMPTY,
@@ -179,8 +179,8 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constraint((0,"!10=11"),"boolean").
             unary("!10=11","!","10=11").
             binary("10=11","10","=","11").
-            number("10",10).
-            number("11",11).""",
+            constant(("10",10),int).
+            constant(("11",11),int).""",
     },
     "par_sat": {
         "test": TEST_EMPTY,
@@ -188,7 +188,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constraint((0,"(10=10)"),"boolean").
             unary("(10=10)","()","10=10").
             binary("10=10","10","=","10").
-            number("10",10).""",
+            constant(("10",10),int).""",
     },
     "or_sat": {
         "test": TEST_EMPTY,
@@ -197,8 +197,8 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             binary("10=11||10=10","10=11","||","10=10").
             binary("10=11","10","=","11").
             binary("10=10","10","=","10").
-            number("10",10).
-            number("11",11).""",
+            constant(("10",10),int).
+            constant(("11",11),int).""",
     },
     "and_sat": {
         "test": TEST_EMPTY,
@@ -207,8 +207,8 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             binary("11=11&&10=10","11=11","&&","10=10").
             binary("11=11","11","=","11").
             binary("10=10","10","=","10").
-            number("10",10).
-            number("11",11).""",
+            constant(("10",10),int).
+            constant(("11",11),int).""",
     },
     "par_unsat": {
         "test": TEST_UNSAT,
@@ -216,8 +216,8 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constraint((0,"(10=11)"),"boolean").
             unary("(10=11)","()","10=11").
             binary("10=11","10","=","11").
-            number("10",10).
-            number("11",11).""",
+            constant(("10",10),int).
+            constant(("11",11),int).""",
     },
     "neg_unsat": {
         "test": TEST_UNSAT,
@@ -225,7 +225,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constraint((0,"!10=10"),"boolean").
             unary("!10=10","!","10=10").
             binary("10=10","10","=","10").
-            number("10",10).""",
+            constant(("10",10),int).""",
     },
     "or_unsat": {
         "test": TEST_UNSAT,
@@ -234,9 +234,9 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             binary("10=11||10=9","10=11","||","10=9").
             binary("10=11","10","=","11").
             binary("10=9","10","=","9").
-            number("9",9).
-            number("10",10).
-            number("11",11).""",
+            constant("9",int).
+            constant(("10",10),int).
+            constant(("11",11),int).""",
     },
     "and_unsat": {
         "test": TEST_UNSAT,
@@ -245,15 +245,15 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             binary("10=11&&10=10","10=11","&&","10=10").
             binary("10=11","10","=","11").
             binary("10=10","10","=","10").
-            number("10",10).
-            number("11",11).""",
+            constant(("10",10),int).
+            constant(("11",11),int).""",
     },
     "binary_undef": {
         "test": TEST_EMPTY,
         "program": """
             constraint((0,"x=5"),"boolean").
             binary("x=5","x","=","5").
-            number("5",5).""",
+            constant(("5",5),int).""",
     },
     "unary_undef": {
         "test": TEST_EMPTY,
@@ -382,8 +382,8 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constraint((0,"10=5+5"),"boolean").
             binary("10=5+5","10","=","5+5").
             binary("5+5","5","+","5").
-            number("5",5).
-            number("10",10).""",
+            constant(("5",5),int).
+            constant(("10",10),int).""",
     },
     "minus_sat": {
         "test": TEST_EMPTY,
@@ -391,8 +391,8 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constraint((0,"5=10-5"),"boolean").
             binary("5=10-5","5","=","10-5").
             binary("10-5","10","-","5").
-            number("5",5).
-            number("10",10).""",
+            constant(("5",5),int).
+            constant(("10",10),int).""",
     },
     "mult_sat": {
         "test": TEST_EMPTY,
@@ -400,8 +400,8 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constraint((0,"4=2*2"),"boolean").
             binary("4=2*2","4","=","2*2").
             binary("2*2","2","*","2").
-            number("2",2).
-            number("4",4).""",
+            constant(("2",2),int).
+            constant(("4",4),int).""",
     },
     "unary_plus_sat": {
         "test": TEST_EMPTY,
@@ -409,7 +409,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constraint((0,"+2=2"),"boolean").
             binary("+2=2","+2","=","2").
             unary("+2","+","2").
-            number("2",2).""",
+            constant(("2",2),int).""",
     },
     "unary_minus_sat": {
         "test": TEST_EMPTY,
@@ -418,8 +418,8 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             binary("-2=0-2","-2","=","0-2").
             binary("0-2","0","-","2").
             unary("-2","-","2").
-            number("0",0).
-            number("2",2).""",
+            constant(("0",0),int).
+            constant(("2",2),int).""",
     },
     "plus_unsat": {
         "test": TEST_UNSAT,
@@ -427,8 +427,8 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constraint((0,"11=5+5"),"boolean").
             binary("11=5+5","11","=","5+5").
             binary("5+5","5","+","5").
-            number("5",5).
-            number("11",11).""",
+            constant(("5",5),int).
+            constant(("11",11),int).""",
     },
     "minus_unsat": {
         "test": TEST_UNSAT,
@@ -436,8 +436,8 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constraint((0,"5=11-5"),"boolean").
             binary("5=11-5","5","=","11-5").
             binary("11-5","11","-","5").
-            number("5",5).
-            number("11",11).""",
+            constant(("5",5),int).
+            constant(("11",11),int).""",
     },
     "mult_unsat": {
         "test": TEST_UNSAT,
@@ -445,8 +445,8 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constraint((0,"5=2*2"),"boolean").
             binary("5=2*2","5","=","2*2").
             binary("2*2","2","*","2").
-            number("2",2).
-            number("5",5).""",
+            constant(("2",2),int).
+            constant(("5",5),int).""",
     },
     "unary_minus_unsat": {
         "test": TEST_UNSAT,
@@ -455,8 +455,8 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             binary("-2=1-2","-2","=","1-2").
             binary("1-2","1","-","2").
             unary("-2","-","2").
-            number("1",1).
-            number("2",2).""",
+            constant(("1",1),int).
+            constant(("2",2),int).""",
     },
     "plus_undef_sat": {
         "test": TEST_EMPTY,
@@ -464,7 +464,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constraint((0,"2=2+x"),"boolean").
             binary("2=2+x","2","=","2+x").
             binary("2+x","2","+","x").
-            number("2",2).""",
+            constant(("2",2),int).""",
     },
     "minus_undef_sat": {
         "test": TEST_EMPTY,
@@ -472,7 +472,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constraint((0,"2=2-x"),"boolean").
             binary("2=2-x","2","=","2-x").
             binary("2-x","2","-","x").
-            number("2",2).""",
+            constant(("2",2),int).""",
     },
     "plus_undef_unsat": {
         "test": TEST_UNSAT,
@@ -480,8 +480,8 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constraint((0,"4=2+x"),"boolean").
             binary("4=2+x","4","=","2+x").
             binary("2+x","2","+","x").
-            number("2",2).
-            number("4",4).""",
+            constant(("2",2),int).
+            constant(("4",4),int).""",
     },
     "minus_undef_unsat": {
         "test": TEST_UNSAT,
@@ -489,8 +489,8 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constraint((0,"4=2-x"),"boolean").
             binary("4=2-x","4","=","2-x").
             binary("2-x","2","-","x").
-            number("2",2).
-            number("4",4).""",
+            constant(("2",2),int).
+            constant(("4",4),int).""",
     },
     "precedence_sat": {
         "test": TEST_EMPTY,
@@ -499,8 +499,8 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             binary("2*2+2=6","2*2+2","=","6").
             binary("2*2+2","2*2","+","2").
             binary("2*2","2","*","2").
-            number("2",2).
-            number("6",6).""",
+            constant(("2",2),int).
+            constant(("6",6),int).""",
     },
     "precedence_par_sat": {
         "test": TEST_EMPTY,
@@ -510,8 +510,8 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             binary("2*(2+2)","2","*","(2+2)").
             unary("(2+2)","()","2+2").
             binary("2+2","2","+","2").
-            number("2",2).
-            number("8",8).""",
+            constant(("2",2),int).
+            constant(("8",8),int).""",
     },
     "precedence_unsat": {
         "test": TEST_UNSAT,
@@ -520,8 +520,8 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             binary("2*2+2=8","2*2+2","=","8").
             binary("2*2+2","2*2","+","2").
             binary("2*2","2","*","2").
-            number("2",2).
-            number("8",8).""",
+            constant(("2",2),int).
+            constant(("8",8),int).""",
     },
     "precedence_par_unsat": {
         "test": TEST_UNSAT,
@@ -531,8 +531,8 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             binary("2*(2+2)","2","*","(2+2)").
             unary("(2+2)","()","2+2").
             binary("2+2","2","+","2").
-            number("2",2).
-            number("6",6).""",
+            constant(("2",2),int).
+            constant(("6",6),int).""",
     },
     "count": {
         "test": StableModels({'include("root.x[0]")', 'include("root.x[1]")'}),
@@ -556,42 +556,42 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
         "test": StableModels({'value("root.x[0]",3)', 'value("root.x[1]",3)'}),
         "files": ["max.lp"],
     },
-    "imply_with_number": {
+    "imply_integer": {
         "test": StableModels({'value("root.wheel[0]","W27")', 'value("root.wheel[0].size[0]",27)'}),
-        "files": ["imply_with_number.lp"],
+        "files": ["imply_integer.lp"],
     },
-    "imply_with_variable": {
+    "imply_variable": {
         "test": StableModels(
             {'value("root.a[0]",1)', 'value("root.b[0]",1)'},
             {'value("root.a[0]",2)', 'value("root.b[0]",2)'},
             {'value("root.a[0]",3)', 'value("root.b[0]",3)'},
         ),
-        "files": ["imply_with_variable.lp"],
+        "files": ["imply_variable.lp"],
     },
-    "imply_with_binary": {
+    "imply_binary": {
         "test": StableModels(
             {'value("root.a[0]",4)', 'value("root.b[0]",1)'},
             {'value("root.a[0]",5)', 'value("root.b[0]",2)'},
             {'value("root.a[0]",6)', 'value("root.b[0]",3)'},
         ),
-        "files": ["imply_with_binary.lp"],
+        "files": ["imply_binary.lp"],
     },
-    "imply_with_unary": {
+    "imply_unary": {
         "test": StableModels(
             {'value("root.a[0]",-1)', 'value("root.b[0]",1)'},
             {'value("root.a[0]",-2)', 'value("root.b[0]",2)'},
             {'value("root.a[0]",-3)', 'value("root.b[0]",3)'},
         ),
-        "files": ["imply_with_unary.lp"],
+        "files": ["imply_unary.lp"],
     },
-    "imply_with_sum": {
+    "imply_sum": {
         "test": StableModels(
             {'value("root.a[0]",2)', 'value("root.b[0]",1)', 'value("root.b[1]",1)'},
             {'value("root.a[0]",3)', 'value("root.b[0]",2)', 'value("root.b[1]",1)'},
             {'value("root.a[0]",3)', 'value("root.b[0]",1)', 'value("root.b[1]",2)'},
             {'value("root.a[0]",4)', 'value("root.b[0]",2)', 'value("root.b[1]",2)'},
         ),
-        "files": ["imply_with_sum.lp"],
+        "files": ["imply_sum.lp"],
     },
     "conditional_imply": {
         "test": StableModels(

@@ -188,21 +188,21 @@ behavior {
 behavior Module {
     explanation "Only modules from the chosen specialization can be taken."
     condition specialization_group = b || specialization_group = ba
-    exists s in root.specialization { s = Bioinformatics }
+    exists s in root.specialization { require s = Bioinformatics }
 
     explanation "Only modules from the chosen specialization can be taken."
     condition specialization_group = c || specialization_group = ca
-    exists s in root.specialization { s = Chemistry }
+    exists s in root.specialization { require s = Chemistry }
 
     explanation "Only modules from the chosen specialization can be taken."
     condition specialization_group = ge || specialization_group = gea
-    exists s in root.specialization { s = Geoscience }
+    exists s in root.specialization { require s = Geoscience }
 
     explanation "Only modules from the chosen specialization can be taken."
     condition specialization_group = k || specialization_group = ka
-    exists s in root.specialization { s = CognitiveScience }
+    exists s in root.specialization { require s = CognitiveScience }
 
     explanation "Only modules from the chosen specialization can be taken."
     condition specialization_group = p || specialization_group = pa
-    exists s in root.specialization { s = Physics }
+    exists s in root.specialization { require s = Physics }
 }

@@ -13,4 +13,4 @@ coom_context(0,"product").
 coom_imply(0,"wheel.size","27").
 coom_path("wheel.size",0,"wheel").
 coom_path("wheel.size",1,"size").
-coom_number("27",27).
+coom_constant("27",int).

@@ -64,7 +64,7 @@ set("root.requestedVolume","root.requestedVolume[0]").
 set("root.color","root.color[0]").
 part("product").
 part("Bag").
-constant("Blue").
-constant("Green").
-number("5",5).
-number("2",2).
+constant("Blue",str).
+constant("Green",str).
+constant(("5",5),int).
+constant(("2",2),int).

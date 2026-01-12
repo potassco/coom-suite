@@ -13,6 +13,6 @@ binary("max(root.x)=3","max(root.x)","=","3").
 function("max(root.x)","max","root.x").
 set("root.x","root.x[0]").
 set("root.x","root.x[1]").
-number("3",3).
+constant(("3",3),int).
 
 constraint(("root.x",2),"lowerbound").

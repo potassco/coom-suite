@@ -46,7 +46,7 @@ local_constraint(C,@dotpath(X),G) :- coom_require(C,F), ground_formula(X,F,G), n
 function(@unary(X,"count"),"count",X)     :- local_constraint(C,X,G).
 set(X,X)                                  :- local_constraint(_,X,_).
 binary(@binary(Fun,"=","1"),Fun,"=","1")  :- local_constraint(_,X,_), function(Fun,"count",X).
-number("1",1)                             :- local_constraint(_,_,_).
+constant(("1",1),int)                     :- local_constraint(_,_,_).
 conditional_requirement(C,Con,G)          :- local_constraint(C,X,G), function(Fun,"count",X), binary(Con,Fun,"=","1").
 
 
@@ -92,7 +92,6 @@ binary(G,L,"&&",R)              :- conditions(C,_,_), conditions_binary(C,_,G,L,
 #show imply/2.
 #show condition/2.
 
-
 % Alldiff constraints
 constraint(@join(X,P),"alldiff") :- alldiff(X,P).
 set(@join(X,P),X')               :- alldiff(X,P), path_to(X,P,X').
@@ -113,11 +112,10 @@ set(@join(X,N),X')                        :- cardinality_aux(X,N,_), path_to(X,N
 #show part/1.
 
 % Constants and numbers
-constant(C) :- coom_constant(C).
-number(C,N) :- coom_number(C,N).
+constant(C,CT)               :- coom_constant(C,CT), CT = (str;bool;float).
+constant((C,@number(C)),int) :- coom_constant(C,int).
 
-#show constant/1.
-#show number/2.
+#show constant/2.
 
 % Optimization
 minimize(X',V) :- coom_minimize(C,V,P), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X').

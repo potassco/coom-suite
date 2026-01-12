@@ -5,6 +5,7 @@
 &sum{X} = X    :- include(X), type(X,T), numeric(T,int), not range(T,_,_).
 
 % Discrete integers
-% TODO: Better way?
 { discrete_aux(X,V) : domain(T,V) } = 1  :- include(X), type(X,T), discrete(T,int).
 &sum{V} = X :- discrete_aux(X,V).
+% TODO: Better way?
+%  &sum{ V :: domain(T,V) } = X :- include(X), type(X,T), discrete(T,int).

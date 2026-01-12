@@ -14,4 +14,4 @@ coom_require(0,"wheel.size=W28").
 coom_binary("wheel.size=W28","wheel.size","=","W28").
 coom_path("wheel.size",0,"wheel").
 coom_path("wheel.size",1,"size").
-coom_constant("W28").
+coom_constant("W28",str).

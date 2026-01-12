@@ -9,5 +9,7 @@ enumeration Module {
 }
 
 behavior {
-     exists m in modules { require m = Thesis }
+    alldiff modules
+
+    exists m in modules { require m = Thesis }
 }

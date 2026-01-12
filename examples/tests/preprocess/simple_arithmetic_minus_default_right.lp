@@ -9,4 +9,4 @@ coom_binary("a-b=2","a-b","=","2").
 coom_binary("a-b","a","-","b").
 coom_path("a",0,"a").
 coom_path("b",0,"b").
-coom_number("2",2).
+coom_constant("2",int).

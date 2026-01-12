@@ -12,4 +12,4 @@ coom_context(0,"Bag").
 coom_require(0,"color=Red").
 coom_binary("color=Red","color","=","Red").
 coom_path("color",0,"color").
-coom_constant("Red").
+coom_constant("Red",str).

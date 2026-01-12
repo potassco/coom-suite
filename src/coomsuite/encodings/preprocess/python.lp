@@ -1,6 +1,6 @@
 % Python helper functions
 #script (python)
-from clingo import String, SymbolType
+from clingo import Number,String, SymbolType
 import math
 
 def dotpath(path):
@@ -45,4 +45,7 @@ def aggregate(f,c,p):
 
 def implication(a,b):
     return String(f'{unary(a,String("!")).string}||{b.string}')
+
+def number(s):
+    return Number(int(s.string))
 #end.

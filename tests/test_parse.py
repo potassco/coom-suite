@@ -247,7 +247,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"color=Red").',
                 'binary("color=Red","color","=","Red").',
                 'path("color",0,"color").',
-                'constant("Red").',
+                'constant("Red",str).',
             ],
         )
         self.assertEqual(
@@ -258,7 +258,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"hasBell=True").',
                 'binary("hasBell=True","hasBell","=","True").',
                 'path("hasBell",0,"hasBell").',
-                'constant("True").',
+                'constant("True",bool).',
             ],
         )
 
@@ -369,7 +369,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"c>5").',
                 'binary("c>5","c",">","5").',
                 'path("c",0,"c").',
-                'number("5",5).',
+                'constant("5",int).',
             ],
         )
         self.assertEqual(
@@ -380,11 +380,11 @@ class TestCOOMModelParser(TestCase):
                 'condition(0,0,"wheelSupport=False").',
                 'binary("wheelSupport=False","wheelSupport","=","False").',
                 'path("wheelSupport",0,"wheelSupport").',
-                'constant("False").',
+                'constant("False",bool).',
                 'require(0,"c>5").',
                 'binary("c>5","c",">","5").',
                 'path("c",0,"c").',
-                'number("5",5).',
+                'constant("5",int).',
             ],
         )
 
@@ -396,15 +396,15 @@ class TestCOOMModelParser(TestCase):
                 'condition(0,0,"a=2").',
                 'binary("a=2","a","=","2").',
                 'path("a",0,"a").',
-                'number("2",2).',
+                'constant("2",int).',
                 'condition(0,1,"b=1").',
                 'binary("b=1","b","=","1").',
                 'path("b",0,"b").',
-                'number("1",1).',
+                'constant("1",int).',
                 'require(0,"c>5").',
                 'binary("c>5","c",">","5").',
                 'path("c",0,"c").',
-                'number("5",5).',
+                'constant("5",int).',
             ],
         )
 
@@ -913,7 +913,7 @@ class TestCOOMModelParser(TestCase):
                 'binary("x=sin(5)","x","=","sin(5)").',
                 'path("x",0,"x").',
                 'unary("sin(5)","sin","5").',
-                'number("5",5).',
+                'constant("5",int).',
             ],
         )
 
@@ -926,7 +926,7 @@ class TestCOOMModelParser(TestCase):
                 'binary("x=asin(5)","x","=","asin(5)").',
                 'path("x",0,"x").',
                 'unary("asin(5)","asin","5").',
-                'number("5",5).',
+                'constant("5",int).',
             ],
         )
 
@@ -939,7 +939,7 @@ class TestCOOMModelParser(TestCase):
                 'binary("x=cos(5)","x","=","cos(5)").',
                 'path("x",0,"x").',
                 'unary("cos(5)","cos","5").',
-                'number("5",5).',
+                'constant("5",int).',
             ],
         )
 
@@ -952,7 +952,7 @@ class TestCOOMModelParser(TestCase):
                 'binary("x=acos(5)","x","=","acos(5)").',
                 'path("x",0,"x").',
                 'unary("acos(5)","acos","5").',
-                'number("5",5).',
+                'constant("5",int).',
             ],
         )
 
@@ -965,7 +965,7 @@ class TestCOOMModelParser(TestCase):
                 'binary("x=cosh(5)","x","=","cosh(5)").',
                 'path("x",0,"x").',
                 'unary("cosh(5)","cosh","5").',
-                'number("5",5).',
+                'constant("5",int).',
             ],
         )
 
@@ -978,7 +978,7 @@ class TestCOOMModelParser(TestCase):
                 'binary("x=tan(5)","x","=","tan(5)").',
                 'path("x",0,"x").',
                 'unary("tan(5)","tan","5").',
-                'number("5",5).',
+                'constant("5",int).',
             ],
         )
 
@@ -991,7 +991,7 @@ class TestCOOMModelParser(TestCase):
                 'binary("x=atan(5)","x","=","atan(5)").',
                 'path("x",0,"x").',
                 'unary("atan(5)","atan","5").',
-                'number("5",5).',
+                'constant("5",int).',
             ],
         )
 
@@ -1004,7 +1004,7 @@ class TestCOOMModelParser(TestCase):
                 'binary("x=tanh(5)","x","=","tanh(5)").',
                 'path("x",0,"x").',
                 'unary("tanh(5)","tanh","5").',
-                'number("5",5).',
+                'constant("5",int).',
             ],
         )
 

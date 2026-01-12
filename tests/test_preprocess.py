@@ -2,6 +2,7 @@
 Test cases for preprocessing the serialized fact format.
 """
 
+# pylint: disable=R0801
 from typing import Any
 from unittest import TestCase
 
@@ -45,9 +46,9 @@ class TestPreprocess(TestCase):
         Test preprocessing COOM require constraints.
         """
         self.run_test("require_undef")
-        self.run_test("require_with_number")
-        self.run_test("require_with_number_ge")
-        self.run_test("require_with_constant")
+        self.run_test("require_with_integer")
+        self.run_test("require_with_integer_ge")
+        self.run_test("require_with_string")
         self.run_test("require_two_wheels")
         self.run_test("conditional_require_undef")
         self.run_test("conditional_require")
@@ -126,8 +127,8 @@ class TestPreprocess(TestCase):
         """
         Test preprocessing COOM user input.
         """
-        self.run_test("set_constant")
-        self.run_test("set_number")
+        self.run_test("set_string")
+        self.run_test("set_integer")
         self.run_test("add")
 
     def test_unbounded_cardinalities(self) -> None:

@@ -21,7 +21,7 @@ condition((1,"root.option[0]"),"root.color[0]=Blue").
 set("root.color","root.color[0]").
 set("root.option","root.option[0]").
 part("product").
-constant("Red").
-constant("Blue").
-number("1",1).
-number("2",2).
+constant("Red",str).
+constant("Blue",str).
+constant(("1",1),int).
+constant(("2",2),int).

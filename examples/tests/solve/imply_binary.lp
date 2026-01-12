@@ -3,7 +3,7 @@ constraint(("root.a",1),"lowerbound").
 constraint(("root.b",1),"lowerbound").
 imply((0,"root.a[0]"),"root.b[0]+3").
 binary("root.b[0]+3","root.b[0]","+","3").
-number("3",3).
+constant(("3",3),int).
 index("root.a[0]",0).
 index("root.b[0]",0).
 numeric("product.a",int).

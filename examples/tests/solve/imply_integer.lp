@@ -11,7 +11,7 @@ domain("Wheel","W28").
 imply((0,"root.wheel[0].size[0]"),"27").
 index("root.wheel[0]",0).
 index("root.wheel[0].size[0]",0).
-number("27",27).
+constant(("27",27),int).
 parent("root.wheel[0]","root").
 parent("root.wheel[0].size[0]","root.wheel[0]").
 set("root.wheel","root.wheel[0]").

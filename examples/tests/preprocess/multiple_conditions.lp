@@ -20,12 +20,12 @@ coom_context(0,"product").
 coom_condition(0,0,"size=Small").
 coom_binary("size=Small","size","=","Small").
 coom_path("size",0,"size").
-coom_constant("Small").
+coom_constant("Small",str).
 coom_condition(0,1,"material=Cotton").
 coom_binary("material=Cotton","material","=","Cotton").
 coom_path("material",0,"material").
-coom_constant("Cotton").
+coom_constant("Cotton",str).
 coom_require(0,"color=Red").
 coom_binary("color=Red","color","=","Red").
 coom_path("color",0,"color").
-coom_constant("Red").
+coom_constant("Red",str).

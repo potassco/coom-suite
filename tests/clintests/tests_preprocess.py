@@ -189,7 +189,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_attribute_value("Wheel","W14","size",14).""",
     },
     "require_undef": {
-        "test": StableModels({'constant("Silver")', 'part("product")', 'type("root","product")'}),
+        "test": StableModels({'constant("Silver",str)', 'part("product")', 'type("root","product")'}),
         "program": """
             coom_structure("product").
 
@@ -197,9 +197,9 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_require(("product",0),"color=Silver").
             coom_binary("color=Silver","color","=","Silver").
             coom_path("color",0,"color").
-            coom_constant("Silver").""",
+            coom_constant("Silver",str).""",
     },
-    "require_with_number": {
+    "require_with_integer": {
         "test": StableModels(
             {
                 'discrete("Wheel",str)',
@@ -215,7 +215,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'domain("Wheel.size",28)',
                 'index("root.wheel[0]",0)',
                 'index("root.wheel[0].size[0]",0)',
-                'number("27",27)',
+                'constant(("27",27),int)',
                 'parent("root.wheel[0]","root")',
                 'parent("root.wheel[0].size[0]","root.wheel[0]")',
                 'set("root.wheel","root.wheel[0]")',
@@ -232,9 +232,9 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'column(("Wheel","root.wheel[0]"),0,0,"root.wheel[0]")',
             }
         ),
-        "files": ["require_with_number.lp"],
+        "files": ["require_with_integer.lp"],
     },
-    "require_with_number_ge": {
+    "require_with_integer_ge": {
         "test": StableModels(
             {
                 'discrete("Wheel",str)',
@@ -250,7 +250,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'domain("Wheel.size",28)',
                 'index("root.wheel[0]",0)',
                 'index("root.wheel[0].size[0]",0)',
-                'number("28",28)',
+                'constant(("28",28),int)',
                 'parent("root.wheel[0]","root")',
                 'parent("root.wheel[0].size[0]","root.wheel[0]")',
                 'set("root.wheel","root.wheel[0]")',
@@ -267,12 +267,12 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'column(("Wheel","root.wheel[0]"),0,0,"root.wheel[0]")',
             }
         ),
-        "files": ["require_with_number_ge.lp"],
+        "files": ["require_with_integer_ge.lp"],
     },
-    "require_with_constant": {
+    "require_with_string": {
         "test": StableModels(
             {
-                'constant("W28")',
+                'constant("W28",str)',
                 'discrete("Wheel",str)',
                 'part("product")',
                 'constraint(("root.wheel",1),"lowerbound")',
@@ -287,7 +287,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("root.wheel[0]=W28","root.wheel[0]","=","W28")',
             }
         ),
-        "files": ["require_with_constant.lp"],
+        "files": ["require_with_string.lp"],
     },
     "require_two_wheels": {
         "test": StableModels(
@@ -339,8 +339,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "conditional_require": {
         "test": StableModels(
             {
-                'constant("True")',
-                'constant("Small")',
+                'constant("True",bool)',
+                'constant("Small",str)',
                 'discrete("Wheel",str)',
                 'discrete("Bool",bool)',
                 'part("product")',
@@ -405,9 +405,9 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'set("root.size","root.size[0]")',
                 'set("root.material","root.material[0]")',
                 'part("product")',
-                'constant("Small")',
-                'constant("Cotton")',
-                'constant("Red")',
+                'constant("Small",str)',
+                'constant("Cotton",str)',
+                'constant("Red",str)',
             }
         ),
         "files": ["multiple_conditions.lp"],
@@ -435,7 +435,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("sum(root.a[0].b)>1","sum(root.a[0].b)",">","1")',
                 'binary("count(root.a[0])=1","count(root.a[0])","=","1")',
                 'binary("!count(root.a[0])=1||sum(root.a[0].b)>1","!count(root.a[0])=1","||","sum(root.a[0].b)>1")',
-                'number("1",1)',
+                'constant(("1",1),int)',
                 'unary("!count(root.a[0])=1","!","count(root.a[0])=1")',
                 'part("product")',
                 'part("A")',
@@ -446,8 +446,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "conditional_require_undef": {
         "test": StableModels(
             {
-                'constant("Silver")',
-                'constant("Big")',
+                'constant("Silver",str)',
+                'constant("Big",str)',
                 'discrete("Size",str)',
                 'part("product")',
                 'constraint(("root.Size",1),"lowerbound")',
@@ -465,7 +465,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "require_multiple_instances": {
         "test": StableModels(
             {
-                'constant("W28")',
+                'constant("W28",str)',
                 'discrete("Size",str)',
                 'part("product")',
                 'part("Wheel")',
@@ -502,7 +502,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "require_with_partonomy": {
         "test": StableModels(
             {
-                'constant("Red")',
+                'constant("Red",str)',
                 'discrete("Color",str)',
                 'part("product")',
                 'part("Basket")',
@@ -526,7 +526,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("count(root.basket[0])=1","count(root.basket[0])","=","1")',
                 'function("count(root.basket[0])","count","root.basket[0]")',
                 'set("root.basket[0]","root.basket[0]")',
-                'number("1",1)',
+                'constant(("1",1),int)',
             }
         ),
         "files": ["require_with_partonomy.lp"],
@@ -534,7 +534,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "require_with_partonomy2": {
         "test": StableModels(
             {
-                'constant("Red")',
+                'constant("Red",str)',
                 'discrete("Color",str)',
                 'part("product")',
                 'part("Bag")',
@@ -549,7 +549,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'index("root.bag[1]",1)',
                 'index("root.bag[1].color[0]",0)',
                 'index("root.bag[0].color[0]",0)',
-                'number("1",1)',
+                'constant(("1",1),int)',
                 'parent("root.bag[0]","root")',
                 'parent("root.bag[1]","root")',
                 'parent("root.bag[1].color[0]","root.bag[1]")',
@@ -582,7 +582,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "require_with_partonomy_multiple_instances": {
         "test": StableModels(
             {
-                'constant("Red")',
+                'constant("Red",str)',
                 'discrete("Color",str)',
                 'part("product")',
                 'part("Compartment")',
@@ -611,7 +611,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'index("root.compartment[0].bag[0].color[0]",0)',
                 'index("root.compartment[1].bag[1].color[0]",0)',
                 'index("root.compartment[1].bag[0].color[0]",0)',
-                'number("1",1)',
+                'constant(("1",1),int)',
                 'parent("root.compartment[0]","root")',
                 'parent("root.compartment[1]","root")',
                 'parent("root.compartment[1].bag[0]","root.compartment[1]")',
@@ -695,7 +695,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("count(root.semester[0])=1","count(root.semester[0])","=","1")',
                 'binary("root.semester[1].type[0]!=root.semester[0].type[0]","root.semester[1].type[0]","!=","root.semester[0].type[0]")',
                 'binary("!count(root.semester[0])=1||root.semester[1].type[0]!=root.semester[0].type[0]","!count(root.semester[0])=1","||","root.semester[1].type[0]!=root.semester[0].type[0]")',
-                'number("1",1)',
+                'constant(("1",1),int)',
                 'unary("!count(root.semester[0])=1","!","count(root.semester[0])=1")',
                 'part("product")',
                 'part("Semester")',
@@ -735,7 +735,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("count(root.semester[1])=1","count(root.semester[1])","=","1")',
                 'binary("root.semester[0].type[0]!=root.semester[1].type[0]","root.semester[0].type[0]","!=","root.semester[1].type[0]")',
                 'binary("!count(root.semester[1])=1||root.semester[0].type[0]!=root.semester[1].type[0]","!count(root.semester[1])=1","||","root.semester[0].type[0]!=root.semester[1].type[0]")',
-                'number("1",1)',
+                'constant(("1",1),int)',
                 'unary("!count(root.semester[1])=1","!","count(root.semester[1])=1")',
                 'part("product")',
                 'part("Semester")',
@@ -744,14 +744,14 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "files": ["require_previous.lp"],
     },
     "imply_undef": {
-        "test": StableModels({'number("5",5)', 'part("product")', 'type("root","product")'}),
+        "test": StableModels({'constant(("5",5),int)', 'part("product")', 'type("root","product")'}),
         "program": """
             coom_structure("product").
             coom_behavior(0).
             coom_context(0,"product").
             coom_imply(0,"x","5").
             coom_path("x",0,"x").
-            coom_number("5",5).""",
+            coom_constant("5",int).""",
     },
     "imply_undef_formula": {
         "test": StableModels(
@@ -793,7 +793,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'imply((0,"root.wheel[0].size[0]"),"27")',
                 'index("root.wheel[0]",0)',
                 'index("root.wheel[0].size[0]",0)',
-                'number("27",27)',
+                'constant(("27",27),int)',
                 'parent("root.wheel[0]","root")',
                 'parent("root.wheel[0].size[0]","root.wheel[0]")',
                 'set("root.wheel","root.wheel[0]")',
@@ -854,7 +854,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint(("root.b",1),"lowerbound")',
                 'imply((0,"root.a[0]"),"root.b[0]+3")',
                 'binary("root.b[0]+3","root.b[0]","+","3")',
-                'number("3",3)',
+                'constant(("3",3),int)',
                 'index("root.a[0]",0)',
                 'index("root.b[0]",0)',
                 'numeric("product.a",int)',
@@ -939,8 +939,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint(("root.color",1),"lowerbound")',
                 'set("root.color","root.color[0]")',
                 'part("product")',
-                'constant("Red")',
-                'number("5",5)',
+                'constant("Red",str)',
+                'constant(("5",5),int)',
             }
         ),
         "files": ["conditional_imply_undef.lp"],
@@ -971,10 +971,10 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'set("root.color","root.color[0]")',
                 'set("root.option","root.option[0]")',
                 'part("product")',
-                'constant("Red")',
-                'constant("Blue")',
-                'number("2",2)',
-                'number("1",1)',
+                'constant("Red",str)',
+                'constant("Blue",str)',
+                'constant(("2",2),int)',
+                'constant(("1",1),int)',
             }
         ),
         "files": ["conditional_imply.lp"],
@@ -1013,9 +1013,9 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'set("root.size","root.size[0]")',
                 'set("root.option","root.option[0]")',
                 'part("product")',
-                'constant("Red")',
-                'constant("Small")',
-                'number("2",2)',
+                'constant("Red",str)',
+                'constant("Small",str)',
+                'constant(("2",2),int)',
             }
         ),
         "files": ["multiple_conditions_imply.lp"],
@@ -1284,7 +1284,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint((0,"root.a[0]+root.b[0]<6"),"boolean")',
                 'index("root.a[0]",0)',
                 'index("root.b[0]",0)',
-                'number("6",6)',
+                'constant(("6",6),int)',
                 'parent("root.a[0]","root")',
                 'parent("root.b[0]","root")',
                 'set("root.a","root.a[0]")',
@@ -1311,7 +1311,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint((0,"root.b[0]-root.a[0]>=3"),"boolean")',
                 'index("root.a[0]",0)',
                 'index("root.b[0]",0)',
-                'number("3",3)',
+                'constant(("3",3),int)',
                 'parent("root.a[0]","root")',
                 'parent("root.b[0]","root")',
                 'set("root.a","root.a[0]")',
@@ -1338,7 +1338,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint((0,"root.a[0]*root.b[0]>=10"),"boolean")',
                 'index("root.a[0]",0)',
                 'index("root.b[0]",0)',
-                'number("10",10)',
+                'constant(("10",10),int)',
                 'parent("root.a[0]","root")',
                 'parent("root.b[0]","root")',
                 'set("root.a","root.a[0]")',
@@ -1361,7 +1361,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'part("product")',
                 'constraint(("root.a",1),"lowerbound")',
                 'index("root.a[0]",0)',
-                'number("2",2)',
+                'constant(("2",2),int)',
                 'parent("root.a[0]","root")',
                 'set("root.a","root.a[0]")',
                 'type("root","product")',
@@ -1380,7 +1380,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'part("product")',
                 'constraint(("root.b",1),"lowerbound")',
                 'index("root.b[0]",0)',
-                'number("2",2)',
+                'constant(("2",2),int)',
                 'parent("root.b[0]","root")',
                 'set("root.b","root.b[0]")',
                 'type("root","product")',
@@ -1399,7 +1399,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'part("product")',
                 'constraint(("root.a",1),"lowerbound")',
                 'index("root.a[0]",0)',
-                'number("2",2)',
+                'constant(("2",2),int)',
                 'parent("root.a[0]","root")',
                 'set("root.a","root.a[0]")',
                 'type("root","product")',
@@ -1416,7 +1416,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'part("product")',
                 'constraint(("root.b",1),"lowerbound")',
                 'index("root.b[0]",0)',
-                'number("2",2)',
+                'constant(("2",2),int)',
                 'parent("root.b[0]","root")',
                 'set("root.b","root.b[0]")',
                 'type("root","product")',
@@ -1463,7 +1463,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'index("root.bag[0]",0)',
                 'index("root.bag[1]",1)',
                 'index("root.bag[2]",2)',
-                'number("2",2)',
+                'constant(("2",2),int)',
                 'parent("root.bag[0]","root")',
                 'parent("root.bag[1]","root")',
                 'parent("root.bag[2]","root")',
@@ -1490,7 +1490,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'index("root.x[0]",0)',
                 'index("root.x[1]",1)',
                 'index("root.x[2]",2)',
-                'number("10",10)',
+                'constant(("10",10),int)',
                 'parent("root.x[0]","root")',
                 'parent("root.x[1]","root")',
                 'parent("root.x[2]","root")',
@@ -1733,11 +1733,11 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         ),
         "files": ["maximize_function.lp"],
     },
-    "set_constant": {
+    "set_string": {
         "test": StableModels({'user_value("root.color[0]","Yellow")'}),
         "program": 'coom_user_value("root.color[0]","Yellow").',
     },
-    "set_number": {
+    "set_integer": {
         "test": StableModels({'user_value("root.size[0]",5)'}),
         "program": 'coom_user_value("root.size[0]",5).',
     },

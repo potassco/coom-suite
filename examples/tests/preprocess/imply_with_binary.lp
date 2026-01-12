@@ -10,4 +10,4 @@ coom_imply(0,"a","b+3").
 coom_path("a",0,"a").
 coom_path("b",0,"b").
 coom_binary("b+3","b","+","3").
-coom_number("3",3).
+coom_constant("3",int).

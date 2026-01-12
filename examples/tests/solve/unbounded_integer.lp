@@ -8,7 +8,7 @@ set("root.a","root.a[0]").
 part("product").
 constraint((0,"root.a[0]<3"),"boolean").
 binary("root.a[0]<3","root.a[0]","<","3").
-number("3",3).
+constant(("3",3),int).
 constraint((1,"root.a[0]>0"),"boolean").
 binary("root.a[0]>0","root.a[0]",">","0").
-number("0",0).
+constant(("0",0),int).

@@ -136,8 +136,8 @@ set("root.bags.pockets","root.bags[0].pockets[0]").
 set("root.bags[0]","root.bags[0]").
 part("product").
 part("Bag").
-constant("Blue").
-constant("Green").
-number("5",5).
-number("2",2).
-number("1",1).
+constant("Blue",str).
+constant("Green",str).
+constant(("5",5),int).
+constant(("2",2),int).
+constant(("1",1),int).

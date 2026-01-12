@@ -11,8 +11,8 @@ coom_context(0,"product").
 coom_condition(0,0,"wheelSupport=True").
 coom_binary("wheelSupport=True","wheelSupport","=","True").
 coom_path("wheelSupport",0,"wheelSupport").
-coom_constant("True").
+coom_constant("True",bool).
 coom_require(0,"Wheel=Small").
 coom_binary("Wheel=Small","Wheel","=","Small").
 coom_path("Wheel",0,"wheel").
-coom_constant("Small").
+coom_constant("Small",str).

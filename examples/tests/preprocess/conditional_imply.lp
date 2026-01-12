@@ -12,17 +12,17 @@ coom_context(0,"product").
 coom_condition(0,0,"color=Red").
 coom_binary("color=Red","color","=","Red").
 coom_path("color",0,"color").
-coom_constant("Red").
+coom_constant("Red",str).
 coom_imply(0,"option","1").
 coom_path("option",0,"option").
-coom_number("1",1).
+coom_constant("1",int).
 
 coom_behavior(1).
 coom_context(1,"product").
 coom_condition(1,0,"color=Blue").
 coom_binary("color=Blue","color","=","Blue").
 coom_path("color",0,"color").
-coom_constant("Blue").
+coom_constant("Blue",str).
 coom_imply(1,"option","2").
 coom_path("option",0,"option").
-coom_number("2",2).
+coom_constant("2",int).

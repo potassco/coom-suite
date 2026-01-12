@@ -11,4 +11,4 @@ coom_binary("b-a>=3","b-a",">=","3").
 coom_binary("b-a","b","-","a").
 coom_path("b",0,"b").
 coom_path("a",0,"a").
-coom_number("3",3).
+coom_constant("3",int).

@@ -16,6 +16,6 @@ function("count(root.x)","count","root.x").
 set("root.x","root.x[0]").
 set("root.x","root.x[1]").
 set("root.x","root.x[2]").
-number("2",2).
+constant(("2",2),int).
 
 constraint(("root.x",0),"lowerbound").

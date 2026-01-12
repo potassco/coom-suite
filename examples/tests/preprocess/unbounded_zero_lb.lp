@@ -58,7 +58,7 @@ coom_context(2,"product").
 coom_require(2,"color=Blue").
 coom_binary("color=Blue","color","=","Blue").
 coom_path("color",0,"color").
-coom_constant("Blue").
+coom_constant("Blue",str).
 
 coom_behavior(3).
 coom_context(3,"product").
@@ -66,13 +66,13 @@ coom_require(3,"bags.color=Green").
 coom_binary("bags.color=Green","bags.color","=","Green").
 coom_path("bags.color",0,"bags").
 coom_path("bags.color",1,"color").
-coom_constant("Green").
+coom_constant("Green",str).
 
 coom_behavior(4).
 coom_context(4,"product").
 coom_require(4,"5<count(bags.pockets)").
 coom_binary("5<count(bags.pockets)","5","<","count(bags.pockets)").
-coom_number("5",5).
+coom_constant("5",int).
 coom_function("product","count(bags.pockets)","count","bags.pockets").
 coom_path("bags.pockets",0,"bags").
 coom_path("bags.pockets",1,"pockets").
@@ -81,7 +81,7 @@ coom_behavior(5).
 coom_context(5,"Bag").
 coom_require(5,"2<=count(pockets)").
 coom_binary("2<=count(pockets)","2","<=","count(pockets)").
-coom_number("2",2).
+coom_constant("2",int).
 coom_function("Bag","count(pockets)","count","pockets").
 coom_path("pockets",0,"pockets").
 
@@ -89,7 +89,7 @@ coom_behavior(6).
 coom_context(6,"Bag").
 coom_require(6,"2<=count(closures)").
 coom_binary("2<=count(closures)","2","<=","count(closures)").
-coom_number("2",2).
+coom_constant("2",int).
 coom_function("Bag","count(closures)","count","closures").
 coom_path("closures",0,"closures").
 

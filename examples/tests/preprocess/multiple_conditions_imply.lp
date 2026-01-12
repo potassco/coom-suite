@@ -17,11 +17,11 @@ coom_context(0,"product").
 coom_condition(0,0,"color=Red").
 coom_binary("color=Red","color","=","Red").
 coom_path("color",0,"color").
-coom_constant("Red").
+coom_constant("Red",str).
 coom_condition(0,1,"size=Small").
 coom_binary("size=Small","size","=","Small").
 coom_path("size",0,"size").
-coom_constant("Small").
+coom_constant("Small",str).
 coom_imply(0,"option","2").
 coom_path("option",0,"option").
-coom_number("2",2).
+coom_constant("2",int).

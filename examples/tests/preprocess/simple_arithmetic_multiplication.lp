@@ -11,4 +11,4 @@ coom_binary("a*b>=10","a*b",">=","10").
 coom_binary("a*b","a","*","b").
 coom_path("a",0,"a").
 coom_path("b",0,"b").
-coom_number("10",10).
+coom_constant("10",int).

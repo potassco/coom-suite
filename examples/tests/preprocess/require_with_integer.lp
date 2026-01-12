@@ -10,8 +10,8 @@ coom_attribute_value("Wheel","W28","size",28).
 
 coom_behavior(0).
 coom_context(0,"product").
-coom_require(0,"wheel.size>=28").
-coom_binary("wheel.size>=28","wheel.size",">=","28").
+coom_require(0,"wheel.size=27").
+coom_binary("wheel.size=27","wheel.size","=","27").
 coom_path("wheel.size",0,"wheel").
 coom_path("wheel.size",1,"size").
-coom_number("28",28).
+coom_constant("27",int).

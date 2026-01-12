@@ -8,4 +8,4 @@ coom_require(0,"count(bag)<=2").
 coom_binary("count(bag)<=2","count(bag)","<=","2").
 coom_function("product","count(bag)","count","bag").
 coom_path("bag",0,"bag").
-coom_number("2",2).
+coom_constant("2",int).

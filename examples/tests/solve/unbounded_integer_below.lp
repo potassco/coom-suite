@@ -9,4 +9,4 @@ set("root.a","root.a[0]").
 part("product").
 constraint((1,"root.a[0]>0"),"boolean").
 binary("root.a[0]>0","root.a[0]",">","0").
-number("0",0).
+constant(("0",0),int).

@@ -23,3 +23,6 @@ value(F,-VR) :- binary(F,XL,"-",XR), value(XR,VR), not value(XL,_).
 % Assign values of imply statements if object is included
 value(X,V) :- imply((C,X),F), include(X), value(F,V), not condition((C,X),_).
 value(X,V) :- imply((C,X),F), include(X), value(F,V), condition((C,X),Con), satisfied(Con).
+
+% Extra constraint needed for imply statements
+:- include(X), type(X,T), numeric(T,int), range(T,Min,Max), value(X,V), not Min <= V <= Max.

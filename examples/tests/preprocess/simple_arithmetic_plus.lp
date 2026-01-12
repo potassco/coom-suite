@@ -11,4 +11,4 @@ coom_binary("a+b<6","a+b","<","6").
 coom_binary("a+b","a","+","b").
 coom_path("a",0,"a").
 coom_path("b",0,"b").
-coom_number("6",6).
+coom_constant("6",int).

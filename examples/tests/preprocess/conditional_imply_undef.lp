@@ -10,7 +10,7 @@ coom_context(0,"product").
 coom_condition(0,0,"size=5").
 coom_binary("size=5","size","=","5").
 coom_path("size",0,"size").
-coom_number("5",5).
+coom_constant("5",int).
 coom_imply(0,"color","Red").
 coom_path("color",0,"color").
-coom_constant("Red").
+coom_constant("Red",str).
