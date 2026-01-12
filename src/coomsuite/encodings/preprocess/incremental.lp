@@ -16,7 +16,7 @@ help_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,Min,#sup),     help_aux
 help_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",_,  Max),  help_aux(X,Ctx), I = 0..Max-1.
 help_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), help_aux(X,Ctx), I = 0..Min+max_bound-1.
 
-% rules to instantiate a helper version of path_to/4 atoms based on help_aux/2
+% rules to instantiate a helper version of path_to/6 atoms based on help_aux/2
 % - start by projecting out the original path_to/6 atoms
 % - path index is not needed here
 help_path_to(X,P,X')  :- path_to(X,P,_,X',_,_).
@@ -28,7 +28,7 @@ help_path_to(X,P,X')  :- coom_path(P,0,"root"), coom_path(P,1,N), path_start(X,P
 help_path_to(X,P,X'') :- coom_path(P,I,N), help_path_to(X,P,X'),
                          help_aux(X'',_), X''=(N,(X',_)).
 
-% map path_to/4 atoms to path_step/2 by using output formatting
+% map help_path_to/4 atoms to path_step/2 by using output formatting
 % - needs to be filtered by help_aux to remove sets belonging to the helper objects
 path_step(@join(X,P),@dotpath(X')) :- help_path_to(X,P,X'), not help_aux(X,_).
 
@@ -38,8 +38,8 @@ table_column((C,@dotpath(X)),@join(X,P)) :- table(C,X), coom_combinations(C,_,P)
 % incremental sets: a set is incremental if:
 % - there is a path from an unbounded object to the set
 % - limit to only sets used in functions or as part of a table
-inc_set(P) :- function(_,_,P),   path_step(P,X'), inc_obj(X').
-inc_set(P) :- table_column(_,P), path_step(P,X'), inc_obj(X').
+inc_set(P) :- function(_,_,P),   path_step(P,X), inc_obj(X).
+inc_set(P) :- table_column(_,P), path_step(P,X), inc_obj(X).
 
 #show inc_set/1.
 
