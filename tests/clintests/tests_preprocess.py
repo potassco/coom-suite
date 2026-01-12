@@ -1680,4 +1680,21 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         ),
         "files": ["unbounded_two_lb.lp"],
     },
+    "unbounded_singleshot_association": {
+        "test": StableModels(get_model_from_file("unbounded_singleshot_association.lp")),
+        "files": ["unbounded_association.lp"],
+    },
+    "unbounded_multishot_association": {
+        "test": StableModels(
+            get_model_from_file("unbounded_singleshot_association.lp")
+            | {
+                'inc_set("root.element")',
+                'incremental("association","root.rack[0].element[0].type[0]","root.element",("root.rack[0]","Element",1,1))',
+                'incremental("binary","root.rack[0].element[0].type[0]=A","root.element",("root.rack[0].element[0].type[0]=A","root.rack[0].element[0].type[0]","=","A"))',
+                'incremental("binary","!count(root.rack[0])=1||root.rack[0].element[0].type[0]=A","root.element",("!count(root.rack[0])=1||root.rack[0].element[0].type[0]=A","!count(root.rack[0])=1","||","root.rack[0].element[0].type[0]=A"))',
+                'incremental("constraint","!count(root.rack[0])=1||root.rack[0].element[0].type[0]=A","root.element",((1,"!count(root.rack[0])=1||root.rack[0].element[0].type[0]=A"),"boolean"))',
+            }
+        ),
+        "files": ["unbounded_association.lp"],
+    },
 }
