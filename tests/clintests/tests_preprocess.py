@@ -158,7 +158,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "test": StableModels(
             {
                 'discrete("Wheel")',
-                'integer("Wheel.size")',
+                'discrete("Wheel.size")',
+                'domain("Wheel.size",14)',
                 'part("product")',
                 'constraint(("root.wheel",1),"lowerbound")',
                 'constraint(("root.wheel[0].size",1),"lowerbound")',
@@ -175,7 +176,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'type("root.wheel[0].size[0]","Wheel.size")',
                 'allow("Wheel",(0,0),"W14")',
                 'allow("Wheel",(1,0),14)',
-                'range("Wheel.size",14,14)',
                 'column(("Wheel","root.wheel[0]"),0,1,"root.wheel[0].size[0]")',
                 'column(("Wheel","root.wheel[0]"),0,0,"root.wheel[0]")',
             }
@@ -203,7 +203,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "test": StableModels(
             {
                 'discrete("Wheel")',
-                'integer("Wheel.size")',
+                'discrete("Wheel.size")',
                 'part("product")',
                 'constraint(("root.wheel",1),"lowerbound")',
                 'constraint(("root.wheel[0].size",1),"lowerbound")',
@@ -211,6 +211,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint((0,"root.wheel[0].size[0]=27"),"boolean")',
                 'domain("Wheel","W27")',
                 'domain("Wheel","W28")',
+                'domain("Wheel.size",27)',
+                'domain("Wheel.size",28)',
                 'index("root.wheel[0]",0)',
                 'index("root.wheel[0].size[0]",0)',
                 'number("27",27)',
@@ -225,7 +227,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'allow("Wheel",(0,1),"W28")',
                 'allow("Wheel",(1,1),28)',
                 'allow("Wheel",(1,0),27)',
-                'range("Wheel.size",27,28)',
                 'binary("root.wheel[0].size[0]=27","root.wheel[0].size[0]","=","27")',
                 'column(("Wheel","root.wheel[0]"),0,1,"root.wheel[0].size[0]")',
                 'column(("Wheel","root.wheel[0]"),0,0,"root.wheel[0]")',
@@ -237,7 +238,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "test": StableModels(
             {
                 'discrete("Wheel")',
-                'integer("Wheel.size")',
+                'discrete("Wheel.size")',
                 'part("product")',
                 'constraint(("root.wheel",1),"lowerbound")',
                 'constraint(("root.wheel[0].size",1),"lowerbound")',
@@ -245,6 +246,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint((0,"root.wheel[0].size[0]>=28"),"boolean")',
                 'domain("Wheel","W27")',
                 'domain("Wheel","W28")',
+                'domain("Wheel.size",27)',
+                'domain("Wheel.size",28)',
                 'index("root.wheel[0]",0)',
                 'index("root.wheel[0].size[0]",0)',
                 'number("28",28)',
@@ -259,7 +262,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'allow("Wheel",(0,1),"W28")',
                 'allow("Wheel",(1,1),28)',
                 'allow("Wheel",(1,0),27)',
-                'range("Wheel.size",27,28)',
                 'binary("root.wheel[0].size[0]>=28","root.wheel[0].size[0]",">=","28")',
                 'column(("Wheel","root.wheel[0]"),0,1,"root.wheel[0].size[0]")',
                 'column(("Wheel","root.wheel[0]"),0,0,"root.wheel[0]")',
@@ -291,7 +293,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "test": StableModels(
             {
                 'discrete("Wheel")',
-                'integer("Wheel.size")',
+                'discrete("Wheel.size")',
                 'part("product")',
                 'constraint(("root.frontWheel",1),"lowerbound")',
                 'constraint(("root.rearWheel",1),"lowerbound")',
@@ -302,6 +304,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint((0,"root.frontWheel[0].size[0]=root.rearWheel[0].size[0]"),"boolean")',
                 'domain("Wheel","W27")',
                 'domain("Wheel","W28")',
+                'domain("Wheel.size",27)',
+                'domain("Wheel.size",28)',
                 'index("root.frontWheel[0]",0)',
                 'index("root.rearWheel[0]",0)',
                 'index("root.rearWheel[0].size[0]",0)',
@@ -323,7 +327,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'allow("Wheel",(0,1),"W28")',
                 'allow("Wheel",(1,1),28)',
                 'allow("Wheel",(1,0),27)',
-                'range("Wheel.size",27,28)',
                 'binary("root.frontWheel[0].size[0]=root.rearWheel[0].size[0]","root.frontWheel[0].size[0]","=","root.rearWheel[0].size[0]")',
                 'column(("Wheel","root.frontWheel[0]"),0,1,"root.frontWheel[0].size[0]")',
                 'column(("Wheel","root.rearWheel[0]"),0,1,"root.rearWheel[0].size[0]")',
@@ -739,6 +742,282 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             }
         ),
         "files": ["require_previous.lp"],
+    },
+    "imply_undef": {
+        "test": StableModels({'number("5",5)', 'part("product")', 'type("root","product")'}),
+        "program": """
+            coom_structure("product").
+            coom_behavior(0).
+            coom_context(0,"product").
+            coom_imply(0,"x","5").
+            coom_path("x",0,"x").
+            coom_number("5",5).""",
+    },
+    "imply_undef_formula": {
+        "test": StableModels(
+            {
+                'part("product")',
+                'type("root","product")',
+                'integer("product.a")',
+                'range("product.a",0,10)',
+                'type("root.a[0]","product.a")',
+                'index("root.a[0]",0)',
+                'parent("root.a[0]","root")',
+                'constraint(("root.a",1),"lowerbound")',
+                'set("root.a","root.a[0]")',
+            }
+        ),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","a","num",1,1).
+            coom_range("product","a",0,10).
+            coom_behavior(0).
+            coom_context(0,"product").
+            coom_imply(0,"a","b").
+            coom_path("a",0,"a").
+            coom_path("b",0,"b").""",
+    },
+    "imply_with_number": {
+        "test": StableModels(
+            {
+                'part("product")',
+                'constraint(("root.wheel",1),"lowerbound")',
+                'constraint(("root.wheel[0].size",1),"lowerbound")',
+                'constraint(("Wheel","root.wheel[0]"),"table")',
+                'discrete("Wheel.size")',
+                'discrete("Wheel")',
+                'domain("Wheel.size",27)',
+                'domain("Wheel.size",28)',
+                'domain("Wheel","W27")',
+                'domain("Wheel","W28")',
+                'imply((0,"root.wheel[0].size[0]"),"27")',
+                'index("root.wheel[0]",0)',
+                'index("root.wheel[0].size[0]",0)',
+                'number("27",27)',
+                'parent("root.wheel[0]","root")',
+                'parent("root.wheel[0].size[0]","root.wheel[0]")',
+                'set("root.wheel","root.wheel[0]")',
+                'set("root.wheel[0].size","root.wheel[0].size[0]")',
+                'type("root","product")',
+                'type("root.wheel[0]","Wheel")',
+                'type("root.wheel[0].size[0]","Wheel.size")',
+                'allow("Wheel",(0,0),"W27")',
+                'allow("Wheel",(0,1),"W28")',
+                'allow("Wheel",(1,1),28)',
+                'allow("Wheel",(1,0),27)',
+                'column(("Wheel","root.wheel[0]"),0,1,"root.wheel[0].size[0]")',
+                'column(("Wheel","root.wheel[0]"),0,0,"root.wheel[0]")',
+            }
+        ),
+        "files": ["imply_with_number.lp"],
+    },
+    "imply_with_variable": {
+        "test": StableModels(
+            {
+                'part("product")',
+                'constraint(("root.a",1),"lowerbound")',
+                'constraint(("root.b",1),"lowerbound")',
+                'imply((0,"root.a[0]"),"root.b[0]")',
+                'index("root.a[0]",0)',
+                'index("root.b[0]",0)',
+                'integer("product.a")',
+                'integer("product.b")',
+                'parent("root.a[0]","root")',
+                'parent("root.b[0]","root")',
+                'set("root.a","root.a[0]")',
+                'set("root.b","root.b[0]")',
+                'type("root","product")',
+                'type("root.a[0]","product.a")',
+                'type("root.b[0]","product.b")',
+                'range("product.a",1,3)',
+                'range("product.b",1,3)',
+            }
+        ),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","a","num",1,1).
+            coom_range("product","a",1,3).
+            coom_feature("product","b","num",1,1).
+            coom_range("product","b",1,3).
+
+            coom_behavior(0).
+            coom_context(0,"product").
+            coom_imply(0,"a","b").
+            coom_path("a",0,"a").
+            coom_path("b",0,"b").""",
+    },
+    "imply_with_binary": {
+        "test": StableModels(
+            {
+                'part("product")',
+                'constraint(("root.a",1),"lowerbound")',
+                'constraint(("root.b",1),"lowerbound")',
+                'imply((0,"root.a[0]"),"root.b[0]+3")',
+                'binary("root.b[0]+3","root.b[0]","+","3")',
+                'number("3",3)',
+                'index("root.a[0]",0)',
+                'index("root.b[0]",0)',
+                'integer("product.a")',
+                'integer("product.b")',
+                'parent("root.a[0]","root")',
+                'parent("root.b[0]","root")',
+                'set("root.a","root.a[0]")',
+                'set("root.b","root.b[0]")',
+                'type("root","product")',
+                'type("root.a[0]","product.a")',
+                'type("root.b[0]","product.b")',
+                'range("product.a",0,10)',
+                'range("product.b",1,3)',
+            }
+        ),
+        "files": ["imply_with_binary.lp"],
+    },
+    "imply_with_unary": {
+        "test": StableModels(
+            {
+                'part("product")',
+                'constraint(("root.a",1),"lowerbound")',
+                'constraint(("root.b",1),"lowerbound")',
+                'imply((0,"root.a[0]"),"-root.b[0]")',
+                'unary("-root.b[0]","-","root.b[0]")',
+                'index("root.a[0]",0)',
+                'index("root.b[0]",0)',
+                'integer("product.a")',
+                'integer("product.b")',
+                'parent("root.a[0]","root")',
+                'parent("root.b[0]","root")',
+                'set("root.a","root.a[0]")',
+                'set("root.b","root.b[0]")',
+                'type("root","product")',
+                'type("root.a[0]","product.a")',
+                'type("root.b[0]","product.b")',
+                'range("product.a",-5,5)',
+                'range("product.b",1,3)',
+            }
+        ),
+        "files": ["imply_with_unary.lp"],
+    },
+    "imply_with_sum": {
+        "test": StableModels(
+            {
+                'part("product")',
+                'constraint(("root.a",1),"lowerbound")',
+                'constraint(("root.b",2),"lowerbound")',
+                'imply((0,"root.a[0]"),"sum(root.b)")',
+                'function("sum(root.b)","sum","root.b")',
+                'index("root.a[0]",0)',
+                'index("root.b[0]",0)',
+                'index("root.b[1]",1)',
+                'integer("product.a")',
+                'integer("product.b")',
+                'parent("root.a[0]","root")',
+                'parent("root.b[0]","root")',
+                'parent("root.b[1]","root")',
+                'set("root.a","root.a[0]")',
+                'set("root.b","root.b[0]")',
+                'set("root.b","root.b[1]")',
+                'type("root","product")',
+                'type("root.a[0]","product.a")',
+                'type("root.b[0]","product.b")',
+                'type("root.b[1]","product.b")',
+                'range("product.a",0,10)',
+                'range("product.b",1,3)',
+            }
+        ),
+        "files": ["imply_with_sum.lp"],
+    },
+    "conditional_imply_undef": {
+        "test": StableModels(
+            {
+                'discrete("Color")',
+                'domain("Color","Red")',
+                'domain("Color","Green")',
+                'type("root","product")',
+                'type("root.color[0]","Color")',
+                'index("root.color[0]",0)',
+                'parent("root.color[0]","root")',
+                'constraint(("root.color",1),"lowerbound")',
+                'set("root.color","root.color[0]")',
+                'part("product")',
+                'constant("Red")',
+                'number("5",5)',
+            }
+        ),
+        "files": ["conditional_imply_undef.lp"],
+    },
+    "conditional_imply": {
+        "test": StableModels(
+            {
+                'discrete("Color")',
+                'domain("Color","Red")',
+                'domain("Color","Blue")',
+                'integer("product.option")',
+                'range("product.option",1,2)',
+                'type("root","product")',
+                'type("root.option[0]","product.option")',
+                'type("root.color[0]","Color")',
+                'index("root.option[0]",0)',
+                'index("root.color[0]",0)',
+                'parent("root.option[0]","root")',
+                'parent("root.color[0]","root")',
+                'constraint(("root.color",1),"lowerbound")',
+                'constraint(("root.option",1),"lowerbound")',
+                'binary("root.color[0]=Red","root.color[0]","=","Red")',
+                'imply((0,"root.option[0]"),"1")',
+                'condition((0,"root.option[0]"),"root.color[0]=Red")',
+                'binary("root.color[0]=Blue","root.color[0]","=","Blue")',
+                'imply((1,"root.option[0]"),"2")',
+                'condition((1,"root.option[0]"),"root.color[0]=Blue")',
+                'set("root.color","root.color[0]")',
+                'set("root.option","root.option[0]")',
+                'part("product")',
+                'constant("Red")',
+                'constant("Blue")',
+                'number("2",2)',
+                'number("1",1)',
+            }
+        ),
+        "files": ["conditional_imply.lp"],
+    },
+    "multiple_conditions_imply": {
+        "test": StableModels(
+            {
+                'discrete("Color")',
+                'discrete("Size")',
+                'domain("Color","Red")',
+                'domain("Color","Blue")',
+                'domain("Size","Small")',
+                'domain("Size","Big")',
+                'integer("product.option")',
+                'range("product.option",1,2)',
+                'type("root","product")',
+                'type("root.option[0]","product.option")',
+                'type("root.color[0]","Color")',
+                'type("root.size[0]","Size")',
+                'index("root.option[0]",0)',
+                'index("root.color[0]",0)',
+                'index("root.size[0]",0)',
+                'parent("root.option[0]","root")',
+                'parent("root.color[0]","root")',
+                'parent("root.size[0]","root")',
+                'constraint(("root.color",1),"lowerbound")',
+                'constraint(("root.size",1),"lowerbound")',
+                'constraint(("root.option",1),"lowerbound")',
+                'binary("root.size[0]=Small","root.size[0]","=","Small")',
+                'binary("root.color[0]=Red","root.color[0]","=","Red")',
+                'imply((0,"root.option[0]"),"2")',
+                'condition((0,"root.option[0]"),"root.color[0]=Red")',
+                'condition((0,"root.option[0]"),"root.size[0]=Small")',
+                'set("root.color","root.color[0]")',
+                'set("root.size","root.size[0]")',
+                'set("root.option","root.option[0]")',
+                'part("product")',
+                'constant("Red")',
+                'constant("Small")',
+                'number("2",2)',
+            }
+        ),
+        "files": ["multiple_conditions_imply.lp"],
     },
     "combination": {
         "test": StableModels(

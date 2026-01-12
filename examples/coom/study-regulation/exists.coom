@@ -1,5 +1,5 @@
 product {
-    1..2 Module modules
+    2..2 Module modules
 }
 
 enumeration Module {
@@ -8,7 +8,6 @@ enumeration Module {
     Thesis
 }
 
-
 behavior {
-     exists Thesis in modules {} // Why the empty braces?
+     exists m in modules { require m = Thesis }
 }

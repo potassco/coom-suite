@@ -2,6 +2,7 @@ discrete("Color").
 discrete("Pocket").
 discrete("Closure").
 discrete("Size").
+discrete("Size.volume").
 domain("Color","Green").
 domain("Color","Blue").
 domain("Color","Red").
@@ -14,12 +15,13 @@ domain("Closure","Velcro").
 domain("Size","small").
 domain("Size","medium").
 domain("Size","large").
+domain("Size.volume",12).
+domain("Size.volume",16).
+domain("Size.volume",20).
 integer("product.totalVolume").
 integer("product.requestedVolume").
-integer("Size.volume").
 range("product.totalVolume",0,200).
 range("product.requestedVolume",0,200).
-range("Size.volume",12,20).
 type("root","product").
 type("root.totalVolume[0]","product.totalVolume").
 type("root.requestedVolume[0]","product.requestedVolume").

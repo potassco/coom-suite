@@ -35,7 +35,7 @@ behavior {
     allow           ( Special       -*-      )
 
     explanation "The number of passengers is equal to the number of seats plus standing room."
-    require num_passengers = count(seat) + standing_room
+    imply num_passengers = count(seat) + standing_room
 
     // explanation "The color of all seats must be the same, except for special seats." // How to implement? Default (see below)? Or set a "global" type that restricts all seat types?
     // condition seat.type != Special

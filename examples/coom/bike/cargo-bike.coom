@@ -26,7 +26,7 @@ enumeration Size {
 
 behavior {
     explanation "The total volume is equal to the sum of the volumes of all bags."
-    require totalVolume = sum(bags.size.volume)
+    imply totalVolume = sum(bags.size.volume)
 
     explanation "The total volume must be greater than or equal to the requested volume."
     require totalVolume >= requestedVolume

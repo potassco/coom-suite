@@ -7,14 +7,14 @@ domain(T,V) :- coom_option(T,V).
 discrete(@join(T,A)) :- coom_attribute(T,A,"str").
 domain(@join(T,A),V) :- coom_attribute_value(T,_,A,V), coom_attribute(T,A,"str").
 
-integer(@join(T,A))       :- coom_attribute(T,A,"num"), not discrete.
-range(@join(T,A),Min,Max) :- coom_attribute(T,A,"num"), not discrete,
-                             Min = #min { V: coom_attribute_value(T,_,A,V) },
-                             Max = #max { V: coom_attribute_value(T,_,A,V) }.
+% integer(@join(T,A))       :- coom_attribute(T,A,"num"), not discrete.
+% range(@join(T,A),Min,Max) :- coom_attribute(T,A,"num"), not discrete,
+%                              Min = #min { V: coom_attribute_value(T,_,A,V) },
+%                              Max = #max { V: coom_attribute_value(T,_,A,V) }.
 
 % Temporary fix: For clingo, huge ranges might make grounding to large, translate numeric attributes to discrete attributes
-discrete(@join(T,A)) :- coom_attribute(T,A,"num"), discrete.
-domain(@join(T,A),V) :- coom_attribute_value(T,_,A,V), coom_attribute(T,A,"num"), discrete.
+discrete(@join(T,A)) :- coom_attribute(T,A,"num"). % , discrete.
+domain(@join(T,A),V) :- coom_attribute_value(T,_,A,V), coom_attribute(T,A,"num"). % , discrete.
 
 % Numeric features
 integer(@join(Ctx,N))       :- coom_feature(Ctx,N,"num",_,_).
@@ -87,8 +87,15 @@ allow(T,(0,I),O)     :- attribute_constraint((T,_)), coom_option(T,O), I = #coun
 allow(T,(Col,Row),V) :- attribute_constraint((T,_)), allow(T,(0,Row),O), coom_attribute_value(T,O,A,V), attribute_constraint_column(T,Col,A).
 
 % Imply statements
-constraint((C,@binary(X',"=",G)),"boolean") :- imply(C,X',G).
-binary(@binary(X',"=",G),X',"=",G)          :- imply(C,X',G).
+% constraint((C,@binary(X',"=",G)),"boolean") :- imply(C,X',G).
+% binary(@binary(X',"=",G),X',"=",G)          :- imply(C,X',G).
+imply((C,X'),G)       :- imply((C,_),X',G), not coom_condition(C,_,_).
+imply((C,X'),G)       :- imply((C,X),X',G), ground_condition(C,X,_,_).
+condition((C,X'),Con) :- imply((C,X),X',_), ground_condition(C,X,_,Con).
+
+#show imply/2.
+#show condition/2.
+
 
 % Alldiff constraints
 constraint(@join(X,P),"alldiff") :- alldiff(X,P).

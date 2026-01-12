@@ -153,9 +153,9 @@ in_tuple(CT,CT',X)      :- in_tuple(CT,(X,CT'),_).
 in_tuple(CT,X)          :- in_tuple(CT,_,X).
 
 % Instantiate imply statements
-imply(C,X',G)                  :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), ground_formula(X,F,G).
-imply(C,X',@aggregate(T,X,P')) :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), function(X,F,T,P').
-% imply((C,X),X',G)              :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), path_to(X,F,G), not ground_formula(X,F,G). % TODO: Check if this is enough if there are aggreagates
+imply((C,X),X',G)                  :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), ground_formula(X,F,G).
+imply((C,X),X',@aggregate(T,X,P')) :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), function(X,F,T,P').
+imply((C,X),X',G)                  :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), path_to(X,F,G), not ground_formula(X,F,G). % TODO: Check if this is enough if there are aggreagates
 
 % Instantiate attribute constraints
 attribute_constraint((T,@dotpath(X)))  :- coom_attribute(T,_,_), type_aux(X,T).

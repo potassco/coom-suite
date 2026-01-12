@@ -65,12 +65,12 @@ behavior {
     require count(carrier.bag) + count(frame.bag) <= 4
 
 	explanation "The total weight is equal to the weight of the front wheel plus the weight of the rear wheel plus the sum of the weights of all bags on the carrier and the frame."
-	require totalWeight = frontWheel.weight + rearWheel.weight
+	imply totalWeight = frontWheel.weight + rearWheel.weight
 						+ sum(carrier.bag.capacity.weight)
 						+ sum(frame.bag.capacity.weight)
 
 	explanation "The total volume is equal to the sum of the volumes of all bags on the carrier and the frame."
-	require totalVolume = sum(carrier.bag.capacity.volume) + sum(frame.bag.capacity.volume)
+	imply totalVolume = sum(carrier.bag.capacity.volume) + sum(frame.bag.capacity.volume)
 
 	explanation "The total volume must be greater than or equal to the requested volume."
 	require totalVolume >= requestedVolume

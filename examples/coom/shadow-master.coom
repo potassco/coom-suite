@@ -66,9 +66,9 @@ enumeration Cover {
 }
 
 behavior Pfosten {
-	require ueberstand = (root.grundmerkmale.eingabeBreite - km_mittePfosten)
+	imply ueberstand = (root.grundmerkmale.eingabeBreite - km_mittePfosten)
 
-	require km_gesamthoehe = (root.grundmerkmale.durchgangshoehe + (tan(root.grundmerkmale.neigungswinkelAnlage) * ueberstand))
+	imply km_gesamthoehe = (root.grundmerkmale.durchgangshoehe + (tan(root.grundmerkmale.neigungswinkelAnlage) * ueberstand))
 
 	require ueberstand > 105
 
@@ -91,31 +91,31 @@ behavior Pfosten {
 }
 
 behavior {
-	require grundmerkmale.neigungswinkelAnlage = (atan(((125 - grundmerkmale.eingabeBreite) / ((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)))) + acos((48.4985 / sqrt(((((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)) ^ 2) + ((125 - grundmerkmale.eingabeBreite) ^ 2))))))
+	imply grundmerkmale.neigungswinkelAnlage = (atan(((125 - grundmerkmale.eingabeBreite) / ((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)))) + acos((48.4985 / sqrt(((((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)) ^ 2) + ((125 - grundmerkmale.eingabeBreite) ^ 2))))))
 
-	require grundmerkmale.bestellBreite = (grundmerkmale.eingabeBreite + (tan(grundmerkmale.neigungswinkelAnlage) * 80))
+	imply grundmerkmale.bestellBreite = (grundmerkmale.eingabeBreite + (tan(grundmerkmale.neigungswinkelAnlage) * 80))
 
-	require grundmerkmale.flaeche = (grundmerkmale.laenge * (grundmerkmale.bestellBreite / 1000000))
+	imply grundmerkmale.flaeche = (grundmerkmale.laenge * (grundmerkmale.bestellBreite / 1000000))
 
-	require grundmerkmale.weight = (grundmerkmale.flaeche * (cover.weight / 1000))
+	imply grundmerkmale.weight = (grundmerkmale.flaeche * (cover.weight / 1000))
 
-	// require grundmerkmale.debugValues.deltaHoehe = ((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe))
+	// imply grundmerkmale.debugValues.deltaHoehe = ((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe))
 
-	// require grundmerkmale.debugValues.deltaBreite = (125 - grundmerkmale.eingabeBreite)
+	// imply grundmerkmale.debugValues.deltaBreite = (125 - grundmerkmale.eingabeBreite)
 
-	// require grundmerkmale.debugValues.deltaBreitePow2 = ((125 - grundmerkmale.eingabeBreite) ^ 2)
+	// imply grundmerkmale.debugValues.deltaBreitePow2 = ((125 - grundmerkmale.eingabeBreite) ^ 2)
 
-	// require grundmerkmale.debugValues.deltaHoehePow2 = (((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)) ^ 2)
+	// imply grundmerkmale.debugValues.deltaHoehePow2 = (((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)) ^ 2)
 
-	// require grundmerkmale.debugValues.sqrtValue = sqrt(((((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)) ^ 2) + ((125 - grundmerkmale.eingabeBreite) ^ 2)))
+	// imply grundmerkmale.debugValues.sqrtValue = sqrt(((((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)) ^ 2) + ((125 - grundmerkmale.eingabeBreite) ^ 2)))
 
-	// require grundmerkmale.debugValues.acosValue = acos((48.4985 / sqrt(((((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)) ^ 2) + ((125 - grundmerkmale.eingabeBreite) ^ 2)))))
+	// imply grundmerkmale.debugValues.acosValue = acos((48.4985 / sqrt(((((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)) ^ 2) + ((125 - grundmerkmale.eingabeBreite) ^ 2)))))
 
-	// require grundmerkmale.debugValues.atanValue = atan(((125 - grundmerkmale.eingabeBreite) / ((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe))))
+	// imply grundmerkmale.debugValues.atanValue = atan(((125 - grundmerkmale.eingabeBreite) / ((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe))))
 
-	// require grundmerkmale.debugValues.acosArg = (48.4985 / sqrt(((((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)) ^ 2) + ((125 - grundmerkmale.eingabeBreite) ^ 2))))
+	// imply grundmerkmale.debugValues.acosArg = (48.4985 / sqrt(((((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)) ^ 2) + ((125 - grundmerkmale.eingabeBreite) ^ 2))))
 
-	// require grundmerkmale.debugValues.atanArg = ((125 - grundmerkmale.eingabeBreite) / ((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)))
+	// imply grundmerkmale.debugValues.atanArg = ((125 - grundmerkmale.eingabeBreite) / ((grundmerkmale.montagehoehe - 8.82) + (90 - grundmerkmale.durchgangshoehe)))
 
 // 	default 	cover = _AcrylAllWeather
 }

@@ -192,6 +192,13 @@ class ASPModelVisitor(ModelVisitor):
         self.output_asp.append(f'imply({self.constraint_idx},"{path}","{formula}").')
         super().visitAssign_imply(ctx)
 
+    # def visitExists(self, ctx: ModelParser.ExistsContext):
+    #     name = ctx.name()[0].getText()
+    #     path = ctx.path()[0].getText()
+    #     print(name)
+    #     print(path)
+    #     super().visitExists(ctx)
+
     def visitAlldiff(self, ctx: ModelParser.AlldiffContext):
         path = ctx.path().getText()
         self.output_asp.append(f'alldiff({self.constraint_idx},"{path}").')
@@ -356,23 +363,6 @@ class ASPModelVisitor(ModelVisitor):
                     self.output_asp.append(f'unary("{complete}","{func}","{f.getText()}").')
         super().visitFormula_sign(ctx)
 
-    def visitPath(self, ctx: ModelParser.PathContext):
-        # Only do this for actual paths? Not formulas
-        if not self.is_table:
-            full_path = f"{prepare_value(ctx.getText())}"
-
-            if full_path[0].isupper():
-                self.output_asp.append(f'constant("{full_path}").')
-            else:
-                for i, p in enumerate(ctx.path_item()):
-                    self.output_asp.append(f'path("{full_path}",{i},"{prepare_value(p.getText())}").')
-
-    # def visitFloating(self, ctx: ModelParser.FloatingContext):
-    #     # if ctx.FLOATING() is not None:
-    #     #     pass
-    #     if ctx.INTEGER() is not None:
-    #         self.output_asp.append(f'number("{ctx.INTEGER()}",{ctx.INTEGER()}).')
-
     def visitFormula_atom(self, ctx: ModelParser.Formula_atomContext):
         if not self.is_table:
             if ctx.atom_true:
@@ -386,3 +376,23 @@ class ASPModelVisitor(ModelVisitor):
                 # elif num_ctx.INTEGER() is not None:
                 self.output_asp.append(f'number("{num_ctx.INTEGER()}",{num_ctx.INTEGER()}).')
         return super().visitFormula_atom(ctx)
+
+    def visitPath(self, ctx: ModelParser.PathContext):
+        # Only do this for actual paths? Not formulas
+        if not self.is_table:
+            full_path = f"{prepare_value(ctx.getText())}"
+
+            if full_path[0].isupper():
+                self.output_asp.append(f'constant("{full_path}").')
+            else:
+                for i, p in enumerate(ctx.path_item()):
+                    # path_index = -1
+                    # if p.path_index() is not []:
+                    #     path_index = p.path_index()[0].getText() # Assume single index for now. Implement multiple indices later
+                    self.output_asp.append(f'path("{full_path}",{i},"{prepare_value(p.getText())}").')
+
+    # def visitFloating(self, ctx: ModelParser.FloatingContext):
+    #     # if ctx.FLOATING() is not None:
+    #     #     pass
+    #     if ctx.INTEGER() is not None:
+    #         self.output_asp.append(f'number("{ctx.INTEGER()}",{ctx.INTEGER()}).')
