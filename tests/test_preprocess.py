@@ -69,11 +69,11 @@ class TestPreprocess(TestCase):
         """
         self.run_test("imply_undef")
         self.run_test("imply_undef_formula")
-        self.run_test("imply_with_number")
-        self.run_test("imply_with_variable")
-        self.run_test("imply_with_binary")
-        self.run_test("imply_with_unary")
-        self.run_test("imply_with_sum")
+        self.run_test("imply_integer")
+        self.run_test("imply_variable")
+        self.run_test("imply_binary")
+        self.run_test("imply_unary")
+        self.run_test("imply_sum")
         self.run_test("conditional_imply_undef")
         self.run_test("conditional_imply")
         self.run_test("multiple_conditions_imply")
@@ -89,7 +89,7 @@ class TestPreprocess(TestCase):
 
     def test_numerics(self) -> None:
         """
-        Test preprocessing numeric features, arithmetics and numerical function in COOM.
+        Test preprocessing numeric features, arithmetics and aggregates in COOM.
         """
         self.run_test("simple_numeric_feature")
         self.run_test("simple_arithmetic_plus")
@@ -120,8 +120,8 @@ class TestPreprocess(TestCase):
         self.run_test("maximize")
         self.run_test("minimize_non_root_path")
         self.run_test("maximize_non_root_path")
-        self.run_test("minimize_function")
-        self.run_test("maximize_function")
+        self.run_test("minimize_aggregate")
+        self.run_test("maximize_aggregate")
 
     def test_user_input(self) -> None:
         """

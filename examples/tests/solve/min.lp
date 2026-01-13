@@ -10,7 +10,7 @@ index("root.x[1]",1).
 
 constraint((0,"min(root.x)=3"),"boolean").
 binary("min(root.x)=3","min(root.x)","=","3").
-function("min(root.x)","min","root.x").
+aggregate("min(root.x)","min","root.x").
 set("root.x","root.x[0]").
 set("root.x","root.x[1]").
 constant(("3",3),int).

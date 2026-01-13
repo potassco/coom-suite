@@ -427,8 +427,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint(("root.a",0),"lowerbound")',
                 'constraint(("root.a[0].b",1),"lowerbound")',
                 'constraint((0,"!count(root.a[0])=1||sum(root.a[0].b)>1"),"boolean")',
-                'function("sum(root.a[0].b)","sum","root.a[0].b")',
-                'function("count(root.a[0])","count","root.a[0]")',
+                'aggregate("sum(root.a[0].b)","sum","root.a[0].b")',
+                'aggregate("count(root.a[0])","count","root.a[0]")',
                 'set("root.a","root.a[0]")',
                 'set("root.a[0].b","root.a[0].b[0]")',
                 'set("root.a[0]","root.a[0]")',
@@ -524,7 +524,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("!count(root.basket[0])=1||root.basket[0].color[0]=Red","!count(root.basket[0])=1","||","root.basket[0].color[0]=Red")',
                 'unary("!count(root.basket[0])=1","!","count(root.basket[0])=1")',
                 'binary("count(root.basket[0])=1","count(root.basket[0])","=","1")',
-                'function("count(root.basket[0])","count","root.basket[0]")',
+                'aggregate("count(root.basket[0])","count","root.basket[0]")',
                 'set("root.basket[0]","root.basket[0]")',
                 'constant(("1",1),int)',
             }
@@ -565,8 +565,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'type("root.bag[1]","Bag")',
                 'type("root.bag[1].color[0]","Color")',
                 'type("root.bag[0].color[0]","Color")',
-                'function("count(root.bag[0])","count","root.bag[0]")',
-                'function("count(root.bag[1])","count","root.bag[1]")',
+                'aggregate("count(root.bag[0])","count","root.bag[0]")',
+                'aggregate("count(root.bag[1])","count","root.bag[1]")',
                 'unary("!count(root.bag[0])=1","!","count(root.bag[0])=1")',
                 'unary("!count(root.bag[1])=1","!","count(root.bag[1])=1")',
                 'binary("root.bag[1].color[0]=Red","root.bag[1].color[0]","=","Red")',
@@ -645,8 +645,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'type("root.compartment[0].bag[0].color[0]","Color")',
                 'type("root.compartment[1].bag[1].color[0]","Color")',
                 'type("root.compartment[1].bag[0].color[0]","Color")',
-                'function("count(root.compartment[0])","count","root.compartment[0]")',
-                'function("count(root.compartment[1])","count","root.compartment[1]")',
+                'aggregate("count(root.compartment[0])","count","root.compartment[0]")',
+                'aggregate("count(root.compartment[1])","count","root.compartment[1]")',
                 'unary("!count(root.compartment[0])=1","!","count(root.compartment[0])=1")',
                 'unary("!count(root.compartment[1])=1","!","count(root.compartment[1])=1")',
                 'binary("root.compartment[1].bag[1].color[0]=Red","root.compartment[1].bag[1].color[0]","=","Red")',
@@ -686,7 +686,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint(("root.semester[0].type",1),"lowerbound")',
                 'constraint(("root.semester[1].type",1),"lowerbound")',
                 'constraint((0,"!count(root.semester[0])=1||root.semester[1].type[0]!=root.semester[0].type[0]"),"boolean")',
-                'function("count(root.semester[0])","count","root.semester[0]")',
+                'aggregate("count(root.semester[0])","count","root.semester[0]")',
                 'set("root.semester","root.semester[0]")',
                 'set("root.semester","root.semester[1]")',
                 'set("root.semester[0].type","root.semester[0].type[0]")',
@@ -726,7 +726,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint(("root.semester[0].type",1),"lowerbound")',
                 'constraint(("root.semester[1].type",1),"lowerbound")',
                 'constraint((0,"!count(root.semester[1])=1||root.semester[0].type[0]!=root.semester[1].type[0]"),"boolean")',
-                'function("count(root.semester[1])","count","root.semester[1]")',
+                'aggregate("count(root.semester[1])","count","root.semester[1]")',
                 'set("root.semester","root.semester[0]")',
                 'set("root.semester","root.semester[1]")',
                 'set("root.semester[0].type","root.semester[0].type[0]")',
@@ -777,7 +777,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_path("a",0,"a").
             coom_path("b",0,"b").""",
     },
-    "imply_with_number": {
+    "imply_integer": {
         "test": StableModels(
             {
                 'part("product")',
@@ -809,9 +809,9 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'column(("Wheel","root.wheel[0]"),0,0,"root.wheel[0]")',
             }
         ),
-        "files": ["imply_with_number.lp"],
+        "files": ["imply_integer.lp"],
     },
-    "imply_with_variable": {
+    "imply_variable": {
         "test": StableModels(
             {
                 'part("product")',
@@ -846,7 +846,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_path("a",0,"a").
             coom_path("b",0,"b").""",
     },
-    "imply_with_binary": {
+    "imply_binary": {
         "test": StableModels(
             {
                 'part("product")',
@@ -870,9 +870,9 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'range("product.b",1,3)',
             }
         ),
-        "files": ["imply_with_binary.lp"],
+        "files": ["imply_binary.lp"],
     },
-    "imply_with_unary": {
+    "imply_unary": {
         "test": StableModels(
             {
                 'part("product")',
@@ -895,16 +895,16 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'range("product.b",1,3)',
             }
         ),
-        "files": ["imply_with_unary.lp"],
+        "files": ["imply_unary.lp"],
     },
-    "imply_with_sum": {
+    "imply_sum": {
         "test": StableModels(
             {
                 'part("product")',
                 'constraint(("root.a",1),"lowerbound")',
                 'constraint(("root.b",2),"lowerbound")',
                 'imply((0,"root.a[0]"),"sum(root.b)")',
-                'function("sum(root.b)","sum","root.b")',
+                'aggregate("sum(root.b)","sum","root.b")',
                 'index("root.a[0]",0)',
                 'index("root.b[0]",0)',
                 'index("root.b[1]",1)',
@@ -924,7 +924,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'range("product.b",1,3)',
             }
         ),
-        "files": ["imply_with_sum.lp"],
+        "files": ["imply_sum.lp"],
     },
     "conditional_imply_undef": {
         "test": StableModels(
@@ -1474,7 +1474,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'type("root.bag[0]","Bag")',
                 'type("root.bag[1]","Bag")',
                 'type("root.bag[2]","Bag")',
-                'function("count(root.bag)","count","root.bag")',
+                'aggregate("count(root.bag)","count","root.bag")',
                 'binary("count(root.bag)<=2","count(root.bag)","<=","2")',
             }
         ),
@@ -1501,7 +1501,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'type("root.x[0]","product.x")',
                 'type("root.x[1]","product.x")',
                 'type("root.x[2]","product.x")',
-                'function("sum(root.x)","sum","root.x")',
+                'aggregate("sum(root.x)","sum","root.x")',
                 'range("product.x",0,10)',
                 'binary("sum(root.x)<=10","sum(root.x)","<=","10")',
             }
@@ -1665,7 +1665,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         ),
         "files": ["maximize_non_root_path.lp"],
     },
-    "minimize_function": {
+    "minimize_aggregate": {
         "test": StableModels(
             {
                 'numeric("Bag.volume",int)',
@@ -1686,7 +1686,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint(("root.bags",0),"lowerbound")',
                 'constraint(("root.bags[0].volume",1),"lowerbound")',
                 'constraint(("root.bags[1].volume",1),"lowerbound")',
-                'function("count(root.bags)","count","root.bags")',
+                'aggregate("count(root.bags)","count","root.bags")',
                 'set("root.bags","root.bags[0]")',
                 'set("root.bags","root.bags[1]")',
                 'set("root.bags[0].volume","root.bags[0].volume[0]")',
@@ -1696,9 +1696,9 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'minimize("count(root.bags)",0)',
             }
         ),
-        "files": ["minimize_function.lp"],
+        "files": ["minimize_aggregate.lp"],
     },
-    "maximize_function": {
+    "maximize_aggregate": {
         "test": StableModels(
             {
                 'numeric("Bag.volume",int)',
@@ -1719,7 +1719,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint(("root.bags",0),"lowerbound")',
                 'constraint(("root.bags[0].volume",1),"lowerbound")',
                 'constraint(("root.bags[1].volume",1),"lowerbound")',
-                'function("sum(root.bags.volume)","sum","root.bags.volume")',
+                'aggregate("sum(root.bags.volume)","sum","root.bags.volume")',
                 'set("root.bags","root.bags[0]")',
                 'set("root.bags","root.bags[1]")',
                 'set("root.bags[0].volume","root.bags[0].volume[0]")',
@@ -1731,7 +1731,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'maximize("sum(root.bags.volume)",0)',
             }
         ),
-        "files": ["maximize_function.lp"],
+        "files": ["maximize_aggregate.lp"],
     },
     "set_string": {
         "test": StableModels({'user_value("root.color[0]","Yellow")'}),
@@ -1790,7 +1790,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             get_model_from_file("unbounded_singleshot_optimize.lp")
             | {
                 'inc_set("root.bags")',
-                'incremental("function","count(root.bags)","root.bags",("count(root.bags)","count","root.bags"))',
+                'incremental("aggregate","count(root.bags)","root.bags",("count(root.bags)","count","root.bags"))',
                 'incremental("minimize","count(root.bags)","root.bags",("count(root.bags)",0))',
             }
         ),
@@ -1802,8 +1802,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             | {
                 'inc_set("root.bags.size.volume")',
                 'inc_set("root.bags.pockets")',
-                'incremental("function","sum(root.bags.size.volume)","root.bags.size.volume",("sum(root.bags.size.volume)","sum","root.bags.size.volume"))',
-                'incremental("function","count(root.bags.pockets)","root.bags.pockets",("count(root.bags.pockets)","count","root.bags.pockets"))',
+                'incremental("aggregate","sum(root.bags.size.volume)","root.bags.size.volume",("sum(root.bags.size.volume)","sum","root.bags.size.volume"))',
+                'incremental("aggregate","count(root.bags.pockets)","root.bags.pockets",("count(root.bags.pockets)","count","root.bags.pockets"))',
                 'incremental("binary","root.totalVolume[0]=sum(root.bags.size.volume)","root.bags.size.volume",("root.totalVolume[0]=sum(root.bags.size.volume)","root.totalVolume[0]","=","sum(root.bags.size.volume)"))',
                 'incremental("binary","5<count(root.bags.pockets)","root.bags.pockets",("5<count(root.bags.pockets)","5","<","count(root.bags.pockets)"))',
                 'incremental("constraint","root.totalVolume[0]=sum(root.bags.size.volume)","root.bags.size.volume",((0,"root.totalVolume[0]=sum(root.bags.size.volume)"),"boolean"))',
@@ -1820,10 +1820,10 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'inc_set("root.bags.pockets")',
                 'inc_set("root.bags[0].pockets")',
                 'inc_set("root.bags[1].pockets")',
-                'incremental("function","sum(root.bags.size.volume)","root.bags.size.volume",("sum(root.bags.size.volume)","sum","root.bags.size.volume"))',
-                'incremental("function","count(root.bags.pockets)","root.bags.pockets",("count(root.bags.pockets)","count","root.bags.pockets"))',
-                'incremental("function","count(root.bags[0].pockets)","root.bags[0].pockets",("count(root.bags[0].pockets)","count","root.bags[0].pockets"))',
-                'incremental("function","count(root.bags[1].pockets)","root.bags[1].pockets",("count(root.bags[1].pockets)","count","root.bags[1].pockets"))',
+                'incremental("aggregate","sum(root.bags.size.volume)","root.bags.size.volume",("sum(root.bags.size.volume)","sum","root.bags.size.volume"))',
+                'incremental("aggregate","count(root.bags.pockets)","root.bags.pockets",("count(root.bags.pockets)","count","root.bags.pockets"))',
+                'incremental("aggregate","count(root.bags[0].pockets)","root.bags[0].pockets",("count(root.bags[0].pockets)","count","root.bags[0].pockets"))',
+                'incremental("aggregate","count(root.bags[1].pockets)","root.bags[1].pockets",("count(root.bags[1].pockets)","count","root.bags[1].pockets"))',
                 'incremental("constraint","root.bags[0]","root.bags[0].pockets",((7,"root.bags[0]"),"table"))',
                 'incremental("constraint","root.bags[1]","root.bags[1].pockets",((7,"root.bags[1]"),"table"))',
                 'incremental("binary","root.totalVolume[0]=sum(root.bags.size.volume)","root.bags.size.volume",("root.totalVolume[0]=sum(root.bags.size.volume)","root.totalVolume[0]","=","sum(root.bags.size.volume)"))',
@@ -1847,9 +1847,9 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'inc_set("root.bags.size.volume")',
                 'inc_set("root.bags.pockets")',
                 'inc_set("root.bags[0].pockets")',
-                'incremental("function","sum(root.bags.size.volume)","root.bags.size.volume",("sum(root.bags.size.volume)","sum","root.bags.size.volume"))',
-                'incremental("function","count(root.bags.pockets)","root.bags.pockets",("count(root.bags.pockets)","count","root.bags.pockets"))',
-                'incremental("function","count(root.bags[0].pockets)","root.bags[0].pockets",("count(root.bags[0].pockets)","count","root.bags[0].pockets"))',
+                'incremental("aggregate","sum(root.bags.size.volume)","root.bags.size.volume",("sum(root.bags.size.volume)","sum","root.bags.size.volume"))',
+                'incremental("aggregate","count(root.bags.pockets)","root.bags.pockets",("count(root.bags.pockets)","count","root.bags.pockets"))',
+                'incremental("aggregate","count(root.bags[0].pockets)","root.bags[0].pockets",("count(root.bags[0].pockets)","count","root.bags[0].pockets"))',
                 'incremental("constraint","root.bags[0]","root.bags[0].pockets",((7,"root.bags[0]"),"table"))',
                 'incremental("binary","root.totalVolume[0]=sum(root.bags.size.volume)","root.bags.size.volume",("root.totalVolume[0]=sum(root.bags.size.volume)","root.totalVolume[0]","=","sum(root.bags.size.volume)"))',
                 'incremental("binary","5<count(root.bags.pockets)","root.bags.pockets",("5<count(root.bags.pockets)","5","<","count(root.bags.pockets)"))',
@@ -1871,11 +1871,11 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'inc_set("root.bags[0].pockets")',
                 'inc_set("root.bags[1].pockets")',
                 'inc_set("root.bags[2].pockets")',
-                'incremental("function","sum(root.bags.size.volume)","root.bags.size.volume",("sum(root.bags.size.volume)","sum","root.bags.size.volume"))',
-                'incremental("function","count(root.bags.pockets)","root.bags.pockets",("count(root.bags.pockets)","count","root.bags.pockets"))',
-                'incremental("function","count(root.bags[0].pockets)","root.bags[0].pockets",("count(root.bags[0].pockets)","count","root.bags[0].pockets"))',
-                'incremental("function","count(root.bags[1].pockets)","root.bags[1].pockets",("count(root.bags[1].pockets)","count","root.bags[1].pockets"))',
-                'incremental("function","count(root.bags[2].pockets)","root.bags[2].pockets",("count(root.bags[2].pockets)","count","root.bags[2].pockets"))',
+                'incremental("aggregate","sum(root.bags.size.volume)","root.bags.size.volume",("sum(root.bags.size.volume)","sum","root.bags.size.volume"))',
+                'incremental("aggregate","count(root.bags.pockets)","root.bags.pockets",("count(root.bags.pockets)","count","root.bags.pockets"))',
+                'incremental("aggregate","count(root.bags[0].pockets)","root.bags[0].pockets",("count(root.bags[0].pockets)","count","root.bags[0].pockets"))',
+                'incremental("aggregate","count(root.bags[1].pockets)","root.bags[1].pockets",("count(root.bags[1].pockets)","count","root.bags[1].pockets"))',
+                'incremental("aggregate","count(root.bags[2].pockets)","root.bags[2].pockets",("count(root.bags[2].pockets)","count","root.bags[2].pockets"))',
                 'incremental("constraint","root.bags[0]","root.bags[0].pockets",((7,"root.bags[0]"),"table"))',
                 'incremental("constraint","root.bags[1]","root.bags[1].pockets",((7,"root.bags[1]"),"table"))',
                 'incremental("constraint","root.bags[2]","root.bags[2].pockets",((7,"root.bags[2]"),"table"))',

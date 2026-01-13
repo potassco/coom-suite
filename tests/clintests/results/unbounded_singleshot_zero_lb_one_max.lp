@@ -115,11 +115,11 @@ allow("Size",(0,0),"large").
 allow("Size",(1,0),20).
 allow("Size",(1,1),16).
 allow("Size",(1,2),12).
-function("sum(root.bags.size.volume)","sum","root.bags.size.volume").
-function("count(root.bags.pockets)","count","root.bags.pockets").
-function("count(root.bags[0].pockets)","count","root.bags[0].pockets").
-function("count(root.bags[0].closures)","count","root.bags[0].closures").
-function("count(root.bags[0])","count","root.bags[0]").
+aggregate("sum(root.bags.size.volume)","sum","root.bags.size.volume").
+aggregate("count(root.bags.pockets)","count","root.bags.pockets").
+aggregate("count(root.bags[0].pockets)","count","root.bags[0].pockets").
+aggregate("count(root.bags[0].closures)","count","root.bags[0].closures").
+aggregate("count(root.bags[0])","count","root.bags[0]").
 set("root.totalVolume","root.totalVolume[0]").
 set("root.requestedVolume","root.requestedVolume[0]").
 set("root.bags","root.bags[0]").

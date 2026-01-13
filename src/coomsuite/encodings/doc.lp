@@ -121,14 +121,14 @@ Defines a unary operation
 *%
 
 %*
-#function(F,Fun,Arg).
+#aggregate(F,Fun,Arg).
 
-Defines a calculation involving a function
+Defines a calculation involving a aggregate
 
 #parameters
     - F   : The identifier of the complete formula
-    - Fun : The function type
-    - Arg : The argument of the function
+    - Fun : The aggregate type
+    - Arg : The argument of the aggregate
 *%
 
 %*

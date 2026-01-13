@@ -6,7 +6,7 @@
         encodings: true
 
 ## Encodings for incremental boolean constraints
-::: src/coomsuite/encodings/multi/inc-function.lp
+::: src/coomsuite/encodings/multi/inc-aggregate.lp
     handler: asp
     options:
         encodings: true

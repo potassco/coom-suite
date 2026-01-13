@@ -43,11 +43,11 @@ constraint((C,G),"boolean") :- coom_require(C,F), ground_formula((),F,G), not co
 % Local constraints without conditions get converted into conditional requirement
 % to add an "definedness" condition on their context variable
 local_constraint(C,@dotpath(X),G) :- coom_require(C,F), ground_formula(X,F,G), not coom_condition(C,_,_), X != ().
-function(@unary(X,"count"),"count",X)     :- local_constraint(C,X,G).
+aggregate(@unary(X,"count"),"count",X)     :- local_constraint(C,X,G).
 set(X,X)                                  :- local_constraint(_,X,_).
-binary(@binary(Fun,"=","1"),Fun,"=","1")  :- local_constraint(_,X,_), function(Fun,"count",X).
+binary(@binary(Fun,"=","1"),Fun,"=","1")  :- local_constraint(_,X,_), aggregate(Fun,"count",X).
 constant(("1",1),int)                     :- local_constraint(_,_,_).
-conditional_requirement(C,Con,G)          :- local_constraint(C,X,G), function(Fun,"count",X), binary(Con,Fun,"=","1").
+conditional_requirement(C,Con,G)          :- local_constraint(C,X,G), aggregate(Fun,"count",X), binary(Con,Fun,"=","1").
 
 
 % Conditional requirements get converted into a disjuction
@@ -96,11 +96,11 @@ binary(G,L,"&&",R)              :- conditions(C,_,_), conditions_binary(C,_,G,L,
 constraint(@join(X,P),"alldiff") :- alldiff(X,P).
 set(@join(X,P),X')               :- alldiff(X,P), path_to(X,P,X').
 
-% Functions
-function(@aggregate(T,X,P),T,@join(X,P)) :- function(X,_,T,P).
-set(@join(X,P),X')                       :- function(X,_,_,P), path_to(X,P,X').
+% Aggregates
+aggregate(@aggregate(T,X,P),T,@join(X,P)) :- aggregate(X,_,T,P).
+set(@join(X,P),X')                       :- aggregate(X,_,_,P), path_to(X,P,X').
 
-#show function/3.
+#show aggregate/3.
 #show set/2.
 
 % Partonomy and cardinality constraints

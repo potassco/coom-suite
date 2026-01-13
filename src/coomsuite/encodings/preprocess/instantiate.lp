@@ -40,7 +40,7 @@ path_start(X,P) :- coom_binary(F,P,_,_),     coom_path(P,0,_), type_aux(X,Ctx), 
 path_start(X,P) :- coom_binary(F,_,_,P),     coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
 path_start(X,P) :- coom_unary(F,_,P),        coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
 path_start(X,P) :- coom_combinations(C,_,P), coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
-path_start(X,P) :- coom_function(Ctx,_,_,P), coom_path(P,0,_), type_aux(X,Ctx).
+path_start(X,P) :- coom_aggregate(Ctx,_,_,P), coom_path(P,0,_), type_aux(X,Ctx).
 path_start(X,P) :- coom_imply(C,P,_),        coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
 % path_start(X,P) :- coom_exists(C,P,_),       coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
 path_start(X,P) :- coom_alldiff(C,P),        coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
@@ -88,12 +88,12 @@ ground_formula(X,F,XR) :- coom_binary(F,L,"+",R),
                           type_aux(X,C), not path_to(X,L,_), path_to(X,R,XR).
 
 
-% Instantiate functions
-function(X,F,T,P) :- coom_function(C,F,T,P), type_aux(X,C).
+% Instantiate aggregates
+aggregate(X,F,T,P) :- coom_aggregate(C,F,T,P), type_aux(X,C).
 
-% Auxiliary paths for formulas and functions
+% Auxiliary paths for formulas and aggregates
 path_to(X,F,G) :- ground_formula(X,F,G).
-path_to(X,F,@aggregate(T,X,P)) :- function(X,F,T,P).
+path_to(X,F,@aggregate(T,X,P)) :- aggregate(X,F,T,P).
 
 % Auxiliary paths for cardinalities
 path_to(X,N,@dotpath(X')) :- coom_feature(Ctx,N,_,_,_), type_aux(X,Ctx), type_aux(X',_), X' =(N,(X,_)).
@@ -134,7 +134,7 @@ in_tuple(CT,X)          :- in_tuple(CT,_,X).
 
 % Instantiate imply statements
 imply((C,X),X',G)                  :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), ground_formula(X,F,G).
-imply((C,X),X',@aggregate(T,X,P')) :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), function(X,F,T,P').
+imply((C,X),X',@aggregate(T,X,P')) :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), aggregate(X,F,T,P').
 imply((C,X),X',G)                  :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), path_to(X,F,G), not ground_formula(X,F,G). % TODO: Check if this is enough if there are aggreagates
 
 

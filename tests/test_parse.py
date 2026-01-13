@@ -656,9 +656,9 @@ class TestCOOMModelParser(TestCase):
             ],
         )
 
-    def test_function(self) -> None:
+    def test_aggregate(self) -> None:
         """
-        Test parsing behavior with functions.
+        Test parsing behavior with aggregates.
         """
 
         self.assertEqual(
@@ -669,7 +669,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"a=sum(b)").',
                 'binary("a=sum(b)","a","=","sum(b)").',
                 'path("a",0,"a").',
-                'function("product","sum(b)","sum","b").',
+                'aggregate("product","sum(b)","sum","b").',
                 'path("b",0,"b").',
             ],
         )
@@ -682,8 +682,8 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"a=sum(b,c)").',
                 'binary("a=sum(b,c)","a","=","sum(b,c)").',
                 'path("a",0,"a").',
-                'function("product","sum(b,c)","sum","b").',
-                'function("product","sum(b,c)","sum","c").',
+                'aggregate("product","sum(b,c)","sum","b").',
+                'aggregate("product","sum(b,c)","sum","c").',
                 'path("b",0,"b").',
                 'path("c",0,"c").',
             ],
@@ -697,7 +697,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"a=count(b)").',
                 'binary("a=count(b)","a","=","count(b)").',
                 'path("a",0,"a").',
-                'function("product","count(b)","count","b").',
+                'aggregate("product","count(b)","count","b").',
                 'path("b",0,"b").',
             ],
         )
@@ -710,8 +710,8 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"a=count(b,c)").',
                 'binary("a=count(b,c)","a","=","count(b,c)").',
                 'path("a",0,"a").',
-                'function("product","count(b,c)","count","b").',
-                'function("product","count(b,c)","count","c").',
+                'aggregate("product","count(b,c)","count","b").',
+                'aggregate("product","count(b,c)","count","c").',
                 'path("b",0,"b").',
                 'path("c",0,"c").',
             ],
@@ -724,7 +724,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"a=min(b)").',
                 'binary("a=min(b)","a","=","min(b)").',
                 'path("a",0,"a").',
-                'function("product","min(b)","min","b").',
+                'aggregate("product","min(b)","min","b").',
                 'path("b",0,"b").',
             ],
         )
@@ -737,8 +737,8 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"a=min(b,c)").',
                 'binary("a=min(b,c)","a","=","min(b,c)").',
                 'path("a",0,"a").',
-                'function("product","min(b,c)","min","b").',
-                'function("product","min(b,c)","min","c").',
+                'aggregate("product","min(b,c)","min","b").',
+                'aggregate("product","min(b,c)","min","c").',
                 'path("b",0,"b").',
                 'path("c",0,"c").',
             ],
@@ -752,7 +752,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"a=max(b)").',
                 'binary("a=max(b)","a","=","max(b)").',
                 'path("a",0,"a").',
-                'function("product","max(b)","max","b").',
+                'aggregate("product","max(b)","max","b").',
                 'path("b",0,"b").',
             ],
         )
@@ -765,8 +765,8 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"a=max(b,c)").',
                 'binary("a=max(b,c)","a","=","max(b,c)").',
                 'path("a",0,"a").',
-                'function("product","max(b,c)","max","b").',
-                'function("product","max(b,c)","max","c").',
+                'aggregate("product","max(b,c)","max","b").',
+                'aggregate("product","max(b,c)","max","c").',
                 'path("b",0,"b").',
                 'path("c",0,"c").',
             ],
@@ -793,8 +793,8 @@ class TestCOOMModelParser(TestCase):
         #         'require(0,"a=delta(b,c)").',
         #         'binary("a=delta(b,c)","a","=","delta(b,c)").',
         #         'path("a",0,"a").',
-        #         'function("product","delta(b,c)","delta","b").',
-        #         'function("product","delta(b,c)","delta","c").',
+        #         'unary("product","delta(b,c)","delta","b").',
+        #         'unary("product","delta(b,c)","delta","c").',
         #         'path("b",0,"b").',
         #         'path("c",0,"c").',
         #     ],
@@ -808,7 +808,7 @@ class TestCOOMModelParser(TestCase):
         #         'require(0,"a=pow(b)").',
         #         'binary("a=pow(b)","a","=","pow(b)").',
         #         'path("a",0,"a").',
-        #         'function("product","pow(b)","pow","b").',
+        #         'unary("product","pow(b)","pow","b").',
         #         'path("b",0,"b").',
         #     ],
         # )
@@ -873,7 +873,7 @@ class TestCOOMModelParser(TestCase):
         #         'require(0,"a=mod(b)").',
         #         'binary("a=mod(b)","a","=","mod(b)").',
         #         'path("a",0,"a").',
-        #         'function("product","mod(b)","mod","b").',
+        #         'unary("product","mod(b)","mod","b").',
         #         'path("b",0,"b").',
         #     ],
         # )
@@ -1086,7 +1086,7 @@ class TestCOOMModelParser(TestCase):
                 "behavior(0).",
                 'context(0,"product").',
                 'maximize(0,0,"count(bags)").',
-                'function("product","count(bags)","count","bags").',
+                'aggregate("product","count(bags)","count","bags").',
                 'path("bags",0,"bags").',
             ],
         )

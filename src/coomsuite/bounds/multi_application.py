@@ -69,7 +69,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         Keep track of the incremental sets and expressions depending on them
 
         Keys: incremental sets
-        Values: sets of expressions (binary, function, etc.), represented by its type and arguments
+        Values: sets of expressions (binary, aggregate, etc.), represented by its type and arguments
         """
         self._incremental_expressions: Set[str] = set()
         """The set of all incremental expressions (represented by their name)"""
@@ -130,7 +130,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             )
             # check if the facts is an incremental expression
             is_incremental_expression = (
-                name in ["function", "binary", "unary", "minimize", "maximize"]
+                name in ["aggregate", "binary", "unary", "minimize", "maximize"]
                 and args[0].string in self._incremental_expressions
             )
 
@@ -156,7 +156,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         Returns:
             ProgPart: the program part containing the rules to update the incremental expression
         """
-        if exp_type not in ["function", "binary", "unary", "constraint", "minimize", "maximize"]:
+        if exp_type not in ["aggregate", "binary", "unary", "constraint", "minimize", "maximize"]:
             raise ValueError(f"unknown type of incremental expression: {exp_type}")
 
         # determine the name and arguments of the program part
@@ -167,13 +167,13 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         match exp_type:
             case "unary" | "constraint" | "minimize" | "maximize":
                 part_name = "incremental_" + exp_type
-            case "function":
-                # determine the name of the function
+            case "aggregate":
+                # determine the name of the aggregate
                 name = args[0].string
-                # to determine the part name we need to check if the function is initialized
+                # to determine the part name we need to check if the aggregate is initialized
                 prefix = "update_" if name in self._is_initialized else "new_"
-                part_name = prefix + "incremental_function"
-                # mark the function as initialized
+                part_name = prefix + "incremental_aggregate"
+                # mark the aggregate as initialized
                 self._is_initialized.add(name)
             case "binary":
                 # for binaries we need to check which of the subexpressions are incremental themselves
@@ -228,7 +228,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             "column",
             "unary",
             "binary",
-            "function",
+            "aggregate",
             "allow",
             "number",
             "constant",

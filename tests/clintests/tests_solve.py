@@ -629,12 +629,12 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
         "ftest": OptimalModel({'include("root.bags[0]")', 'value("root.bags[0].volume[0]",10) '}, flingo=True),
         "files": ["maximize_priority.lp"],
     },
-    "minimize_maximize_function": {
+    "minimize_maximize_aggregate": {
         "test": OptimalModel({'include("root.bags[0]")', 'value("root.bags[0].volume[0]",10)'}),
         "ftest": OptimalModel({'include("root.bags[0]")', 'value("root.bags[0].volume[0]",10)'}, flingo=True),
-        "files": ["minimize_maximize_function.lp"],
+        "files": ["minimize_maximize_aggregate.lp"],
     },
-    "maximize_minimize_function": {
+    "maximize_minimize_aggregate": {
         "test": OptimalModel(
             {
                 'include("root.bags[0]")',
@@ -652,7 +652,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             },
             flingo=True,
         ),
-        "files": ["maximize_minimize_function.lp"],
+        "files": ["maximize_minimize_aggregate.lp"],
     },
     "add_part": {"test": StableModels({'include("root.a[0]")'}), "files": ["add_part.lp"]},
     "add_attribute": {

@@ -12,7 +12,7 @@ index("root.x[2]",2).
 
 constraint((0,"count(root.x)=2"),"boolean").
 binary("count(root.x)=2","count(root.x)","=","2").
-function("count(root.x)","count","root.x").
+aggregate("count(root.x)","count","root.x").
 set("root.x","root.x[0]").
 set("root.x","root.x[1]").
 set("root.x","root.x[2]").

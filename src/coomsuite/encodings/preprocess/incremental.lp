@@ -37,19 +37,19 @@ table_column((C,@dotpath(X)),@join(X,P)) :- table(C,X), coom_combinations(C,_,P)
 
 % incremental sets: a set is incremental if:
 % - there is a path from an unbounded object to the set
-% - limit to only sets used in functions or as part of a table
-inc_set(P) :- function(_,_,P),   path_step(P,X'), inc_obj(X').
+% - limit to only sets used in aggregates or as part of a table
+inc_set(P) :- aggregate(_,_,P),   path_step(P,X'), inc_obj(X').
 inc_set(P) :- table_column(_,P), path_step(P,X'), inc_obj(X').
 
 #show inc_set/1.
 
 % incremental expressions are defined recursively
-% - base case: functions over incremental sets are incremental
-incremental("function",  X,P,(X,F,P))            :- function(X,F,P),              inc_set(P).
+% - base case: aggregates over incremental sets are incremental
+incremental("aggregate",  X,P,(X,F,P))            :- aggregate(X,F,P),              inc_set(P).
 % - base case: table constraints over incremental sets are incremental
 incremental("constraint",X,P,((ID,X),"table"))   :- table_column((ID,X),P),       inc_set(P).
 % - recursive: if a sub-expression of X is incremental, then X is also incremental
-% incremental("function",  X,P,(X,F,Y))            :- function(X,F,Y),              incremental(_,Y ,P,_).
+% incremental("aggregate",  X,P,(X,F,Y))            :- aggregate(X,F,Y),              incremental(_,Y ,P,_).
 incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,L ,P,_).
 incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,R ,P,_).
 incremental("unary",     X,P,(X,O,X'))           :- unary(X,O,X'),                incremental(_,X',P,_).

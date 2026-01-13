@@ -7,6 +7,6 @@ coom_behavior(0).
 coom_context(0,"A").
 coom_require(0,"sum(b)>1").
 coom_binary("sum(b)>1","sum(b)",">","1").
-coom_function("A","sum(b)","sum","b").
+coom_aggregate("A","sum(b)","sum","b").
 coom_path("b",0,"b").
 coom_constant("1",int).

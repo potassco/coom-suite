@@ -10,7 +10,7 @@ index("root.x[1]",1).
 
 constraint((0,"sum(root.x)=3"),"boolean").
 binary("sum(root.x)=3","sum(root.x)","=","3").
-function("sum(root.x)","sum","root.x").
+aggregate("sum(root.x)","sum","root.x").
 set("root.x","root.x[0]").
 set("root.x","root.x[1]").
 constant(("3",3),int).

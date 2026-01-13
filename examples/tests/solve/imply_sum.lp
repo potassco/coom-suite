@@ -2,7 +2,7 @@ part("product").
 constraint(("root.a",1),"lowerbound").
 constraint(("root.b",2),"lowerbound").
 imply((0,"root.a[0]"),"sum(root.b)").
-function("sum(root.b)","sum","root.b").
+aggregate("sum(root.b)","sum","root.b").
 index("root.a[0]",0).
 index("root.b[0]",0).
 index("root.b[1]",1).

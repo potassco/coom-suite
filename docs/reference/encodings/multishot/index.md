@@ -52,7 +52,7 @@ These are added through respective program parts in the [`new-object`][new-objec
 
 ## Constraint Facts
 
-The second group of facts is made up of facts describing new constraints as well as their components (i.e. binaries, unaries, and functions).
+The second group of facts is made up of facts describing new constraints as well as their components (i.e. binaries, unaries, and aggregates).
 The constraints (and their components) are further divided into two categories: simple constraints and incremental constraints.
 
 ### Simple Constraints

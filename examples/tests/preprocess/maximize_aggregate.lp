@@ -6,6 +6,6 @@ coom_range("Bag","volume",0,10).
 coom_behavior(0).
 coom_context(0,"product").
 coom_maximize(0,0,"sum(bags.volume)").
-coom_function("product","sum(bags.volume)","sum","bags.volume").
+coom_aggregate("product","sum(bags.volume)","sum","bags.volume").
 coom_path("bags.volume",0,"bags").
 coom_path("bags.volume",1,"volume").

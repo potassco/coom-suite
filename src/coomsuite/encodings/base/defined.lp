@@ -22,7 +22,7 @@
 
 #defined constant/2.
 
-#defined function/3.
+#defined aggregate/3.
 #defined set/2.
 
 #defined minimize/2.

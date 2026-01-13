@@ -10,7 +10,7 @@ index("root.x[1]",1).
 
 constraint((0,"max(root.x)=3"),"boolean").
 binary("max(root.x)=3","max(root.x)","=","3").
-function("max(root.x)","max","root.x").
+aggregate("max(root.x)","max","root.x").
 set("root.x","root.x[0]").
 set("root.x","root.x[1]").
 constant(("3",3),int).

@@ -16,8 +16,8 @@ parent("root.bags[0].volume[0]","root.bags[0]").
 constraint(("root.bags",1),"lowerbound").
 constraint(("root.bags[0].volume",1),"lowerbound").
 constraint(("root.bags[1].volume",1),"lowerbound").
-function("count(root.bags)","count","root.bags").
-function("sum(root.bags.volume)","sum","root.bags.volume").
+aggregate("count(root.bags)","count","root.bags").
+aggregate("sum(root.bags.volume)","sum","root.bags.volume").
 set("root.bags","root.bags[0]").
 set("root.bags","root.bags[1]").
 set("root.bags[0].volume","root.bags[0].volume[0]").
@@ -26,5 +26,5 @@ set("root.bags.volume","root.bags[1].volume[0]").
 set("root.bags.volume","root.bags[0].volume[0]").
 part("product").
 part("Bag").
-minimize("count(root.bags)",0).
-maximize("sum(root.bags.volume)",1).
+minimize("count(root.bags)",1).
+maximize("sum(root.bags.volume)",0).

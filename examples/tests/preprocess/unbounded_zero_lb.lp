@@ -41,7 +41,7 @@ coom_context(0,"product").
 coom_require(0,"totalVolume=sum(bags.size.volume)").
 coom_binary("totalVolume=sum(bags.size.volume)","totalVolume","=","sum(bags.size.volume)").
 coom_path("totalVolume",0,"totalVolume").
-coom_function("product","sum(bags.size.volume)","sum","bags.size.volume").
+coom_aggregate("product","sum(bags.size.volume)","sum","bags.size.volume").
 coom_path("bags.size.volume",0,"bags").
 coom_path("bags.size.volume",1,"size").
 coom_path("bags.size.volume",2,"volume").
@@ -73,7 +73,7 @@ coom_context(4,"product").
 coom_require(4,"5<count(bags.pockets)").
 coom_binary("5<count(bags.pockets)","5","<","count(bags.pockets)").
 coom_constant("5",int).
-coom_function("product","count(bags.pockets)","count","bags.pockets").
+coom_aggregate("product","count(bags.pockets)","count","bags.pockets").
 coom_path("bags.pockets",0,"bags").
 coom_path("bags.pockets",1,"pockets").
 
@@ -82,7 +82,7 @@ coom_context(5,"Bag").
 coom_require(5,"2<=count(pockets)").
 coom_binary("2<=count(pockets)","2","<=","count(pockets)").
 coom_constant("2",int).
-coom_function("Bag","count(pockets)","count","pockets").
+coom_aggregate("Bag","count(pockets)","count","pockets").
 coom_path("pockets",0,"pockets").
 
 coom_behavior(6).
@@ -90,7 +90,7 @@ coom_context(6,"Bag").
 coom_require(6,"2<=count(closures)").
 coom_binary("2<=count(closures)","2","<=","count(closures)").
 coom_constant("2",int).
-coom_function("Bag","count(closures)","count","closures").
+coom_aggregate("Bag","count(closures)","count","closures").
 coom_path("closures",0,"closures").
 
 coom_behavior(7).

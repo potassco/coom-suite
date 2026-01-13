@@ -357,7 +357,7 @@ class ASPModelVisitor(ModelVisitor):
             func = ctx.formula_func().FUNCTION()
             for f in ctx.formula_func().formula():
                 if str(func) in ["sum", "count", "min", "max", "avg"]:
-                    self.output_asp.append(f'function("{self.context}","{complete}","{func}","{f.getText()}").')
+                    self.output_asp.append(f'aggregate("{self.context}","{complete}","{func}","{f.getText()}").')
                 else:
                     self.output_asp.append(f'unary("{complete}","{func}","{f.getText()}").')
         super().visitFormula_sign(ctx)

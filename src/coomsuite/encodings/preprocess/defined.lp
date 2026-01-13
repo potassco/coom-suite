@@ -18,7 +18,7 @@
 #defined coom_path/3.
 #defined coom_constant/2.
 
-#defined coom_function/4.
+#defined coom_aggregate/4.
 #defined coom_imply/3.
 #defined coom_exists/3.
 #defined coom_alldiff/2.

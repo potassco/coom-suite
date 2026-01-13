@@ -93,14 +93,14 @@ class TestMultiApplication(TestCase):
         bound = 3
         bound_term = Number(3)
 
-        # test unary, constraint and function
+        # test unary, constraint and aggregate
         for exp_type, args, part in [
             ("unary", [name], ("incremental_unary", [name, bound_term])),
             ("constraint", [name], ("incremental_constraint", [name, bound_term])),
-            # first the function prog parts has prefix new
-            ("function", [name], ("new_incremental_function", [name, bound_term])),
+            # first the aggregate prog parts has prefix new
+            ("aggregate", [name], ("new_incremental_aggregate", [name, bound_term])),
             # then it has prefix update
-            ("function", [name], ("update_incremental_function", [name, bound_term])),
+            ("aggregate", [name], ("update_incremental_aggregate", [name, bound_term])),
         ]:
             self.assertEqual(
                 app._get_incremental_prog_part(exp_type, args, bound),
@@ -181,14 +181,14 @@ class TestMultiApplication(TestCase):
             'constraint(("root.color",1),"lowerbound").',
             'constraint((7,"root.bags[0]"),"table").',
             'constraint((2,"root.color[0]=Blue"),"boolean").',
-            'function("count(root.bags[0].pockets)","count","root.bags[0].pockets").',
+            'aggregate("count(root.bags[0].pockets)","count","root.bags[0].pockets").',
             'binary("root.color[0]=Blue","root.color[0]","=","Blue").',
             'unary("-7","-","7").',
         }
         # incremental expressions part of the initial value of _new_processed_facts
         incremental = {
             'constraint((4,"5<count(root.bags.pockets)"),"boolean").',
-            'function("count(root.bags.pockets)","count","root.bags.pockets").',
+            'aggregate("count(root.bags.pockets)","count","root.bags.pockets").',
             'binary("5<count(root.bags.pockets)","5","<","count(root.bags.pockets)").',
             'unary("(count(root.bags.pockets))","()","count(root.bags.pockets)").',
         }
@@ -223,7 +223,7 @@ class TestMultiApplication(TestCase):
         inc_sets_dict: Dict[str, Set[Tuple[str, Tuple[Symbol, ...]]]] = {}
         inc_sets_dict["root.bags.pockets"] = {
             (
-                "function",
+                "aggregate",
                 (String("count(root.bags.pockets)"), String("count"), String("root.bags.pockets")),
             ),
         }
@@ -238,7 +238,7 @@ class TestMultiApplication(TestCase):
             'inc_set("root.bags.size.volume").',
             'inc_set("root.bags.pockets").',
             (
-                'incremental("function","sum(root.bags.size.volume)","root.bags.size.volume",'
+                'incremental("aggregate","sum(root.bags.size.volume)","root.bags.size.volume",'
                 '("sum(root.bags.size.volume)","sum","root.bags.size.volume")).'
             ),
             (
@@ -268,7 +268,7 @@ class TestMultiApplication(TestCase):
         )
         inc_sets_dict["root.bags.size.volume"] = {
             (
-                "function",
+                "aggregate",
                 (String("sum(root.bags.size.volume)"), String("sum"), String("root.bags.size.volume")),
             )
         }
@@ -294,9 +294,9 @@ class TestMultiApplication(TestCase):
         # add elements to the incremental set and respective program parts to expected return
         for name, args, part_name in [
             (
-                "function",
+                "aggregate",
                 [String("count(root.bags.pockets)"), String("count"), String("root.bags.pockets")],
-                "new_incremental_function",
+                "new_incremental_aggregate",
             ),
             (
                 "constraint",
@@ -449,7 +449,7 @@ class TestMultiApplication(TestCase):
         incremental = {
             'inc_set("root.bags.pockets").',
             (
-                'incremental("function","count(root.bags.pockets)","root.bags.pockets",'
+                'incremental("aggregate","count(root.bags.pockets)","root.bags.pockets",'
                 '("count(root.bags.pockets)","count","root.bags.pockets"))'
             ),
         }
@@ -500,17 +500,17 @@ class TestMultiApplication(TestCase):
             patch.object(app, "_get_incremental_prog_part", autospec=True) as mock_get_inc_part,
         ):
             # mocked return value of _remove_new_incremental_expressions
-            mock_remove.side_effect = [[("function", ['"count"']), ("unary", ['"()"'])]]
+            mock_remove.side_effect = [[("aggregate", ['"count"']), ("unary", ['"()"'])]]
             # expected program parts
             expected_parts = [
-                ("new_function", [String('"count"'), Number(0)]),
+                ("new_aggregate", [String('"count"'), Number(0)]),
                 ("new_unary", [String('"()"'), Number(0)]),
             ]
             # mock the program parts as return values of _get_incremental_prog_part
             mock_get_inc_part.side_effect = expected_parts.copy()
             # expected calls to _get_incremental_prog_part
             expected_get_inc_part_calls = [
-                call("function", ['"count"'], 0),
+                call("aggregate", ['"count"'], 0),
                 call("unary", ['"()"'], 0),
             ]
 
@@ -555,7 +555,7 @@ class TestMultiApplication(TestCase):
             mock_get_part.side_effect = non_inc_parts.copy()
 
             # mocked return value of _get_prog_part_of_incremental_set
-            inc_parts = [("update_incremental_function", [Number(1)]), ("incremental_unary", [Number(1)])]
+            inc_parts = [("update_incremental_aggregate", [Number(1)]), ("incremental_unary", [Number(1)])]
             mock_get_part_inc_set.side_effect = [inc_parts.copy()]
 
             # initial value of _new_processed_facts

@@ -57,8 +57,8 @@ allow(8,(1,0),"Velcro").
 allow(8,(0,1),"Blue").
 allow(8,(0,1),"Red").
 allow(8,(1,1),"Zipper").
-function("sum(root.bags.size.volume)","sum","root.bags.size.volume").
-function("count(root.bags.pockets)","count","root.bags.pockets").
+aggregate("sum(root.bags.size.volume)","sum","root.bags.size.volume").
+aggregate("count(root.bags.pockets)","count","root.bags.pockets").
 set("root.totalVolume","root.totalVolume[0]").
 set("root.requestedVolume","root.requestedVolume[0]").
 set("root.color","root.color[0]").
