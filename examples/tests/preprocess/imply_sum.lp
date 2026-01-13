@@ -8,5 +8,6 @@ coom_behavior(0).
 coom_context(0,"product").
 coom_imply(0,"a","sum(b)").
 coom_path("a",0,"a").
-coom_aggregate("product","sum(b)","sum","b").
+coom_aggregate("product","sum(b)","sum").
+coom_aggregate_set("product","sum(b)","b").
 coom_path("b",0,"b").

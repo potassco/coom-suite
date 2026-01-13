@@ -39,8 +39,16 @@ def join(p1,p2):
     else:
         return String(f"{context}.{p2.string}")
 
-def aggregate(f,c,p):
-    joined = join(c,p).string
+def join_comprehension(p1,p2):
+    remove_var = p2.string.split(".")[1]
+    return String(f"{p1.string}.{remove_var}")
+
+def aggregate(f,ctx,p,val=None,var=None,c=None):
+    joined = join(ctx,p).string
+    if c is not None:
+        return String(f"{f.string}({val.string} for {var.string} in {joined} if {c.string})")
+    elif val is not None and var is not None:
+        return String(f"{f.string}({val.string} for {var.string} in {joined})")
     return String(f"{f.string}({joined})")
 
 def implication(a,b):

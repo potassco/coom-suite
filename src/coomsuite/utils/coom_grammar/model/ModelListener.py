@@ -422,6 +422,15 @@ class ModelListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by ModelParser#formula_aggr.
+    def enterFormula_aggr(self, ctx:ModelParser.Formula_aggrContext):
+        pass
+
+    # Exit a parse tree produced by ModelParser#formula_aggr.
+    def exitFormula_aggr(self, ctx:ModelParser.Formula_aggrContext):
+        pass
+
+
     # Enter a parse tree produced by ModelParser#formula_func.
     def enterFormula_func(self, ctx:ModelParser.Formula_funcContext):
         pass
@@ -437,6 +446,15 @@ class ModelListener(ParseTreeListener):
 
     # Exit a parse tree produced by ModelParser#formula_atom.
     def exitFormula_atom(self, ctx:ModelParser.Formula_atomContext):
+        pass
+
+
+    # Enter a parse tree produced by ModelParser#aggregate.
+    def enterAggregate(self, ctx:ModelParser.AggregateContext):
+        pass
+
+    # Exit a parse tree produced by ModelParser#aggregate.
+    def exitAggregate(self, ctx:ModelParser.AggregateContext):
         pass
 
 

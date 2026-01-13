@@ -239,6 +239,11 @@ class ModelVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by ModelParser#formula_aggr.
+    def visitFormula_aggr(self, ctx:ModelParser.Formula_aggrContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by ModelParser#formula_func.
     def visitFormula_func(self, ctx:ModelParser.Formula_funcContext):
         return self.visitChildren(ctx)
@@ -246,6 +251,11 @@ class ModelVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by ModelParser#formula_atom.
     def visitFormula_atom(self, ctx:ModelParser.Formula_atomContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ModelParser#aggregate.
+    def visitAggregate(self, ctx:ModelParser.AggregateContext):
         return self.visitChildren(ctx)
 
 

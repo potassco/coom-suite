@@ -97,11 +97,42 @@ constraint(@join(X,P),"alldiff") :- alldiff(X,P).
 set(@join(X,P),X')               :- alldiff(X,P), path_to(X,P,X').
 
 % Aggregates
-aggregate(@aggregate(T,X,P),T,@join(X,P)) :- aggregate(X,_,T,P).
-set(@join(X,P),X')                       :- aggregate(X,_,_,P), path_to(X,P,X').
+% aggregate(@aggregate(T,X,P),T,@join(X,P)) :- aggregate(X,_,T,P).
+% set(@join(X,P),X')                       :- aggregate(X,_,_,P), path_to(X,P,X').
+% #show aggregate/3.
+% #show set/2.
+
+% without comprehension
+aggregate(@aggregate(T,X,P),T,@join(X,P)) :-
+    aggregate(X,A,T,P),
+    not coom_aggregate_comprehension(_,A,_,_).
+
+% with comprehension but without condition
+aggregate(@aggregate(T,X,P,Val,Var),T,@join(X,P)) :-
+    aggregate(X,A,T,P),
+    coom_aggregate_comprehension(_,A,Val,Var),
+    not coom_aggregate_condition(_,A,_).
+
+% with comprehension and condition
+aggregate(@aggregate(T,X,P,Val,Var,C),T,@join(X,P)) :-
+    aggregate(X,A,T,P),
+    coom_aggregate_comprehension(_,A,Val,Var),
+    coom_aggregate_condition(_,A,C).
+
+condition(@aggregate(T,X,P,Val,Var,C),@binary(@join(X,L),Op,R)) :-
+    aggregate(X,A,T,P),
+    aggregate_condition(X,A,_,(L,Op,R)),
+    coom_aggregate_comprehension(_,A,Val,Var),
+    coom_aggregate_condition(_,A,C).
+
+
+set(@join(X,P),X')    :- aggregate(X,_,_,P), path_to(X,P,X').
+property((S,X),(C,F)) :- aggregate(A,T,S), set(S,X), condition(A,C), F = 0.
 
 #show aggregate/3.
 #show set/2.
+#show condition/2.
+#show property/2.
 
 % Partonomy and cardinality constraints
 part(T) :- coom_structure(T).

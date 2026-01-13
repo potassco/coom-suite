@@ -57,6 +57,7 @@ unit:
 		| INTEGER
 		| TIMES
 		| HASHES
+		| AGGREGATE
 		| FUNCTION
 	);
 fraction: sign = ('.' | '^') digits = HASHES;
@@ -158,16 +159,19 @@ formula_pow: formula_sign (operator = '^' formula_sign)*;
 formula_sign: ('-' neg = formula_sign)
 	| ('+' formula_sign)
 	| ('(' formula ')')
+	| formula_aggr
 	| formula_func
 	| formula_atom;
-formula_func: fun = FUNCTION '(' formula (',' formula)* ')';
-// formula_func: fun = FUNCTION '(' formula ( 'for' name 'in' path ( 'if' condition)? )? ')';
+formula_aggr:
+	aggr = AGGREGATE '(' aggregate (','? aggregate)* ')';
+formula_func: fun = FUNCTION '(' formula ')';
 formula_atom:
 	atom_true = 'true'
 	| atom_false = 'false'
 	| atom_num = floating
 	| atom_path = path;
 
+aggregate: formula ( 'for' name 'in' path ( 'if' condition)?)?;
 constant: floating | name | 'true' | 'false';
 floating:
 	'-'? (FLOATING | INTEGER | '\u221e'); // == infinity symbol
@@ -178,7 +182,7 @@ path: path_item ('.' path_item)*;
 path_item: name ('[' path_index ('..' path_index)? ']')?;
 path_index: INTEGER | ('last' ('-' INTEGER)?);
 
-name: NAME | FUNCTION | KEYWORD;
+name: NAME | AGGREGATE | FUNCTION | KEYWORD;
 stmt_end: ';' | {self.wasNewline()};
 
 compare:
@@ -196,12 +200,9 @@ compare:
 	| 'contains';
 
 // define lexical tokens
+AGGREGATE: 'count' | 'min' | 'max' | 'sum' | 'avg';
 FUNCTION:
-	'count'
-	| 'min'
-	| 'max'
-	| 'sum'
-	| 'delta'
+	'delta'
 	| 'pow'
 	| 'sqrt'
 	| 'ceil'
