@@ -1,0 +1,16 @@
+product {
+    1..1 Module modules
+}
+
+enumeration Module {
+    attribute num ects
+    attribute str group
+
+    A1 = ( 6, A )
+    A2 = ( 9, A )
+    B1 = ( 9, B )
+}
+
+behavior {
+    require 6 >= max(m.ects for m in modules if m.group = A)
+}

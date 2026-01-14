@@ -133,7 +133,10 @@ class TestClingo(TestCase):
         self.run_test("simple_max")
 
         self.run_test("sum_comprehension")
+        self.run_test("count_conditional")
         self.run_test("sum_conditional")
+        self.run_test("max_conditional")
+        self.run_test("min_conditional")
 
     def test_imply(self) -> None:
         """
@@ -297,7 +300,10 @@ class TestFlingo(TestCase):
         self.run_test("simple_max")
 
         self.run_test("sum_comprehension")
+        self.run_test("count_conditional")
         self.run_test("sum_conditional")
+        self.run_test("max_conditional")
+        self.run_test("min_conditional")
 
     def test_imply(self) -> None:
         """

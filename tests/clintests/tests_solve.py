@@ -579,6 +579,10 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
         ),
         "files": ["sum_comprehension.lp"],
     },
+    "count_conditional": {
+        "test": StableModels(set()),
+        "files": ["count_conditional.lp"],
+    },
     "sum_conditional": {
         "test": StableModels(
             {
@@ -599,6 +603,36 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             },
         ),
         "files": ["sum_conditional.lp"],
+    },
+    "max_conditional": {
+        "test": StableModels(
+            {
+                'value("root.modules[0]","A1")',
+                'value("root.modules[0].ects[0]",6)',
+                'value("root.modules[0].group[0]","A")',
+            },
+            {
+                'value("root.modules[0]","B1")',
+                'value("root.modules[0].ects[0]",9)',
+                'value("root.modules[0].group[0]","B")',
+            },
+        ),
+        "files": ["max_conditional.lp"],
+    },
+    "min_conditional": {
+        "test": StableModels(
+            {
+                'value("root.modules[0]","A2")',
+                'value("root.modules[0].ects[0]",9)',
+                'value("root.modules[0].group[0]","A")',
+            },
+            {
+                'value("root.modules[0]","B1")',
+                'value("root.modules[0].ects[0]",9)',
+                'value("root.modules[0].group[0]","B")',
+            },
+        ),
+        "files": ["min_conditional.lp"],
     },
     "imply_integer": {
         "test": StableModels({'value("root.wheel[0]","W27")', 'value("root.wheel[0].size[0]",27)'}),

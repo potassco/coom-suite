@@ -1,0 +1,49 @@
+discrete("Module.ects",int).
+discrete("Module.group",str).
+discrete("Module",str).
+domain("Module.ects",6).
+domain("Module.ects",9).
+domain("Module.group","A").
+domain("Module.group","B").
+domain("Module","A1").
+domain("Module","A2").
+domain("Module","B1").
+type("root","product").
+type("root.modules[0]","Module").
+type("root.modules[0].ects[0]","Module.ects").
+type("root.modules[0].group[0]","Module.group").
+index("root.modules[0]",0).
+index("root.modules[0].ects[0]",0).
+index("root.modules[0].group[0]",0).
+parent("root.modules[0]","root").
+parent("root.modules[0].ects[0]","root.modules[0]").
+parent("root.modules[0].group[0]","root.modules[0]").
+constraint(("root.modules",1),"lowerbound").
+constraint(("root.modules[0].ects",1),"lowerbound").
+constraint(("root.modules[0].group",1),"lowerbound").
+constraint(("Module","root.modules[0]"),"table").
+constraint((0,"6>=max(m.ects for m in root.modules.ects if m.group=A)"),"boolean").
+aggregate("max(m.ects for m in root.modules.ects if m.group=A)","max","root.modules.ects").
+set("root.modules","root.modules[0]").
+set("root.modules[0].ects","root.modules[0].ects[0]").
+set("root.modules[0].group","root.modules[0].group[0]").
+set("root.modules.ects","root.modules[0].ects[0]").
+binary("root.modules[0].group[0]=A","root.modules[0].group[0]","=","A").
+binary("6>=max(m.ects for m in root.modules.ects if m.group=A)","6",">=","max(m.ects for m in root.modules.ects if m.group=A)").
+constant(("6",6),int).
+constant("A",str).
+column(("Module","root.modules[0]"),0,1,"root.modules[0].ects[0]").
+column(("Module","root.modules[0]"),0,2,"root.modules[0].group[0]").
+column(("Module","root.modules[0]"),0,0,"root.modules[0]").
+allow("Module",(0,0),"A1").
+allow("Module",(0,1),"A2").
+allow("Module",(0,2),"B1").
+allow("Module",(1,2),9).
+allow("Module",(2,2),"B").
+allow("Module",(1,1),9).
+allow("Module",(2,1),"A").
+allow("Module",(1,0),6).
+allow("Module",(2,0),"A").
+condition("max(m.ects for m in root.modules.ects if m.group=A)","root.modules.group=A").
+property(("root.modules.ects","root.modules[0].ects[0]"),("root.modules.group=A","root.modules[0].group[0]=A")).
+part("product").

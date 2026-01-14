@@ -104,7 +104,10 @@ class TestPreprocess(TestCase):
         self.run_test("simple_count")
         self.run_test("simple_sum")
         self.run_test("sum_comprehension")
+        # self.run_test("count_conditional")
         self.run_test("sum_conditional")
+        self.run_test("max_conditional")
+        self.run_test("min_conditional")
 
     def test_other_constraints(self) -> None:
         """
