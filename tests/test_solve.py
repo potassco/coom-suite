@@ -127,10 +127,13 @@ class TestClingo(TestCase):
         """
         Test aggregation functions (clingo).
         """
-        self.run_test("count")
-        self.run_test("sum")
-        self.run_test("min")
-        self.run_test("max")
+        self.run_test("simple_count")
+        self.run_test("simple_sum")
+        self.run_test("simple_min")
+        self.run_test("simple_max")
+
+        self.run_test("sum_comprehension")
+        self.run_test("sum_conditional")
 
     def test_imply(self) -> None:
         """
@@ -288,10 +291,13 @@ class TestFlingo(TestCase):
         """
         Test aggregation functions (flingo).
         """
-        self.run_test("count")
-        self.run_test("sum")
-        self.run_test("min")
-        self.run_test("max")
+        self.run_test("simple_count")
+        self.run_test("simple_sum")
+        self.run_test("simple_min")
+        self.run_test("simple_max")
+
+        self.run_test("sum_comprehension")
+        self.run_test("sum_conditional")
 
     def test_imply(self) -> None:
         """

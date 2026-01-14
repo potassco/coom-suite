@@ -1,8 +1,12 @@
 % Evaluate aggregates in flingo
-&sum{ 1,X : set(P,X), include(X) } = F :- aggregate(F,"count",P).
-&sum{   X : set(P,X), include(X) } = F :- aggregate(F,"sum",  P).
-&min{   X : set(P,X), include(X) } = F :- aggregate(F,"min",  P).
-&max{   X : set(P,X), include(X) } = F :- aggregate(F,"max",  P).
+&sum{ 1,X : set(P,X),        include(X) } = A :- aggregate(A,"count",P), not condition(A,_).
+&sum{   X : set(P,X),        include(X) } = A :- aggregate(A,"sum",  P), not condition(A,_).
+&min{   X : set(P,X),        include(X) } = A :- aggregate(A,"min",  P), not condition(A,_).
+&max{   X : set(P,X),        include(X) } = A :- aggregate(A,"max",  P), not condition(A,_).
+&sum{ 1,X : subset(A,P,C,X), include(X) } = A :- aggregate(A,"count",P),     condition(A,C).
+&sum{   X : subset(A,P,C,X), include(X) } = A :- aggregate(A,"sum",  P),     condition(A,C).
+&min{   X : subset(A,P,C,X), include(X) } = A :- aggregate(A,"min",  P),     condition(A,C).
+&max{   X : subset(A,P,C,X), include(X) } = A :- aggregate(A,"max",  P),     condition(A,C).
 
 % Arithmetics in flingo
 &sum{ XL;  XR } = F :- binary(F,XL,"+",XR).

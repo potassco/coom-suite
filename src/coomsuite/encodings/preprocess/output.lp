@@ -119,20 +119,23 @@ aggregate(@aggregate(T,X,P,Val,Var,C),T,@join(X,P)) :-
     coom_aggregate_comprehension(_,A,Val,Var),
     coom_aggregate_condition(_,A,C).
 
-condition(@aggregate(T,X,P,Val,Var,C),@binary(@join(X,L),Op,R)) :-
+condition(@aggregate(T,X,P,Val,Var,C),@binary(@join(X,L),Op,R)) :- % TODO: Always binary?
     aggregate(X,A,T,P),
     aggregate_condition(X,A,_,(L,Op,R)),
     coom_aggregate_comprehension(_,A,Val,Var),
     coom_aggregate_condition(_,A,C).
 
+property((@join(X,P),X'),(@binary(@join(X,L),Op,R),G)) :-
+    aggregate(X,A,_,P),
+    aggregate_condition(X,A,F,(L,Op,R)),
+    aggregate_property(X,A,(P,X'),(F,G)).
 
-set(@join(X,P),X')    :- aggregate(X,_,_,P), path_to(X,P,X').
-property((S,X),(C,F)) :- aggregate(A,T,S), set(S,X), condition(A,C), F = 0.
+set(@join(X,P),X') :- aggregate(X,_,_,P), path_to(X,P,X').
 
 #show aggregate/3.
-#show set/2.
 #show condition/2.
 #show property/2.
+#show set/2.
 
 % Partonomy and cardinality constraints
 part(T) :- coom_structure(T).

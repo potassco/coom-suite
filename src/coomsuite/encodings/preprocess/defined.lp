@@ -18,7 +18,7 @@
 #defined coom_path/3.
 #defined coom_constant/2.
 
-#defined coom_aggregate/4.
+#defined coom_aggregate/3.
 #defined coom_aggregate_set/3.
 #defined coom_aggregate_comprehension/4.
 #defined coom_aggregate_condition/3.

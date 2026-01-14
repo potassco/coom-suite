@@ -40,7 +40,7 @@ def join(p1,p2):
         return String(f"{context}.{p2.string}")
 
 def join_comprehension(p1,p2):
-    remove_var = p2.string.split(".")[1]
+    remove_var = ".".join(p2.string.split(".")[1:])
     return String(f"{p1.string}.{remove_var}")
 
 def aggregate(f,ctx,p,val=None,var=None,c=None):

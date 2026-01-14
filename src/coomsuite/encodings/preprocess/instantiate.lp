@@ -21,10 +21,12 @@ type_aux((A,(X,0)),A) :- type_aux(X,T), coom_enumeration(T), coom_attribute_valu
 formula_context(F,Ctx) :- coom_binary(F,_,_,_), coom_require(C,F),   coom_context(C,Ctx).
 formula_context(F,Ctx) :- coom_binary(F,_,_,_), coom_condition(C,_,F), coom_context(C,Ctx).
 formula_context(F,Ctx) :- coom_binary(F,_,_,_), coom_imply(C,_,F),   coom_context(C,Ctx).
+formula_context(F,Ctx) :- coom_binary(F,_,_,_), coom_aggregate_condition(Ctx,_,F).
 
 formula_context(F,Ctx) :- coom_unary(F,_,_),    coom_require(C,F),   coom_context(C,Ctx).
 formula_context(F,Ctx) :- coom_unary(F,_,_),    coom_condition(C,_,F), coom_context(C,Ctx).
 formula_context(F,Ctx) :- coom_unary(F,_,_),    coom_imply(C,_,F),   coom_context(C,Ctx).
+formula_context(F,Ctx) :- coom_unary(F,_,_),    coom_aggregate_condition(Ctx,_,F).
 
 formula_context(L,Ctx) :- coom_binary(L,_,_,_), coom_binary(F,L,_,_), formula_context(F,Ctx).
 formula_context(R,Ctx) :- coom_binary(R,_,_,_), coom_binary(F,_,_,R), formula_context(F,Ctx).
@@ -86,75 +88,8 @@ ground_formula(X,F,XR) :- coom_binary(F,L,"+",R),
                           formula_context(F,C),
                           type_aux(X,C), not path_to(X,L,_), path_to(X,R,XR).
 
-
-% Instantiate aggregates
-% aggregate(X,F,T,P) :- coom_aggregate(C,F,T,P), type_aux(X,C).
-
-% no comprehension
-aggregate(X,A,T,P) :-
-    coom_aggregate(C,A,T),
-    coom_aggregate_set(C,A,P),
-    type_aux(X,C),
-    not coom_aggregate_comprehension(C,A,_,_).
-
-% with comprehension but without condition
-aggregate(X,A,T,@join_comprehension(S,P)) :-
-    coom_aggregate(C,A,T),
-    coom_aggregate_set(C,A,S),
-    type_aux(X,C),
-    coom_aggregate_comprehension(C,A,P,V).
-
-% with condition
-aggregate_condition(X,A,F,(@join_comprehension(S,L),Op,R)) :-
-    coom_aggregate_set(C,A,S),
-    coom_aggregate_condition(C,A,F),
-    type_aux(X,C),
-    coom_binary(F,L,Op,R).
-
-% auxiliary coom_path/3 and path_to/3 for aggregate comprehensions
-coom_path(@join_comprehension(S,P),I,N) :-
-    coom_aggregate_set(C,A,S),
-    coom_aggregate_comprehension(C,A,P,V),
-    coom_path(P,0,V),
-    coom_path(P,I,N).
-
-coom_path(@join_comprehension(S,L),I,N) :-
-    coom_aggregate_set(C,A,S),
-    coom_aggregate_comprehension(C,A,_,V),
-    coom_aggregate_condition(C,A,F),
-    coom_binary(F,L,_,_),
-    coom_path(L,0,V),
-    coom_path(L,I,N).
-
-path_to_aux(X,P,X')       :- not coom_path(P,I,_), path_to(X,P,I,X').
-path_to(X,P,@dotpath(X')) :- path_to_aux(X,P,X').
-
-path_to(X,@join_comprehension(S,P),1,X') :-
-    coom_aggregate_set(C,A,S),
-    coom_aggregate_comprehension(C,A,P,V),
-    type_aux(X,C),
-    path_to_aux(X,S,X'),
-    coom_path(P,0,V).
-
-path_to(X,@join_comprehension(S,L),1,X') :-
-    coom_aggregate_set(C,A,S),
-    coom_aggregate_comprehension(C,A,_,V),
-    coom_aggregate_condition(C,A,F),
-    type_aux(X,C),
-    coom_binary(F,L,_,_),
-    path_to_aux(X,S,X'),
-    coom_path(L,0,V).
-
-% auxiliary binary for aggregate conditions
-binary(X,F,@binary(XL,Op,XR),XL,Op,XR) :-
-    aggregate_condition(X,A,F,(L,Op,R)),
-    coom_binary(F,_,Op,R),
-    path_to(X,L,XL),
-    path_to(X,R,XR).
-
-% Auxiliary paths for formulas and aggregates
+% Auxiliary paths for formulas
 path_to(X,F,G) :- ground_formula(X,F,G).
-path_to(X,F,@aggregate(T,X,P)) :- aggregate(X,F,T,P).
 
 % Auxiliary paths for cardinalities
 path_to(X,N,@dotpath(X')) :- coom_feature(Ctx,N,_,_,_), type_aux(X,Ctx), type_aux(X',_), X' =(N,(X,_)).

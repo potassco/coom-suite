@@ -780,6 +780,49 @@ class TestCOOMModelParser(TestCase):
             ],
         )
 
+        self.assertEqual(
+            parse_coom("behavior {require 12 = sum(m.ects for m in module)}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'require(0,"12=sum(m.ectsforminmodule)").',
+                'binary("12=sum(m.ectsforminmodule)","12","=","sum(m.ectsforminmodule)").',
+                'constant("12",int).',
+                'aggregate("product","sum(m.ectsforminmodule)","sum").',
+                'aggregate_set("product","sum(m.ectsforminmodule)","module").',
+                'aggregate_comprehension("product","sum(m.ectsforminmodule)","m.ects","m").',
+                'path("m.ects",0,"m").',
+                'path("m.ects",1,"ects").',
+                'path("module",0,"module").',
+            ],
+        )
+        self.assertEqual(
+            parse_coom("behavior {require 12 = sum(m.ects for m in module if m.group = A)}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'require(0,"12=sum(m.ectsforminmoduleifm.group=A)").',
+                'binary("12=sum(m.ectsforminmoduleifm.group=A)","12","=","sum(m.ectsforminmoduleifm.group=A)").',
+                'constant("12",int).',
+                'aggregate("product","sum(m.ectsforminmoduleifm.group=A)","sum").',
+                'aggregate_set("product","sum(m.ectsforminmoduleifm.group=A)","module").',
+                'aggregate_comprehension("product","sum(m.ectsforminmoduleifm.group=A)","m.ects","m").',
+                'aggregate_condition("product","sum(m.ectsforminmoduleifm.group=A)","m.group=A").',
+                'path("m.ects",0,"m").',
+                'path("m.ects",1,"ects").',
+                'path("module",0,"module").',
+                'binary("m.group=A","m.group","=","A").',
+                'path("m.group",0,"m").',
+                'path("m.group",1,"group").',
+                'constant("A",str).',
+            ],
+        )
+
+    def test_function(self) -> None:
+        """
+        Test parsing behavior with functions
+        """
+
         # self.assertEqual(
         #     parse_coom("behavior{require a = delta(b)}"),
         #     [
@@ -801,25 +844,25 @@ class TestCOOMModelParser(TestCase):
         #         'require(0,"a=delta(b,c)").',
         #         'binary("a=delta(b,c)","a","=","delta(b,c)").',
         #         'path("a",0,"a").',
-        #         'unary("product","delta(b,c)","delta","b").',
-        #         'unary("product","delta(b,c)","delta","c").',
+        #         'unary("delta(b,c)","delta","b").',
+        #         'unary("delta(b,c)","delta","c").',
         #         'path("b",0,"b").',
         #         'path("c",0,"c").',
         #     ],
         # )
 
-        # self.assertEqual(
-        #     parse_coom("behavior{require a = pow(b)}"),
-        #     [
-        #         "behavior(0).",
-        #         'context(0,"product").',
-        #         'require(0,"a=pow(b)").',
-        #         'binary("a=pow(b)","a","=","pow(b)").',
-        #         'path("a",0,"a").',
-        #         'unary("product","pow(b)","pow","b").',
-        #         'path("b",0,"b").',
-        #     ],
-        # )
+        self.assertEqual(
+            parse_coom("behavior{require a = pow(b)}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'require(0,"a=pow(b)").',
+                'binary("a=pow(b)","a","=","pow(b)").',
+                'path("a",0,"a").',
+                'unary("pow(b)","pow","b").',
+                'path("b",0,"b").',
+            ],
+        )
 
         self.assertEqual(
             parse_coom("behavior{require a = sqrt(b)}"),
@@ -873,18 +916,18 @@ class TestCOOMModelParser(TestCase):
             ],
         )
 
-        # self.assertEqual(
-        #     parse_coom("behavior{require a = mod(b)}"),
-        #     [
-        #         "behavior(0).",
-        #         'context(0,"product").',
-        #         'require(0,"a=mod(b)").',
-        #         'binary("a=mod(b)","a","=","mod(b)").',
-        #         'path("a",0,"a").',
-        #         'unary("product","mod(b)","mod","b").',
-        #         'path("b",0,"b").',
-        #     ],
-        # )
+        self.assertEqual(
+            parse_coom("behavior{require a = mod(b)}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'require(0,"a=mod(b)").',
+                'binary("a=mod(b)","a","=","mod(b)").',
+                'path("a",0,"a").',
+                'unary("mod(b)","mod","b").',
+                'path("b",0,"b").',
+            ],
+        )
 
         self.assertEqual(
             parse_coom("behavior{require a = log(b)}"),

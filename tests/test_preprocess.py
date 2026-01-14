@@ -101,8 +101,10 @@ class TestPreprocess(TestCase):
         self.run_test("simple_arithmetic_minus_default_left")
         self.run_test("parentheses")
 
-        self.run_test("count")
-        self.run_test("sum")
+        self.run_test("simple_count")
+        self.run_test("simple_sum")
+        self.run_test("sum_comprehension")
+        self.run_test("sum_conditional")
 
     def test_other_constraints(self) -> None:
         """

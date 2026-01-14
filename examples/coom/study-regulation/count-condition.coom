@@ -1,0 +1,16 @@
+product {
+    3..3 Bike bikes
+}
+
+structure Bike {
+    0..2 Bag bags
+}
+
+enumeration Bag {
+    Small
+    Big
+}
+
+behavior {
+    require 2 = count(b for b in bikes.frame.bags if b = Small)
+}

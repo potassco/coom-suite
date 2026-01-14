@@ -534,27 +534,71 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             constant(("2",2),int).
             constant(("6",6),int).""",
     },
-    "count": {
+    "simple_count": {
         "test": StableModels({'include("root.x[0]")', 'include("root.x[1]")'}),
-        "files": ["count.lp"],
+        "files": ["simple_count.lp"],
     },
-    "sum": {
+    "simple_sum": {
         "test": StableModels(
             {'value("root.x[0]",1)', 'value("root.x[1]",2)'}, {'value("root.x[0]",2)', 'value("root.x[1]",1)'}
         ),
-        "files": ["sum.lp"],
+        "files": ["simple_sum.lp"],
     },
-    "min": {
+    "simple_min": {
         "test": StableModels(
             {'value("root.x[0]",4)', 'value("root.x[1]",3)'},
             {'value("root.x[0]",3)', 'value("root.x[1]",3)'},
             {'value("root.x[0]",3)', 'value("root.x[1]",4)'},
         ),
-        "files": ["min.lp"],
+        "files": ["simple_min.lp"],
     },
-    "max": {
+    "simple_max": {
         "test": StableModels({'value("root.x[0]",3)', 'value("root.x[1]",3)'}),
-        "files": ["max.lp"],
+        "files": ["simple_max.lp"],
+    },
+    "sum_comprehension": {
+        "test": StableModels(
+            {
+                'value("root.modules[0]","A")',
+                'value("root.modules[0].ects[0]",6)',
+                'value("root.modules[1]","A")',
+                'value("root.modules[1].ects[0]",6)',
+            },
+            {
+                'value("root.modules[0]","B")',
+                'value("root.modules[0].ects[0]",9)',
+                'value("root.modules[1]","C")',
+                'value("root.modules[1].ects[0]",3)',
+            },
+            {
+                'value("root.modules[0]","C")',
+                'value("root.modules[0].ects[0]",3)',
+                'value("root.modules[1]","B")',
+                'value("root.modules[1].ects[0]",9)',
+            },
+        ),
+        "files": ["sum_comprehension.lp"],
+    },
+    "sum_conditional": {
+        "test": StableModels(
+            {
+                'value("root.modules[0]","A1")',
+                'value("root.modules[0].ects[0]",6)',
+                'value("root.modules[0].group[0]","A")',
+                'value("root.modules[1]","B1")',
+                'value("root.modules[1].ects[0]",9)',
+                'value("root.modules[1].group[0]","B")',
+            },
+            {
+                'value("root.modules[0]","B1")',
+                'value("root.modules[0].ects[0]",9)',
+                'value("root.modules[0].group[0]","B")',
+                'value("root.modules[1]","A1")',
+                'value("root.modules[1].ects[0]",6)',
+                'value("root.modules[1].group[0]","A")',
+            },
+        ),
+        "files": ["sum_conditional.lp"],
     },
     "imply_integer": {
         "test": StableModels({'value("root.wheel[0]","W27")', 'value("root.wheel[0].size[0]",27)'}),

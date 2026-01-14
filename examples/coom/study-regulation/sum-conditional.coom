@@ -1,0 +1,15 @@
+product {
+    2..2 Module modules
+}
+
+enumeration Module {
+    attribute num ects
+    attribute str group
+
+    A1 = ( 6, A )
+    B1 = ( 9, B )
+}
+
+behavior {
+    require 6 = sum(m.ects for m in modules if m.group = A)
+}

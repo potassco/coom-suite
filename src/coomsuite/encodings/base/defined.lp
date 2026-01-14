@@ -23,6 +23,7 @@
 #defined constant/2.
 
 #defined aggregate/3.
+#defined property/2.
 #defined set/2.
 
 #defined minimize/2.
