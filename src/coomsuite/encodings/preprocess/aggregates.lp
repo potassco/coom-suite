@@ -35,7 +35,7 @@ aggregate_variable(X,A,X') :-
     aggregate_condition(X,A,_,_),
     path_to(X,S,1,X').
 
-% TODO: Improve?
+% TODO: Make more general
 aggregate_property(X,A,(P,X''),(F,G)) :-
     aggregate(X,A,_,P),
     aggregate_variable(X,A,X'),
