@@ -2,9 +2,8 @@
 The coomsuite project.
 """
 
-from os.path import basename, join, splitext
 from tempfile import NamedTemporaryFile
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from antlr4 import FileStream
 from clingo.application import clingo_main
@@ -19,32 +18,44 @@ log = get_logger("main")
 SOLVERS = ["clingo", "flingo"]
 
 
-def convert_instance(coom_file: str, grammar: str, outdir: Optional[str] = None) -> str:  # nocoverage
+def write_facts(facts: str, outfile: str) -> None:  # nocoverage
+    """
+    Auxiilary function to write ASP facts to a file
+
+    Args:
+        facts (str): ASP facts
+        outfile (str): Output file
+    """
+    with open(outfile, "w", encoding="utf8") as f:
+        f.write("%%% serialized COOM facts \n")
+        f.write(facts)
+    log.info("ASP file saved in %s", outfile)
+
+
+def convert_coom(coom_model: str, coom_user: Optional[str] = None) -> Tuple[str, bool]:  # nocoverage
     """
     Converts a COOM instance into ASP
     Args:
-        coom_file (str): COOM file .coom
-        output_dir (str, optional): Name of the output directory, by default the same of coom_file is used
+        coom_model (str): COOM model file .coom
+        coom_user (str, optional): COOM user input file .coom
     """
-    input_stream = FileStream(coom_file, encoding="utf-8")
-    asp_instance = "\n".join([f"coom_{a}" if a != "" else a for a in run_antlr4_visitor(input_stream, grammar=grammar)])
+    unbounded = False
 
-    if outdir is not None:
-        filename = splitext(basename(coom_file))[0] + "-coom.lp"
-        output_lp_file = join(outdir, filename)
+    input_stream_model = FileStream(coom_model, encoding="utf-8")
+    asp_instance = "\n".join(
+        [f"coom_{a}" if a != "" else a for a in run_antlr4_visitor(input_stream_model, grammar="model")]
+    )
 
-        with open(output_lp_file, "w", encoding="utf8") as f:
-            if grammar == "model":
-                f.write("%%% COOM model\n")
-            elif grammar == "user":
-                f.write("%%% User Input\n")
+    if "#sup" in asp_instance:
+        unbounded = True
 
-            f.write(asp_instance)
-            f.write("\n")
-        log.info("ASP file saved in %s", output_lp_file)
-        return output_lp_file
+    if coom_user is not None:
+        input_stream_user = FileStream(coom_user, encoding="utf-8")
+        asp_instance += "\n".join(
+            [f"coom_{a}" if a != "" else a for a in run_antlr4_visitor(input_stream_user, grammar="user")]
+        )
 
-    return asp_instance
+    return asp_instance, unbounded
 
 
 def solve(

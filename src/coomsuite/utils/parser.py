@@ -106,7 +106,7 @@ def get_parser() -> ArgumentParser:
         type=str,
         help="Solve with search for bounds for problems with unbounded cardinalities.",
         choices=["linear", "exponential"],
-        default=None,
+        default="linear",
     )
     parser_solve.add_argument(
         "--multishot",
