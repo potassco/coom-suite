@@ -47,8 +47,6 @@ def aggregate(f,ctx,p,val=None,var=None,c=None):
     joined = join(ctx,p).string
     if c is not None:
         return String(f"{f.string}({val.string} for {var.string} in {joined} if {c.string})")
-    elif val is not None and var is not None:
-        return String(f"{f.string}({val.string} for {var.string} in {joined})")
     return String(f"{f.string}({joined})")
 
 def implication(a,b):

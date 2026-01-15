@@ -171,7 +171,7 @@ formula_atom:
 	| atom_num = floating
 	| atom_path = path;
 
-aggregate: formula ( 'for' name 'in' path ( 'if' condition)?)?;
+aggregate: formula ( 'for' name 'in' path 'if' condition)?;
 constant: floating | name | 'true' | 'false';
 floating:
 	'-'? (FLOATING | INTEGER | '\u221e'); // == infinity symbol

@@ -781,22 +781,6 @@ class TestCOOMModelParser(TestCase):
         )
 
         self.assertEqual(
-            parse_coom("behavior {require 12 = sum(m.ects for m in module)}"),
-            [
-                "behavior(0).",
-                'context(0,"product").',
-                'require(0,"12=sum(m.ectsforminmodule)").',
-                'binary("12=sum(m.ectsforminmodule)","12","=","sum(m.ectsforminmodule)").',
-                'constant("12",int).',
-                'aggregate("product","sum(m.ectsforminmodule)","sum").',
-                'aggregate_set("product","sum(m.ectsforminmodule)","module").',
-                'aggregate_comprehension("product","sum(m.ectsforminmodule)","m.ects","m").',
-                'path("m.ects",0,"m").',
-                'path("m.ects",1,"ects").',
-                'path("module",0,"module").',
-            ],
-        )
-        self.assertEqual(
             parse_coom("behavior {require 12 = sum(m.ects for m in module if m.group = A)}"),
             [
                 "behavior(0).",
@@ -815,6 +799,26 @@ class TestCOOMModelParser(TestCase):
                 'path("m.group",0,"m").',
                 'path("m.group",1,"group").',
                 'constant("A",str).',
+            ],
+        )
+        self.assertEqual(
+            parse_coom("behavior {require 2 = count(b for b in bikes.bags if b = Small))}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'require(0,"2=count(bforbinbikes.bagsifb=Small)").',
+                'binary("2=count(bforbinbikes.bagsifb=Small)","2","=","count(bforbinbikes.bagsifb=Small)").',
+                'constant("2",int).',
+                'aggregate("product","count(bforbinbikes.bagsifb=Small)","count").',
+                'aggregate_set("product","count(bforbinbikes.bagsifb=Small)","bikes.bags").',
+                'aggregate_comprehension("product","count(bforbinbikes.bagsifb=Small)","b","b").',
+                'aggregate_condition("product","count(bforbinbikes.bagsifb=Small)","b=Small").',
+                'path("b",0,"b").',
+                'path("bikes.bags",0,"bikes").',
+                'path("bikes.bags",1,"bags").',
+                'binary("b=Small","b","=","Small").',
+                'path("b",0,"b").',
+                'constant("Small",str).',
             ],
         )
 

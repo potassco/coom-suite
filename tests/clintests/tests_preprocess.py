@@ -1512,60 +1512,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "test": StableModels(
             {
                 'discrete("Module.ects",int)',
-                'discrete("Module",str)',
-                'domain("Module.ects",6)',
-                'domain("Module.ects",9)',
-                'domain("Module.ects",3)',
-                'domain("Module","A")',
-                'domain("Module","B")',
-                'domain("Module","C")',
-                'type("root","product")',
-                'type("root.modules[0]","Module")',
-                'type("root.modules[1]","Module")',
-                'type("root.modules[0].ects[0]","Module.ects")',
-                'type("root.modules[1].ects[0]","Module.ects")',
-                'index("root.modules[0]",0)',
-                'index("root.modules[1]",1)',
-                'index("root.modules[1].ects[0]",0)',
-                'index("root.modules[0].ects[0]",0)',
-                'parent("root.modules[0]","root")',
-                'parent("root.modules[1]","root")',
-                'parent("root.modules[1].ects[0]","root.modules[1]")',
-                'parent("root.modules[0].ects[0]","root.modules[0]")',
-                'constraint(("root.modules",2),"lowerbound")',
-                'constraint(("root.modules[0].ects",1),"lowerbound")',
-                'constraint(("root.modules[1].ects",1),"lowerbound")',
-                'constraint(("Module","root.modules[0]"),"table")',
-                'constraint(("Module","root.modules[1]"),"table")',
-                'constraint((0,"12=sum(m.ects for m in root.modules.ects)"),"boolean")',
-                'aggregate("sum(m.ects for m in root.modules.ects)","sum","root.modules.ects")',
-                'set("root.modules","root.modules[0]")',
-                'set("root.modules","root.modules[1]")',
-                'set("root.modules[0].ects","root.modules[0].ects[0]")',
-                'set("root.modules[1].ects","root.modules[1].ects[0]")',
-                'set("root.modules.ects","root.modules[0].ects[0]")',
-                'set("root.modules.ects","root.modules[1].ects[0]")',
-                'binary("12=sum(m.ects for m in root.modules.ects)","12","=","sum(m.ects for m in root.modules.ects)")',
-                'constant(("12",12),int)',
-                'column(("Module","root.modules[0]"),0,1,"root.modules[0].ects[0]")',
-                'column(("Module","root.modules[1]"),0,1,"root.modules[1].ects[0]")',
-                'column(("Module","root.modules[0]"),0,0,"root.modules[0]")',
-                'column(("Module","root.modules[1]"),0,0,"root.modules[1]")',
-                'allow("Module",(0,0),"A")',
-                'allow("Module",(0,1),"B")',
-                'allow("Module",(0,2),"C")',
-                'allow("Module",(1,2),3)',
-                'allow("Module",(1,1),9)',
-                'allow("Module",(1,0),6)',
-                'part("product")',
-            }
-        ),
-        "files": ["sum_comprehension.lp"],
-    },
-    "sum_conditional": {
-        "test": StableModels(
-            {
-                'discrete("Module.ects",int)',
                 'discrete("Module.group",str)',
                 'discrete("Module",str)',
                 'domain("Module.ects",6)',
@@ -1633,9 +1579,9 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'part("product")',
             }
         ),
-        "files": ["sum_conditional.lp"],
+        "files": ["sum_comprehension.lp"],
     },
-    "max_conditional": {
+    "max_comprehension": {
         "test": StableModels(
             {
                 'discrete("Module.ects",int)',
@@ -1689,9 +1635,9 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'part("product")',
             }
         ),
-        "files": ["max_conditional.lp"],
+        "files": ["max_comprehension.lp"],
     },
-    "min_conditional": {
+    "min_comprehension": {
         "test": StableModels(
             {
                 'discrete("Module.ects",int)',
@@ -1745,7 +1691,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'part("product")',
             }
         ),
-        "files": ["min_conditional.lp"],
+        "files": ["min_comprehension.lp"],
     },
     "alldiff_integer": {
         "test": StableModels(

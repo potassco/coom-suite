@@ -556,34 +556,11 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
         "test": StableModels({'value("root.x[0]",3)', 'value("root.x[1]",3)'}),
         "files": ["simple_max.lp"],
     },
-    "sum_comprehension": {
-        "test": StableModels(
-            {
-                'value("root.modules[0]","A")',
-                'value("root.modules[0].ects[0]",6)',
-                'value("root.modules[1]","A")',
-                'value("root.modules[1].ects[0]",6)',
-            },
-            {
-                'value("root.modules[0]","B")',
-                'value("root.modules[0].ects[0]",9)',
-                'value("root.modules[1]","C")',
-                'value("root.modules[1].ects[0]",3)',
-            },
-            {
-                'value("root.modules[0]","C")',
-                'value("root.modules[0].ects[0]",3)',
-                'value("root.modules[1]","B")',
-                'value("root.modules[1].ects[0]",9)',
-            },
-        ),
-        "files": ["sum_comprehension.lp"],
-    },
-    "count_conditional": {
+    "count_comprehension": {
         "test": StableModels(set()),
-        "files": ["count_conditional.lp"],
+        "files": ["count_comprehension.lp"],
     },
-    "sum_conditional": {
+    "sum_comprehension": {
         "test": StableModels(
             {
                 'value("root.modules[0]","A1")',
@@ -602,9 +579,9 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
                 'value("root.modules[1].group[0]","A")',
             },
         ),
-        "files": ["sum_conditional.lp"],
+        "files": ["sum_comprehension.lp"],
     },
-    "max_conditional": {
+    "max_comprehension": {
         "test": StableModels(
             {
                 'value("root.modules[0]","A1")',
@@ -617,9 +594,9 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
                 'value("root.modules[0].group[0]","B")',
             },
         ),
-        "files": ["max_conditional.lp"],
+        "files": ["max_comprehension.lp"],
     },
-    "min_conditional": {
+    "min_comprehension": {
         "test": StableModels(
             {
                 'value("root.modules[0]","A2")',
@@ -632,7 +609,7 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
                 'value("root.modules[0].group[0]","B")',
             },
         ),
-        "files": ["min_conditional.lp"],
+        "files": ["min_comprehension.lp"],
     },
     "imply_integer": {
         "test": StableModels({'value("root.wheel[0]","W27")', 'value("root.wheel[0].size[0]",27)'}),

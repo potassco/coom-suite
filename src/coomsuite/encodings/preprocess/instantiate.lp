@@ -60,7 +60,7 @@ path_to(X,P,I+1,X'') :- coom_path(P,I,"previous"), path_to(X,P,I,X'), type_aux(X
 
 path_to(X,P,@dotpath(X')) :- not coom_path(P,I,_), path_to(X,P,I,X').
 
-% Constants and numbers
+% Auxiliary paths for constants and numbers
 path_to(X,P,P) :- coom_binary(F,_,_,P), coom_constant(P,_), formula_context(F,T), type_aux(X,T).
 path_to(X,P,P) :- coom_binary(F,P,_,_), coom_constant(P,_), formula_context(F,T), type_aux(X,T).
 path_to(X,P,P) :- coom_unary(F,_,P),    coom_constant(P,_), formula_context(F,T), type_aux(X,T).
@@ -91,13 +91,7 @@ ground_formula(X,F,XR) :- coom_binary(F,L,"+",R),
 % Auxiliary paths for formulas
 path_to(X,F,G) :- ground_formula(X,F,G).
 
-% Auxiliary paths for cardinalities
-path_to(X,N,@dotpath(X')) :- coom_feature(Ctx,N,_,_,_), type_aux(X,Ctx), type_aux(X',_), X' =(N,(X,_)).
-path_to(X,A,@dotpath(X')) :- coom_attribute(T,A,_),     type_aux(X,T),   type_aux(X',_), X' =(A,(X,_)).
-
 % Instantiate conditional requirements
-% conditions_aux(C,X,0,(G,()))  :- coom_context(C,Ctx), type_aux(X,Ctx), coom_condition(C,0,F), ground_formula(X,F,G).
-% conditions_aux(C,X,I+1,(G,T)) :- conditions_aux(C,X,I,T), coom_condition(C,I+1,F), ground_formula(X,F,G).
 ground_condition(C,X,I,G) :- coom_context(C,Ctx), type_aux(X,Ctx), coom_condition(C,I,F), ground_formula(X,F,G).
 
 conditions_aux(C,X,0,(G,()))  :- ground_condition(C,X,0,G).
@@ -133,7 +127,6 @@ imply((C,X),X',G)                  :- coom_imply(C,P,F), coom_context(C,Ctx), ty
 imply((C,X),X',@aggregate(T,X,P')) :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), aggregate(X,F,T,P').
 imply((C,X),X',G)                  :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), path_to(X,F,G), not ground_formula(X,F,G). % TODO: Check if this is enough if there are aggreagates
 
-
 % Instantiate alldiff constraints
 alldiff(X,P) :- coom_alldiff(C,P), coom_context(C,Ctx), type_aux(X,Ctx).
 
@@ -147,6 +140,10 @@ attribute_constraint_column(T,Col+1,A) :- coom_attribute(T,A,_), Col = #count{ A
 % Instantiate cardinality constraints
 cardinality_aux(X,N,Min) :- coom_feature(C,N,_,Min,_), type_aux(X,C).
 cardinality_aux(X,A,1)   :- coom_attribute(T,A,_),     type_aux(X,T).
+
+% Auxiliary paths for cardinalities
+path_to(X,N,@dotpath(X')) :- coom_feature(Ctx,N,_,_,_), type_aux(X,Ctx), type_aux(X',_), X' =(N,(X,_)).
+path_to(X,A,@dotpath(X')) :- coom_attribute(T,A,_),     type_aux(X,T),   type_aux(X',_), X' =(A,(X,_)).
 
 % Include boolean enumeration if needed
 coom_enumeration("Bool")     :- coom_feature(_,_,"Bool",_,_).

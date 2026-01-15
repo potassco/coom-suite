@@ -102,18 +102,14 @@ set(@join(X,P),X')               :- alldiff(X,P), path_to(X,P,X').
 % #show aggregate/3.
 % #show set/2.
 
-% without comprehension
+% no comprehension
 aggregate(@aggregate(T,X,P),T,@join(X,P)) :-
     aggregate(X,A,T,P),
     not coom_aggregate_comprehension(_,A,_,_).
 
-% with comprehension but without condition
-aggregate(@aggregate(T,X,P,Val,Var),T,@join(X,P)) :-
-    aggregate(X,A,T,P),
-    coom_aggregate_comprehension(_,A,Val,Var),
-    not coom_aggregate_condition(_,A,_).
+set(@join(X,P),X') :- aggregate(X,_,_,P), path_to(X,P,X').
 
-% with comprehension and condition
+% with comprehension
 aggregate(@aggregate(T,X,P,Val,Var,C),T,@join(X,P)) :-
     aggregate(X,A,T,P),
     coom_aggregate_comprehension(_,A,Val,Var),
@@ -129,8 +125,6 @@ property((@join(X,P),X'),(@binary(@join(X,L),Op,R),G)) :-
     aggregate(X,A,_,P),
     aggregate_condition(X,A,F,(L,Op,R)),
     aggregate_property(X,A,(P,X'),(F,G)).
-
-set(@join(X,P),X') :- aggregate(X,_,_,P), path_to(X,P,X').
 
 #show aggregate/3.
 #show condition/2.

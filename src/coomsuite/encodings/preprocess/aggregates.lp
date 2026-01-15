@@ -1,14 +1,21 @@
 % Instantiate aggregates
 % aggregate(X,F,T,P) :- coom_aggregate(C,F,T,P), type_aux(X,C).
 
-% no comprehension
+% No comprehension
+% simple case, aggregate just contains a path
 aggregate(X,A,T,P) :-
     coom_aggregate(C,A,T),
     coom_aggregate_set(C,A,P),
     type_aux(X,C),
     not coom_aggregate_comprehension(C,A,_,_).
 
-% with comprehension but without condition
+% Auxiliary path
+path_to(X,F,@aggregate(T,X,P)) :-
+    aggregate(X,F,T,P),
+    not coom_aggregate_comprehension(_,F,_,_).
+
+% With comprehension
+% create atoms for condition
 aggregate(X,A,T,@join_comprehension(S,P)) :-
     coom_aggregate(C,A,T),
     coom_aggregate_set(C,A,S),
@@ -78,11 +85,12 @@ binary(X,F,@binary(XL,Op,XR),XL,Op,XR) :-
     path_to(X,L,XL),
     path_to(X,R,XR).
 
-% Auxiliary paths
-path_to(X,F,@aggregate(T,X,P)) :-
-    aggregate(X,F,T,P),
-    not coom_aggregate_comprehension(_,F,_,_).
+% unary(X,F,@unary(X',Op),Op,X') :-
+%     aggregate_condition(X,A,F),
+%     coom_unary(F,Op,F'),
+%     path_to(X,F',X').
 
+% Auxiliary paths
 path_to(X,F,@aggregate(T,X,P,Val,Var)) :-
     aggregate(X,F,T,P),
     coom_aggregate_comprehension(_,F,Val,Var),

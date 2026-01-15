@@ -357,8 +357,6 @@ class ASPModelVisitor(ModelVisitor):
             aggr_ctx: ModelParser.Formula_aggrContext = ctx.formula_aggr()
             aggr = aggr_ctx.AGGREGATE()
 
-            # for f in ctx.formula_aggr().formula():
-            # self.output_asp.append(f'aggregate("{self.context}","{complete}","{func}","{f.getText()}").')
             self.output_asp.append(f'aggregate("{self.context}","{complete}","{aggr}").')
             for a in aggr_ctx.aggregate():
                 if a.path() is None:
@@ -368,15 +366,13 @@ class ASPModelVisitor(ModelVisitor):
                     path = prepare_value(a.path().getText())
                     variable = prepare_value(a.name().getText())
                     formula = prepare_value(a.formula().getText())
+                    condition = prepare_value(a.condition().getText())
 
                     self.output_asp.append(f'aggregate_set("{self.context}","{complete}","{path}").')
                     self.output_asp.append(
                         f'aggregate_comprehension("{self.context}","{complete}","{formula}","{variable}").'
                     )
-
-                    if a.condition() is not None:
-                        condition = prepare_value(a.condition().getText())
-                        self.output_asp.append(f'aggregate_condition("{self.context}","{complete}","{condition}").')
+                    self.output_asp.append(f'aggregate_condition("{self.context}","{complete}","{condition}").')
         elif ctx.formula_func() is not None:
             func_ctx: ModelParser.Formula_funcContext = ctx.formula_func()
             func = func_ctx.FUNCTION()

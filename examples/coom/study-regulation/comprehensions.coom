@@ -1,0 +1,11 @@
+behavior {
+    require 2 = count(b for b in bikes.bags if b = Small)
+    require 2 = count(b for b in bikes.bags if b != Small)
+    require 2 = count(b for b in bikes.bags if b = Small || b = Medium)
+    require 2 = count(b for b in bikes.bags if !(b = Small))
+    // require 2 = count(b.bags for b in bikes if b.bags = Small)
+    // require 2 = count(b for b in bikes if count(b.bags) = 2)
+    // require 2 = count(bike for bike in bikes if count(b for b in bike.bags if b = Small) = 2)
+
+    require 5 = count(b for b in bikes if b.price <= 500)
+}
