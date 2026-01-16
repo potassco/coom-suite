@@ -1,0 +1,46 @@
+// House configuration problem
+// Friedrich et al.: (Re)configuration based on model generation (2011)
+
+// Is this problem representable in COOM?
+
+product {
+    0..*    Person  persons
+}
+
+structure Person {
+    0..*    Room    rooms
+    0..*    Thing   things
+
+}
+
+enumeration Thing {
+    Short
+    Long
+}
+
+structure Room {
+   0..4   Cabinet   cabinets
+}
+
+structure Cabinet {
+                    CabinetType type
+    reference 0..5  Thing       things
+}
+
+enumeration CabinetType {
+    attribute num space
+
+    Small = ( 1 )
+    High  = ( 2 )
+}
+
+behavior Room {
+    explanation "The cabinets in a room can take up at most 4 spaces."
+    require sum(cabinets.type.space) <= 4
+}
+
+behavior Cabinet {
+    explanation "A long thing can only be put into a high cabinet."
+    condition things.type = Long
+    require type = High
+}
