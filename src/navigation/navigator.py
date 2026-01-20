@@ -135,13 +135,14 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
         Update the configuration of the control object by setting enum_mode, number of models, opt_mode.
         """
+        # set the enum_mode
         match self._reasoning_mode:
-            case "auto" | "browse":
-                self._control.configuration.solve.enum_mode = "auto"
             case "brave":
                 self._control.configuration.solve.enum_mode = "brave"
             case "cautious":
                 self._control.configuration.solve.enum_mode = "cautious"
+            case _:
+                self._control.configuration.solve.enum_mode = "auto"
 
         self._control.configuration.solve.models = num_models
 
