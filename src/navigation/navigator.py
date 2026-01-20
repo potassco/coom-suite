@@ -51,6 +51,8 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         # keep track of which rules are not ground yet
         self._non_ground_rules: Set[str] = set()
 
+        self._auxiliary_atoms: set[Symbol] = set()
+
     def load(self, file_path: str) -> None:
         """
         Load a file into the logic program.
@@ -195,9 +197,9 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
     def _is_auxiliary(self, symbol: Symbol) -> bool:
         """
-        Check if a symbol is auxiliary (used to control activation of rules).
+        Check if a symbol is auxiliary.
         """
-        return symbol in self._rule_map.values()
+        return symbol in self._auxiliary_atoms
 
     def _on_model(self, model: Model) -> Set[Symbol]:
         """
@@ -387,6 +389,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
         external = self._as_symbol(name)
         self._rule_map[rule] = external
+        self._auxiliary_atoms.add(external)
         # add the activation external to the rule
         if not permanent:
             self._rules[rule] = True
