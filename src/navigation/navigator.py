@@ -36,6 +36,8 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         self._cautious = None
         self._facets = None
 
+        self._atoms: Set[Symbol] = set()
+
         self._solve_handle: Optional[SolveHandle] = None
         self._model_iterator: Optional[Iterator[Model]] = None
 
@@ -61,7 +63,13 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         self._base_ground = False
         self._control.load(file_path)
 
-    def _updated_solution_space(self) -> None:
+    def _outdate_atoms(self) -> None:
+        """
+        Called whenever the set of symbols of the program changes.
+        """
+        self._atoms = set()
+
+    def _outdate_solution_space(self) -> None:
         """
         Called whenever the solution space of the program changes.
         """
@@ -215,14 +223,14 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
         Enable optimization while solving.
         """
-        self._updated_solution_space()
+        self._outdate_solution_space()
         self._optimization = True
 
     def disable_optimization(self) -> None:
         """
         Disable optimization while solving.
         """
-        self._updated_solution_space()
+        self._outdate_solution_space()
         self._optimization = False
 
     def compute_models(self, num_models: int = 1) -> List[Set[Symbol]]:
@@ -303,7 +311,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         Add an assumption to the logic program.
         """
         symbol = self._as_symbol(symbol)
-        self._updated_solution_space()
+        self._outdate_solution_space()
         self._assumptions.add((symbol, value))
 
     def remove_assumption(self, symbol: str | Symbol, value: bool) -> None:
@@ -311,14 +319,14 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         Remove an assumption from the logic program.
         """
         symbol = self._as_symbol(symbol)
-        self._updated_solution_space()
+        self._outdate_solution_space()
         self._assumptions.discard((symbol, value))
 
     def clear_assumptions(self) -> None:
         """
         Remove all assumptions from the logic program.
         """
-        self._updated_solution_space()
+        self._outdate_solution_space()
         self._assumptions = set()
 
     def get_assumptions(self) -> Set[Tuple[Symbol, bool]]:
@@ -332,7 +340,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         Set the value of an external.
         """
         symbol = self._as_symbol(symbol)
-        self._updated_solution_space()
+        self._outdate_solution_space()
         self._externals[symbol] = value
         if value is not None:
             self._control.assign_external(symbol, value)
@@ -343,7 +351,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
         Release all externals.
         """
-        self._updated_solution_space()
+        self._outdate_solution_space()
         for symbol in self._externals:
             self.set_external(symbol, None)
 
@@ -382,7 +390,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
         Internal function to add a rule to the logic program.
         """
-        self._updated_solution_space()
+        self._outdate_solution_space()
 
         name = self._get_new_program_name()
         self._non_ground_rules.add(rule)
@@ -402,13 +410,14 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         Add a rule to the logic program.
         """
         # TODO: check that head is a new atom to avoid redefinition error
+        self._outdate_atoms
         self._add_rule(rule, permanent)
 
     def _set_value_of_rule(self, rule: str, value: bool) -> None:
         """
         Set the activation external of a rule to the specified value.
         """
-        self._updated_solution_space()
+        self._outdate_solution_space()
         self._rules[rule] = value
         if rule not in self._non_ground_rules:
             external = self._rule_map[rule]
