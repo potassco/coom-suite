@@ -365,27 +365,31 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         new_model = self._get_model_from_partial_int(partial_int)
         return new_model
 
+    def _compute_diverse_similar_models(self, num_models: int = 1, diverse: bool = True) -> List[Set[Symbol]]:
+        """
+        Helper function to compute diverse/similar models.
+        """
+        models = []
+
+        for i in range(num_models):
+            new_model = self._extend_solution_set(models, diverse)
+            models.append(new_model)
+
+        return models
+
     def compute_diverse_models(self, num_models: int = 1) -> List[Set[Symbol]]:
         """
         Compute num_models many diverse models.
         """
         self._reasoning_mode = "diverse"
-        models = []
-        for i in range(num_models):
-            new_model = self._extend_solution_set(models, diverse=True)
-            models.append(new_model)
-        return models
+        return self._compute_diverse_similar_models(num_models, diverse=True)
 
     def compute_similar_models(self, num_models: int = 1) -> List[Set[Symbol]]:
         """
         Compute num_models many similar models.
         """
         self._reasoning_mode = "similar"
-        models = []
-        for i in range(num_models):
-            new_model = self._extend_solution_set(models, diverse=False)
-            models.append(new_model)
-        return models
+        return self._compute_diverse_similar_models(num_models, diverse=False)
 
     def browse_diverse_models(self) -> Set[Symbol]:
         """
