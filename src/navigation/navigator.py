@@ -365,15 +365,51 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         new_model = self._get_model_from_partial_int(partial_int)
         return new_model
 
+    def _model_to_constraint(self, model: Set[Symbol], external: Symbol) -> str:
+        """
+        Turn a model into a constraint which forbids this model.
+        """
+        literals = []
+        for atom in self._atoms:
+            if atom in model:
+                literals.append(f"{atom}")
+            else:
+                literals.append(f"not {atom}")
+
+        constraint = f":- {external}"
+        for lit in literals:
+            constraint += ", " + lit
+        constraint += "."
+
+        prg = f"#external {external}.\n" + constraint
+
+        return prg
+
     def _compute_diverse_similar_models(self, num_models: int = 1, diverse: bool = True) -> List[Set[Symbol]]:
         """
         Helper function to compute diverse/similar models.
         """
         models = []
+        externals = []
 
         for i in range(num_models):
             new_model = self._extend_solution_set(models, diverse)
             models.append(new_model)
+
+            # for all but the last model add a constraint to the program to avoid repeating this model
+            if i < num_models - 1:
+                name = self._get_new_program_name()
+                external = self._as_symbol(name)
+                self._auxiliary_atoms.add(external)
+                externals.append(external)
+                constraint = self._model_to_constraint(new_model, external)
+                self._control.add(name, [], constraint)
+                self._ground([(name, [])])
+                self._control.assign_external(external, True)
+
+        # deactivate all added constraints
+        for external in externals:
+            self._control.release_external(external)
 
         return models
 
