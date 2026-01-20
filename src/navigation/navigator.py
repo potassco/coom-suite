@@ -144,6 +144,14 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
             case _:
                 self._control.configuration.solve.enum_mode = "auto"
 
+        # set the heursitic
+        match self._reasoning_mode:
+            case "diverse" | "similar":
+                self._control.configuration.solver.heuristic = "Domain"
+            case _:
+                # TODO: is this needed?
+                self._control.configuration.solver.heuristic = "Vsids,92"
+
         self._control.configuration.solve.models = num_models
 
         if self._optimization:
@@ -276,17 +284,108 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
             self._facets = brave - cautious  # type: ignore [assignment]
         return self._facets  # type: ignore [return-value]
 
-    # TODO: diverse and similar models
+    def _update_all_atoms(self) -> None:
+        """
+        Update the set of all symbols.
+        """
+        if self._atoms == set():
+            for atom in self._control.symbolic_atoms:
+                if not atom.is_external:
+                    self._atoms.add(atom.symbol)
+
+    def _get_partial_interpretation(
+        self, models: List[Set[Symbol]], diverse: bool = True
+    ) -> Dict[Symbol, Optional[bool]]:
+        """
+        Get a partial interpretation diverse/similar to the list of models.
+        """
+        self._update_all_atoms()
+
+        partial_int = {}
+        for atom in self._atoms:
+            val = 0
+            # for every model check if the atom is true/false
+            for model in models:
+                if atom in model:
+                    val += 1
+                else:
+                    val -= 1
+
+            # set the value of the atom in the partial interpretation
+            if val > 0:
+                partial_int[atom] = False if diverse else True
+            elif val < 0:
+                partial_int[atom] = True if diverse else False
+            else:
+                partial_int[atom] = None
+
+        return partial_int
+
+    def _get_heuristics(self, partial_int: Dict[Symbol, Optional[bool]], external: Symbol) -> str:
+        """
+        Get heuristic statements for the partial interpretation.
+        """
+        prog = f"#external {external}.\n"
+
+        for atom in partial_int:
+            # add heurisitc statements for each atom that has a value in partial_int
+            match partial_int[atom]:
+                case True:
+                    prog += f"#heuristic {atom} : {external}. [ 1, true ]\n"
+                case False:
+                    prog += f"#heuristic {atom} : {external}. [ 1, false ]\n"
+
+        return prog
+
+    def _get_model_from_partial_int(self, partial_int: Dict[Symbol, Optional[bool]]) -> Set[Symbol]:
+        """
+        Get a model similar to the partial interpretation.
+        """
+        name = self._get_new_program_name()
+        external = self._as_symbol(name)
+        self._auxiliary_atoms.add(external)
+
+        heuristics_prog = self._get_heuristics(partial_int, external)
+
+        self._control.add(name, [], heuristics_prog)
+        self._ground([(name, [])])
+        self._control.assign_external(external, True)
+
+        model = self._solve()
+
+        self._control.release_external(external)
+
+        return model
+
+    def _extend_solution_set(self, models: List[Set[Symbol]], diverse: bool = True) -> Set[Symbol]:
+        """
+        Extend the current solution set by a diverse/similar model.
+        """
+        partial_int = self._get_partial_interpretation(models, diverse)
+        new_model = self._get_model_from_partial_int(partial_int)
+        return new_model
 
     def compute_diverse_models(self, num_models: int = 1) -> List[Set[Symbol]]:
         """
         Compute num_models many diverse models.
         """
+        self._reasoning_mode = "diverse"
+        models = []
+        for i in range(num_models):
+            new_model = self._extend_solution_set(models, diverse=True)
+            models.append(new_model)
+        return models
 
     def compute_similar_models(self, num_models: int = 1) -> List[Set[Symbol]]:
         """
         Compute num_models many similar models.
         """
+        self._reasoning_mode = "similar"
+        models = []
+        for i in range(num_models):
+            new_model = self._extend_solution_set(models, diverse=False)
+            models.append(new_model)
+        return models
 
     def browse_diverse_models(self) -> Set[Symbol]:
         """
