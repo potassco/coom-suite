@@ -387,7 +387,24 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
         return prg
 
-    def _compute_diverse_similar_models(self, num_models: int = 1, diverse: bool = True) -> List[Set[Symbol]]:
+    def _forbid_model(self, model: Set[Symbol]) -> Symbol:
+        """
+        Add a constraint to forbid the model to the program.
+
+        Returns:
+            Symbol: the symbol of the external to deactivate the constraint.
+        """
+        name = self._get_new_program_name()
+        external = self._as_symbol(name)
+        self._auxiliary_atoms.add(external)
+        constraint = self._model_to_constraint(model, external)
+        self._control.add(name, [], constraint)
+        self._ground([(name, [])])
+        self._control.assign_external(external, True)
+
+        return external
+
+    def _compute_diverse_similar_models(self, num_models, diverse: bool = True) -> List[Set[Symbol]]:
         """
         Helper function to compute diverse/similar models.
         """
@@ -400,14 +417,8 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
             # for all but the last model add a constraint to the program to avoid repeating this model
             if i < num_models - 1:
-                name = self._get_new_program_name()
-                external = self._as_symbol(name)
-                self._auxiliary_atoms.add(external)
+                external = self._forbid_model(new_model)
                 externals.append(external)
-                constraint = self._model_to_constraint(new_model, external)
-                self._control.add(name, [], constraint)
-                self._ground([(name, [])])
-                self._control.assign_external(external, True)
 
         # deactivate all added constraints
         for external in externals:
