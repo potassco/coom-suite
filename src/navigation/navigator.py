@@ -404,15 +404,22 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
         return external
 
-    def _compute_diverse_similar_models(self, num_models, diverse: bool = True) -> List[Set[Symbol]]:
+    def _compute_diverse_similar_models(
+        self, num_models, initial_models: List[Set[Symbol]], diverse: bool = True
+    ) -> List[Set[Symbol]]:
         """
         Helper function to compute diverse/similar models.
         """
         models = []
         externals = []
 
+        # avoid repetition of any initial models
+        for model in initial_models:
+            external = self._forbid_model(model)
+            externals.append(external)
+
         for i in range(num_models):
-            new_model = self._extend_solution_set(models, diverse)
+            new_model = self._extend_solution_set(initial_models + models, diverse)
             models.append(new_model)
 
             # for all but the last model add a constraint to the program to avoid repeating this model
@@ -426,19 +433,19 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
         return models
 
-    def compute_diverse_models(self, num_models: int = 1) -> List[Set[Symbol]]:
+    def compute_diverse_models(self, num_models: int = 1, initial_models: List[Set[Symbol]] = []) -> List[Set[Symbol]]:
         """
         Compute num_models many diverse models.
         """
         self._reasoning_mode = "diverse"
-        return self._compute_diverse_similar_models(num_models, diverse=True)
+        return self._compute_diverse_similar_models(num_models, initial_models, diverse=True)
 
-    def compute_similar_models(self, num_models: int = 1) -> List[Set[Symbol]]:
+    def compute_similar_models(self, num_models: int = 1, initial_models: List[Set[Symbol]] = []) -> List[Set[Symbol]]:
         """
         Compute num_models many similar models.
         """
         self._reasoning_mode = "similar"
-        return self._compute_diverse_similar_models(num_models, diverse=False)
+        return self._compute_diverse_similar_models(num_models, initial_models, diverse=False)
 
     def browse_diverse_models(self) -> Set[Symbol]:
         """
