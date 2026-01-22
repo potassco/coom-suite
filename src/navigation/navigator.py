@@ -36,7 +36,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         self._cautious = None
         self._facets = None
 
-        self._atoms: Set[Symbol] = set()
+        self._atoms: Optional[Set[Symbol]] = None
 
         self._solve_handle: Optional[SolveHandle] = None
         self._model_iterator: Optional[Iterator[Model]] = None
@@ -284,14 +284,18 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
             self._facets = brave - cautious  # type: ignore [assignment]
         return self._facets  # type: ignore [return-value]
 
-    def _update_all_atoms(self) -> None:
+    def _get_all_atoms(self) -> Set[Symbol]:
         """
-        Update the set of all symbols.
+        Get the set of all symbols.
+
+        This function should be used instead of directly accessing self._atoms.
         """
-        if self._atoms == set():
+        if self._atoms is None:
             for atom in self._control.symbolic_atoms:
                 if not atom.is_external:
                     self._atoms.add(atom.symbol)
+
+        return self._atoms
 
     def _get_partial_interpretation(
         self, models: List[Set[Symbol]], diverse: bool = True
@@ -299,10 +303,8 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
         Get a partial interpretation diverse/similar to the list of models.
         """
-        self._update_all_atoms()
-
         partial_int = {}
-        for atom in self._atoms:
+        for atom in self._get_all_atoms():
             val = 0
             # for every model check if the atom is true/false
             for model in models:
@@ -370,7 +372,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         Turn a model into a constraint which forbids this model.
         """
         literals = []
-        for atom in self._atoms:
+        for atom in self._get_all_atoms():
             if atom in model:
                 literals.append(f"{atom}")
             else:
