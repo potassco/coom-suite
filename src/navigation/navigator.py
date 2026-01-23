@@ -138,26 +138,26 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         # set the enum_mode
         match self._reasoning_mode:
             case "brave":
-                self._control.configuration.solve.enum_mode = "brave"
+                self._control.configuration.solve.enum_mode = "brave"  # type: ignore
             case "cautious":
-                self._control.configuration.solve.enum_mode = "cautious"
+                self._control.configuration.solve.enum_mode = "cautious"  # type: ignore
             case _:
-                self._control.configuration.solve.enum_mode = "auto"
+                self._control.configuration.solve.enum_mode = "auto"  # type: ignore
 
         # set the heursitic
         match self._reasoning_mode:
             case "diverse" | "similar":
-                self._control.configuration.solver.heuristic = "Domain"
+                self._control.configuration.solver.heuristic = "Domain"  # type: ignore
             case _:
                 # TODO: is this needed?
-                self._control.configuration.solver.heuristic = "Vsids,92"
+                self._control.configuration.solver.heuristic = "Vsids,92"  # type: ignore
 
-        self._control.configuration.solve.models = num_models
+        self._control.configuration.solve.models = num_models  # type: ignore
 
         if self._optimization:
-            self._control.configuration.solve.opt_mode = "optN"
+            self._control.configuration.solve.opt_mode = "optN"  # type: ignore
         else:
-            self._control.configuration.solve.opt_mode = "ignore"
+            self._control.configuration.solve.opt_mode = "ignore"  # type: ignore
 
     def _solve(self, num_models: int = 1) -> Optional[Set[Symbol]] | List[Set[Symbol]]:
         """
@@ -304,7 +304,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
         Get a partial interpretation diverse/similar to the list of models.
         """
-        partial_int = {}
+        partial_int: Dict[Symbol, Optional[bool]] = {}
         for atom in self._get_all_atoms():
             val = 0
             # for every model check if the atom is true/false
@@ -316,9 +316,9 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
             # set the value of the atom in the partial interpretation
             if val > 0:
-                partial_int[atom] = False if diverse else True
+                partial_int[atom] = not diverse
             elif val < 0:
-                partial_int[atom] = True if diverse else False
+                partial_int[atom] = diverse
             else:
                 partial_int[atom] = None
 
@@ -406,14 +406,15 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         return external
 
     def _compute_diverse_similar_models(
-        self, num_models, initial_models: List[Set[Symbol]], diverse: bool = True
+        self, num_models: int, initial_models: Optional[List[Set[Symbol]]], diverse: bool = True
     ) -> List[Set[Symbol]]:
         """
         Helper function to compute diverse/similar models.
         """
-        models = []
+        models: List[Set[Symbol]] = []
         externals = []
 
+        initial_models = initial_models or []
         # avoid repetition of any initial models
         for model in initial_models:
             external = self._forbid_model(model)
@@ -434,14 +435,18 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
         return models
 
-    def compute_diverse_models(self, num_models: int = 1, initial_models: List[Set[Symbol]] = []) -> List[Set[Symbol]]:
+    def compute_diverse_models(
+        self, num_models: int = 1, initial_models: Optional[List[Set[Symbol]]] = None
+    ) -> List[Set[Symbol]]:
         """
         Compute num_models many diverse models.
         """
         self._reasoning_mode = "diverse"
         return self._compute_diverse_similar_models(num_models, initial_models, diverse=True)
 
-    def compute_similar_models(self, num_models: int = 1, initial_models: List[Set[Symbol]] = []) -> List[Set[Symbol]]:
+    def compute_similar_models(
+        self, num_models: int = 1, initial_models: Optional[List[Set[Symbol]]] = None
+    ) -> List[Set[Symbol]]:
         """
         Compute num_models many similar models.
         """
