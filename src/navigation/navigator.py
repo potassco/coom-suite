@@ -60,7 +60,6 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         Load a file into the logic program.
         """
         self._clear_consequences()
-        self._base_ground = False
         self._control.load(file_path)
 
     def _outdate_atoms(self) -> None:
@@ -317,6 +316,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         This function should be used instead of directly accessing self._atoms.
         """
         if self._atoms is None:
+            self._ground()
             self._atoms = set()
             for atom in self._control.symbolic_atoms:
                 if not atom.is_external:
