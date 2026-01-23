@@ -67,7 +67,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
         Called whenever the set of symbols of the program changes.
         """
-        self._atoms = set()
+        self._atoms = None
 
     def _outdate_solution_space(self) -> None:
         """
@@ -291,6 +291,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         This function should be used instead of directly accessing self._atoms.
         """
         if self._atoms is None:
+            self._atoms = set()
             for atom in self._control.symbolic_atoms:
                 if not atom.is_external:
                     self._atoms.add(atom.symbol)
@@ -570,7 +571,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         Add a rule to the logic program.
         """
         # TODO: check that head is a new atom to avoid redefinition error
-        self._outdate_atoms
+        self._outdate_atoms()
         self._add_rule(rule, permanent)
 
     def _set_value_of_rule(self, rule: str, value: bool) -> None:
