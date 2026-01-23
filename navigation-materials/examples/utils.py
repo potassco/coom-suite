@@ -11,22 +11,18 @@ def print_models(models: List[Model]) -> None:
 
 
 def model_as_str(model: Model) -> str:
-    ret = "{"
-    for i, a in enumerate(model):
-        if i > 0:
-            ret += ", "
-        ret += str(a)
-    ret += "}"
+    atoms = []
+    for a in model:
+        atoms.append(str(a))
+    atoms.sort()
 
-    return ret
+    return "{" + ", ".join(atoms) + "}"
 
 
 def assumptions_as_str(assumptions: Set[Tuple[Symbol, bool]]) -> str:
-    ret = "{"
-    for i, (a, v) in enumerate(assumptions):
-        if i > 0:
-            ret += ", "
-        ret += f"({a}, {v})"
-    ret += "}"
+    assumptions_str = []
+    for a, v in assumptions:
+        assumptions_str.append(f"({a}, {v})")
+    assumptions_str.sort()
 
-    return ret
+    return "{" + ", ".join(assumptions_str) + "}"
