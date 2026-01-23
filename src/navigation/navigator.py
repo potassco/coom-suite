@@ -32,9 +32,9 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         self._reasoning_mode = "auto"
         self._optimization = False
 
-        self._brave = None
-        self._cautious = None
-        self._facets = None
+        self._brave: Optional[Set[Symbol]] = None
+        self._cautious: Optional[Set[Symbol]] = None
+        self._facets: Optional[Set[Symbol]] = None
 
         self._atoms: Optional[Set[Symbol]] = None
 
@@ -152,65 +152,88 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
                 # TODO: is this needed?
                 self._control.configuration.solver.heuristic = "Vsids,92"  # type: ignore
 
-        self._control.configuration.solve.models = num_models  # type: ignore
+        match self._reasoning_mode:
+            case "auto" | "diverse" | "similar":
+                self._control.configuration.solve.models = num_models  # type: ignore
+            case _:
+                self._control.configuration.solve.models = 0  # type: ignore
 
         if self._optimization:
             self._control.configuration.solve.opt_mode = "optN"  # type: ignore
         else:
             self._control.configuration.solve.opt_mode = "ignore"  # type: ignore
 
-    def _solve(self, num_models: int = 1) -> Optional[Set[Symbol]] | List[Set[Symbol]]:
+    def _get_solve_handle(self, num_models: int = 1) -> SolveHandle:
         """
-        Solve the logic program.
+        Get a solve handle for the logic program.
 
-        Depending on the current reasoning mode the return is either a list of models (auto reasoning mode)
-        or a single model (brave, cautious or browsing reasoning mode).
-        Note that models here are just sets of Symbols.
+        This function also takes care of updating the solver configuration and grounding.
         """
-        # TODO: support for timeouts
-        browsing = self._reasoning_mode == "browse"
-
-        if not browsing:
+        if not self._reasoning_mode == "browse":
             self._clear_browsing()
 
-        all_models: List[Set[Symbol]] = []
-        last_model: Optional[Set[Symbol]] = None
-        if not browsing or self._model_iterator is None:
-            self._update_configuration(num_models)
-            self._ground()
+        self._update_configuration(num_models)
+        self._ground()
 
-            handle = self._control.solve(assumptions=list(self._assumptions), yield_=True)
+        handle = self._control.solve(assumptions=list(self._assumptions), yield_=True)
 
-            if browsing:
-                self._solve_handle = handle
-                self._model_iterator = iter(handle)
+        return handle
+
+    def _browse(self) -> Optional[Set[Symbol]]:
+        """
+        Solve the logic program for the next model.
+        """
+        if self._model_iterator is None:
+            handle = self._get_solve_handle()
+            self._solve_handle = handle
+            self._model_iterator = iter(handle)
+
+        model = None
+        try:
+            m = next(self._model_iterator)
+            while self._optimization and not m.optimality_proven:
+                m = next(self._model_iterator)
+            model = self._on_model(m)
+        except StopIteration:
+            self._solve_handle.cancel()  # type: ignore[union-attr]
+            self._solve_handle = None
+            self._model_iterator = None
+
+        return model
+
+    def _solve(self, num_models: int = 1) -> List[Set[Symbol]]:
+        """
+        Solve the logic program for num_models.
+        """
+        handle = self._get_solve_handle(num_models)
+
+        models = []
+        for m in handle:
+            if self._optimization and not m.optimality_proven:
+                continue
+            model = self._on_model(m)
+            if self._reasoning_mode == "auto":
+                models.append(model)
             else:
-                for m in handle:
-                    if self._optimization and not m.optimality_proven:
-                        continue
-                    model = self._on_model(m)
-                    if self._reasoning_mode == "auto":
-                        all_models.append(model)
-                    else:
-                        last_model = model
-                handle.cancel()
+                models = [model]
+        handle.cancel()
 
-        if browsing:
-            try:
-                m = next(self._model_iterator)  # type: ignore [arg-type]
-                while self._optimization and not m.optimality_proven:
-                    m = next(self._model_iterator)  # type: ignore [arg-type]
-                last_model = self._on_model(m)
-            except StopIteration:
-                self._solve_handle.cancel()  # type: ignore [union-attr]
-                self._solve_handle = None
-                self._model_iterator = None
+        return models
 
-        match self._reasoning_mode:
-            case "auto":
-                return all_models
-            case _:
-                return last_model
+    def _solve_single(self) -> Optional[Set[Symbol]]:
+        """
+        Solve the logic program for a single model.
+
+        Wrapper around self._solve with different return type.
+        """
+        models = self._solve(1)
+
+        if len(models) == 0:
+            model = None
+        else:
+            model = models[0]
+
+        return model
 
     def _is_auxiliary(self, symbol: Symbol) -> bool:
         """
@@ -247,42 +270,45 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         Compute num_models many models.
         """
         self._reasoning_mode = "auto"
-        return self._solve(num_models)  # type: ignore [return-value]
+        return self._solve(num_models)
 
-    def browse_models(self) -> Set[Symbol]:
+    def browse_models(self) -> Optional[Set[Symbol]]:
         """
         Compute model iteratively.
         """
         self._reasoning_mode = "browse"
-        return self._solve(0)  # type: ignore [return-value]
+        return self._browse()
 
-    def compute_brave_consequences(self) -> Set[Symbol]:
+    def compute_brave_consequences(self) -> Optional[Set[Symbol]]:
         """
         Compute the brave consequences.
         """
         if self._brave is None:
             self._reasoning_mode = "brave"
-            self._brave = self._solve(0)  # type: ignore [assignment]
-        return self._brave  # type: ignore [return-value]
+            self._brave = self._solve_single()
+        return self._brave
 
-    def compute_cautious_consequences(self) -> Set[Symbol]:
+    def compute_cautious_consequences(self) -> Optional[Set[Symbol]]:
         """
         Compute the cautious consequences.
         """
         if self._cautious is None:
             self._reasoning_mode = "cautious"
-            self._cautious = self._solve(0)  # type: ignore [assignment]
-        return self._cautious  # type: ignore [return-value]
+            self._cautious = self._solve_single()
+        return self._cautious
 
-    def compute_facets(self) -> Set[Symbol]:
+    def compute_facets(self) -> Optional[Set[Symbol]]:
         """
         Compute the facets of the program.
         """
         if self._facets is None:
             brave = self.compute_brave_consequences()
             cautious = self.compute_cautious_consequences()
-            self._facets = brave - cautious  # type: ignore [assignment]
-        return self._facets  # type: ignore [return-value]
+            if brave is not None and cautious is not None:
+                self._facets = brave - cautious
+            else:
+                self._facets = None
+        return self._facets
 
     def _get_all_atoms(self) -> Set[Symbol]:
         """
@@ -340,7 +366,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
         return prog
 
-    def _get_model_from_partial_int(self, partial_int: Dict[Symbol, Optional[bool]]) -> Set[Symbol]:
+    def _get_model_from_partial_int(self, partial_int: Dict[Symbol, Optional[bool]]) -> Optional[Set[Symbol]]:
         """
         Get a model similar to the partial interpretation.
         """
@@ -354,13 +380,13 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         self._ground([(name, [])])
         self._control.assign_external(external, True)
 
-        model = self._solve()
+        model = self._solve_single()
 
         self._control.release_external(external)
 
         return model
 
-    def _extend_solution_set(self, models: List[Set[Symbol]], diverse: bool = True) -> Set[Symbol]:
+    def _extend_solution_set(self, models: List[Set[Symbol]], diverse: bool = True) -> Optional[Set[Symbol]]:
         """
         Extend the current solution set by a diverse/similar model.
         """
@@ -422,6 +448,10 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
         for i in range(num_models):
             new_model = self._extend_solution_set(initial_models + models, diverse)
+
+            if new_model is None:
+                break
+
             models.append(new_model)
 
             # for all but the last model add a constraint to the program to avoid repeating this model
