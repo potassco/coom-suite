@@ -1,0 +1,23 @@
+product {
+    3..3 Semester semester
+}
+
+structure Semester {
+    1..1 Module modules
+    num previousECTS
+    // num test_id
+}
+
+enumeration Module {
+    attribute num ects
+
+    B = ( 9 )
+    A = ( 6 )
+}
+
+behavior Semester {
+    explanation "The number of previously achieved ECTS is equal to the sum of the ECTS of all semesters before this one."
+    imply previousECTS = sum(s.modules.ects for s in root.semester if s.id < id)
+
+    // require sum(m.ects for m in modules if m = A) > 0
+}

@@ -84,6 +84,7 @@ allow(T,(Col,Row),V) :- attribute_constraint((T,_)), allow(T,(0,Row),O), coom_at
 
 % Imply statements
 imply((C,X'),G)       :- imply((C,_),X',G), not coom_condition(C,_,_).
+
 imply((C,X'),G)       :- imply((C,X),X',G), ground_condition(C,X,_,_).
 condition((C,X'),Con) :- imply((C,X),X',_), conditions(C,X,Con).
 unary(@unary(G,"()"),"()",G)    :- conditions(C,_,_), conditions_binary(C,_,G,_,_,()).

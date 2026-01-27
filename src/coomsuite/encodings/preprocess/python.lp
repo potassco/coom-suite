@@ -41,7 +41,9 @@ def join(p1,p2):
 
 def join_comprehension(p1,p2):
     remove_var = p2.string.split(".")[1:]
-    return String(f"{".".join([p1.string]+remove_var)}")
+    # if "root" not in p1.string:
+    return String(".".join([p1.string]+remove_var))
+    # return String(".".join(remove_var))
 
 def aggregate(f,ctx,p,val=None,var=None,c=None):
     joined = join(ctx,p).string

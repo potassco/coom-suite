@@ -84,13 +84,13 @@ behavior {
     explanation "The number of ECTS in the practical modules has to be equal to 36."
     require 24 = sum(m.ects for m in semester.modules if m.group = p)
 
-    // explanation "The interdisciplinary modules has to be taken."
-    // // exists m in semester.modules { require m = IM }
+    explanation "The interdisciplinary modules has to be taken."
+    // exists m in semester.modules { require m = IM }
     // exists IM in semester.modules // easier syntax for simple existence checks
-    // require 1 = count(semester.modules if m = IM)
+    require 1 = count(m for m in semester.modules if m = IM)
 
-    // explanation "The thesis has to be taken."
-    // // exists m in semester.modules { require m = Thesis }
+    explanation "The thesis has to be taken."
+    // exists m in semester.modules { require m = Thesis }
     // exists Thesis in semester.modules
-    // require 1 = count(semester.modules if m = Thesis)
+    require 1 = count(m for m in semester.modules if m = Thesis)
 }
