@@ -90,14 +90,14 @@ coom_path(@join_comprehension(S,P),I-1,N) :-
     coom_path(S,0,S0),
     S0 != "root".
 
-% coom_path(@join_comprehension(S,P),I-1,N) :-
-%     coom_aggregate_set(C,A,S),
-%     coom_aggregate_comprehension(C,A,P,V),
-%     coom_path(P,0,V),
-%     coom_path(P,I,N),
-%     I > 0,
-%     coom_path(S,0,S0),
-%     S0 != "root".
+coom_path(@join_comprehension(S,P),I-1,N) :-
+    coom_aggregate_set(C,A,S),
+    coom_aggregate_comprehension(C,A,P,V),
+    coom_path(P,0,V),
+    coom_path(P,I,N),
+    I > 0,
+    coom_path(S,0,"root").
+
 % coom_path(@join_comprehension(S,L),I-1,N) :-
 %     coom_aggregate_set(C,A,S),
 %     coom_aggregate_comprehension(C,A,_,V),
