@@ -59,6 +59,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
         Load a file into the logic program.
         """
+        self._outdate_atoms()
         self._clear_consequences()
         self._control.load(file_path)
 
