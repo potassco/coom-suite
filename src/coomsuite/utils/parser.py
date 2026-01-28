@@ -97,7 +97,12 @@ def get_parser() -> ArgumentParser:
     parser_solve.add_argument("--solver", "-s", type=str, help="Set solver", choices=SOLVERS, default="clingo")
 
     parser_solve.add_argument(
-        "--output", "-o", type=str, help="Set console output format", choices=["asp", "coom"], default="asp"
+        "--output",
+        "-o",
+        type=str,
+        help="Set console output format",
+        choices=["asp", "coom", "json", "yaml"],
+        default="asp",
     )
     parser_solve.add_argument("--show-facts", action="store_true", help="Show preprocessed fact format")
     parser_solve.add_argument(

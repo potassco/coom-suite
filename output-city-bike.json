@@ -1,0 +1,19 @@
+{
+    "basket[0]": {
+        "basket[0].color[0]": "White",
+        "basket[0].position[0]": "Back"
+    },
+    "carrier[0]": {
+        "carrier[0].bag[0]": {
+            "carrier[0].bag[0].capacity[0]": "B10",
+            "carrier[0].bag[0].capacity[0].volume[0]": 10,
+            "carrier[0].bag[0].material[0]": "Leather"
+        }
+    },
+    "color[0]": "White",
+    "saddle[0]": "Comfort",
+    "frontWheel[0]": "W29",
+    "frontWheel[0].size[0]": 29,
+    "rearWheel[0]": "W29",
+    "rearWheel[0].size[0]": 29
+}

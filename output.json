@@ -1,0 +1,21 @@
+{
+    "basket[0]": {
+        "color[0]": "White",
+        "position[0]": "Back"
+    },
+    "carrier[0]": {
+        "bag[0]": {
+            "capacity[0]": "B10",
+            "capacity[0].volume[0]": 10,
+            "material[0]": "Leather"
+        }
+    },
+    "color[0]": "White",
+    "frontWheel[0]": {
+        "size[0]": {}
+    },
+    "rearWheel[0]": {
+        "size[0]": {}
+    },
+    "saddle[0]": {}
+}

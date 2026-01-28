@@ -1,0 +1,6 @@
+color[0]: "Red"
+frontWheel[0]: "W14"
+frontWheel[0].size[0]: 14
+rearWheel[0]: "W14"
+rearWheel[0].size[0]: 14
+wheelSupport[0]": "True"
