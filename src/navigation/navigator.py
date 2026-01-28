@@ -2,13 +2,13 @@
 Module defining the navigator class.
 """
 
-from typing import Dict, Iterator, List, Optional, Set, Tuple
+from typing import Iterator
 
 from clingo.control import Control
 from clingo.solving import Model, SolveHandle
 from clingo.symbol import Symbol, parse_term
 
-ProgPart = Tuple[str, List[Symbol]]
+ProgPart = tuple[str, list[Symbol]]
 
 
 class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-attributes
@@ -16,7 +16,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
     Class to navigate solution spaces of logic programs.
     """
 
-    def __init__(self, control: Optional[Control] = None, grounded: Optional[bool] = None):
+    def __init__(self, control: Control | None = None, grounded: bool | None = None):
         """
         Args:
             control (Optional[Control]): optionally pass a control object to use
@@ -32,26 +32,26 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         self._reasoning_mode = "auto"
         self._optimization = False
 
-        self._brave: Optional[Set[Symbol]] = None
-        self._cautious: Optional[Set[Symbol]] = None
-        self._facets: Optional[Set[Symbol]] = None
+        self._brave: set[Symbol] | None = None
+        self._cautious: set[Symbol] | None = None
+        self._facets: set[Symbol] | None = None
 
-        self._atoms: Optional[Set[Symbol]] = None
+        self._atoms: set[Symbol] | None = None
 
-        self._solve_handle: Optional[SolveHandle] = None
-        self._model_iterator: Optional[Iterator[Model]] = None
+        self._solve_handle: SolveHandle | None = None
+        self._model_iterator: Iterator[Model] | None = None
 
-        self._assumptions: Set[Tuple[Symbol, bool]] = set()
-        self._externals: Dict[Symbol, Optional[bool]] = {}
+        self._assumptions: set[tuple[Symbol, bool]] = set()
+        self._externals: dict[Symbol, bool | None] = {}
 
         self._program_name = "add"
         self._program_counter = 0
         # keep track of whether a rule is active or not
-        self._rules: Dict[str, bool] = {}
+        self._rules: dict[str, bool] = {}
         # the external belonging to a rule to activate/deactivate it (also the program part name)
-        self._rule_map: Dict[str, Symbol] = {}
+        self._rule_map: dict[str, Symbol] = {}
         # keep track of which rules are not ground yet
-        self._non_ground_rules: Set[str] = set()
+        self._non_ground_rules: set[str] = set()
 
         self._auxiliary_atoms: set[Symbol] = set()
 
@@ -92,7 +92,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         self._cautious = None
         self._facets = None
 
-    def ground(self, parts: List[ProgPart] = [("base", [])]) -> None:  # pylint: disable=dangerous-default-value
+    def ground(self, parts: list[ProgPart] = [("base", [])]) -> None:  # pylint: disable=dangerous-default-value
         """
         Ground the specified program parts.
         """
@@ -100,7 +100,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
             self._base_ground = True
         self._control.ground(parts)
 
-    def _activate_rules(self, rules: Set[str]) -> None:
+    def _activate_rules(self, rules: set[str]) -> None:
         """
         Activate a set of rules by setting their activation externals.
         """
@@ -109,17 +109,19 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
                 external = self._rule_map[rule]
                 self._control.assign_external(external, self._rules[rule])
 
-    def _ground(self, parts: Optional[List[ProgPart]] = None) -> None:
+    def _ground(self, parts: list[ProgPart] | None = None) -> None:
         """
         Ground program parts, if base was not grounded yet it is added to the parts.
         """
         if parts is None:
             parts = []
 
+        # add base program part if it is not grounded yet
         if not self._base_ground:
             if ("base", []) not in parts:
                 parts.append(("base", []))
 
+        # add program parts corresponding to added rules
         for rule in self._non_ground_rules:
             part = self._rule_map[rule]
             parts.append((str(part), []))
@@ -127,12 +129,15 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         if parts:
             self.ground(parts)
 
+        # set activation of the newly grounded rules
         self._activate_rules(self._non_ground_rules)
+
+        # clear set of non-ground rules
         self._non_ground_rules = set()
 
     def _update_configuration(self, num_models: int = 1) -> None:
         """
-        Update the configuration of the control object by setting enum_mode, number of models, opt_mode.
+        Update the configuration of the control object.
         """
         # set the enum_mode
         match self._reasoning_mode:
@@ -151,12 +156,14 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
                 # TODO: is this needed?
                 self._control.configuration.solver.heuristic = "Vsids,92"  # type: ignore
 
+        # set number of models
         match self._reasoning_mode:
             case "auto" | "diverse" | "similar":
                 self._control.configuration.solve.models = num_models  # type: ignore
             case _:
                 self._control.configuration.solve.models = 0  # type: ignore
 
+        # set optimization mode
         if self._optimization:
             self._control.configuration.solve.opt_mode = "optN"  # type: ignore
         else:
@@ -178,15 +185,17 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
         return handle
 
-    def _browse(self) -> Optional[Set[Symbol]]:
+    def _browse(self) -> set[Symbol] | None:
         """
         Solve the logic program for the next model.
         """
+        # get a solve_handle/model_iterator if there is none
         if self._model_iterator is None:
             handle = self._get_solve_handle()
             self._solve_handle = handle
             self._model_iterator = iter(handle)
 
+        # get the next model from the iterator
         model = None
         try:
             m = next(self._model_iterator)
@@ -200,7 +209,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
         return model
 
-    def _solve(self, num_models: int = 1) -> List[Set[Symbol]]:
+    def _solve(self, num_models: int = 1) -> list[set[Symbol]]:
         """
         Solve the logic program for num_models.
         """
@@ -209,17 +218,23 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         models = []
         for m in handle:
             if self._optimization and not m.optimality_proven:
+                # skip non optimal models if optimizing
                 continue
+
             model = self._on_model(m)
+
+            # for the auto reasoning mode we save all models
             if self._reasoning_mode == "auto":
                 models.append(model)
+            # for all other modes only the last model
             else:
                 models = [model]
+
         handle.cancel()
 
         return models
 
-    def _solve_single(self) -> Optional[Set[Symbol]]:
+    def _solve_single(self) -> set[Symbol] | None:
         """
         Solve the logic program for a single model.
 
@@ -240,12 +255,12 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
         return symbol in self._auxiliary_atoms
 
-    def _on_model(self, model: Model) -> Set[Symbol]:
+    def _on_model(self, model: Model) -> set[Symbol]:
         """
         Convert a model to a set of symbols filtering auxiliary symbols.
         """
         result = set()
-        for s in model.symbols(shown=True):
+        for s in model.symbols(atoms=True):
             if not self._is_auxiliary(s):
                 result.add(s)
         return result
@@ -264,21 +279,21 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         self._outdate_solution_space()
         self._optimization = False
 
-    def compute_models(self, num_models: int = 1) -> List[Set[Symbol]]:
+    def compute_models(self, num_models: int = 1) -> list[set[Symbol]]:
         """
         Compute num_models many models.
         """
         self._reasoning_mode = "auto"
         return self._solve(num_models)
 
-    def browse_models(self) -> Optional[Set[Symbol]]:
+    def browse_models(self) -> set[Symbol] | None:
         """
         Compute model iteratively.
         """
         self._reasoning_mode = "browse"
         return self._browse()
 
-    def compute_brave_consequences(self) -> Optional[Set[Symbol]]:
+    def compute_brave_consequences(self) -> set[Symbol] | None:
         """
         Compute the brave consequences.
         """
@@ -287,7 +302,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
             self._brave = self._solve_single()
         return self._brave
 
-    def compute_cautious_consequences(self) -> Optional[Set[Symbol]]:
+    def compute_cautious_consequences(self) -> set[Symbol] | None:
         """
         Compute the cautious consequences.
         """
@@ -296,7 +311,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
             self._cautious = self._solve_single()
         return self._cautious
 
-    def compute_facets(self) -> Optional[Set[Symbol]]:
+    def compute_facets(self) -> set[Symbol] | None:
         """
         Compute the facets of the program.
         """
@@ -309,28 +324,29 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
                 self._facets = None
         return self._facets
 
-    def _get_all_atoms(self) -> Set[Symbol]:
+    def _get_all_atoms(self) -> set[Symbol]:
         """
         Get the set of all symbols.
 
         This function should be used instead of directly accessing self._atoms.
         """
         if self._atoms is None:
+            # ground to obtain possible new atoms
             self._ground()
+
             self._atoms = set()
             for atom in self._control.symbolic_atoms:
+                # filter out atoms that are external
                 if not atom.is_external:
                     self._atoms.add(atom.symbol)
 
         return self._atoms
 
-    def _get_partial_interpretation(
-        self, models: List[Set[Symbol]], diverse: bool = True
-    ) -> Dict[Symbol, Optional[bool]]:
+    def _get_partial_interpretation(self, models: list[set[Symbol]], diverse: bool = True) -> dict[Symbol, bool | None]:
         """
         Get a partial interpretation diverse/similar to the list of models.
         """
-        partial_int: Dict[Symbol, Optional[bool]] = {}
+        partial_int: dict[Symbol, bool | None] = {}
         for atom in self._get_all_atoms():
             val = 0
             # for every model check if the atom is true/false
@@ -350,7 +366,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
         return partial_int
 
-    def _get_heuristics(self, partial_int: Dict[Symbol, Optional[bool]], external: Symbol) -> str:
+    def _get_heuristics(self, partial_int: dict[Symbol, bool | None], external: Symbol) -> str:
         """
         Get heuristic statements for the partial interpretation.
         """
@@ -363,30 +379,30 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
                     prog += f"#heuristic {atom} : {external}. [ 1, true ]\n"
                 case False:
                     prog += f"#heuristic {atom} : {external}. [ 1, false ]\n"
+                case None:
+                    pass
 
         return prog
 
-    def _get_model_from_partial_int(self, partial_int: Dict[Symbol, Optional[bool]]) -> Optional[Set[Symbol]]:
+    def _get_model_from_partial_int(self, partial_int: dict[Symbol, bool | None]) -> set[Symbol] | None:
         """
         Get a model similar to the partial interpretation.
         """
-        name = self._get_new_program_name()
-        external = self._as_symbol(name)
-        self._auxiliary_atoms.add(external)
+        # get a new external/program part
+        external = self._get_new_auxiliary_symbol()
 
         heuristics_prog = self._get_heuristics(partial_int, external)
 
-        self._control.add(name, [], heuristics_prog)
-        self._ground([(name, [])])
-        self._control.assign_external(external, True)
+        self._add_and_activate(heuristics_prog, external)
 
         model = self._solve_single()
 
+        # deactivate the heuristics again
         self._control.release_external(external)
 
         return model
 
-    def _extend_solution_set(self, models: List[Set[Symbol]], diverse: bool = True) -> Optional[Set[Symbol]]:
+    def _extend_solution_set(self, models: list[set[Symbol]], diverse: bool = True) -> set[Symbol] | None:
         """
         Extend the current solution set by a diverse/similar model.
         """
@@ -394,10 +410,11 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         new_model = self._get_model_from_partial_int(partial_int)
         return new_model
 
-    def _model_to_constraint(self, model: Set[Symbol], external: Symbol) -> str:
+    def _model_to_constraint(self, model: set[Symbol], external: Symbol) -> str:
         """
         Turn a model into a constraint which forbids this model.
         """
+        # list of literals for the constraint
         literals = []
         for atom in self._get_all_atoms():
             if atom in model:
@@ -405,39 +422,53 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
             else:
                 literals.append(f"not {atom}")
 
+        # constraint with the list of literals and the external
         constraint = f":- {external}"
         for lit in literals:
             constraint += ", " + lit
         constraint += "."
 
+        # external statement and the constraint
         prg = f"#external {external}.\n" + constraint
 
         return prg
 
-    def _forbid_model(self, model: Set[Symbol]) -> Symbol:
+    def _get_new_auxiliary_symbol(self) -> Symbol:
+        """
+        Get a new auxiliary symbol to use as a program part name and external.
+        """
+        new_symbol = self._as_symbol(self._get_new_program_name())
+        self._auxiliary_atoms.add(new_symbol)
+        return new_symbol
+
+    def _add_and_activate(self, prg: str, external: Symbol) -> None:
+        """
+        Add prg to control using external as the program part name. The external is set to True to activate the program.
+        """
+        name = str(external)
+        self._control.add(name, [], prg)
+        self._ground([(name, [])])
+        self._control.assign_external(external, True)
+
+    def _forbid_model(self, model: set[Symbol]) -> Symbol:
         """
         Add a constraint to forbid the model to the program.
 
         Returns:
             Symbol: the symbol of the external to deactivate the constraint.
         """
-        name = self._get_new_program_name()
-        external = self._as_symbol(name)
-        self._auxiliary_atoms.add(external)
+        external = self._get_new_auxiliary_symbol()
         constraint = self._model_to_constraint(model, external)
-        self._control.add(name, [], constraint)
-        self._ground([(name, [])])
-        self._control.assign_external(external, True)
-
+        self._add_and_activate(constraint, external)
         return external
 
     def _compute_diverse_similar_models(
-        self, num_models: int, initial_models: Optional[List[Set[Symbol]]], diverse: bool = True
-    ) -> List[Set[Symbol]]:
+        self, num_models: int, initial_models: list[set[Symbol]] | None, diverse: bool = True
+    ) -> list[set[Symbol]]:
         """
         Helper function to compute diverse/similar models.
         """
-        models: List[Set[Symbol]] = []
+        models: list[set[Symbol]] = []
         externals = []
 
         initial_models = initial_models or []
@@ -466,8 +497,8 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         return models
 
     def compute_diverse_models(
-        self, num_models: int = 1, initial_models: Optional[List[Set[Symbol]]] = None
-    ) -> List[Set[Symbol]]:
+        self, num_models: int = 1, initial_models: list[set[Symbol]] | None = None
+    ) -> list[set[Symbol]]:
         """
         Compute num_models many diverse models.
         """
@@ -475,20 +506,20 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         return self._compute_diverse_similar_models(num_models, initial_models, diverse=True)
 
     def compute_similar_models(
-        self, num_models: int = 1, initial_models: Optional[List[Set[Symbol]]] = None
-    ) -> List[Set[Symbol]]:
+        self, num_models: int = 1, initial_models: list[set[Symbol]] | None = None
+    ) -> list[set[Symbol]]:
         """
         Compute num_models many similar models.
         """
         self._reasoning_mode = "similar"
         return self._compute_diverse_similar_models(num_models, initial_models, diverse=False)
 
-    def browse_diverse_models(self) -> Set[Symbol]:
+    def browse_diverse_models(self) -> set[Symbol]:
         """
         Compute diverse models iteratively.
         """
 
-    def browse_similar_models(self) -> Set[Symbol]:
+    def browse_similar_models(self) -> set[Symbol]:
         """
         Compute similar models iteratively.
         """
@@ -525,7 +556,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         self._outdate_solution_space()
         self._assumptions = set()
 
-    def get_assumptions(self) -> Set[Tuple[Symbol, bool]]:
+    def get_assumptions(self) -> set[tuple[Symbol, bool]]:
         """
         Get the current assumptions.
         """
@@ -551,13 +582,11 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         for symbol in self._externals:
             self.set_external(symbol, None)
 
-    def get_externals(self) -> Dict[Symbol, Optional[bool]]:
+    def get_externals(self) -> dict[Symbol, bool | None]:
         """
         Get the current values of the externals.
         """
         return self._externals
-
-    # TODO: add a function to get all the externals from the program?
 
     def _get_new_program_name(self) -> str:
         """
@@ -588,24 +617,27 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
         self._outdate_solution_space()
 
-        name = self._get_new_program_name()
+        # mark rule as non-ground
         self._non_ground_rules.add(rule)
 
-        external = self._as_symbol(name)
+        # get external/program part name for adding the rule
+        external = self._get_new_auxiliary_symbol()
+        # associate the rule to the external
         self._rule_map[rule] = external
-        self._auxiliary_atoms.add(external)
+
         # add the activation external to the rule
         if not permanent:
             self._rules[rule] = True
             rule = self._add_external_to_rule(rule, external)
 
-        self._control.add(name, [], rule)
+        # add the rule as a new program part
+        self._control.add(str(external), [], rule)
 
     def add_rule(self, rule: str, permanent: bool = False) -> None:
         """
         Add a rule to the logic program.
         """
-        # TODO: check that head is a new atom to avoid redefinition error
+        # TODO: add error handling for redefinition error
         self._outdate_atoms()
         self._add_rule(rule, permanent)
 
@@ -615,6 +647,8 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
         self._outdate_solution_space()
         self._rules[rule] = value
+
+        # only change the value of the activation external if the rule is ground
         if rule not in self._non_ground_rules:
             external = self._rule_map[rule]
             self._control.assign_external(external, value)
@@ -631,7 +665,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
         self._set_value_of_rule(rule, True)
 
-    def get_rules(self) -> Dict[str, bool]:
+    def get_rules(self) -> dict[str, bool]:
         """
         Get all added rules and their activation status.
         """
@@ -641,5 +675,4 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
         Add a constraint to the logic program.
         """
-        # TODO: should argument be the whole constraint or just the constraint body?
         self._add_rule(constraint, permanent)
