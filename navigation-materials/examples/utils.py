@@ -1,16 +1,22 @@
-from typing import List, Set, Tuple
+"""
+Some simple utility functions used in the example notebooks.
+"""
 
+from clingo.solving import Model
 from clingo.symbol import Symbol
 
-from navigation.navigator import Model
 
+def print_models(models: list[Model]) -> None:
+    """Print a list of models."""
+    if len(models) == 0:
+        print("UNSAT")
 
-def print_models(models: List[Model]) -> None:
     for i, m in enumerate(models):
         print(f"Model {i+1}: {model_as_str(m)}")
 
 
 def model_as_str(model: Model) -> str:
+    """Convert a model to its (sorted) string representation."""
     atoms = []
     for a in model:
         atoms.append(str(a))
@@ -19,7 +25,8 @@ def model_as_str(model: Model) -> str:
     return "{" + ", ".join(atoms) + "}"
 
 
-def assumptions_as_str(assumptions: Set[Tuple[Symbol, bool]]) -> str:
+def assumptions_as_str(assumptions: set[tuple[Symbol, bool]]) -> str:
+    """Convert a set of assumptions into a string."""
     assumptions_str = []
     for a, v in assumptions:
         assumptions_str.append(f"({a}, {v})")
