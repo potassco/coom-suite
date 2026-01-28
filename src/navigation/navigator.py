@@ -6,7 +6,9 @@ from typing import Iterator
 
 from clingo.control import Control
 from clingo.solving import Model, SolveHandle
-from clingo.symbol import Symbol, parse_term
+from clingo.symbol import Symbol
+
+from .utils import as_symbol
 
 ProgPart = tuple[str, list[Symbol]]
 
@@ -55,13 +57,9 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
         self._auxiliary_atoms: set[Symbol] = set()
 
-    def load(self, file_path: str) -> None:
-        """
-        Load a file into the logic program.
-        """
-        self._outdate_atoms()
-        self._clear_consequences()
-        self._control.load(file_path)
+    ####################################
+    # HELPER FUNCTIONS
+    ####################################
 
     def _outdate_atoms(self) -> None:
         """
@@ -93,22 +91,33 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         self._cautious = None
         self._facets = None
 
-    def ground(self, parts: list[ProgPart] = [("base", [])]) -> None:  # pylint: disable=dangerous-default-value
+    def _get_all_atoms(self) -> set[Symbol]:
         """
-        Ground the specified program parts.
-        """
-        if ("base", []) in parts:
-            self._base_ground = True
-        self._control.ground(parts)
+        Get the set of all symbols.
 
-    def _activate_rules(self, rules: set[str]) -> None:
+        This function should be used instead of directly accessing self._atoms.
         """
-        Activate a set of rules by setting their activation externals.
+        if self._atoms is None:
+            # ground to obtain possible new atoms
+            self._ground()
+
+            self._atoms = set()
+            for atom in self._control.symbolic_atoms:
+                # filter out atoms that are external
+                if not atom.is_external:
+                    self._atoms.add(atom.symbol)
+
+        return self._atoms
+
+    def _is_auxiliary(self, symbol: Symbol) -> bool:
         """
-        for rule in rules:
-            if rule in self._rules:
-                external = self._rule_map[rule]
-                self._control.assign_external(external, self._rules[rule])
+        Check if a symbol is auxiliary.
+        """
+        return symbol in self._auxiliary_atoms
+
+    ####################################
+    # SOLVING
+    ####################################
 
     def _ground(self, parts: list[ProgPart] | None = None) -> None:
         """
@@ -250,12 +259,6 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
         return model
 
-    def _is_auxiliary(self, symbol: Symbol) -> bool:
-        """
-        Check if a symbol is auxiliary.
-        """
-        return symbol in self._auxiliary_atoms
-
     def _on_model(self, model: Model) -> set[Symbol]:
         """
         Convert a model to a set of symbols filtering auxiliary symbols.
@@ -266,82 +269,96 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
                 result.add(s)
         return result
 
-    def enable_optimization(self) -> None:
+    ####################################
+    # EXTENDING THE LOGIC PROGRAM
+    ####################################
+
+    def _activate_rules(self, rules: set[str]) -> None:
         """
-        Enable optimization while solving.
+        Activate a set of rules by setting their activation externals.
+        """
+        for rule in rules:
+            if rule in self._rules:
+                external = self._rule_map[rule]
+                self._control.assign_external(external, self._rules[rule])
+
+    def _get_new_auxiliary_symbol(self) -> Symbol:
+        """
+        Get a new auxiliary symbol to use as a program part name and external.
+        """
+        new_symbol = as_symbol(self._get_new_program_name())
+        self._auxiliary_atoms.add(new_symbol)
+        return new_symbol
+
+    def _add_and_activate(self, prg: str, external: Symbol) -> None:
+        """
+        Add prg to control using external as the program part name. The external is set to True to activate the program.
+        """
+        name = str(external)
+        self._control.add(name, [], prg)
+        self._ground([(name, [])])
+        self._control.assign_external(external, True)
+
+    def _set_value_of_rule(self, rule: str, value: bool) -> None:
+        """
+        Set the activation external of a rule to the specified value.
         """
         self._outdate_solution_space()
-        self._optimization = True
+        self._rules[rule] = value
 
-    def disable_optimization(self) -> None:
+        # only change the value of the activation external if the rule is ground
+        if rule not in self._non_ground_rules:
+            external = self._rule_map[rule]
+            self._control.assign_external(external, value)
+
+    def _get_new_program_name(self) -> str:
         """
-        Disable optimization while solving.
+        Get a new program part name.
+        """
+        name = self._program_name + str(self._program_counter)
+        self._program_counter += 1
+        return name
+
+    def _add_external_to_rule(self, rule: str, external: Symbol) -> str:
+        """
+        Add an external to a the rule body in order to control activation of the rule.
+        """
+        has_body = ":-" in rule
+
+        external_statement = f"#external {external}.\n"
+
+        if has_body:
+            new_rule = rule[:-1] + f", {external}."
+        else:
+            new_rule = rule[:-1] + f" :- {external}."
+
+        return external_statement + new_rule
+
+    def _add_rule(self, rule: str, permanent: bool = False) -> None:
+        """
+        Internal function to add a rule to the logic program.
         """
         self._outdate_solution_space()
-        self._optimization = False
 
-    def compute_models(self, num_models: int = 1) -> list[set[Symbol]]:
-        """
-        Compute num_models many models.
-        """
-        self._reasoning_mode = "auto"
-        return self._solve(num_models)
+        # mark rule as non-ground
+        self._non_ground_rules.add(rule)
 
-    def browse_models(self) -> set[Symbol] | None:
-        """
-        Compute model iteratively.
-        """
-        self._reasoning_mode = "browse"
-        return self._browse()
+        # get external/program part name for adding the rule
+        external = self._get_new_auxiliary_symbol()
+        # associate the rule to the external
+        self._rule_map[rule] = external
 
-    def compute_brave_consequences(self) -> set[Symbol] | None:
-        """
-        Compute the brave consequences.
-        """
-        if self._brave is None:
-            self._reasoning_mode = "brave"
-            self._brave = self._solve_single()
-        return self._brave
+        # add the activation external to the rule
+        if not permanent:
+            self._rules[rule] = True
+            rule = self._add_external_to_rule(rule, external)
 
-    def compute_cautious_consequences(self) -> set[Symbol] | None:
-        """
-        Compute the cautious consequences.
-        """
-        if self._cautious is None:
-            self._reasoning_mode = "cautious"
-            self._cautious = self._solve_single()
-        return self._cautious
+        # add the rule as a new program part
+        self._control.add(str(external), [], rule)
 
-    def compute_facets(self) -> set[Symbol] | None:
-        """
-        Compute the facets of the program.
-        """
-        if self._facets is None:
-            brave = self.compute_brave_consequences()
-            cautious = self.compute_cautious_consequences()
-            if brave is not None and cautious is not None:
-                self._facets = brave - cautious
-            else:
-                self._facets = None
-        return self._facets
-
-    def _get_all_atoms(self) -> set[Symbol]:
-        """
-        Get the set of all symbols.
-
-        This function should be used instead of directly accessing self._atoms.
-        """
-        if self._atoms is None:
-            # ground to obtain possible new atoms
-            self._ground()
-
-            self._atoms = set()
-            for atom in self._control.symbolic_atoms:
-                # filter out atoms that are external
-                if not atom.is_external:
-                    self._atoms.add(atom.symbol)
-
-        return self._atoms
+    ####################################
+    # DIVERSE AND SIMILAR MODELS
+    ####################################
 
     def _get_partial_interpretation(self, models: list[set[Symbol]], diverse: bool = True) -> dict[Symbol, bool | None]:
         """
@@ -434,23 +451,6 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
         return prg
 
-    def _get_new_auxiliary_symbol(self) -> Symbol:
-        """
-        Get a new auxiliary symbol to use as a program part name and external.
-        """
-        new_symbol = self._as_symbol(self._get_new_program_name())
-        self._auxiliary_atoms.add(new_symbol)
-        return new_symbol
-
-    def _add_and_activate(self, prg: str, external: Symbol) -> None:
-        """
-        Add prg to control using external as the program part name. The external is set to True to activate the program.
-        """
-        name = str(external)
-        self._control.add(name, [], prg)
-        self._ground([(name, [])])
-        self._control.assign_external(external, True)
-
     def _forbid_model(self, model: set[Symbol]) -> Symbol:
         """
         Add a constraint to forbid the model to the program.
@@ -497,6 +497,93 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
         return models
 
+    ####################################
+    # PUBLIC METHODS
+    ####################################
+
+    def load(self, file_path: str) -> None:
+        """
+        Load a file into the logic program.
+        """
+        self._outdate_atoms()
+        self._clear_consequences()
+        self._control.load(file_path)
+
+    def ground(self, parts: list[ProgPart] = [("base", [])]) -> None:  # pylint: disable=dangerous-default-value
+        """
+        Ground the specified program parts.
+        """
+        if ("base", []) in parts:
+            self._base_ground = True
+        self._control.ground(parts)
+
+    # CONFIGURATION ####################
+
+    def enable_optimization(self) -> None:
+        """
+        Enable optimization while solving.
+        """
+        self._outdate_solution_space()
+        self._optimization = True
+
+    def disable_optimization(self) -> None:
+        """
+        Disable optimization while solving.
+        """
+        self._outdate_solution_space()
+        self._optimization = False
+
+    # SOLVING ##########################
+
+    def compute_models(self, num_models: int = 1) -> list[set[Symbol]]:
+        """
+        Compute num_models many models.
+        """
+        self._reasoning_mode = "auto"
+        return self._solve(num_models)
+
+    def browse_models(self) -> set[Symbol] | None:
+        """
+        Compute model iteratively.
+        """
+        self._reasoning_mode = "browse"
+        return self._browse()
+
+    # BRAVE/CAUTIOUS CONSEQUENCES ######
+
+    def compute_brave_consequences(self) -> set[Symbol] | None:
+        """
+        Compute the brave consequences.
+        """
+        if self._brave is None:
+            self._reasoning_mode = "brave"
+            self._brave = self._solve_single()
+        return self._brave
+
+    def compute_cautious_consequences(self) -> set[Symbol] | None:
+        """
+        Compute the cautious consequences.
+        """
+        if self._cautious is None:
+            self._reasoning_mode = "cautious"
+            self._cautious = self._solve_single()
+        return self._cautious
+
+    def compute_facets(self) -> set[Symbol] | None:
+        """
+        Compute the facets of the program.
+        """
+        if self._facets is None:
+            brave = self.compute_brave_consequences()
+            cautious = self.compute_cautious_consequences()
+            if brave is not None and cautious is not None:
+                self._facets = brave - cautious
+            else:
+                self._facets = None
+        return self._facets
+
+    # SIMILAR/DIVERSE MODELS ###########
+
     def compute_diverse_models(
         self, num_models: int = 1, initial_models: list[set[Symbol]] | None = None
     ) -> list[set[Symbol]]:
@@ -525,20 +612,13 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         Compute similar models iteratively.
         """
 
-    def _as_symbol(self, symbol: str | Symbol) -> Symbol:
-        """
-        Convert a symbol or string to a symbol.
-        """
-        if isinstance(symbol, str):
-            symbol = parse_term(symbol)
-
-        return symbol
+    # ASSUMPTIONS ######################
 
     def add_assumption(self, symbol: str | Symbol, value: bool) -> None:
         """
         Add an assumption to the logic program.
         """
-        symbol = self._as_symbol(symbol)
+        symbol = as_symbol(symbol)
         self._outdate_solution_space()
         self._assumptions.add((symbol, value))
 
@@ -546,7 +626,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
         Remove an assumption from the logic program.
         """
-        symbol = self._as_symbol(symbol)
+        symbol = as_symbol(symbol)
         self._outdate_solution_space()
         self._assumptions.discard((symbol, value))
 
@@ -563,11 +643,13 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
         return self._assumptions
 
+    # EXTERNALS ########################
+
     def set_external(self, symbol: str | Symbol, value: bool | None) -> None:
         """
         Set the value of an external.
         """
-        symbol = self._as_symbol(symbol)
+        symbol = as_symbol(symbol)
         self._outdate_solution_space()
         self._externals[symbol] = value
         if value is not None:
@@ -589,50 +671,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
         return self._externals
 
-    def _get_new_program_name(self) -> str:
-        """
-        Get a new program part name.
-        """
-        name = self._program_name + str(self._program_counter)
-        self._program_counter += 1
-        return name
-
-    def _add_external_to_rule(self, rule: str, external: Symbol) -> str:
-        """
-        Add an external to a the rule body in order to control activation of the rule.
-        """
-        has_body = ":-" in rule
-
-        external_statement = f"#external {external}.\n"
-
-        if has_body:
-            new_rule = rule[:-1] + f", {external}."
-        else:
-            new_rule = rule[:-1] + f" :- {external}."
-
-        return external_statement + new_rule
-
-    def _add_rule(self, rule: str, permanent: bool = False) -> None:
-        """
-        Internal function to add a rule to the logic program.
-        """
-        self._outdate_solution_space()
-
-        # mark rule as non-ground
-        self._non_ground_rules.add(rule)
-
-        # get external/program part name for adding the rule
-        external = self._get_new_auxiliary_symbol()
-        # associate the rule to the external
-        self._rule_map[rule] = external
-
-        # add the activation external to the rule
-        if not permanent:
-            self._rules[rule] = True
-            rule = self._add_external_to_rule(rule, external)
-
-        # add the rule as a new program part
-        self._control.add(str(external), [], rule)
+    # RULES ############################
 
     def add_rule(self, rule: str, permanent: bool = False) -> None:
         """
@@ -641,18 +680,6 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         # TODO: add error handling for redefinition error
         self._outdate_atoms()
         self._add_rule(rule, permanent)
-
-    def _set_value_of_rule(self, rule: str, value: bool) -> None:
-        """
-        Set the activation external of a rule to the specified value.
-        """
-        self._outdate_solution_space()
-        self._rules[rule] = value
-
-        # only change the value of the activation external if the rule is ground
-        if rule not in self._non_ground_rules:
-            external = self._rule_map[rule]
-            self._control.assign_external(external, value)
 
     def deactivate_rule(self, rule: str) -> None:
         """
