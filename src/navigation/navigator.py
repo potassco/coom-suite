@@ -20,9 +20,11 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
     def __init__(self, control: Control | None = None, grounded: bool | None = None):
         """
+        Create a navigator object possibly with an existing control object.
+
         Args:
-            control (Optional[Control]): optionally pass a control object to use
-            grounded_base (Optional[bool]): indicate if the passed control object was already grounded
+            control (Control | None): optionally pass a control object to use
+            grounded_base (bool | None): indicate if the base program of the control object is already ground
         """
         if control:
             self._control = control
@@ -121,7 +123,10 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
     def _ground(self, parts: list[ProgPart] | None = None) -> None:
         """
-        Ground program parts, if base was not grounded yet it is added to the parts.
+        Ground a list of program parts.
+
+        If base was not grounded yet it is automatically added to the program parts.
+        The program parts of rules added via self.add_rule (or similar) are also added.
         """
         if parts is None:
             parts = []
@@ -195,6 +200,16 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
         return handle
 
+    def _on_model(self, model: Model) -> set[Symbol]:
+        """
+        Convert a model to a set of symbols filtering auxiliary symbols.
+        """
+        result = set()
+        for s in model.symbols(atoms=True):
+            if not self._is_auxiliary(s):
+                result.add(s)
+        return result
+
     def _browse(self) -> set[Symbol] | None:
         """
         Solve the logic program for the next model.
@@ -209,6 +224,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         model = None
         try:
             m = next(self._model_iterator)
+            # skip non-optimal models if optimizing
             while self._optimization and not m.optimality_proven:
                 m = next(self._model_iterator)
             model = self._on_model(m)
@@ -227,8 +243,8 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
         models = []
         for m in handle:
+            # skip non optimal models if optimizing
             if self._optimization and not m.optimality_proven:
-                # skip non optimal models if optimizing
                 continue
 
             model = self._on_model(m)
@@ -259,28 +275,17 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
         return model
 
-    def _on_model(self, model: Model) -> set[Symbol]:
-        """
-        Convert a model to a set of symbols filtering auxiliary symbols.
-        """
-        result = set()
-        for s in model.symbols(atoms=True):
-            if not self._is_auxiliary(s):
-                result.add(s)
-        return result
-
     ####################################
     # EXTENDING THE LOGIC PROGRAM
     ####################################
 
-    def _activate_rules(self, rules: set[str]) -> None:
+    def _get_new_program_name(self) -> str:
         """
-        Activate a set of rules by setting their activation externals.
+        Get a new program part name.
         """
-        for rule in rules:
-            if rule in self._rules:
-                external = self._rule_map[rule]
-                self._control.assign_external(external, self._rules[rule])
+        name = self._program_name + str(self._program_counter)
+        self._program_counter += 1
+        return name
 
     def _get_new_auxiliary_symbol(self) -> Symbol:
         """
@@ -292,12 +297,21 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
 
     def _add_and_activate(self, prg: str, external: Symbol) -> None:
         """
-        Add prg to control using external as the program part name. The external is set to True to activate the program.
+        Add prg to control using external as the program part name and activate it.
         """
         name = str(external)
         self._control.add(name, [], prg)
         self._ground([(name, [])])
         self._control.assign_external(external, True)
+
+    def _activate_rules(self, rules: set[str]) -> None:
+        """
+        Activate a set of rules by setting their activation externals.
+        """
+        for rule in rules:
+            if rule in self._rules:
+                external = self._rule_map[rule]
+                self._control.assign_external(external, self._rules[rule])
 
     def _set_value_of_rule(self, rule: str, value: bool) -> None:
         """
@@ -307,27 +321,18 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         self._rules[rule] = value
 
         # only change the value of the activation external if the rule is ground
+        # if the rule is non-ground this will be handled later while grounding
         if rule not in self._non_ground_rules:
             external = self._rule_map[rule]
             self._control.assign_external(external, value)
 
-    def _get_new_program_name(self) -> str:
-        """
-        Get a new program part name.
-        """
-        name = self._program_name + str(self._program_counter)
-        self._program_counter += 1
-        return name
-
     def _add_external_to_rule(self, rule: str, external: Symbol) -> str:
         """
-        Add an external to a the rule body in order to control activation of the rule.
+        Add an external to the rule body in order to control activation of the rule.
         """
-        has_body = ":-" in rule
-
         external_statement = f"#external {external}.\n"
 
-        if has_body:
+        if ":-" in rule:
             new_rule = rule[:-1] + f", {external}."
         else:
             new_rule = rule[:-1] + f" :- {external}."
@@ -365,6 +370,7 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         Get a partial interpretation diverse/similar to the list of models.
         """
         partial_int: dict[Symbol, bool | None] = {}
+
         for atom in self._get_all_atoms():
             val = 0
             # for every model check if the atom is true/false
@@ -409,8 +415,8 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         # get a new external/program part
         external = self._get_new_auxiliary_symbol()
 
+        # get and add the heuristics program
         heuristics_prog = self._get_heuristics(partial_int, external)
-
         self._add_and_activate(heuristics_prog, external)
 
         model = self._solve_single()
@@ -471,8 +477,8 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         """
         models: list[set[Symbol]] = []
         externals = []
-
         initial_models = initial_models or []
+
         # avoid repetition of any initial models
         for model in initial_models:
             external = self._forbid_model(model)
@@ -681,6 +687,12 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         self._outdate_atoms()
         self._add_rule(rule, permanent)
 
+    def add_constraint(self, constraint: str, permanent: bool = False) -> None:
+        """
+        Add a constraint to the logic program.
+        """
+        self._add_rule(constraint, permanent)
+
     def deactivate_rule(self, rule: str) -> None:
         """
         Deactivate a rule of the logic program.
@@ -698,9 +710,3 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         Get all added rules and their activation status.
         """
         return self._rules
-
-    def add_constraint(self, constraint: str, permanent: bool = False) -> None:
-        """
-        Add a constraint to the logic program.
-        """
-        self._add_rule(constraint, permanent)
