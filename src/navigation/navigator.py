@@ -229,7 +229,8 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
                 m = next(self._model_iterator)
             model = self._on_model(m)
         except StopIteration:
-            self._solve_handle.cancel()  # type: ignore[union-attr]
+            if self._solve_handle is not None:
+                self._solve_handle.cancel()
             self._solve_handle = None
             self._model_iterator = None
 
@@ -515,10 +516,13 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         self._clear_consequences()
         self._control.load(file_path)
 
-    def ground(self, parts: list[ProgPart] = [("base", [])]) -> None:  # pylint: disable=dangerous-default-value
+    def ground(self, parts: list[ProgPart] | None = None) -> None:
         """
         Ground the specified program parts.
         """
+        if parts is None:
+            parts = [("base", [])]
+
         if ("base", []) in parts:
             self._base_ground = True
         self._control.ground(parts)
