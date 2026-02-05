@@ -6,11 +6,10 @@ build-backend = "setuptools.build_meta"
 name = "coomsuite"
 authors = [{ name = "Nicolas Rühling", email = "nruehling@uni-potsdam.de" }]
 description = "Python package to parse and solve COOM configuration instances using ASP."
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     "antlr4-python3-runtime==4.13.2",
     "clingo==5.7.*",
-    # "clingcon >= 5.2.1, == 5.2.*",                                                                  # requirement for flingo
     "flingo==1.0.0",
     "clinguin>=2.6.1",
 ]
