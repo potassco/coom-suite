@@ -974,6 +974,43 @@ class TestCOOMModelParser(TestCase):
             ],
         )
 
+        self.assertEqual(
+            parse_coom("behavior{require a = b._name}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'require(0,"a=b._name").',
+                'binary("a=b._name","a","=","b._name").',
+                'path("a",0,"a").',
+                'path("b._name",0,"b").',
+                'path("b._name",1,"_name").',
+            ],
+        )
+
+        self.assertEqual(
+            parse_coom("behavior{require a = _name}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'require(0,"a=_name").',
+                'binary("a=_name","a","=","_name").',
+                'path("a",0,"a").',
+                'path("_name",0,"_name").',
+            ],
+        )
+
+        self.assertEqual(
+            parse_coom("behavior{require a = _Metal}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'require(0,"a=_Metal").',
+                'binary("a=_Metal","a","=","_Metal").',
+                'path("a",0,"a").',
+                'constant("_Metal").',
+            ],
+        )
+
     def test_explanation(self) -> None:
         """
         Test parsing behavior with explanation.

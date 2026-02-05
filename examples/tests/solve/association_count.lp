@@ -8,11 +8,11 @@ index("root.elements[0]",0).
 parent("root.modules[0]","root").
 parent("root.modules[1]","root").
 parent("root.elements[0]","root").
-association("root.elements[0]","Module",1,2).
-replace(("root.elements[0].modules[0]","root.modules[0]"),(("root.elements[0]","root.modules[0]"),0)).
-replace(("root.elements[0].modules[0]","root.modules[1]"),(("root.elements[0]","root.modules[1]"),0)).
-replace(("root.elements[0].modules[1]","root.modules[0]"),(("root.elements[0]","root.modules[0]"),1)).
-replace(("root.elements[0].modules[1]","root.modules[1]"),(("root.elements[0]","root.modules[1]"),1)).
+association("root.elements[0]","Module","modules",1,2).
+replace(("root.elements[0].modules[0]","root.modules[0]"),(("root.elements[0]","root.modules[0]"),"modules",0)).
+replace(("root.elements[0].modules[0]","root.modules[1]"),(("root.elements[0]","root.modules[1]"),"modules",0)).
+replace(("root.elements[0].modules[1]","root.modules[0]"),(("root.elements[0]","root.modules[0]"),"modules",1)).
+replace(("root.elements[0].modules[1]","root.modules[1]"),(("root.elements[0]","root.modules[1]"),"modules",1)).
 constraint(("root.modules",0),"lowerbound").
 constraint(("root.elements",1),"lowerbound").
 constraint((0,"!count(root.elements[0])=1||count(root.elements[0].modules)=2"),"boolean").

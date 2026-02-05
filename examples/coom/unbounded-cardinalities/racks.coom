@@ -1,6 +1,6 @@
 product{
     0..*    Rack        racks
-    0..40   Element     elements
+    0..*    Element     elements
 }
 
 structure Rack {
@@ -18,7 +18,9 @@ structure Frame {
 }
 
 structure Module {
-    ModuleType type
+                    ModuleType  type
+    // reference 0..1  Element     element
+
 }
 
 enumeration ModuleType {
@@ -56,7 +58,7 @@ behavior Rack {
 // behavior Frame {
 //     explanation "A Frame containing a ModuleII must also contain exactly one ModuleV"
 //     condition exists II in modules.type
-//     require count(modules if modules.type is V)=1
+//     require count(m for m in modules if modules.type = V) = 1
 // }
 
 behavior Element {

@@ -358,7 +358,8 @@ class ASPModelVisitor(ModelVisitor):
         if self.print_path:
             full_path = f"{ctx.getText()}"
 
-            if full_path[0].islower():  # Path
+            if len(ctx.path_item()) > 1 or next(filter(str.isalpha, full_path)).islower():  # Path
+                # if full_path[0].islower():  # Path
                 for i, p in enumerate(ctx.path_item()):
                     self.output_asp.append(f'path("{full_path}",{i},"{p.getText()}").')
             else:

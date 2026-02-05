@@ -17,9 +17,9 @@ parent("root.modules[0]","root").
 parent("root.modules[1]","root").
 parent("root.modules[1].type[0]","root.modules[1]").
 parent("root.modules[0].type[0]","root.modules[0]").
-association("root.elements[0]","Module",1,1).
-replace(("root.elements[0].modules[0].type[0]","root.modules[1].type[0]"),(("root.elements[0]","root.modules[1]"),0)).
-replace(("root.elements[0].modules[0].type[0]","root.modules[0].type[0]"),(("root.elements[0]","root.modules[0]"),0)).
+association("root.elements[0]","Module","modules",1,1).
+replace(("root.elements[0].modules[0].type[0]","root.modules[1].type[0]"),(("root.elements[0]","root.modules[1]"),"modules",0)).
+replace(("root.elements[0].modules[0].type[0]","root.modules[0].type[0]"),(("root.elements[0]","root.modules[0]"),"modules",0)).
 constraint(("root.elements",1),"lowerbound").
 constraint(("root.modules",2),"lowerbound").
 constraint(("root.modules[0].type",1),"lowerbound").

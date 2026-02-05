@@ -40,12 +40,17 @@ parent(@dotpath(X),@dotpath(P)) :- type_aux(X,_), X=(_,(P,_)).
 #show parent/2.
 
 % Associations
-association(@dotpath(X),T,Min,Max) :- association_aux(X,_,T,Min,Max).
+association(@dotpath(X),T,F,Min,Max) :- association_aux(X,F,T,Min,Max).
+% set(@join(@dotpath(X),F),@dotpath(X'))                :- association_aux(X,F,T,Min,Max), type_aux(X',T).
+
+% Match opposite associations
+association_match(@dotpath(X),F,F') :- association_aux(X,F,T',_,_), type_aux(X,T), type_aux(X',T'), association_aux(X',F',T,_,_).
 
 % Replace paths/variables based on associations
-replace(R,((@dotpath(X),@dotpath(X')),I)) :- replace_aux(R,A,_), A = ((X,X'),I).
+replace(R,((@dotpath(X),@dotpath(X')),N,I)) :- replace_aux(R,A,_), A = ((X,X'),N,I).
 
-#show association/4.
+#show association/5.
+#show association_match/3.
 #show replace/2.
 
 %%% Constraints

@@ -5,7 +5,8 @@
 #defined index/2.
 #defined parent/2.
 
-#defined association/4.
+#defined association/5.
+#defined association_match/3.
 #defined replace/2.
 
 #defined discrete/1.
