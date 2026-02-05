@@ -11,6 +11,3 @@ examples of bike configurations in increasing complexity:
 - [City Bike](coom/city-bike.coom)
 - [Travel Bike](coom/travel-bike.coom)
 - [Cargo Bike](coom/cargo-bike.coom)
-
-We also provide the corresponding ASP facts to these examples in the
-[`asp`](asp/) directory.

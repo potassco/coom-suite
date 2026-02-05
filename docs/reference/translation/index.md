@@ -30,7 +30,7 @@ head to the [Encodings][encodings] section.
     The first step of the translation to ASP closely resembles the COOM language.
 
     ```prolog title="model-serialized.lp"
-    --8<-- "examples/asp/travel-bike-simplified-coom.lp"
+    --8<-- "docs/assets/encodings/travel-bike-simplified-coom.lp"
     ```
 
 === "Refined facts"
@@ -54,5 +54,5 @@ head to the [Encodings][encodings] section.
     and with the same parent variable in sets (represented by dashed circles in the diagram).
 
     ```prolog title="model-refined.lp"
-    --8<-- "examples/asp/travel-bike-simplified.lp"
+    --8<-- docs/assets/encodings/travel-bike-simplified.lp"
     ```

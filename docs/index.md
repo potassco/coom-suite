@@ -140,7 +140,7 @@ Check out our paper [here](https://arxiv.org/pdf/2504.00013).
 [antlr]: https://www.antlr.org
 [encodings]: reference/encodings/index.md
 [clingo]: https://potassco.org/clingo
-[flingo]: https://github.com/potassco/fclingo
+[flingo]: https://github.com/potassco/flingo
 [ui]: usage/ui.md
 [examples]: examples/index.md
 [benchmarks]: examples/benchmarks.md
