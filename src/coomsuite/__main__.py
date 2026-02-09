@@ -2,12 +2,10 @@
 The main entry point for the application.
 """
 
-import subprocess
 import sys
 from os.path import basename, join, splitext
-from tempfile import TemporaryDirectory
 
-from . import convert_coom, solve, write_facts
+from . import convert_coom, run_ui, solve, write_facts
 from .bounds.solver import BoundSolver
 from .preprocess import preprocess
 from .utils.logging import configure_logging, get_logger
@@ -40,29 +38,8 @@ def main() -> None:
             write_facts(serialized_facts, join(args.output, splitext(basename(args.input))[0] + "-coom.lp"))
     elif args.command == "ui":
         log.info("Running UI with COOM file %s", args.input)
+        run_ui(serialized_facts)
 
-        with TemporaryDirectory() as temp_dir:
-            temp_file = join(temp_dir, "processed-facts.lp")
-            log.info("Saving processed facts to %s", temp_file)
-            write_facts("".join(preprocess(serialized_facts, discrete=True)), temp_file)
-            encoding = "src/coomsuite/encodings/encoding-base-clingo.lp"
-            ui_encoding = "src/coomsuite/encodings/ui.lp"
-            subprocess.run(
-                [
-                    "clinguin",
-                    "client-server",
-                    "--domain-files",
-                    temp_file,
-                    encoding,
-                    "--ui-files",
-                    ui_encoding,
-                    "--backend",
-                    "ExplanationBackend",
-                    "--assumption-signature",
-                    "constraint,2",
-                ],
-                check=False,
-            )
     elif args.command == "solve":
         log.info("Solving COOM file %s", args.input)
 

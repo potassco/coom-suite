@@ -2,7 +2,9 @@
 The coomsuite project.
 """
 
-from tempfile import NamedTemporaryFile
+import subprocess
+from os.path import join
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 from typing import List, Optional, Tuple
 
 from antlr4 import FileStream
@@ -55,6 +57,37 @@ def convert_coom(coom_model: str, coom_user: Optional[str] = None) -> Tuple[str,
         )
 
     return asp_instance, unbounded
+
+
+def run_ui(coom_facts: str) -> None:
+    """
+    Runs a clinguin UI to interactively solve a serialized COOM instance
+    """
+    with TemporaryDirectory() as temp_dir:
+        temp_file = join(temp_dir, "processed-facts.lp")
+        log.info("Saving processed facts to %s", temp_file)
+        write_facts("".join(preprocess(coom_facts, discrete=True)), temp_file)
+
+        encoding = "src/coomsuite/encodings/encoding-base-clingo.lp"
+        ui_encoding = "src/coomsuite/encodings/ui.lp"
+        subprocess.run(
+            [
+                "clinguin",
+                "client-server",
+                "--domain-files",
+                temp_file,
+                encoding,
+                "--ui-files",
+                ui_encoding,
+                "--backend",
+                "ExplanationBackend",
+                "--assumption-signature",
+                "constraint,2",
+                "--server-log-level",
+                "DEBUG",
+            ],
+            check=False,
+        )
 
 
 def solve(

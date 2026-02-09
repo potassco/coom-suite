@@ -11,7 +11,7 @@ dependencies = [
     "antlr4-python3-runtime==4.13.2",
     "clingo==5.7.*",
     "flingo==1.0.0",
-    "clinguin>=2.6.1",
+    "clinguin>=2.7.4",
 ]
 license-files = ["LICENSE"]
 dynamic = ["version"]
