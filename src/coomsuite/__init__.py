@@ -58,7 +58,7 @@ def convert_coom(coom_model: str, coom_user: Optional[str] = None) -> Tuple[str,
 
 
 def solve(
-    serialized_facts: List[str],
+    coom_facts: str,
     solver: str,
     max_bound: int,
     clingo_args: List[str],
@@ -69,7 +69,7 @@ def solve(
     """
     # Preprocess serialized ASP facts
     processed_facts = preprocess(
-        serialized_facts,
+        coom_facts,
         max_bound=max_bound,
         discrete=solver == "clingo",
     )

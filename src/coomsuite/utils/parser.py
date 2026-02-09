@@ -78,8 +78,8 @@ def get_parser() -> ArgumentParser:
         default=None,
         help="Path to output directory. (Optional)",
     )
-
     parser_convert.add_argument("--user-input", "-u", type=str, help="Input the COOM user input.")
+
     # -------------
     # Solve parser
     # -------------
@@ -124,4 +124,19 @@ def get_parser() -> ArgumentParser:
         default=0,
         help="Initial bound for the incremental search algorithm. Default is 0.",
     )
+
+    # -------------
+    # UI parser
+    # -------------
+    parser_ui = subparsers.add_parser(
+        "ui",
+        help="Solves a COOM instance interactively (only works with clingo currently)",
+    )
+    parser_ui.add_argument(
+        "input",
+        type=str,
+        help="Path to the COOM model file to solve interactively",
+    )
+    parser_ui.add_argument("--user-input", "-u", type=str, help="Input the COOM user input.")
+
     return parser

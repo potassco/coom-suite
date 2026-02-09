@@ -19,14 +19,14 @@ class BoundSolver:
     Module for solving problems with open bounds/cardinalities.
     """
 
-    facts: List[str]
+    facts: str
     solver: str
     clingo_args: List[str]
     output_format: str
 
     def __init__(
         self,
-        facts: List[str],
+        facts: str,
         solver: str,
         clingo_args: List[str],
         output_format: str,

@@ -14,15 +14,16 @@ from .utils.logging import get_logger
 log = get_logger("main")
 
 
-def preprocess(files: List[str], max_bound: int = 0, discrete: bool = False, multishot: bool = False) -> List[str]:
+def preprocess(coom_facts: str, max_bound: int = 0, discrete: bool = False, multishot: bool = False) -> List[str]:
     """
     Preprocesses COOM ASP facts into a "grounded" configuration fact format
     """
     # pylint: disable=not-context-manager
-    input_files = files
+    # input_files = files
     ctl = Control(["-c", f"max_bound={max_bound}"], message_limit=0)
-    for f in input_files:
-        ctl.load(f)
+    ctl.add(coom_facts)
+    # for f in input_files:
+    #     ctl.load(f)
 
     enable_python()
     ctl.load(get_encoding("preprocess.lp" if not multishot else "preprocess-multishot.lp"))

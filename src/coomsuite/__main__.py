@@ -2,6 +2,7 @@
 The main entry point for the application.
 """
 
+import subprocess
 import sys
 from os.path import basename, join, splitext
 from tempfile import TemporaryDirectory
@@ -37,30 +38,46 @@ def main() -> None:
             print(serialized_facts)
         else:
             write_facts(serialized_facts, join(args.output, splitext(basename(args.input))[0] + "-coom.lp"))
+    elif args.command == "ui":
+        log.info("Running UI with COOM file %s", args.input)
 
+        with TemporaryDirectory() as temp_dir:
+            temp_file = join(temp_dir, "processed-facts.lp")
+            log.info("Saving processed facts to %s", temp_file)
+            write_facts("".join(preprocess(serialized_facts, discrete=True)), temp_file)
+            encoding = "src/coomsuite/encodings/encoding-base-clingo.lp"
+            ui_encoding = "src/coomsuite/encodings/ui.lp"
+            subprocess.run(
+                [
+                    "clinguin",
+                    "client-server",
+                    "--domain-files",
+                    temp_file,
+                    encoding,
+                    "--ui-files",
+                    ui_encoding,
+                    "--backend",
+                    "ExplanationBackend",
+                    "--assumption-signature",
+                    "constraint,2",
+                ],
+                check=False,
+            )
     elif args.command == "solve":
         log.info("Solving COOM file %s", args.input)
 
-        with TemporaryDirectory() as temp_dir:
-            # # Parse COOM to ASP serialized facts
-            # serialized_facts = [convert_instance(args.input, "model", temp_dir)] + (
-            #     [convert_instance(args.user_input, "user", temp_dir)] if args.user_input else []
-            # )
-            temp_file = join(temp_dir, "serialized-facts.lp")
-            log.info("Saving serialized facts to %s", temp_file)
-            write_facts(serialized_facts, temp_file)
+        if args.show_facts:
+            log.info("Printing preprocessed facts")
+            print("\n".join(preprocess(serialized_facts, discrete=True)))  # nocoverage
+        elif unbounded:
+            bound_solver = BoundSolver(serialized_facts, args.solver, solver_args, args.output)
+            bound = bound_solver.get_bounds(
+                algorithm=args.bounds, initial_bound=args.initial_bound, use_multishot=args.multishot
+            )
 
-            if args.show_facts:
-                print("\n".join(preprocess([temp_file], discrete=True)))  # nocoverage
-            elif unbounded:
-                bound_solver = BoundSolver([temp_file], args.solver, solver_args, args.output)
-                bound = bound_solver.get_bounds(
-                    algorithm=args.bounds, initial_bound=args.initial_bound, use_multishot=args.multishot
-                )
-
-                print(f"\n The minimal upper bound is {bound}")
-            else:
-                solve([temp_file], args.solver, 0, solver_args, args.output)
+            print(f"\n The minimal upper bound is {bound}")
+        else:
+            solve(serialized_facts, args.solver, 0, solver_args, args.output)
 
 
 if __name__ == "__main__":
