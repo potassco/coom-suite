@@ -33,3 +33,14 @@ def assumptions_as_str(assumptions: set[tuple[Symbol, bool]]) -> str:
     assumptions_str.sort()
 
     return "{" + ", ".join(assumptions_str) + "}"
+
+
+def weights_as_str(weights: tuple[int | float, int | float]) -> None:
+    """Convert a pair of weights into a string."""
+    return f"+={weights[0]:.2f} ; -={weights[1]:.2f}"
+
+
+def print_weighted_facets(weighted_facets: dict[Symbol, tuple[int, int] | tuple[float, float]]) -> None:
+    """Print a dictionary containing facets and their weights."""
+    for sym, weights in sorted(weighted_facets.items(), key=lambda item: sorted(item[1], reverse=True), reverse=True):
+        print(f"{str(sym)}: {weights_as_str(weights)}")
