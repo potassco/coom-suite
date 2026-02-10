@@ -8,7 +8,7 @@ from clingo.control import Control
 from clingo.solving import Model, SolveHandle
 from clingo.symbol import Symbol
 
-from .utils import as_symbol
+from navigation.utils import as_symbol
 
 ProgPart = tuple[str, list[Symbol]]
 
@@ -363,6 +363,56 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
         self._control.add(str(external), [], rule)
 
     ####################################
+    # FACETS
+    ####################################
+
+    def _compute_facet_weight(self, symbol: str | Symbol, value: bool) -> int | None:
+        """
+        Compute the number of facets under the assumption given by symbol and value.
+        """
+        # save current facets
+        old_facets = self._facets
+
+        # initialize count to None
+        count = None
+
+        # add assumption and compute facets
+        self.add_assumption(symbol, value)
+        facets = self.compute_facets()
+
+        # if facets were computed update count
+        if facets:
+            # number of facets
+            count = len(facets)
+
+        # remove assumption again
+        self.remove_assumption(symbol, value)
+        # restore value of facets
+        self._facets = old_facets
+
+        return count
+
+    def _compute_facet_significance(self, symbol: str | Symbol, value: bool) -> float | None:
+        """
+        Compute the significance under the assumption given by symbol and value.
+        """
+        facets = self.compute_facets()
+
+        significance = None
+
+        if facets:
+            # number of facets before assumption
+            count = len(facets)
+
+            # number of facets after adding (symbol, value) as assumption
+            assumption_count = self._compute_facet_weight(symbol, value)
+
+            if assumption_count:
+                significance = (count - assumption_count) / count
+
+        return significance
+
+    ####################################
     # DIVERSE AND SIMILAR MODELS
     ####################################
 
@@ -591,6 +641,37 @@ class Navigator:  # pylint: disable=too-many-public-methods,too-many-instance-at
             else:
                 self._facets = None
         return self._facets
+
+    def compute_facet_weight(
+        self, facet: str | Symbol, absolute: bool = False
+    ) -> tuple[int | float | None, int | float | None]:
+        """
+        Compute the weight of a facet.
+        """
+        weight_true = (
+            self._compute_facet_weight(facet, True) if absolute else self._compute_facet_significance(facet, True)
+        )
+        weight_false = (
+            self._compute_facet_weight(facet, False) if absolute else self._compute_facet_significance(facet, False)
+        )
+
+        return (weight_true, weight_false)
+
+    def compute_weighted_facets(
+        self, absolute: bool = False
+    ) -> dict[Symbol, tuple[int | float | None, int | float | None]] | None:
+        """
+        Compute the weighted facets of the program.
+        """
+        weighted_facets = None
+        facets = self.compute_facets()
+
+        if facets:
+            weighted_facets = {}
+            for facet in facets:
+                weighted_facets[facet] = self.compute_facet_weight(facet, absolute)
+
+        return weighted_facets
 
     # SIMILAR/DIVERSE MODELS ###########
 
