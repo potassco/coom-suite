@@ -1,0 +1,49 @@
+diverse 3
+assume framesize(l)
+assume include(light)
+assume color(blue)
+diverse 3
+assume not type(race)
+diverse 3
+assumptions
+assume bagsize(4,l)
+assume not include(mudguards)
+assume not bagsize(2,l)
+similar 3 --init "{bagsize(1,m), bagsize(2,l), bagsize(3,l), bagsize(4,l), color(blue), framesize(l), include(bell), include(light), include(mudguards), type(travel), weight(19)}"
+clear_assumptions
+cautious
+facets
+assume type(race)
+cautious
+facets
+remove_assumption type(race)
+assume type(city)
+cautious
+facets
+clear_assumptions
+facet_weight type(race)
+facet_weight type(city)
+weighted_facets
+add_constraint :- bagsize(X,l).
+diverse 3
+rules
+deactivate_rule :- bagsize(X,l).
+diverse 3
+add_constraint :- weight(X), X >= 10.
+diverse 3
+deactivate_rule :- weight(X), X >= 10.
+rules
+add_rule #minimize{ X : weight(X) }. --permanent
+diverse 5
+enable_optimization
+solve 0
+disable_optimization
+add_rule numSmallBags(C) :- C = #count{ X : bagsize(X,s) }.
+solve
+assume numSmallBags(2)
+diverse 3
+clear_assumptions
+add_constraint :- numSmallBags(X), X < 3.
+diverse 3
+assume numSmallBags(4)
+diverse 3

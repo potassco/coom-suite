@@ -39,6 +39,7 @@ dev = ["coomsuite[test,typecheck,lint_pylint,grammar,navigation]"]
 
 [project.scripts]
 coomsuite = "coomsuite.__main__:main"
+navigator = "navigation.__main__:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
