@@ -61,7 +61,7 @@ class COOMSolverApp(Application):
     config: FlingoConfig
     _propagator: ClingconTheory
     program_name: str = "COOM Suite"
-    version: str = "0.1"
+    version: str = "1.1.0"
 
     def __init__(
         self,

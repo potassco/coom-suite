@@ -101,7 +101,7 @@ set(@join(X,P),X')                       :- function(X,_,_,P), path_to(X,P,X').
 part(T) :- coom_structure(T).
 
 constraint((@join(X,N),Min),"lowerbound") :- cardinality_aux(X,N,Min).
-set(@join(X,N),X')                       :- cardinality_aux(X,N,_), path_to(X,N,X').
+set(@join(X,N),X')                        :- cardinality_aux(X,N,_), path_to(X,N,X').
 
 #show part/1.
 
@@ -111,6 +111,11 @@ number(C,N) :- coom_number(C,N).
 
 #show constant/1.
 #show number/2.
+
+% Defaults
+default(X',V) :- coom_default(ID,P,V), coom_context(ID,T), type_aux(X,T), path_to(X,P,X').
+
+#show default/2.
 
 % Optimization
 minimize(X',V) :- coom_minimize(C,V,P), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X').

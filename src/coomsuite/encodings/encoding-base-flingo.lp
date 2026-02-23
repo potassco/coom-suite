@@ -9,6 +9,8 @@
 #include "base/flingo/numerics.lp".
 #include "base/flingo/table.lp".
 #include "base/constraints.lp".
+#include "base/clingo/defaults.lp".
+#include "base/flingo/defaults.lp".
 
 #include "base/flingo/optimization.lp".
 

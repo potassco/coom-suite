@@ -492,6 +492,11 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
         "test": StableModels({'value("root.x[0]",3)', 'value("root.x[1]",3)'}),
         "files": ["max.lp"],
     },
+    "simple_default": {"test": StableModels({'value("root.color[0]","White")'}), "files": ["simple_default.lp"]},
+    "simple_default_user": {
+        "test": StableModels({'value("root.color[0]","Black")'}),
+        "files": ["simple_default_user.lp"],
+    },
     "minimize": {
         "test": OptimalModel({'value("root.totalWeight[0]",1)'}),
         "ftest": OptimalModel({'value("root.totalWeight[0]",1)'}, flingo=True),

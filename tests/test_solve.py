@@ -123,6 +123,13 @@ class TestClingo(TestCase):
         self.run_test("min")
         self.run_test("max")
 
+    def test_defaults(self) -> None:
+        """
+        Test solving defaults (clingo)
+        """
+        self.run_test("simple_default")
+        self.run_test("simple_default_user")
+
     def test_optimization(self) -> None:
         """
         Test solving optimization statements (clingo)
@@ -264,6 +271,13 @@ class TestFlingo(TestCase):
         self.run_test("sum")
         self.run_test("min")
         self.run_test("max")
+
+    def test_defaults(self) -> None:
+        """
+        Test solving defaults (flingo)
+        """
+        self.run_test("simple_default")
+        self.run_test("simple_default_user")
 
     def test_optimization(self) -> None:
         """
