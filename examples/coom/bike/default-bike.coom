@@ -1,0 +1,41 @@
+// Kids Bike with default example
+// Provided by denkbares GmbH
+// Taken and adapted from: https://www.coom-lang.org/profile_D-BASE/
+
+
+product {
+	Color   color
+	Wheel	frontWheel
+	Wheel	rearWheel
+}
+
+enumeration Color {
+	Red
+	White
+	Black
+}
+
+enumeration Wheel {
+	attribute	num/inch	size
+
+	W25	= (	 25	)
+	W26	= (	 26	)
+	W27	= (	 27	)
+	W28	= (	 28	)
+}
+
+behavior {
+	explanation "If the bike is white, then the size of the front wheel must be greater than 26."
+	condition color = White
+	require frontWheel.size > 26
+}
+
+behavior {
+	explanation "The size of the front wheel must be equal to the size of the rear wheel."
+	require frontWheel.size = rearWheel.size
+}
+
+behavior {
+	explanation "By default the bike is white"
+	default color = White
+}
