@@ -24,6 +24,8 @@
 #defined function/3.
 #defined set/2.
 
+#defined default/2.
+
 #defined minimize/2.
 #defined maximize/2.
 
