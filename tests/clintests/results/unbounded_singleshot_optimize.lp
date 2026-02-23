@@ -1,0 +1,9 @@
+discrete("Bag").
+part("product").
+constraint(("root.bags",0),"lowerbound").
+domain("Bag","Small").
+domain("Bag","Medium").
+domain("Bag","Large").
+minimize("count(root.bags)",0).
+type("root","product").
+function("count(root.bags)","count","root.bags").

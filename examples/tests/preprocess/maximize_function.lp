@@ -1,0 +1,11 @@
+coom_structure("product").
+coom_feature("product","bags","Bag",0,2).
+coom_structure("Bag").
+coom_feature("Bag","volume","num",1,1).
+coom_range("Bag","volume",0,10).
+coom_behavior(0).
+coom_context(0,"product").
+coom_maximize(0,0,"sum(bags.volume)").
+coom_function("product","sum(bags.volume)","sum","bags.volume").
+coom_path("bags.volume",0,"bags").
+coom_path("bags.volume",1,"volume").

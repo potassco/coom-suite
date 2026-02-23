@@ -1,0 +1,10 @@
+set numRooms[0] = 3
+
+set person[0].numShortThings[0] = 7
+set person[0].numLongThings[0]  = 3
+
+set person[1].numShortThings[0] = 5
+set person[1].numLongThings[0]  = 5
+
+set person[2].numShortThings[0] = 4
+set person[2].numLongThings[0]  = 6

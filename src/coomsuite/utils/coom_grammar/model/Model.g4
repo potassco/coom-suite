@@ -114,7 +114,7 @@ assign_default:
 assign_imply: op = 'imply' path '=' formula;
 
 optimize:
-	op = ('minimize' | 'maximize') ('/' priority = INTEGER)? path;
+	op = ('minimize' | 'maximize') ('/' priority = INTEGER)? formula;
 
 interaction:
 	directive = ('readwrite' | 'readonly' | 'hide') (
@@ -175,7 +175,7 @@ path_item: name ('[' path_index ('..' path_index)? ']')?;
 path_index: INTEGER | ('last' ('-' INTEGER)?);
 
 name: NAME | FUNCTION | KEYWORD;
-stmt_end: ';' | { wasNewline(); };
+stmt_end: ';' | {self.wasNewline()};
 
 compare:
 	'<'

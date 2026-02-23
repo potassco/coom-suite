@@ -1,0 +1,90 @@
+// Travel Bike example with minimization
+// Provided by denkbares GmbH
+// see Baumeister et al.: Towards Industrial-scale Product Configuration (2025).
+
+product {
+    num .#/g	1-10000 totalWeight
+	num .#/l	0-200   totalVolume
+	num .#/l	0-200   requestedVolume
+	Wheel			    frontWheel
+	Wheel			    rearWheel
+	Carrier			    carrier
+	Frame			    frame
+	Color				color
+}
+
+structure Carrier {
+	0..3 Bag	        bag
+}
+
+structure Frame {
+	0..2 Bag  	        bag
+}
+
+structure Bag {
+	Capacity	        capacity
+	Material	        material
+}
+
+enumeration Capacity {
+	attribute num/l volume
+	attribute num/gr weight
+
+	B10  = ( 10,  100)
+	B20  = ( 20,  250)
+	B50  = ( 50,  600)
+	B100 = (100, 1200)
+}
+
+enumeration Material {
+	Cotton
+	Leather
+	Polyester
+}
+
+enumeration Wheel {
+	attribute	num/inch	size
+	attribute	num/gr		weight
+
+	W20	= (	 20	    650	)
+	W22	= (	 22	    700	)
+	W24	= (	 24	    800	)
+	W26	= (	 26	    900	)
+	W28	= (	 28	   1000	)
+}
+
+enumeration Color {
+	Red
+	Green
+	Yellow
+	Blue
+}
+
+behavior {
+	explanation "The bike can have a maximum of 4 bags."
+    require count(carrier.bag) + count(frame.bag) <= 4
+
+	explanation "The total weight is equal to the weight of the front wheel plus the weight of the rear wheel plus the sum of the weights of all bags on the carrier and the frame."
+	require totalWeight = frontWheel.weight + rearWheel.weight
+						+ sum(carrier.bag.capacity.weight)
+						+ sum(frame.bag.capacity.weight)
+
+	explanation "The total volume is equal to the sum of the volumes of all bags on the carrier and the frame."
+	require totalVolume = sum(carrier.bag.capacity.volume) + sum(frame.bag.capacity.volume)
+
+	explanation "The total volume must be greater than or equal to the requested volume."
+	require totalVolume >= requestedVolume
+
+	explanation "If the color is red, then the size of the front wheel must be 20."
+	condition color = Red
+	require frontWheel.size = 20
+
+	explanation "Minimize the total weight of the bike"
+	minimize totalWeight
+}
+
+behavior Bag {
+	explanation "If the material of the bag is leather, then the capacity must be B10."
+	condition material = Leather
+	require capacity = B10
+}

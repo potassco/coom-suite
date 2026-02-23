@@ -1,0 +1,5 @@
+// minimal bound of 6 bags
+// set requestedVolume[0] = 120
+
+// minimal bound of 7 bags
+set requestedVolume[0] = 121

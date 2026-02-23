@@ -1,0 +1,17 @@
+integer("Bag.volume").
+range("Bag.volume",0,10).
+type("root","product").
+type("root.bags[0]","Bag").
+type("root.bags[0].volume[0]","Bag.volume").
+index("root.bags[0]",0).
+index("root.bags[0].volume[0]",0).
+parent("root.bags[0]","root").
+parent("root.bags[0].volume[0]","root.bags[0]").
+constraint(("root.bags",1),"lowerbound").
+constraint(("root.bags[0].volume",1),"lowerbound").
+set("root.bags","root.bags[0]").
+set("root.bags[0].volume","root.bags[0].volume[0]").
+part("product").
+part("Bag").
+minimize("root.bags[0].volume[0]",0).
+maximize("root.bags[0].volume[0]",1).

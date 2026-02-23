@@ -1,0 +1,120 @@
+product {
+	Milk_System	milk_system
+	Cup_Warmer	cup_warmer
+}
+
+structure Milk_System {
+	Available	milk_warmer
+	Available	milk_foamer
+}
+
+structure Cup_Warmer {
+	BOM_CW					bom_cw
+	Heating_Plate_Size		size
+	Active_Heating_Plate	heating_plate
+}
+
+structure BOM_CW {
+	MAT_Cup_Warmer	mat_cup_warmer
+}
+
+enumeration Available {
+	unavailable
+	available
+}
+
+enumeration MAT_Cup_Warmer {
+	without
+	M_CW_1a_590503
+	M_CW_1p_534566
+	M_CW_3a_593453
+	M_CW_3p_593666
+	M_CW_5a_534553
+	M_CW_5p_593666
+	M_CW_EXT_48966
+}
+
+enumeration Heating_Plate_Size {
+	without
+	one_cup
+	three_cups
+	five_cups
+}
+
+enumeration Active_Heating_Plate {
+	without
+	standard
+	extended
+}
+
+
+behavior Cup_Warmer {
+	combinations	(	heating_plate	size					)
+	allow			(	without			without					)
+	allow			(	standard		(one_cup, three_cups)	)
+	allow			(	extended		(five_cups, three_cups)	)
+
+}
+
+behavior Milk_System {
+	combinations	(	milk_foamer	milk_warmer	)
+	allow			(	available	available	)
+	allow			(	unavailable		-*-			)
+
+}
+
+behavior Cup_Warmer {
+	explanation "KM"
+	condition heating_plate = without
+	condition size = without
+	require bom_cw.mat_cup_warmer = without
+}
+
+behavior Cup_Warmer {
+	explanation "KM"
+	condition heating_plate = standard
+	condition size = one_cup
+	require bom_cw.mat_cup_warmer = M_CW_1a_590503
+}
+
+behavior Cup_Warmer {
+	explanation "KM"
+	condition heating_plate = without
+	condition size = one_cup
+	require bom_cw.mat_cup_warmer = M_CW_1p_534566
+}
+
+behavior Cup_Warmer {
+	explanation "KM"
+	condition heating_plate = standard
+	condition size = three_cups
+	require bom_cw.mat_cup_warmer = M_CW_3a_593453
+}
+
+behavior Cup_Warmer {
+	explanation "KM"
+	condition heating_plate = without
+	condition size = three_cups
+	require bom_cw.mat_cup_warmer = M_CW_3p_593666
+}
+
+behavior Cup_Warmer {
+	explanation "KM"
+	condition heating_plate = standard
+	condition size = five_cups
+	require bom_cw.mat_cup_warmer = M_CW_5a_534553
+}
+
+behavior Cup_Warmer {
+	explanation "KM"
+	condition heating_plate = without
+	condition size = five_cups
+	require bom_cw.mat_cup_warmer = M_CW_5p_593666
+}
+
+behavior Cup_Warmer {
+	explanation "KM"
+	condition heating_plate = extended
+	condition (size = without || size = one_cup || size = three_cups || size = five_cups)
+	require bom_cw.mat_cup_warmer = M_CW_EXT_48966
+}

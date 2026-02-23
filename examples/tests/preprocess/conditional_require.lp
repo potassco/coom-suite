@@ -8,7 +8,7 @@ coom_option("Wheel", "Large").
 
 coom_behavior(0).
 coom_context(0,"product").
-coom_condition(0,"wheelSupport=True").
+coom_condition(0,0,"wheelSupport=True").
 coom_binary("wheelSupport=True","wheelSupport","=","True").
 coom_path("wheelSupport",0,"wheelSupport").
 coom_constant("True").

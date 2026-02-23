@@ -1,0 +1,68 @@
+product {
+            num /l  0-200   totalVolume
+            num /l  0-200   requestedVolume
+    0..*    Bag             bags
+            Color           color
+}
+
+structure Bag {
+         Color    color
+         Size     size
+    0..* Pocket   pockets
+    1..3 Opening  openings
+}
+
+enumeration Pocket { S M L XL }
+
+enumeration Opening { Zipper Velcro }
+
+enumeration Color { Green Blue Red }
+
+enumeration Size {
+    attribute num weight
+    attribute num volume
+
+    Small   = ( 10 12 )
+    Medium  = ( 15 16 )
+    Large   = ( 25 20 )
+}
+
+behavior {
+    explanation "The total volume is equal to the sum of the volumes of all bags."
+    require totalVolume = sum(bags.size.volume)
+
+    explanation "The total volume must be greater than or equal to the requested volume."
+    require totalVolume >= requestedVolume
+}
+
+behavior {
+   explanation "The bike should have at least five pockets."
+   require 5 < count(bags.pockets)
+}
+
+behavior Bag {
+    explanation "A small bag should have at least 2 pockets."
+    condition size = Small
+    require 2 <= count(pockets)
+
+    explanation "A medium bag should have at least 4 pockets."
+    condition size = Medium
+    require 4 <= count(pockets)
+
+    explanation "A large bag should have at least 6 pockets."
+    condition size = Large
+    require 6 <= count(pockets)
+}
+
+behavior Bag {
+    explanation "The size of the pockets of a bag have to match the size of the bag."
+    combinations (size     pockets)
+    allow        (Small    S      )
+    allow        (Medium   M      )
+    allow        (Large    (L,XL) )
+}
+
+behavior Bag {
+    explanation "Each bag should have at least two openings."
+    require 2 <= count(openings)
+}

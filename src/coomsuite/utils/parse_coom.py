@@ -8,12 +8,17 @@ in a visitor style fashion and outputs ASP facts.
 # flake8: noqa
 # pylint: skip-file
 # mypy: ignore-errors
+import sys
 from typing import List, Optional
 
-from .coom_grammar.model.ModelParser import ModelParser
-from .coom_grammar.model.ModelVisitor import ModelVisitor
-from .coom_grammar.user.UserInputParser import UserInputParser
-from .coom_grammar.user.UserInputVisitor import UserInputVisitor
+try:
+    from .coom_grammar.model.ModelParser import ModelParser
+    from .coom_grammar.model.ModelVisitor import ModelVisitor
+    from .coom_grammar.user.UserInputParser import UserInputParser
+    from .coom_grammar.user.UserInputVisitor import UserInputVisitor
+except ModuleNotFoundError:  # nocoverage
+    print("COOM grammar files not found. Please run \n\n     ./build_grammar.sh")
+    sys.exit(1)
 
 
 class ASPUserInputVisitor(UserInputVisitor):
@@ -62,6 +67,7 @@ class ASPModelVisitor(ModelVisitor):
         self.structure_name: str = self.root_name
         self.context: str = self.root_name
         self.constraint_idx: int = 0
+        self.condition_idx: int = 0
         self.row_idx: int = 0
         self.print_path: bool = True
         self.output_asp: List[str] = []
@@ -107,17 +113,18 @@ class ASPModelVisitor(ModelVisitor):
         c_min = 1
         c_max = 1
         if cardinality is not None:
-            c_min = cardinality.min.text.replace("x", "")
+            c_min = cardinality.min_.text.replace("x", "")
             c_max = c_min
-            if cardinality.max is not None:
-                c_max = cardinality.max.text.replace("x", "").replace("*", "#sup")
+            if cardinality.max_ is not None:
+                c_max = cardinality.max_.text.replace("x", "").replace("*", "#sup")
 
         self.output_asp.append(f'feature("{self.structure_name}","{feature_name}","{type_name}",{c_min},{c_max}).')
         if type_name == "num":
             num: ModelParser.Number_defContext = field.number_def()
-            r_min = "#inf" if num.min is None else num.min.getText()
-            r_max = "#sup" if num.max is None else num.max.getText()
-            self.output_asp.append(f'range("{self.structure_name}","{feature_name}",{r_min},{r_max}).')
+            if num.min_ is not None or num.max_ is not None:
+                r_min = "#inf" if num.min_.getText() == "-\u221e" else num.min_.getText()  # negative infinity symbol
+                r_max = "#sup" if num.max_.getText() == "\u221e" else num.max_.getText()  # infinity symbol
+                self.output_asp.append(f'range("{self.structure_name}","{feature_name}",{r_min},{r_max}).')
 
     def visitAttribute(self, ctx: ModelParser.AttributeContext):
         # if self.parent_enum is None:
@@ -154,12 +161,17 @@ class ASPModelVisitor(ModelVisitor):
                 )
 
     def visitConditioned(self, ctx: ModelParser.ConditionedContext):
+        self.condition_idx = 0
         if ctx.interaction() is None:
             self.output_asp.append("")
             self.output_asp.append(f"behavior({self.constraint_idx}).")
             self.output_asp.append(f'context({self.constraint_idx},"{self.context}").')
             super().visitConditioned(ctx)
             self.constraint_idx += 1
+
+    def visitExplanation(self, ctx: ModelParser.ExplanationContext):
+        self.output_asp.append(f"explanation({self.constraint_idx},{ctx.name().getText()}).")
+        return super().visitExplanation(ctx)
 
     def visitAssign_default(self, ctx: ModelParser.Assign_defaultContext):
         path = ctx.path().getText()
@@ -197,7 +209,8 @@ class ASPModelVisitor(ModelVisitor):
 
     def visitPrecondition(self, ctx: ModelParser.PreconditionContext):
         condition = f'"{ctx.condition().getText()}"'
-        self.output_asp.append(f"condition({self.constraint_idx},{condition}).")
+        self.output_asp.append(f"condition({self.constraint_idx},{self.condition_idx},{condition}).")
+        self.condition_idx += 1
         super().visitPrecondition(ctx)
 
     def visitRequire(self, ctx: ModelParser.RequireContext):
@@ -254,6 +267,13 @@ class ASPModelVisitor(ModelVisitor):
             #     complete_prop = complete + "&&" + right_prop
             #     self.output_asp.append(f'binary("{complete_prop}","{complete}","&&","{right_prop}").')
         super().visitCondition_compare(ctx)
+
+    def visitOptimize(self, ctx: ModelParser.OptimizeContext):
+        priority = 0
+        if ctx.priority:
+            priority = int(ctx.priority.text)
+        self.output_asp.append(f'{ctx.op.text}({self.constraint_idx},{priority},"{ctx.formula().getText()}").')
+        return super().visitOptimize(ctx)
 
     def visitFormula_add(self, ctx: ModelParser.Formula_addContext):
         form_sub: ModelParser.Formula_subContext = ctx.formula_sub()
@@ -316,7 +336,10 @@ class ASPModelVisitor(ModelVisitor):
         elif ctx.formula_func() is not None:
             func = ctx.formula_func().FUNCTION()
             for f in ctx.formula_func().formula():
-                self.output_asp.append(f'function("{self.context}","{complete}","{func}","{f.getText()}").')
+                if str(func) in ["sum", "count", "min", "max", "avg"]:
+                    self.output_asp.append(f'function("{self.context}","{complete}","{func}","{f.getText()}").')
+                else:
+                    self.output_asp.append(f'unary("{complete}","{func}","{f.getText()}").')
         super().visitFormula_sign(ctx)
 
     def visitPath(self, ctx: ModelParser.PathContext):

@@ -3,52 +3,22 @@ The main entry point for the application.
 """
 
 import sys
-from tempfile import NamedTemporaryFile, TemporaryDirectory
-from typing import List
+from os.path import basename, join, splitext
+from tempfile import TemporaryDirectory
 
-from clingo.application import clingo_main
-
-from . import convert_instance
-from .application import COOMSolverApp
-from .preprocess import check_user_input, preprocess
+from . import convert_coom, solve, write_facts
+from .bounds.solver import BoundSolver
+from .preprocess import preprocess
 from .utils.logging import configure_logging, get_logger
 from .utils.parser import get_parser
 
 
-def solve(serialized_facts: List[str], max_bound: int, args, unknown_args) -> int:
-    """
-    Preprocesses and solves a serialized COOM instance.
-    """
-    # Preprocess serialized ASP facts
-    processed_facts = preprocess(
-        serialized_facts,
-        max_bound=max_bound,
-        discrete=args.solver == "clingo",
-    )
-    check_user_input(processed_facts)
-
-    with NamedTemporaryFile(mode="w", delete=False) as tmp:
-        tmp_name = tmp.name
-        tmp.write("".join(processed_facts))
-
-    # Solve the ASP instance
-    return clingo_main(
-        COOMSolverApp(
-            options={
-                "solver": args.solver,
-                "output_format": args.output,
-            }
-        ),
-        [tmp_name] + unknown_args,
-    )
-
-
-def main():
+def main() -> None:
     """
     Run the main function.
     """
     parser = get_parser()
-    args, unknown_args = parser.parse_known_args()
+    args, solver_args = parser.parse_known_args()
     configure_logging(sys.stderr, args.log, sys.stderr.isatty())
 
     log = get_logger("main")
@@ -58,39 +28,39 @@ def main():
     # log.debug("debug")
     # log.error("error")
 
+    log.info("Converting COOM file %s", args.input)
+    serialized_facts, unbounded = convert_coom(args.input, coom_user=args.user_input if args.user_input else None)
+
     if args.command == "convert":
-        asp_instance = convert_instance(args.input, "model", args.output)
-
-        if args.user_input:
-            output_user_lp_file = convert_instance(args.user_input, "user", args.output)
-
+        # asp_instance = convert_instance(args.input, "model", args.output)
         if args.output is None:
-            print(asp_instance)
-            if args.user_input:
-                print("")
-                print(output_user_lp_file)
+            print(serialized_facts)
+        else:
+            write_facts(serialized_facts, join(args.output, splitext(basename(args.input))[0] + "-coom.lp"))
 
     elif args.command == "solve":
-        log.info("Converting and solving COOM file %s", args.input)
+        log.info("Solving COOM file %s", args.input)
 
         with TemporaryDirectory() as temp_dir:
-            # Parse COOM to ASP serialized facts
-            serialized_facts = [convert_instance(args.input, "model", temp_dir)] + (
-                [convert_instance(args.user_input, "user", temp_dir)] if args.user_input else []
-            )
+            # # Parse COOM to ASP serialized facts
+            # serialized_facts = [convert_instance(args.input, "model", temp_dir)] + (
+            #     [convert_instance(args.user_input, "user", temp_dir)] if args.user_input else []
+            # )
+            temp_file = join(temp_dir, "serialized-facts.lp")
+            log.info("Saving serialized facts to %s", temp_file)
+            write_facts(serialized_facts, temp_file)
 
             if args.show_facts:
-                print("\n".join(preprocess(serialized_facts)))  # nocoverage
-            elif not args.incremental_bounds:
-                solve(serialized_facts, 99, args, unknown_args=unknown_args)
-            else:
-                ret = 20
-                max_bound = 1
+                print("\n".join(preprocess([temp_file], discrete=True)))  # nocoverage
+            elif unbounded:
+                bound_solver = BoundSolver([temp_file], args.solver, solver_args, args.output)
+                bound = bound_solver.get_bounds(
+                    algorithm=args.bounds, initial_bound=args.initial_bound, use_multishot=args.multishot
+                )
 
-                while ret == 20:
-                    print(f"\nSolving with max_bound = {max_bound}\n")
-                    ret = solve(serialized_facts, max_bound, args, unknown_args=unknown_args)
-                    max_bound += 1
+                print(f"\n The minimal upper bound is {bound}")
+            else:
+                solve([temp_file], args.solver, 0, solver_args, args.output)
 
 
 if __name__ == "__main__":

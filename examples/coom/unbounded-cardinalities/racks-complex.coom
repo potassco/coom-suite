@@ -1,0 +1,105 @@
+// Hardware racks problem
+// Balazova et al.: Smart Expansion Techniques for ASP-based Interactive Configuration (2025)
+
+product {
+    0..*  Rack         rack
+          num 0-20     numA
+          num 0-20     numB
+          num 0-20     numC
+          num 0-20     numD
+}
+
+structure Rack {
+    4..8  Frame        frame
+          RackType     type
+}
+
+enumeration RackType { Single Double }
+
+structure Frame {
+    1..5  Element      element
+}
+
+structure Element {
+    1..4  Module       module
+          ElementType  type
+}
+
+enumeration ElementType {
+    attribute num isA
+    attribute num isB
+    attribute num isC
+    attribute num isD
+
+    A = (1 0 0 0)
+    B = (0 1 0 0)
+    C = (0 0 1 0)
+    D = (0 0 0 1)
+}
+
+enumeration Module {
+    attribute num isI
+    attribute num isII
+    attribute num isIII
+    attribute num isIV
+    attribute num isV
+
+    I   = (1 0 0 0 0)
+    II  = (0 1 0 0 0)
+    III = (0 0 1 0 0)
+    IV  = (0 0 0 1 0)
+    V   = (0 0 0 0 1)
+}
+
+behavior {
+    explanation "The number of elements of type A has to equal the required number."
+    require numA = sum(rack.frame.element.type.isA)
+
+    explanation "The number of elements of type B has to equal the required number."
+    require numB = sum(rack.frame.element.type.isB)
+
+    explanation "The number of elements of type C has to equal the required number."
+    require numC = sum(rack.frame.element.type.isC)
+
+    explanation "The number of elements of type D has to equal the required number."
+    require numD = sum(rack.frame.element.type.isD)
+}
+
+behavior Rack {
+    explanation "A single rack has exactly 4 frames."
+    condition type = Single
+    require 4 = count(frame)
+
+    explanation "A double rack has exactly 8 frames."
+    condition type = Double
+    require 8 = count(frame)
+}
+
+behavior Frame {
+    explanation "A frame containing a module III must also contain exaclty one module V."
+    condition 1 <= sum(element.module.isIII)
+    require 1 = sum(element.module.isV)
+}
+
+behavior Frame {
+    explanation "A frame contains at most 5 modules."
+    require 5 >= count(element.module)
+}
+
+behavior Element {
+    explanation "An element A requires exactly 1 module I."
+    condition type = A
+    require 1 = sum(module.isI)
+
+    explanation "An element B requires exactly 2 modules II."
+    condition type = B
+    require 2 = sum(module.isII)
+
+    explanation "An element C requires exactly 3 modules III."
+    condition type = C
+    require 3 = sum(module.isIII)
+
+    explanation "An element D requires exactly 4 modules IV."
+    condition type = D
+    require 4 = sum(module.isIV)
+}
