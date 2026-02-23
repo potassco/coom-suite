@@ -129,6 +129,7 @@ class TestClingo(TestCase):
         """
         self.run_test("simple_default")
         self.run_test("simple_default_user")
+        self.run_test("simple_default_include")
 
     def test_optimization(self) -> None:
         """
@@ -278,6 +279,7 @@ class TestFlingo(TestCase):
         """
         self.run_test("simple_default")
         self.run_test("simple_default_user")
+        self.run_test("simple_default_include")
 
     def test_optimization(self) -> None:
         """

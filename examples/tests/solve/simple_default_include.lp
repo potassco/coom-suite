@@ -1,0 +1,20 @@
+discrete("Color").
+domain("Color","Red").
+domain("Color","White").
+domain("Color","Black").
+type("root","product").
+type("root.bike[0]","Bike").
+type("root.bike[0].color[0]","Color").
+index("root.bike[0]",0).
+index("root.bike[0].color[0]",0).
+parent("root.bike[0]","root").
+parent("root.bike[0].color[0]","root.bike[0]").
+constraint(("root.bike",0),"lowerbound").
+constraint(("root.bike[0].color",1),"lowerbound").
+set("root.bike","root.bike[0]").
+set("root.bike[0].color","root.bike[0].color[0]").
+part("product").
+part("Bike").
+constant("White").
+default("root.bike[0].color[0]","White").
+explanation(0,"By default the bike is white").

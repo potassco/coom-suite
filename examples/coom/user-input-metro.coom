@@ -1,0 +1,23 @@
+set num_passengers[0] = 160
+set seat[0].type[0] = Special
+// set handrail[0] = Premium // not compatible with current defaults
+add seat[0]
+add seat[1]
+add seat[2]
+add seat[3]
+add seat[4]
+add seat[5]
+add seat[6]
+add seat[7]
+add seat[8]
+add seat[9]
+add seat[10]
+add seat[11]
+add seat[12]
+add seat[13]
+add seat[14]
+add seat[15]
+add seat[16]
+add seat[17]
+add seat[18]
+add seat[19]

@@ -3,14 +3,16 @@
 
 product {
     num /mm 10000-20000     length
-    num 50-200              num_passengers
-    num 0-200               standing_room
+    num     50-200          num_passengers
+    num     0-200           standing_room
 
-    0..1    HandRail    handrail
-    0..80   Seat        seat
+    0..1    Handrail        handrail
+    0..80   Seat            seat
+
+            Color           seat_color // auxiliary attribute to define color for non-special seats
 }
 
-enumeration HandRail { Standard Premium}
+enumeration Handrail { Standard Premium}
 
 structure Seat {
     SeatType    type
@@ -18,7 +20,7 @@ structure Seat {
 }
 
 enumeration SeatType { Standard Premium Special}
-enumeration Color { Blue Red White }
+enumeration Color    { Blue Red White }
 
 behavior {
     explanation "If there is standing room, a handrail is required."
@@ -26,7 +28,7 @@ behavior {
     require count(handrail) = 1
 
     explanation "Max. 4 seats per meter length and one seat occupies the space of three standing passengers."
-    require count(seat) * 3 + standing_room <= 12 * length
+    require 1000 * (count(seat) * 3 + standing_room) <= 12 * length
 
     explanation "Standard type cannot be mixed with premium."
     combinations    ( seat.type     handrail )
@@ -40,24 +42,30 @@ behavior {
     // explanation "The color of all seats must be the same, except for special seats." // How to implement? Default (see below)? Or set a "global" type that restricts all seat types?
     // condition seat.type != Special
     // require seat.color = seat.color
+    // require allequal(s.color for s in seat if seat.type != Special)
+
+    explanation "By default the seats are blue"
+    default seat_color = Blue
+
+    // // Not implemented: arbitrary formulas for optimization
+    // explanation "Users prefer to maximize load factor (number of passengers per length)"
+    // maximize num_passengers // / length
 }
 
 behavior Seat {
     explanation "Seats of type Special must be red."
     condition type = Special
     require color = Red
+
+    explanation "Seats which are not of type Special must have the same colors"
+    condition type != Special
+    require color = root.seat_color
+
+    explanation "The default seat type is Standard"
+    default type = Standard
 }
 
-// // Defaults (not implemented currently)
-// behavior {
-//     default seat.type = Standard
-
-//     default handrail = Standard
-
-//     default seat.color = Blue
-
-//     explanation "All seats have to have the same color (except special seats)"
-//     default seat.color = seat.color
-
-//     explanation "Users prefer to maximize load factor (number of passengers per length)" // How to implement?
-// }
+behavior Handrail{
+    explanation "The default handrail type is Standard"
+    default type = Standard
+}
