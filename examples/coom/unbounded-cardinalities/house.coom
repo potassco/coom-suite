@@ -5,21 +5,27 @@
 
 product {
     0..*    Person  persons
+    0..*    Room    rooms
 }
 
 structure Person {
-    0..*    Room    rooms
-    0..*    Thing   things
+                0..*    Thing   things
+    reference   0..*    Room    rooms
 
 }
 
-enumeration Thing {
+structure Thing {
+                        ThingType   type
+    reference   1..1    Room        storedInRoom
+}
+enumeration ThingType {
     Short
     Long
 }
 
 structure Room {
-   0..4   Cabinet   cabinets
+                0..4   Cabinet   cabinets
+   reference    1..1    Person  owner
 }
 
 structure Cabinet {
@@ -43,4 +49,9 @@ behavior Cabinet {
     explanation "A long thing can only be put into a high cabinet."
     condition things.type = Long
     require type = High
+}
+
+behavior Person {
+    explanation "Each thing has to be stored in a room owned by the thing's owner"
+    require things.storedInRoom.owner = this
 }

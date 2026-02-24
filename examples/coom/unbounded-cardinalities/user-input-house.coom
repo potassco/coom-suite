@@ -5,5 +5,3 @@ add persons[0].things[3]
 
 add persons[1].things[0]
 add persons[1].things[1]
-
-add things[0]

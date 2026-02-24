@@ -64,9 +64,13 @@ path_to(X,P,I,AP',X'',(((X',X''),N,AI),A)) :- coom_path(P,I,N),
 path_to(X,P,AP,X',A) :- not coom_path(P,I+1,_), path_to(X,P,I,AP,X',A).
 path_to(X,P,@dotpath(X')) :- path_to(X,P,X',_,_).
 
+% Special case for "this" keyword
+path_to(X,"this",@dotpath(X)) :- path_start(X,"this").
+
 % Replace variables based on associations
-replace_aux((@dotpath(AP),@dotpath(X')),A,AT) :- path_to(X,P,AP,X',(A,AT)), AP != X'.
-replace_aux(R,A,AT)                           :- replace_aux(R,_,(A,AT)), AT != ().
+replace_instantiate(AT,(@dotpath(AP),@dotpath(X'))) :- path_to(X,P,AP,X',AT), AP != X'.
+replace_aux((R,ID),A,AT')                       :- replace_instantiate(AT,R), AT = (A,AT'), ID = #count{ T : replace_instantiate(T,R), T < AT }.
+replace_aux((R,ID),A,AT)                        :- replace_aux((R,ID),_,(A,AT)). %, AT != ().
 
 % Constants and numbers
 path_to(X,P,P) :- coom_binary(F,_,_,P), coom_constant(P), formula_context(F,T), type_aux(X,T).
