@@ -85,7 +85,8 @@ def _parse_user_input_warnings(warning: Symbol) -> str:
         case "too many associations":
             variable = info.arguments[0].string
             target_type = info.arguments[1].string
-            maximum = info.arguments[2].number
-            return f'Too many user association between variable "{variable}" and variables of type "{target_type}". Has to be at most {maximum}.'  # pylint: disable=line-too-long
+            name = info.arguments[2].string
+            maximum = info.arguments[3].number
+            return f'Too many user associations for association "{name}" between variable "{variable}" and variables of type "{target_type}".\nHas to be at most {maximum}.'  # pylint: disable=line-too-long
         case _:  # nocoverage
             raise ValueError(f"Unknown warning type: {warning_type}")

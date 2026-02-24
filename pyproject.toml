@@ -6,12 +6,11 @@ build-backend = "setuptools.build_meta"
 name = "coomsuite"
 authors = [{ name = "Nicolas Rühling", email = "nruehling@uni-potsdam.de" }]
 description = "Python package to parse and solve COOM configuration instances using ASP."
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
     "antlr4-python3-runtime==4.13.2",
     "clingo==5.7.*",
-    "clingcon >= 5.2.1, == 5.2.*",                                                                  # requirement for flingo
-    "fclingo@git+https://github.com/potassco/fclingo.git@6f4d7efc92bfac18465e2c95c4ef9ac99ef470b5",
+    "flingo==1.0.0",
     "clinguin>=2.6.1",
 ]
 license-files = ["LICENSE"]
@@ -29,7 +28,7 @@ test = ["coverage[toml]", "clintest>=0.2.0"]
 doc = [
     "mkdocs",
     "mkdocs-material",
-    "mkdocstrings[python]==0.30.1", # temporary fix until mkdoclingo is updated
+    "mkdocstrings[python]",
     "mkdoclingo",
     "tree_sitter",
 ]

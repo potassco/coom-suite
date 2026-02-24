@@ -61,5 +61,5 @@ class TestUserInputCheck(TestCase):
         )
         self.user_check(
             "too_many_associations",
-            'Invalid user input.\nToo many user association between variable "root.elements[0]" and variables of type "Module". Has to be at most 1.',  # pylint: disable=line-too-long
+            'Invalid user input.\nToo many user associations for association "modules" between variable "root.elements[0]" and variables of type "Module".\nHas to be at most 1.',  # pylint: disable=line-too-long
         )

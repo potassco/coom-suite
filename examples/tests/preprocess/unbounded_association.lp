@@ -1,10 +1,10 @@
 coom_structure("product").
 coom_feature("product","rack","Rack",1,1).
-coom_feature("product","module","Module",0,#sup).
-coom_feature("product","element","Element",1,#sup).
+coom_feature("product","modules","Module",0,#sup).
+coom_feature("product","elements","Element",1,#sup).
 
 coom_structure("Rack").
-coom_reference("Rack","element","Element",1,1).
+coom_reference("Rack","elements","Element",1,1).
 
 coom_structure("Module").
 coom_feature("Module","type","ModuleType",1,1).
@@ -35,8 +35,8 @@ coom_number("1",1).
 
 coom_behavior(1).
 coom_context(1,"Rack").
-coom_require(1,"element.type=A").
-coom_binary("element.type=A","element.type","=","A").
-coom_path("element.type",0,"element").
-coom_path("element.type",1,"type").
+coom_require(1,"elements.type=A").
+coom_binary("elements.type=A","elements.type","=","A").
+coom_path("elements.type",0,"elements").
+coom_path("elements.type",1,"type").
 coom_constant("A").

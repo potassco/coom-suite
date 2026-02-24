@@ -8,7 +8,7 @@ index("root.elements[0]",0).
 parent("root.modules[0]","root").
 parent("root.modules[1]","root").
 parent("root.elements[0]","root").
-association("root.elements[0]","Module",1,1).
+association("root.elements[0]","Module","modules",1,1).
 constraint(("root.modules",2),"lowerbound").
 constraint(("root.elements",1),"lowerbound").
 set("root.modules","root.modules[0]").

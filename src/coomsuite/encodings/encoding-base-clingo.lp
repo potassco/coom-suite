@@ -9,6 +9,7 @@
 #include "base/clingo/numerics.lp".
 #include "base/clingo/table.lp".
 #include "base/constraints.lp".
+#include "base/clingo/defaults.lp".
 
 #include "base/clingo/optimization.lp".
 

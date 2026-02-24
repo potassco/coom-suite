@@ -23,6 +23,11 @@ where <ALGORITHM\> is either `linear` or `exponential`.
 
 For more information see the [cargo bike example][cargo-bike].
 
+!!! info "Solver Options"
+    Note that all clingo options can be used as usual in `solve` mode.
+
+    For example, `coomsuite solve kids-bike.coom -n0` to print all models
+
 [cargo-bike]: ../examples/cargo-bike.md
 
 ## Convert COOM to ASP

@@ -28,7 +28,6 @@ def main() -> None:
     # log.debug("debug")
     # log.error("error")
 
-    # Parse COOM to ASP serialized facts
     log.info("Converting COOM file %s", args.input)
     serialized_facts, unbounded = convert_coom(args.input, coom_user=args.user_input if args.user_input else None)
 
@@ -42,7 +41,6 @@ def main() -> None:
         log.info("Solving COOM file %s", args.input)
 
         with TemporaryDirectory() as temp_dir:
-
             temp_file = join(temp_dir, "serialized-facts.lp")
             log.info("Saving serialized facts to %s", temp_file)
             write_facts(serialized_facts, temp_file)

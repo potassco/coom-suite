@@ -48,7 +48,6 @@ def convert_coom(coom_model: str, coom_user: Optional[str] = None) -> Tuple[str,
 
     if "#sup" in asp_instance:
         unbounded = True
-
     if coom_user is not None:
         input_stream_user = FileStream(coom_user, encoding="utf-8")
         asp_instance += "\n".join(

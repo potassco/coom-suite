@@ -10,11 +10,11 @@ from clingo import Control, Model, Symbol
 from clingo.application import Application, ApplicationOptions, Flag
 from clingo.ast import Location, Position, ProgramBuilder, Rule, parse_files
 from clingo.symbol import Function, SymbolType
-from fclingo.__main__ import CSP, DEF, MAX_INT, MIN_INT
-from fclingo.__main__ import AppConfig as FlingoConfig
-from fclingo.__main__ import Statistic
-from fclingo.parsing import THEORY, HeadBodyTransformer
-from fclingo.translator import AUX, Translator
+from flingo.__main__ import CSP, DEF, MAX_INT, MIN_INT
+from flingo.__main__ import AppConfig as FlingoConfig
+from flingo.__main__ import Statistic
+from flingo.parsing import THEORY, HeadBodyTransformer
+from flingo.translator import AUX, Translator
 
 from .utils import asp2coom, get_encoding
 from .utils.logging import get_logger
@@ -61,7 +61,7 @@ class COOMSolverApp(Application):
     config: FlingoConfig
     _propagator: ClingconTheory
     program_name: str = "COOM Suite"
-    version: str = "0.1"
+    version: str = "1.1.0"
 
     def __init__(
         self,

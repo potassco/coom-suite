@@ -95,6 +95,12 @@ class TestPreprocess(TestCase):
         self.run_test("count")
         self.run_test("sum")
 
+    def test_defaults(self) -> None:
+        """
+        Test defaults in COOM
+        """
+        self.run_test("simple_default")
+
     def test_optimization(self) -> None:
         """
         Test optimization in COOM

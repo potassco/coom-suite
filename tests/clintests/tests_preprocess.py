@@ -1369,6 +1369,26 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         ),
         "files": ["sum.lp"],
     },
+    "simple_default": {
+        "test": StableModels(
+            {
+                'discrete("Color")',
+                'domain("Color","Red")',
+                'domain("Color","White")',
+                'domain("Color","Black")',
+                'type("root","product")',
+                'type("root.color[0]","Color")',
+                'index("root.color[0]",0)',
+                'parent("root.color[0]","root")',
+                'constraint(("root.color",1),"lowerbound")',
+                'set("root.color","root.color[0]")',
+                'part("product")',
+                'constant("White")',
+                'default("root.color[0]","White")',
+            }
+        ),
+        "files": ["simple_default.lp"],
+    },
     "minimize": {
         "test": StableModels(
             {
@@ -1688,11 +1708,11 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         "test": StableModels(
             get_model_from_file("unbounded_singleshot_association.lp")
             | {
-                'inc_set("root.element")',
-                'incremental("association","root.rack[0].element[0].type[0]","root.element",("root.rack[0]","Element",1,1))',
-                'incremental("binary","root.rack[0].element[0].type[0]=A","root.element",("root.rack[0].element[0].type[0]=A","root.rack[0].element[0].type[0]","=","A"))',
-                'incremental("binary","!count(root.rack[0])=1||root.rack[0].element[0].type[0]=A","root.element",("!count(root.rack[0])=1||root.rack[0].element[0].type[0]=A","!count(root.rack[0])=1","||","root.rack[0].element[0].type[0]=A"))',
-                'incremental("constraint","!count(root.rack[0])=1||root.rack[0].element[0].type[0]=A","root.element",((1,"!count(root.rack[0])=1||root.rack[0].element[0].type[0]=A"),"boolean"))',
+                'inc_set("root.elements")',
+                'incremental("association","root.rack[0].elements[0].type[0]","root.elements",("root.rack[0]","Element","elements",1,1))',
+                'incremental("binary","root.rack[0].elements[0].type[0]=A","root.elements",("root.rack[0].elements[0].type[0]=A","root.rack[0].elements[0].type[0]","=","A"))',
+                'incremental("binary","!count(root.rack[0])=1||root.rack[0].elements[0].type[0]=A","root.elements",("!count(root.rack[0])=1||root.rack[0].elements[0].type[0]=A","!count(root.rack[0])=1","||","root.rack[0].elements[0].type[0]=A"))',
+                'incremental("constraint","!count(root.rack[0])=1||root.rack[0].elements[0].type[0]=A","root.elements",((1,"!count(root.rack[0])=1||root.rack[0].elements[0].type[0]=A"),"boolean"))',
             }
         ),
         "files": ["unbounded_association.lp"],

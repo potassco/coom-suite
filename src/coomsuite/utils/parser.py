@@ -85,7 +85,8 @@ def get_parser() -> ArgumentParser:
     # -------------
     parser_solve = subparsers.add_parser(
         "solve",
-        help="Converts and solves the COOM instance",
+        help="Converts and solves the COOM instance.",
+        epilog="In addition to the above commands, all usual clingo commands can be used, e.g., -n0 to print all models.",  # pylint: disable=line-too-long
     )
     parser_solve.add_argument(
         "input",
