@@ -19,24 +19,26 @@ structure Person {
 }
 
 structure Thing {
-
+    reference   1..1    Room        storedInRoom
 }
 
 structure Room {
-    reference   0..5    Thing   things
+    reference   0..2    Thing   things
     reference   1..1    Person  owner
 }
 
-behavior Room {
-    // explanation "Ensure bidirectional associations" // Is this the best way?
-    // require things.storedInRoom = this
-}
-
 behavior Person {
-    // explanation "Ensure bidirectional associations" // Is this the best way?
-    // require roomsOwned.owner = this
-
     explanation "Each thing has to be stored in a room owned by the thing's owner"
     // // require things.storedInRoom.owner._name = _name // Implement auxiliary _name path which returns variable name?
     require things.storedInRoom.owner = this // Implement "this"
 }
+
+// behavior Room {
+//     explanation "Ensure bidirectional associations" // Is this the best way?
+//     require things.storedInRoom = this
+// }
+
+// behavior Person {
+//     explanation "Ensure bidirectional associations" // Is this the best way?
+//     require roomsOwned.owner = this
+// }

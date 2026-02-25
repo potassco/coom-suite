@@ -60,10 +60,12 @@ path_to(X,P,I,AP',X'',A)                   :- coom_path(P,I,N),
                                               path_to(X,P,I-1,AP,X',A), type_aux(X'',_), X''=(N,(X',J)), AP' = (N,(AP,J)).
 path_to(X,P,I,AP',X'',(((X',X''),N,AI),A)) :- coom_path(P,I,N),
                                               path_to(X,P,I-1,AP,X',A), type_aux(X'',T), association_aux(X',N,T,_,Max), AP' = (N,(AP,AI)), AI=0..Max-1.
+path_to(X,P,I,AP',X'',A)                    :- coom_path(P,I,"_parent"),
+                                              path_to(X,P,I-1,AP,X',A), type_aux(X'',_), X'=(_,(X'',_)), AP' = ("_parent",(AP,0)).
 
 path_to(X,P,AP,X',A) :- not coom_path(P,I+1,_), path_to(X,P,I,AP,X',A).
 path_to(X,P,@dotpath(X')) :- path_to(X,P,X',_,_).
-
+% #show path_to/6.
 % Special case for "this" keyword
 path_to(X,"this",@dotpath(X)) :- path_start(X,"this").
 

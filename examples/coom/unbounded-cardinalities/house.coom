@@ -9,14 +9,14 @@ product {
 }
 
 structure Person {
-                0..*    Thing   things
-    reference   0..*    Room    rooms
+                0..*    Thing       things
+    reference   0..*    Room        rooms
 
 }
 
 structure Thing {
                         ThingType   type
-    reference   1..1    Room        storedInRoom
+    reference   1..1    Cabinet     storedInCabinet
 }
 enumeration ThingType {
     Short
@@ -24,13 +24,13 @@ enumeration ThingType {
 }
 
 structure Room {
-                0..4   Cabinet   cabinets
-   reference    1..1    Person  owner
+                0..4    Cabinet     cabinets
+   reference    1..1    Person      owner
 }
 
 structure Cabinet {
-                    CabinetType type
-    reference 0..5  Thing       things
+                    CabinetType     type
+    reference 0..5  Thing           things
 }
 
 enumeration CabinetType {
@@ -53,5 +53,5 @@ behavior Cabinet {
 
 behavior Person {
     explanation "Each thing has to be stored in a room owned by the thing's owner"
-    require things.storedInRoom.owner = this
+    require things.storedInCabinet._parent.owner = this
 }
