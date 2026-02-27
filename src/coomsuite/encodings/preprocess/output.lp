@@ -61,8 +61,8 @@ unary(@unary(Con,"!"),"!",Con)                         :- conditional_requiremen
 unary(@unary(G,"()"),"()",G)                           :- conditions_binary(_,_,G,_,_,()).
 binary(G,L,"&&",R)                                     :- conditions_binary(_,_,G,L,R,_).
 
-binary(G,L,Op,R) :- binary(_,_,G,L,Op,R).
-unary(G,Op,F)    :- unary(_,_,G,Op,F).
+binary(G,L,Op,R) :- binary(X,F,L,Op,R),  ground_formula(X,F,G).
+unary(G,Op,F')   :- unary(X,F,Op,F'),    ground_formula(X,F,G).
 
 #show constraint/2.
 #show binary/4.

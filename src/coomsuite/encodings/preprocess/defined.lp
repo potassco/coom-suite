@@ -22,7 +22,7 @@
 #defined coom_function/4.
 #defined coom_imply/3.
 
-#defined coom_default/2.
+#defined coom_default/3.
 
 #defined coom_user_include/1.
 #defined coom_user_value/2.
