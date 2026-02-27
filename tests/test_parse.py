@@ -998,6 +998,30 @@ class TestCOOMModelParser(TestCase):
                 'path("_name",0,"_name").',
             ],
         )
+        self.assertEqual(
+            parse_coom("behavior{require a = b._parent}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'require(0,"a=b._parent").',
+                'binary("a=b._parent","a","=","b._parent").',
+                'path("a",0,"a").',
+                'path("b._parent",0,"b").',
+                'path("b._parent",1,"_parent").',
+            ],
+        )
+
+        self.assertEqual(
+            parse_coom("behavior{require a = _parent}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'require(0,"a=_parent").',
+                'binary("a=_parent","a","=","_parent").',
+                'path("a",0,"a").',
+                'path("_parent",0,"_parent").',
+            ],
+        )
 
         self.assertEqual(
             parse_coom("behavior{require a = _Metal}"),
@@ -1008,6 +1032,18 @@ class TestCOOMModelParser(TestCase):
                 'binary("a=_Metal","a","=","_Metal").',
                 'path("a",0,"a").',
                 'constant("_Metal").',
+            ],
+        )
+
+        self.assertEqual(
+            parse_coom("behavior{require a = this}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'require(0,"a=this").',
+                'binary("a=this","a","=","this").',
+                'path("a",0,"a").',
+                'path("this",0,"this").',
             ],
         )
 

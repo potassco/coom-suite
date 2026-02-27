@@ -24,7 +24,7 @@ associate(A,N,I) :- associate(A,N), A = (X,XT), I = #count{ XT': associate((X,XT
 :- association(X,T,N,_,_), association_match(X,N,N'), associate((X,X'),N,_), not associate((X',X),N',_).
 
 value(X,V) :- replace(((X,X'),ID),_), value(X',V), #false : replace(((X,X'),ID),(A,N,I)), not associate(A,N,I).
-include(X) :- replace(((X,X'),ID),(A,N,I)), associate(A,N,I), include(X').
+include(X) :- replace(((X,X'),ID),_), include(X'), #false : replace(((X,X'),ID),(A,N,I)), not associate(A,N,I).
 
 % -------------------------------------------------
 

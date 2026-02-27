@@ -134,6 +134,10 @@ class TestClingo(TestCase):
         self.run_test("association_count")
         self.run_test("association_sum")
 
+        self.run_test("association_match_parent")
+        self.run_test("self_association")
+        self.run_test("double_association")
+
     def test_defaults(self) -> None:
         """
         Test solving defaults (clingo)
@@ -299,6 +303,10 @@ class TestFlingo(TestCase):
         self.run_test("association_table")
         self.run_test("association_count")
         self.run_test("association_sum")
+
+        self.run_test("association_match_parent")
+        self.run_test("self_association")
+        self.run_test("double_association")
 
     def test_defaults(self) -> None:
         """

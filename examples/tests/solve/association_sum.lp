@@ -17,10 +17,10 @@ parent("root.elements[0]","root").
 parent("root.modules[1].size[0]","root.modules[1]").
 parent("root.modules[0].size[0]","root.modules[0]").
 association("root.elements[0]","Module","modules",1,2).
-replace(("root.elements[0].modules[1].size[0]","root.modules[1].size[0]"),(("root.elements[0]","root.modules[1]"),"modules",1)).
-replace(("root.elements[0].modules[1].size[0]","root.modules[0].size[0]"),(("root.elements[0]","root.modules[0]"),"modules",1)).
-replace(("root.elements[0].modules[0].size[0]","root.modules[1].size[0]"),(("root.elements[0]","root.modules[1]"),"modules",0)).
-replace(("root.elements[0].modules[0].size[0]","root.modules[0].size[0]"),(("root.elements[0]","root.modules[0]"),"modules",0)).
+replace((("root.elements[0].modules[1].size[0]","root.modules[1].size[0]"),0),(("root.elements[0]","root.modules[1]"),"modules",1)).
+replace((("root.elements[0].modules[1].size[0]","root.modules[0].size[0]"),0),(("root.elements[0]","root.modules[0]"),"modules",1)).
+replace((("root.elements[0].modules[0].size[0]","root.modules[1].size[0]"),0),(("root.elements[0]","root.modules[1]"),"modules",0)).
+replace((("root.elements[0].modules[0].size[0]","root.modules[0].size[0]"),0),(("root.elements[0]","root.modules[0]"),"modules",0)).
 constraint(("root.modules",2),"lowerbound").
 constraint(("root.elements",1),"lowerbound").
 constraint(("root.modules[0].size",1),"lowerbound").

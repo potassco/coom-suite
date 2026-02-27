@@ -1,8 +1,6 @@
 // House configuration problem
 // Friedrich et al.: (Re)configuration based on model generation (2011)
 
-// Is this problem representable in COOM?
-
 product {
     0..*    Person  persons
     0..*    Room    rooms

@@ -41,6 +41,9 @@ class TestPreprocess(TestCase):
         self.run_test("reference_table")
         self.run_test("reference_count")
         self.run_test("reference_sum")
+        self.run_test("reference_parent_this")
+        self.run_test("self_reference")
+        self.run_test("double_reference")
 
     def test_enumeration(self) -> None:
         """
@@ -68,6 +71,8 @@ class TestPreprocess(TestCase):
         self.run_test("require_with_partonomy")
         self.run_test("require_with_partonomy2")
         self.run_test("require_with_partonomy_multiple_instances")
+
+        self.run_test("require_parent")
 
     def test_combinations_table(self) -> None:
         """

@@ -53,7 +53,7 @@ incremental("function",  X,P,(X,F,P))            :- function(X,F,P),            
 % - base case: table constraints over incremental sets are incremental
 incremental("constraint",X,P,((ID,X),"table"))   :- table_column((ID,X),P),       inc_set(P).
 % - base case: association with an unbounded object
-incremental("association",A,P,(X,T,N,L,U)) :- replace((A,B),((X,Y),N,I)), set(P,Y), inc_set(P), association(X,T,N,L,U).
+incremental("association",A,P,(X,T,N,L,U)) :- replace(((A,B),ID),((X,Y),N,I)), set(P,Y), inc_set(P), association(X,T,N,L,U).
 % - recursive: if a sub-expression of X is incremental, then X is also incremental
 % incremental("function",  X,P,(X,F,Y))            :- function(X,F,Y),              incremental(_,Y ,P,_).
 incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,L ,P,_).

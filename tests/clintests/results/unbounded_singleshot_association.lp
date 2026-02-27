@@ -16,7 +16,7 @@ parent("root.rack[0]","root").
 parent("root.elements[0].type[0]","root.elements[0]").
 association("root.rack[0]","Element","elements",1,1).
 association("root.elements[0]","Module","modules",1,2).
-replace(("root.rack[0].elements[0].type[0]","root.elements[0].type[0]"),(("root.rack[0]","root.elements[0]"),"elements",0)).
+replace((("root.rack[0].elements[0].type[0]","root.elements[0].type[0]"),0),(("root.rack[0]","root.elements[0]"),"elements",0)).
 constraint(("root.rack",1),"lowerbound").
 constraint(("root.modules",0),"lowerbound").
 constraint(("root.elements",1),"lowerbound").
