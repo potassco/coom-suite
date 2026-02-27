@@ -21,3 +21,8 @@ satisfied(F) :- binary(F,XL,"&&",XR), satisfied(XL), satisfied(XR).
 
 % A Boolean formula is violated if it is defined and not satisfied
 violated((C,F)) :- constraint((C,F),"boolean"), defined(F), not satisfied(F).
+
+% Auxiliary value/2 predicates for parts
+value(X,X) :- binary(_,X,_,_), type(X,T), part(T).
+value(X,X) :- binary(_,_,_,X), type(X,T), part(T).
+value(X,X) :- unary(_,_,X),    type(X,T), part(T).

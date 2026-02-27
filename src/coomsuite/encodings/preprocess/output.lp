@@ -39,10 +39,25 @@ parent(@dotpath(X),@dotpath(P)) :- type_aux(X,_), X=(_,(P,_)).
 #show index/2.
 #show parent/2.
 
+% Associations
+association(@dotpath(X),T,F,Min,Max) :- association_aux(X,F,T,Min,Max).
+% set(@join(@dotpath(X),F),@dotpath(X'))                :- association_aux(X,F,T,Min,Max), type_aux(X',T).
+
+% Match opposite associations
+association_match(@dotpath(X),F,F') :- association_aux(X,F,T',_,_), type_aux(X,T), type_aux(X',T'), association_aux(X',F',T,_,_).
+
+% Replace paths/variables based on associations
+replace(R,((@dotpath(X),@dotpath(X')),N,I)) :- replace_aux(R,A,_), A = ((X,X'),N,I).
+
+#show association/5.
+#show association_match/3.
+#show replace/2.
+
 %%% Constraints
 % Formulas
 % Constraints at root and without conditions can be instantiated "as is"
 constraint((C,G),"boolean") :- coom_require(C,F), ground_formula((),F,G), not coom_condition(C,_,_).
+% TODO: Can there be associations at root?
 
 % Local constraints without conditions get converted into conditional requirement
 % to add an "definedness" condition on their context variable
@@ -52,7 +67,6 @@ set(X,X)                                  :- local_constraint(_,X,_).
 binary(@binary(Fun,"=","1"),Fun,"=","1")  :- local_constraint(_,X,_), function(Fun,"count",X).
 number("1",1)                             :- local_constraint(_,_,_).
 conditional_requirement(C,Con,G)          :- local_constraint(C,X,G), function(Fun,"count",X), binary(Con,Fun,"=","1").
-
 
 % Conditional requirements get converted into a disjuction
 constraint((C,@implication(Con,Req)),"boolean")        :- conditional_requirement(C,Con,Req).
@@ -129,8 +143,10 @@ explanation(C,E) :- coom_explanation(C,E).
 #show explanation/2.
 
 % User input
-user_include(X) :- coom_user_include(X).
-user_value(X,V) :- coom_user_value(X,V).
+user_include(X)        :- coom_user_include(X).
+user_value(X,V)        :- coom_user_value(X,V).
+user_associate((X,X')) :- coom_user_associate((X,X')).
 
 #show user_include/1.
 #show user_value/2.
+#show user_associate/1.

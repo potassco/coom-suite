@@ -1,6 +1,7 @@
 #include "base/defined.lp".
 
 #include "base/structure.lp".
+#include "base/association.lp".
 #include "base/discrete.lp".
 #include "base/clingo/integer.lp".
 

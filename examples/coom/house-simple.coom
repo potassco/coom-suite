@@ -1,0 +1,44 @@
+// House configuration problem
+// Friedrich et al.: (Re)configuration based on model generation (2011)
+
+// How to represent this problem in COOM?
+
+// This has two solutions if both persons own at least one thing:
+//  1. root.room[0] is owned by root.person[0], root.room[1] is owned by root.person[1]
+//  2. root.room[0] is owned by root.person[1], root.room[1] is owned by root.person[0]
+
+product {
+    2..2    Person  persons
+    2..2    Room    rooms
+}
+
+structure Person {
+                2..2    Thing   things
+    reference   0..2    Room    roomsOwned
+
+}
+
+structure Thing {
+    reference   1..1    Room        storedInRoom
+}
+
+structure Room {
+    reference   0..2    Thing   things
+    reference   1..1    Person  owner
+}
+
+behavior Person {
+    explanation "Each thing has to be stored in a room owned by the thing's owner"
+    // // require things.storedInRoom.owner._name = _name // Implement auxiliary _name path which returns variable name?
+    require things.storedInRoom.owner = this // Implement "this"
+}
+
+// behavior Room {
+//     explanation "Ensure bidirectional associations" // Is this the best way?
+//     require things.storedInRoom = this
+// }
+
+// behavior Person {
+//     explanation "Ensure bidirectional associations" // Is this the best way?
+//     require roomsOwned.owner = this
+// }

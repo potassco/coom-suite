@@ -1,6 +1,6 @@
 """
 Contains a dictionary with all clintest tests for solving
-and the corresponding files or programs they should be run with.
+and the corresponding file (corresponds to "testname.lp") or programs they should be run with.
 
 The key of the dictionary corresponds to the name of the test.
 
@@ -8,6 +8,7 @@ Some tests contain a "ftest" entry which is a test modified especially to work w
 All other tests work with both clingo and flingo.
 """
 
+# pylint: disable=line-too-long, too-many-lines
 from typing import Any
 
 from . import TEST_EMPTY, TEST_UNSAT, OptimalModel, StableModels
@@ -26,23 +27,18 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
     },
     "mandatory_part": {
         "test": StableModels({'include("root.a[0]")'}),
-        "files": ["mandatory_part.lp"],
     },
     "part_with_cardinality": {
         "test": StableModels({'include("root.a[0]")'}, {'include("root.a[0]")', 'include("root.a[1]")'}),
-        "files": ["part_with_cardinality.lp"],
     },
     "optional_part_with_subpart": {
         "test": StableModels(set(), {'include("root.a[0]")', 'include("root.a[0].b[0]")'}),
-        "files": ["optional_part_with_subpart.lp"],
     },
     "simple_discrete": {
         "test": StableModels({'value("root.a[0]","A1")'}, {'value("root.a[0]","A2")'}),
-        "files": ["simple_discrete.lp"],
     },
     "optional_discrete": {
         "test": StableModels(set(), {'value("root.a[0]","A1")'}, {'value("root.a[0]","A2")'}),
-        "files": ["optional_discrete.lp"],
     },
     "multiple_discrete": {
         "test": StableModels(
@@ -51,15 +47,12 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             {'value("root.a[0]","A2")', 'value("root.a[1]","A1")'},
             {'value("root.a[0]","A2")', 'value("root.a[1]","A2")'},
         ),
-        "files": ["multiple_discrete.lp"],
     },
     "simple_integer": {
         "test": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
-        "files": ["simple_integer.lp"],
     },
     "optional_integer": {
         "test": StableModels(set(), {'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
-        "files": ["optional_integer.lp"],
     },
     "multiple_integer": {
         "test": StableModels(
@@ -68,19 +61,15 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             {'value("root.a[0]",2)', 'value("root.a[1]",1)'},
             {'value("root.a[0]",2)', 'value("root.a[1]",2)'},
         ),
-        "files": ["multiple_integer.lp"],
     },
     "unbounded_integer": {
         "test": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
-        "files": ["unbounded_integer.lp"],
     },
     "unbounded_integer_below": {
         "test": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
-        "files": ["unbounded_integer_below.lp"],
     },
     "unbounded_integer_above": {
         "test": StableModels({'value("root.a[0]",1)'}, {'value("root.a[0]",2)'}),
-        "files": ["unbounded_integer_above.lp"],
     },
     "eq_sat": {
         "test": TEST_EMPTY,
@@ -268,7 +257,6 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             {'value("root.x[0]","A2")', 'value("root.y[0]","A1")'},
             {'value("root.x[0]","A3")', 'value("root.y[0]","A2")'},
         ),
-        "files": ["table_discrete.lp"],
     },
     "table_integer": {
         "test": StableModels(
@@ -277,7 +265,6 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             {'value("root.x[0]",2)', 'value("root.y[0]",1)'},
             {'value("root.x[0]",3)', 'value("root.y[0]",2)'},
         ),
-        "files": ["table_integer.lp"],
     },
     "table_mixed": {
         "test": StableModels(
@@ -286,7 +273,6 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             {'value("root.x[0]","A2")', 'value("root.y[0]",1)'},
             {'value("root.x[0]","A3")', 'value("root.y[0]",2)'},
         ),
-        "files": ["table_mixed.lp"],
     },
     "table_wildcard": {
         "test": StableModels(
@@ -294,11 +280,9 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             {'value("root.x[0]","A2")', 'value("root.y[0]","A1")'},
             {'value("root.x[0]","A2")', 'value("root.y[0]","A2")'},
         ),
-        "files": ["table_wildcard.lp"],
     },
     "table_undef": {
         "test": StableModels({'value("root.x[0]","A1")'}, {'value("root.x[0]","A2")'}),
-        "files": ["table_undef.lp"],
     },
     "table_undef2": {
         "test": TEST_EMPTY,
@@ -310,7 +294,6 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
     },
     "empty_table": {
         "test": TEST_UNSAT,
-        "files": ["empty_table.lp"],
     },
     "plus_sat": {
         "test": TEST_EMPTY,
@@ -472,13 +455,11 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
     },
     "count": {
         "test": StableModels({'include("root.x[0]")', 'include("root.x[1]")'}),
-        "files": ["count.lp"],
     },
     "sum": {
         "test": StableModels(
             {'value("root.x[0]",1)', 'value("root.x[1]",2)'}, {'value("root.x[0]",2)', 'value("root.x[1]",1)'}
         ),
-        "files": ["sum.lp"],
     },
     "min": {
         "test": StableModels(
@@ -486,16 +467,218 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             {'value("root.x[0]",3)', 'value("root.x[1]",3)'},
             {'value("root.x[0]",3)', 'value("root.x[1]",4)'},
         ),
-        "files": ["min.lp"],
     },
     "max": {
         "test": StableModels({'value("root.x[0]",3)', 'value("root.x[1]",3)'}),
-        "files": ["max.lp"],
     },
-    "simple_default": {"test": StableModels({'value("root.color[0]","White")'}), "files": ["simple_default.lp"]},
+    "simple_association": {
+        "test": StableModels(
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'associate(("root.elements[0]","root.modules[0]"),"modules",0)',
+            },
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'associate(("root.elements[0]","root.modules[0]"),"modules",0)',
+            },
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'associate(("root.elements[0]","root.modules[1]"),"modules",0)',
+            },
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'associate(("root.elements[0]","root.modules[0]"),"modules",0)',
+                'associate(("root.elements[0]","root.modules[1]"),"modules",1)',
+            },
+        ),
+    },
+    "association_boolean": {
+        "test": StableModels(
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'associate(("root.elements[0]","root.modules[0]"),"modules",0)',
+                'value("root.modules[0].type[0]","I")',
+            },
+        ),
+    },
+    "association_boolean_user": {
+        "test": StableModels(
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'associate(("root.elements[0]","root.modules[1]"),"modules",0)',
+                'value("root.modules[0].type[0]","II")',
+                'value("root.modules[1].type[0]","I")',
+            },
+        ),
+    },
+    "association_table": {
+        "test": StableModels(
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'value("root.elements[0].type[0]","A")',
+                'associate(("root.elements[0]","root.modules[0]"),"modules",0)',
+                'value("root.modules[0].type[0]","I")',
+                'value("root.modules[1].type[0]","I")',
+            },
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'value("root.elements[0].type[0]","A")',
+                'associate(("root.elements[0]","root.modules[0]"),"modules",0)',
+                'value("root.modules[0].type[0]","I")',
+                'value("root.modules[1].type[0]","II")',
+            },
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'value("root.elements[0].type[0]","A")',
+                'associate(("root.elements[0]","root.modules[1]"),"modules",0)',
+                'value("root.modules[0].type[0]","I")',
+                'value("root.modules[1].type[0]","I")',
+            },
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'value("root.elements[0].type[0]","A")',
+                'associate(("root.elements[0]","root.modules[1]"),"modules",0)',
+                'value("root.modules[0].type[0]","II")',
+                'value("root.modules[1].type[0]","I")',
+            },
+        ),
+    },
+    "association_count": {
+        "test": StableModels(
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'associate(("root.elements[0]","root.modules[0]"),"modules",0)',
+                'associate(("root.elements[0]","root.modules[1]"),"modules",1)',
+            },
+        ),
+    },
+    "association_sum": {
+        "test": StableModels(
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'associate(("root.elements[0]","root.modules[0]"),"modules",0)',
+                'value("root.modules[0].size[0]",10)',
+                'value("root.modules[1].size[0]",10)',
+            },
+            {
+                'include("root.elements[0]")',
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'associate(("root.elements[0]","root.modules[1]"),"modules",0)',
+                'value("root.modules[0].size[0]",10)',
+                'value("root.modules[1].size[0]",10)',
+            },
+        ),
+    },
+    "association_match_parent": {
+        "test": StableModels(
+            {
+                'include("root.bikes[0]")',
+                'include("root.bikes[0].frame[0]")',
+                'include("root.bikes[0].saddle[0]")',
+                'include("root.bikes[1]")',
+                'include("root.bikes[1].frame[0]")',
+                'include("root.bikes[1].saddle[0]")',
+                'associate(("root.bikes[0].frame[0]","root.bikes[0].saddle[0]"),"saddle",0)',
+                'associate(("root.bikes[0].saddle[0]","root.bikes[0].frame[0]"),"frame",0)',
+                'associate(("root.bikes[1].frame[0]","root.bikes[1].saddle[0]"),"saddle",0)',
+                'associate(("root.bikes[1].saddle[0]","root.bikes[1].frame[0]"),"frame",0)',
+            }
+        ),
+    },
+    "self_association": {
+        "test": StableModels(
+            {
+                'include("root.left_bag[0]")',
+                'include("root.left_bag[1]")',
+                'include("root.right_bag[0]")',
+                'include("root.right_bag[1]")',
+                'associate(("root.left_bag[0]","root.right_bag[1]"),"other_side",0)',
+                'associate(("root.left_bag[1]","root.right_bag[0]"),"other_side",0)',
+                'associate(("root.right_bag[0]","root.left_bag[1]"),"other_side",0)',
+                'associate(("root.right_bag[1]","root.left_bag[0]"),"other_side",0)',
+            },
+            {
+                'include("root.left_bag[0]")',
+                'include("root.left_bag[1]")',
+                'include("root.right_bag[0]")',
+                'include("root.right_bag[1]")',
+                'associate(("root.left_bag[0]","root.right_bag[0]"),"other_side",0)',
+                'associate(("root.left_bag[1]","root.right_bag[1]"),"other_side",0)',
+                'associate(("root.right_bag[1]","root.left_bag[1]"),"other_side",0)',
+                'associate(("root.right_bag[0]","root.left_bag[0]"),"other_side",0)',
+            },
+        )
+    },
+    "double_association": {
+        "test": StableModels(
+            {
+                'include("root.persons[0]")',
+                'include("root.persons[1]")',
+                'include("root.rooms[0]")',
+                'include("root.rooms[1]")',
+                'include("root.things[0]")',
+                'include("root.things[1]")',
+                'associate(("root.persons[0]","root.rooms[1]"),"roomsOwned",0)',
+                'associate(("root.persons[0]","root.things[0]"),"thingOwned",0)',
+                'associate(("root.persons[1]","root.rooms[0]"),"roomsOwned",0)',
+                'associate(("root.persons[1]","root.things[1]"),"thingOwned",0)',
+                'associate(("root.rooms[0]","root.persons[1]"),"owner",0)',
+                'associate(("root.rooms[0]","root.things[1]"),"things",0)',
+                'associate(("root.rooms[1]","root.persons[0]"),"owner",0)',
+                'associate(("root.rooms[1]","root.things[0]"),"things",0)',
+                'associate(("root.things[0]","root.persons[0]"),"owner",0)',
+                'associate(("root.things[0]","root.rooms[1]"),"storedInRoom",0)',
+                'associate(("root.things[1]","root.persons[1]"),"owner",0)',
+                'associate(("root.things[1]","root.rooms[0]"),"storedInRoom",0)',
+            },
+            {
+                'include("root.persons[0]")',
+                'include("root.persons[1]")',
+                'include("root.rooms[0]")',
+                'include("root.rooms[1]")',
+                'include("root.things[0]")',
+                'include("root.things[1]")',
+                'associate(("root.persons[0]","root.rooms[0]"),"roomsOwned",0)',
+                'associate(("root.persons[0]","root.things[0]"),"thingOwned",0)',
+                'associate(("root.persons[1]","root.rooms[1]"),"roomsOwned",0)',
+                'associate(("root.persons[1]","root.things[1]"),"thingOwned",0)',
+                'associate(("root.rooms[0]","root.persons[0]"),"owner",0)',
+                'associate(("root.rooms[0]","root.things[0]"),"things",0)',
+                'associate(("root.rooms[1]","root.persons[1]"),"owner",0)',
+                'associate(("root.rooms[1]","root.things[1]"),"things",0)',
+                'associate(("root.things[0]","root.persons[0]"),"owner",0)',
+                'associate(("root.things[0]","root.rooms[0]"),"storedInRoom",0)',
+                'associate(("root.things[1]","root.persons[1]"),"owner",0)',
+                'associate(("root.things[1]","root.rooms[1]"),"storedInRoom",0)',
+            },
+        )
+    },
+    "simple_default": {"test": StableModels({'value("root.color[0]","White")'})},
     "simple_default_user": {
         "test": StableModels({'value("root.color[0]","Black")'}),
-        "files": ["simple_default_user.lp"],
     },
     "simple_default_include": {
         "test": StableModels(set(), {'include("root.bike[0]")', 'value("root.bike[0].color[0]","White")'}),
@@ -504,27 +687,22 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
     "minimize": {
         "test": OptimalModel({'value("root.totalWeight[0]",1)'}),
         "ftest": OptimalModel({'value("root.totalWeight[0]",1)'}, flingo=True),
-        "files": ["minimize.lp"],
     },
     "maximize": {
         "test": OptimalModel({'value("root.totalOutput[0]",10)'}),
         "ftest": OptimalModel({'value("root.totalOutput[0]",10)'}, flingo=True),
-        "files": ["maximize.lp"],
     },
     "minimize_priority": {
         "test": OptimalModel({'include("root.bags[0]")', 'value("root.bags[0].volume[0]",0) '}),
         "ftest": OptimalModel({'include("root.bags[0]")', 'value("root.bags[0].volume[0]",0) '}, flingo=True),
-        "files": ["minimize_priority.lp"],
     },
     "maximize_priority": {
         "test": OptimalModel({'include("root.bags[0]")', 'value("root.bags[0].volume[0]",10)'}),
         "ftest": OptimalModel({'include("root.bags[0]")', 'value("root.bags[0].volume[0]",10) '}, flingo=True),
-        "files": ["maximize_priority.lp"],
     },
     "minimize_maximize_function": {
         "test": OptimalModel({'include("root.bags[0]")', 'value("root.bags[0].volume[0]",10)'}),
         "ftest": OptimalModel({'include("root.bags[0]")', 'value("root.bags[0].volume[0]",10)'}, flingo=True),
-        "files": ["minimize_maximize_function.lp"],
     },
     "maximize_minimize_function": {
         "test": OptimalModel(
@@ -544,31 +722,59 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             },
             flingo=True,
         ),
-        "files": ["maximize_minimize_function.lp"],
     },
-    "add_part": {"test": StableModels({'include("root.a[0]")'}), "files": ["add_part.lp"]},
+    "add_part": {"test": StableModels({'include("root.a[0]")'})},
     "add_attribute": {
         "test": StableModels({'value("root.basket[0]","White")'}, {'value("root.basket[0]","Black")'}),
-        "files": ["add_attribute.lp"],
     },
-    "set_value_discrete": {"test": StableModels({'value("root.a[0]","A1")'}), "files": ["set_value_discrete.lp"]},
-    "set_value_integer": {"test": StableModels({'value("root.a[0]",1)'}), "files": ["set_value_integer.lp"]},
+    "associate": {
+        "test": StableModels(
+            {
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'include("root.elements[0]")',
+                'associate(("root.elements[0]","root.modules[0]"),"modules",0)',
+            },
+        ),
+    },
+    "set_value_discrete": {"test": StableModels({'value("root.a[0]","A1")'})},
+    "set_value_integer": {"test": StableModels({'value("root.a[0]",1)'})},
     "add_invalid_variable": {
         "test": StableModels(set()),
         "program": """
         user_include("root.basket[0]").""",
     },
     "set_invalid_variable": {"test": StableModels(set()), "program": """user_value("root.color[0]","Yellow")."""},
+    "associate_invalid_variable": {
+        "test": StableModels({'include("root.modules[0]")'}),
+    },
+    "associate_invalid_variable2": {
+        "test": StableModels({'include("root.modules[0]")'}),
+    },
     "set_invalid_type": {
         "test": StableModels(set(), {'include("root.basket[0]")'}),
-        "files": ["set_invalid_type.lp"],
     },
     "set_invalid_value_discrete": {
         "test": StableModels({'value("root.color[0]","Red")'}),
-        "files": ["set_invalid_value_discrete.lp"],
     },
     "set_invalid_value_num": {
         "test": StableModels({'value("root.size[0]",1)'}, {'value("root.size[0]",2)'}, {'value("root.size[0]",3)'}),
-        "files": ["set_invalid_value_num.lp"],
     },
+    "invalid_association": {
+        "test": StableModels(
+            {
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'include("root.elements[0]")',
+                'associate(("root.elements[0]","root.modules[0]"),"modules",0)',
+            },
+            {
+                'include("root.modules[0]")',
+                'include("root.modules[1]")',
+                'include("root.elements[0]")',
+                'associate(("root.elements[0]","root.modules[1]"),"modules",0)',
+            },
+        ),
+    },
+    "too_many_associations": {"test": TEST_UNSAT},
 }

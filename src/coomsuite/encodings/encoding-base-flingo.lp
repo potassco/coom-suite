@@ -1,6 +1,7 @@
 #include "base/defined.lp".
 
 #include "base/structure.lp".
+#include "base/association.lp".
 #include "base/discrete.lp".
 #include "base/flingo/integer.lp".
 
@@ -9,6 +10,7 @@
 #include "base/flingo/numerics.lp".
 #include "base/flingo/table.lp".
 #include "base/constraints.lp".
+#include "base/flingo/replace.lp".
 #include "base/clingo/defaults.lp".
 #include "base/flingo/defaults.lp".
 

@@ -36,6 +36,16 @@ class TestCOOMUserParser(TestCase):
             ['user_include("root.wheels[0]").', 'user_include("root.wheels[1]").'],
         )
 
+    def test_associate(self) -> None:
+        """
+        Test parsing for the 'associate' keyword
+        used for associating instances of objects
+        """
+        self.assertEqual(
+            parse_coom("associate elements[0] modules[0]", grammar="user"),
+            ['user_associate(("root.elements[0]","root.modules[0]")).'],
+        )
+
     def test_blockinput(self) -> None:
         """
         Test parsing a user input block.
@@ -65,7 +75,7 @@ class TestCOOMModelParser(TestCase):
 
     def test_feature(self) -> None:
         """
-        Test parsing the 'feature' keyword.
+        Test parsing the COOM features
         """
         self.assertEqual(
             parse_coom("product{Wheel wheel Frame frame}"),
@@ -121,6 +131,11 @@ class TestCOOMModelParser(TestCase):
         )
 
         self.assertEqual(parse_coom("product{string id}"), ['structure("product").'])
+
+        self.assertEqual(
+            parse_coom("product{ reference 1..2 Module modules }"),
+            ['structure("product").', 'reference("product","modules","Module",1,2).'],
+        )
 
     def test_enumeration(self) -> None:
         """
@@ -956,6 +971,79 @@ class TestCOOMModelParser(TestCase):
                 'path("b.c.d.e.f",2,"d").',
                 'path("b.c.d.e.f",3,"e").',
                 'path("b.c.d.e.f",4,"f").',
+            ],
+        )
+
+        self.assertEqual(
+            parse_coom("behavior{require a = b._name}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'require(0,"a=b._name").',
+                'binary("a=b._name","a","=","b._name").',
+                'path("a",0,"a").',
+                'path("b._name",0,"b").',
+                'path("b._name",1,"_name").',
+            ],
+        )
+
+        self.assertEqual(
+            parse_coom("behavior{require a = _name}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'require(0,"a=_name").',
+                'binary("a=_name","a","=","_name").',
+                'path("a",0,"a").',
+                'path("_name",0,"_name").',
+            ],
+        )
+        self.assertEqual(
+            parse_coom("behavior{require a = b._parent}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'require(0,"a=b._parent").',
+                'binary("a=b._parent","a","=","b._parent").',
+                'path("a",0,"a").',
+                'path("b._parent",0,"b").',
+                'path("b._parent",1,"_parent").',
+            ],
+        )
+
+        self.assertEqual(
+            parse_coom("behavior{require a = _parent}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'require(0,"a=_parent").',
+                'binary("a=_parent","a","=","_parent").',
+                'path("a",0,"a").',
+                'path("_parent",0,"_parent").',
+            ],
+        )
+
+        self.assertEqual(
+            parse_coom("behavior{require a = _Metal}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'require(0,"a=_Metal").',
+                'binary("a=_Metal","a","=","_Metal").',
+                'path("a",0,"a").',
+                'constant("_Metal").',
+            ],
+        )
+
+        self.assertEqual(
+            parse_coom("behavior{require a = this}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'require(0,"a=this").',
+                'binary("a=this","a","=","this").',
+                'path("a",0,"a").',
+                'path("this",0,"this").',
             ],
         )
 

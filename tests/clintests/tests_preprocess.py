@@ -111,6 +111,469 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_feature("Carrier","bag","Bag",0,2).
             coom_structure("Bag").""",
     },
+    "simple_reference": {
+        "test": StableModels(
+            {
+                'type("root","product")',
+                'type("root.elements[0]","Element")',
+                'type("root.elements[1]","Element")',
+                'type("root.modules[0]","Module")',
+                'type("root.modules[1]","Module")',
+                'type("root.modules[2]","Module")',
+                'type("root.modules[3]","Module")',
+                'index("root.elements[0]",0)',
+                'index("root.elements[1]",1)',
+                'index("root.modules[0]",0)',
+                'index("root.modules[1]",1)',
+                'index("root.modules[2]",2)',
+                'index("root.modules[3]",3)',
+                'parent("root.elements[0]","root")',
+                'parent("root.elements[1]","root")',
+                'parent("root.modules[0]","root")',
+                'parent("root.modules[1]","root")',
+                'parent("root.modules[2]","root")',
+                'parent("root.modules[3]","root")',
+                'association("root.elements[0]","Module","modules",2,2)',
+                'association("root.elements[1]","Module","modules",2,2)',
+                'constraint(("root.elements",2),"lowerbound")',
+                'constraint(("root.modules",0),"lowerbound")',
+                'set("root.elements","root.elements[0]")',
+                'set("root.elements","root.elements[1]")',
+                'set("root.modules","root.modules[0]")',
+                'set("root.modules","root.modules[1]")',
+                'set("root.modules","root.modules[2]")',
+                'set("root.modules","root.modules[3]")',
+                'part("product")',
+                'part("Module")',
+                'part("Element")',
+            }
+        ),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","elements","Element",2,2).
+            coom_feature("product","modules","Module",0,4).
+            coom_structure("Module").
+            coom_structure("Element").
+            coom_reference("Element","modules","Module",2,2).""",
+    },
+    "reference_require": {
+        "test": StableModels(
+            {
+                'discrete("ModuleType")',
+                'domain("ModuleType","I")',
+                'domain("ModuleType","II")',
+                'type("root","product")',
+                'type("root.elements[0]","Element")',
+                'type("root.modules[0]","Module")',
+                'type("root.modules[0].type[0]","ModuleType")',
+                'index("root.elements[0]",0)',
+                'index("root.modules[0]",0)',
+                'index("root.modules[0].type[0]",0)',
+                'parent("root.elements[0]","root")',
+                'parent("root.modules[0]","root")',
+                'parent("root.modules[0].type[0]","root.modules[0]")',
+                'association("root.elements[0]","Module","modules",1,1)',
+                'replace((("root.elements[0].modules[0].type[0]","root.modules[0].type[0]"),0),(("root.elements[0]","root.modules[0]"),"modules",0))',
+                'constraint(("root.elements",1),"lowerbound")',
+                'constraint(("root.modules",1),"lowerbound")',
+                'constraint(("root.modules[0].type",1),"lowerbound")',
+                'constraint((0,"!count(root.elements[0])=1||root.elements[0].modules[0].type[0]=I"),"boolean")',
+                'function("count(root.elements[0])","count","root.elements[0]")',
+                'set("root.elements","root.elements[0]")',
+                'set("root.modules","root.modules[0]")',
+                'set("root.modules[0].type","root.modules[0].type[0]")',
+                'set("root.elements[0]","root.elements[0]")',
+                'binary("root.elements[0].modules[0].type[0]=I","root.elements[0].modules[0].type[0]","=","I")',
+                'binary("count(root.elements[0])=1","count(root.elements[0])","=","1")',
+                'binary("!count(root.elements[0])=1||root.elements[0].modules[0].type[0]=I","!count(root.elements[0])=1","||","root.elements[0].modules[0].type[0]=I")',
+                'number("1",1)',
+                'unary("!count(root.elements[0])=1","!","count(root.elements[0])=1")',
+                'part("product")',
+                'part("Module")',
+                'part("Element")',
+                'constant("I")',
+            }
+        ),
+    },
+    "reference_table": {
+        "test": StableModels(
+            {
+                'discrete("ModuleType")',
+                'discrete("ElementType")',
+                'domain("ModuleType","I")',
+                'domain("ModuleType","II")',
+                'domain("ElementType","A")',
+                'type("root","product")',
+                'type("root.elements[0]","Element")',
+                'type("root.modules[0]","Module")',
+                'type("root.modules[1]","Module")',
+                'type("root.modules[1].type[0]","ModuleType")',
+                'type("root.modules[0].type[0]","ModuleType")',
+                'type("root.elements[0].type[0]","ElementType")',
+                'index("root.elements[0]",0)',
+                'index("root.modules[0]",0)',
+                'index("root.modules[1]",1)',
+                'index("root.modules[1].type[0]",0)',
+                'index("root.modules[0].type[0]",0)',
+                'index("root.elements[0].type[0]",0)',
+                'parent("root.elements[0]","root")',
+                'parent("root.modules[0]","root")',
+                'parent("root.modules[1]","root")',
+                'parent("root.modules[1].type[0]","root.modules[1]")',
+                'parent("root.modules[0].type[0]","root.modules[0]")',
+                'parent("root.elements[0].type[0]","root.elements[0]")',
+                'association("root.elements[0]","Module","modules",1,1)',
+                'replace((("root.elements[0].modules[0].type[0]","root.modules[1].type[0]"),0),(("root.elements[0]","root.modules[1]"),"modules",0))',
+                'replace((("root.elements[0].modules[0].type[0]","root.modules[0].type[0]"),0),(("root.elements[0]","root.modules[0]"),"modules",0))',
+                'constraint(("root.elements",1),"lowerbound")',
+                'constraint(("root.modules",2),"lowerbound")',
+                'constraint(("root.modules[0].type",1),"lowerbound")',
+                'constraint(("root.modules[1].type",1),"lowerbound")',
+                'constraint(("root.elements[0].type",1),"lowerbound")',
+                'constraint((0,"root.elements[0]"),"table")',
+                'set("root.elements","root.elements[0]")',
+                'set("root.modules","root.modules[0]")',
+                'set("root.modules","root.modules[1]")',
+                'set("root.modules[0].type","root.modules[0].type[0]")',
+                'set("root.modules[1].type","root.modules[1].type[0]")',
+                'set("root.elements[0].type","root.elements[0].type[0]")',
+                'column((0,"root.elements[0]"),("root.elements[0].type[0]",("root.elements[0].modules[0].type[0]",())),0,"root.elements[0].type[0]")',
+                'column((0,"root.elements[0]"),("root.elements[0].type[0]",("root.elements[0].modules[0].type[0]",())),1,"root.elements[0].modules[0].type[0]")',
+                'allow(0,(0,0),"A")',
+                'allow(0,(1,0),"I")',
+                'part("product")',
+                'part("Module")',
+                'part("Element")',
+            }
+        ),
+    },
+    "reference_count": {
+        "test": StableModels(
+            {
+                'type("root","product")',
+                'type("root.modules[0]","Module")',
+                'type("root.modules[1]","Module")',
+                'type("root.elements[0]","Element")',
+                'index("root.modules[0]",0)',
+                'index("root.modules[1]",1)',
+                'index("root.elements[0]",0)',
+                'parent("root.modules[0]","root")',
+                'parent("root.modules[1]","root")',
+                'parent("root.elements[0]","root")',
+                'association("root.elements[0]","Module","modules",1,2)',
+                'replace((("root.elements[0].modules[0]","root.modules[0]"),0),(("root.elements[0]","root.modules[0]"),"modules",0))',
+                'replace((("root.elements[0].modules[0]","root.modules[1]"),0),(("root.elements[0]","root.modules[1]"),"modules",0))',
+                'replace((("root.elements[0].modules[1]","root.modules[0]"),0),(("root.elements[0]","root.modules[0]"),"modules",1))',
+                'replace((("root.elements[0].modules[1]","root.modules[1]"),0),(("root.elements[0]","root.modules[1]"),"modules",1))',
+                'constraint(("root.modules",0),"lowerbound")',
+                'constraint(("root.elements",1),"lowerbound")',
+                'constraint((0,"!count(root.elements[0])=1||count(root.elements[0].modules)=2"),"boolean")',
+                'function("count(root.elements[0].modules)","count","root.elements[0].modules")',
+                'function("count(root.elements[0])","count","root.elements[0]")',
+                'set("root.modules","root.modules[0]")',
+                'set("root.modules","root.modules[1]")',
+                'set("root.elements","root.elements[0]")',
+                'set("root.elements[0].modules","root.elements[0].modules[0]")',
+                'set("root.elements[0].modules","root.elements[0].modules[1]")',
+                'set("root.elements[0]","root.elements[0]")',
+                'binary("count(root.elements[0].modules)=2","count(root.elements[0].modules)","=","2")',
+                'binary("count(root.elements[0])=1","count(root.elements[0])","=","1")',
+                'binary("!count(root.elements[0])=1||count(root.elements[0].modules)=2","!count(root.elements[0])=1","||","count(root.elements[0].modules)=2")',
+                'number("2",2)',
+                'number("1",1)',
+                'unary("!count(root.elements[0])=1","!","count(root.elements[0])=1")',
+                'part("product")',
+                'part("Module")',
+                'part("Element")',
+            }
+        ),
+    },
+    "reference_sum": {
+        "test": StableModels(
+            {
+                'type("root","product")',
+                'type("root.modules[0]","Module")',
+                'type("root.modules[1]","Module")',
+                'type("root.elements[0]","Element")',
+                'index("root.modules[0]",0)',
+                'index("root.modules[1]",1)',
+                'index("root.elements[0]",0)',
+                'parent("root.modules[0]","root")',
+                'parent("root.modules[1]","root")',
+                'parent("root.elements[0]","root")',
+                'association("root.elements[0]","Module","modules",1,2)',
+                'replace((("root.elements[0].modules[0]","root.modules[0]"),0),(("root.elements[0]","root.modules[0]"),"modules",0))',
+                'replace((("root.elements[0].modules[0]","root.modules[1]"),0),(("root.elements[0]","root.modules[1]"),"modules",0))',
+                'replace((("root.elements[0].modules[1]","root.modules[0]"),0),(("root.elements[0]","root.modules[0]"),"modules",1))',
+                'replace((("root.elements[0].modules[1]","root.modules[1]"),0),(("root.elements[0]","root.modules[1]"),"modules",1))',
+                'constraint(("root.modules",2),"lowerbound")',
+                'constraint(("root.elements",1),"lowerbound")',
+                'constraint((0,"!count(root.elements[0])=1||count(root.elements[0].modules)=2"),"boolean")',
+                'function("count(root.elements[0].modules)","count","root.elements[0].modules")',
+                'function("count(root.elements[0])","count","root.elements[0]")',
+                'set("root.modules","root.modules[0]")',
+                'set("root.modules","root.modules[1]")',
+                'set("root.elements","root.elements[0]")',
+                'set("root.elements[0].modules","root.elements[0].modules[0]")',
+                'set("root.elements[0].modules","root.elements[0].modules[1]")',
+                'set("root.elements[0]","root.elements[0]")',
+                'binary("count(root.elements[0].modules)=2","count(root.elements[0].modules)","=","2")',
+                'binary("count(root.elements[0])=1","count(root.elements[0])","=","1")',
+                'binary("!count(root.elements[0])=1||count(root.elements[0].modules)=2","!count(root.elements[0])=1","||","count(root.elements[0].modules)=2")',
+                'number("2",2)',
+                'number("1",1)',
+                'unary("!count(root.elements[0])=1","!","count(root.elements[0])=1")',
+                'part("product")',
+                'part("Module")',
+                'part("Element")',
+            }
+        ),
+    },
+    "reference_parent_this": {
+        "test": StableModels(
+            {
+                'type("root","product")',
+                'type("root.bikes[0]","Bike")',
+                'type("root.bikes[1]","Bike")',
+                'type("root.bikes[1].frame[0]","Frame")',
+                'type("root.bikes[1].saddle[0]","Saddle")',
+                'type("root.bikes[0].frame[0]","Frame")',
+                'type("root.bikes[0].saddle[0]","Saddle")',
+                'index("root.bikes[0]",0)',
+                'index("root.bikes[1]",1)',
+                'index("root.bikes[1].frame[0]",0)',
+                'index("root.bikes[1].saddle[0]",0)',
+                'index("root.bikes[0].frame[0]",0)',
+                'index("root.bikes[0].saddle[0]",0)',
+                'parent("root.bikes[0]","root")',
+                'parent("root.bikes[1]","root")',
+                'parent("root.bikes[1].frame[0]","root.bikes[1]")',
+                'parent("root.bikes[1].saddle[0]","root.bikes[1]")',
+                'parent("root.bikes[0].frame[0]","root.bikes[0]")',
+                'parent("root.bikes[0].saddle[0]","root.bikes[0]")',
+                'association("root.bikes[1].frame[0]","Saddle","saddle",1,1)',
+                'association("root.bikes[0].frame[0]","Saddle","saddle",1,1)',
+                'association("root.bikes[1].saddle[0]","Frame","frame",1,1)',
+                'association("root.bikes[0].saddle[0]","Frame","frame",1,1)',
+                'association_match("root.bikes[1].saddle[0]","frame","saddle")',
+                'association_match("root.bikes[0].saddle[0]","frame","saddle")',
+                'association_match("root.bikes[1].frame[0]","saddle","frame")',
+                'association_match("root.bikes[0].frame[0]","saddle","frame")',
+                'replace((("root.bikes[1].frame[0].saddle[0]._parent[0]","root.bikes[0]"),0),(("root.bikes[1].frame[0]","root.bikes[0].saddle[0]"),"saddle",0))',
+                'replace((("root.bikes[1].frame[0].saddle[0]._parent[0]","root.bikes[1]"),0),(("root.bikes[1].frame[0]","root.bikes[1].saddle[0]"),"saddle",0))',
+                'replace((("root.bikes[0].frame[0].saddle[0]._parent[0]","root.bikes[0]"),0),(("root.bikes[0].frame[0]","root.bikes[0].saddle[0]"),"saddle",0))',
+                'replace((("root.bikes[0].frame[0].saddle[0]._parent[0]","root.bikes[1]"),0),(("root.bikes[0].frame[0]","root.bikes[1].saddle[0]"),"saddle",0))',
+                'constraint(("root.bikes",2),"lowerbound")',
+                'constraint(("root.bikes[0].frame",1),"lowerbound")',
+                'constraint(("root.bikes[1].frame",1),"lowerbound")',
+                'constraint(("root.bikes[0].saddle",1),"lowerbound")',
+                'constraint(("root.bikes[1].saddle",1),"lowerbound")',
+                'constraint((0,"!count(root.bikes[0])=1||root.bikes[0].frame[0].saddle[0]._parent[0]=root.bikes[0]"),"boolean")',
+                'constraint((0,"!count(root.bikes[1])=1||root.bikes[1].frame[0].saddle[0]._parent[0]=root.bikes[1]"),"boolean")',
+                'function("count(root.bikes[0])","count","root.bikes[0]")',
+                'function("count(root.bikes[1])","count","root.bikes[1]")',
+                'set("root.bikes","root.bikes[0]")',
+                'set("root.bikes","root.bikes[1]")',
+                'set("root.bikes[0].frame","root.bikes[0].frame[0]")',
+                'set("root.bikes[1].frame","root.bikes[1].frame[0]")',
+                'set("root.bikes[0].saddle","root.bikes[0].saddle[0]")',
+                'set("root.bikes[1].saddle","root.bikes[1].saddle[0]")',
+                'set("root.bikes[0]","root.bikes[0]")',
+                'set("root.bikes[1]","root.bikes[1]")',
+                'binary("root.bikes[1].frame[0].saddle[0]._parent[0]=root.bikes[1]","root.bikes[1].frame[0].saddle[0]._parent[0]","=","root.bikes[1]")',
+                'binary("root.bikes[0].frame[0].saddle[0]._parent[0]=root.bikes[0]","root.bikes[0].frame[0].saddle[0]._parent[0]","=","root.bikes[0]")',
+                'binary("count(root.bikes[0])=1","count(root.bikes[0])","=","1")',
+                'binary("count(root.bikes[1])=1","count(root.bikes[1])","=","1")',
+                'binary("!count(root.bikes[0])=1||root.bikes[0].frame[0].saddle[0]._parent[0]=root.bikes[0]","!count(root.bikes[0])=1","||","root.bikes[0].frame[0].saddle[0]._parent[0]=root.bikes[0]")',
+                'binary("!count(root.bikes[1])=1||root.bikes[1].frame[0].saddle[0]._parent[0]=root.bikes[1]","!count(root.bikes[1])=1","||","root.bikes[1].frame[0].saddle[0]._parent[0]=root.bikes[1]")',
+                'number("1",1)',
+                'unary("!count(root.bikes[0])=1","!","count(root.bikes[0])=1")',
+                'unary("!count(root.bikes[1])=1","!","count(root.bikes[1])=1")',
+                'part("product")',
+                'part("Bike")',
+                'part("Frame")',
+                'part("Saddle")',
+            }
+        ),
+    },
+    "self_reference": {
+        "test": StableModels(
+            {
+                'type("root","product")',
+                'type("root.left_bag[0]","Bag")',
+                'type("root.left_bag[1]","Bag")',
+                'type("root.right_bag[0]","Bag")',
+                'type("root.right_bag[1]","Bag")',
+                'index("root.left_bag[0]",0)',
+                'index("root.left_bag[1]",1)',
+                'index("root.right_bag[0]",0)',
+                'index("root.right_bag[1]",1)',
+                'parent("root.left_bag[0]","root")',
+                'parent("root.left_bag[1]","root")',
+                'parent("root.right_bag[0]","root")',
+                'parent("root.right_bag[1]","root")',
+                'association("root.left_bag[0]","Bag","other_side",1,1)',
+                'association("root.left_bag[1]","Bag","other_side",1,1)',
+                'association("root.right_bag[0]","Bag","other_side",1,1)',
+                'association("root.right_bag[1]","Bag","other_side",1,1)',
+                'association_match("root.left_bag[0]","other_side","other_side")',
+                'association_match("root.left_bag[1]","other_side","other_side")',
+                'association_match("root.right_bag[0]","other_side","other_side")',
+                'association_match("root.right_bag[1]","other_side","other_side")',
+                'replace((("root.left_bag[1].other_side[0]","root.left_bag[0]"),0),(("root.left_bag[1]","root.left_bag[0]"),"other_side",0))',
+                'replace((("root.left_bag[1].other_side[0]","root.left_bag[1]"),0),(("root.left_bag[1]","root.left_bag[1]"),"other_side",0))',
+                'replace((("root.left_bag[1].other_side[0]","root.right_bag[0]"),0),(("root.left_bag[1]","root.right_bag[0]"),"other_side",0))',
+                'replace((("root.left_bag[1].other_side[0]","root.right_bag[1]"),0),(("root.left_bag[1]","root.right_bag[1]"),"other_side",0))',
+                'replace((("root.left_bag[0].other_side[0]","root.left_bag[0]"),0),(("root.left_bag[0]","root.left_bag[0]"),"other_side",0))',
+                'replace((("root.left_bag[0].other_side[0]","root.left_bag[1]"),0),(("root.left_bag[0]","root.left_bag[1]"),"other_side",0))',
+                'replace((("root.left_bag[0].other_side[0]","root.right_bag[0]"),0),(("root.left_bag[0]","root.right_bag[0]"),"other_side",0))',
+                'replace((("root.left_bag[0].other_side[0]","root.right_bag[1]"),0),(("root.left_bag[0]","root.right_bag[1]"),"other_side",0))',
+                'constraint(("root.left_bag",2),"lowerbound")',
+                'constraint(("root.right_bag",2),"lowerbound")',
+                'constraint((0,"root.left_bag[0].other_side[0]!=root.left_bag[0]"),"boolean")',
+                'constraint((0,"root.left_bag[1].other_side[0]!=root.left_bag[0]"),"boolean")',
+                'constraint((0,"root.left_bag[0].other_side[0]!=root.left_bag[1]"),"boolean")',
+                'constraint((0,"root.left_bag[1].other_side[0]!=root.left_bag[1]"),"boolean")',
+                'set("root.left_bag","root.left_bag[0]")',
+                'set("root.left_bag","root.left_bag[1]")',
+                'set("root.right_bag","root.right_bag[0]")',
+                'set("root.right_bag","root.right_bag[1]")',
+                'binary("root.left_bag[1].other_side[0]!=root.left_bag[1]","root.left_bag[1].other_side[0]","!=","root.left_bag[1]")',
+                'binary("root.left_bag[0].other_side[0]!=root.left_bag[1]","root.left_bag[0].other_side[0]","!=","root.left_bag[1]")',
+                'binary("root.left_bag[1].other_side[0]!=root.left_bag[0]","root.left_bag[1].other_side[0]","!=","root.left_bag[0]")',
+                'binary("root.left_bag[0].other_side[0]!=root.left_bag[0]","root.left_bag[0].other_side[0]","!=","root.left_bag[0]")',
+                'part("product")',
+                'part("Bag")',
+            }
+        )
+    },
+    "double_reference": {
+        "test": StableModels(
+            {
+                'type("root","product")',
+                'type("root.persons[0]","Person")',
+                'type("root.persons[1]","Person")',
+                'type("root.rooms[0]","Room")',
+                'type("root.rooms[1]","Room")',
+                'type("root.things[0]","Thing")',
+                'type("root.things[1]","Thing")',
+                'index("root.persons[0]",0)',
+                'index("root.persons[1]",1)',
+                'index("root.rooms[0]",0)',
+                'index("root.rooms[1]",1)',
+                'index("root.things[0]",0)',
+                'index("root.things[1]",1)',
+                'parent("root.persons[0]","root")',
+                'parent("root.persons[1]","root")',
+                'parent("root.rooms[0]","root")',
+                'parent("root.rooms[1]","root")',
+                'parent("root.things[0]","root")',
+                'parent("root.things[1]","root")',
+                'association("root.persons[0]","Room","roomsOwned",0,2)',
+                'association("root.persons[1]","Room","roomsOwned",0,2)',
+                'association("root.persons[0]","Thing","thingOwned",1,1)',
+                'association("root.persons[1]","Thing","thingOwned",1,1)',
+                'association("root.things[0]","Room","storedInRoom",1,1)',
+                'association("root.things[1]","Room","storedInRoom",1,1)',
+                'association("root.things[0]","Person","owner",1,1)',
+                'association("root.things[1]","Person","owner",1,1)',
+                'association("root.rooms[0]","Thing","things",1,1)',
+                'association("root.rooms[1]","Thing","things",1,1)',
+                'association("root.rooms[0]","Person","owner",1,1)',
+                'association("root.rooms[1]","Person","owner",1,1)',
+                'association_match("root.rooms[0]","owner","roomsOwned")',
+                'association_match("root.rooms[1]","owner","roomsOwned")',
+                'association_match("root.things[0]","owner","thingOwned")',
+                'association_match("root.things[1]","owner","thingOwned")',
+                'association_match("root.rooms[0]","things","storedInRoom")',
+                'association_match("root.rooms[1]","things","storedInRoom")',
+                'association_match("root.persons[0]","thingOwned","owner")',
+                'association_match("root.persons[1]","thingOwned","owner")',
+                'association_match("root.things[0]","storedInRoom","things")',
+                'association_match("root.things[1]","storedInRoom","things")',
+                'association_match("root.persons[0]","roomsOwned","owner")',
+                'association_match("root.persons[1]","roomsOwned","owner")',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),2),(("root.rooms[1]","root.persons[0]"),"owner",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),2),(("root.rooms[1]","root.persons[1]"),"owner",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),0),(("root.rooms[0]","root.persons[0]"),"owner",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),0),(("root.rooms[0]","root.persons[1]"),"owner",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),3),(("root.rooms[1]","root.persons[0]"),"owner",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),3),(("root.rooms[1]","root.persons[1]"),"owner",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),1),(("root.rooms[0]","root.persons[0]"),"owner",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),1),(("root.rooms[0]","root.persons[1]"),"owner",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),2),(("root.rooms[1]","root.persons[0]"),"owner",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),2),(("root.rooms[1]","root.persons[1]"),"owner",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),0),(("root.rooms[0]","root.persons[0]"),"owner",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),0),(("root.rooms[0]","root.persons[1]"),"owner",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),3),(("root.rooms[1]","root.persons[0]"),"owner",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),3),(("root.rooms[1]","root.persons[1]"),"owner",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),1),(("root.rooms[0]","root.persons[0]"),"owner",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),1),(("root.rooms[0]","root.persons[1]"),"owner",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),1),(("root.things[1]","root.rooms[0]"),"storedInRoom",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),1),(("root.things[1]","root.rooms[0]"),"storedInRoom",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),3),(("root.things[1]","root.rooms[1]"),"storedInRoom",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),3),(("root.things[1]","root.rooms[1]"),"storedInRoom",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),0),(("root.things[0]","root.rooms[0]"),"storedInRoom",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),0),(("root.things[0]","root.rooms[0]"),"storedInRoom",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),2),(("root.things[0]","root.rooms[1]"),"storedInRoom",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),2),(("root.things[0]","root.rooms[1]"),"storedInRoom",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),1),(("root.things[1]","root.rooms[0]"),"storedInRoom",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),1),(("root.things[1]","root.rooms[0]"),"storedInRoom",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),3),(("root.things[1]","root.rooms[1]"),"storedInRoom",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),3),(("root.things[1]","root.rooms[1]"),"storedInRoom",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),0),(("root.things[0]","root.rooms[0]"),"storedInRoom",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),0),(("root.things[0]","root.rooms[0]"),"storedInRoom",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),2),(("root.things[0]","root.rooms[1]"),"storedInRoom",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),2),(("root.things[0]","root.rooms[1]"),"storedInRoom",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),2),(("root.persons[0]","root.things[0]"),"thingOwned",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),2),(("root.persons[0]","root.things[0]"),"thingOwned",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),0),(("root.persons[0]","root.things[0]"),"thingOwned",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),0),(("root.persons[0]","root.things[0]"),"thingOwned",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),3),(("root.persons[0]","root.things[1]"),"thingOwned",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),3),(("root.persons[0]","root.things[1]"),"thingOwned",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),1),(("root.persons[0]","root.things[1]"),"thingOwned",0))',
+                'replace((("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),1),(("root.persons[0]","root.things[1]"),"thingOwned",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),2),(("root.persons[1]","root.things[0]"),"thingOwned",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),2),(("root.persons[1]","root.things[0]"),"thingOwned",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),0),(("root.persons[1]","root.things[0]"),"thingOwned",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),0),(("root.persons[1]","root.things[0]"),"thingOwned",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),3),(("root.persons[1]","root.things[1]"),"thingOwned",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),3),(("root.persons[1]","root.things[1]"),"thingOwned",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[0]"),1),(("root.persons[1]","root.things[1]"),"thingOwned",0))',
+                'replace((("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","root.persons[1]"),1),(("root.persons[1]","root.things[1]"),"thingOwned",0))',
+                'constraint(("root.persons",2),"lowerbound")',
+                'constraint(("root.rooms",2),"lowerbound")',
+                'constraint(("root.things",2),"lowerbound")',
+                'constraint((0,"!count(root.persons[0])=1||root.persons[0].thingOwned[0].storedInRoom[0].owner[0]=root.persons[0]"),"boolean")',
+                'constraint((0,"!count(root.persons[1])=1||root.persons[1].thingOwned[0].storedInRoom[0].owner[0]=root.persons[1]"),"boolean")',
+                'function("count(root.persons[0])","count","root.persons[0]")',
+                'function("count(root.persons[1])","count","root.persons[1]")',
+                'set("root.persons","root.persons[0]")',
+                'set("root.persons","root.persons[1]")',
+                'set("root.rooms","root.rooms[0]")',
+                'set("root.rooms","root.rooms[1]")',
+                'set("root.things","root.things[0]")',
+                'set("root.things","root.things[1]")',
+                'set("root.persons[0]","root.persons[0]")',
+                'set("root.persons[1]","root.persons[1]")',
+                'binary("root.persons[1].thingOwned[0].storedInRoom[0].owner[0]=root.persons[1]","root.persons[1].thingOwned[0].storedInRoom[0].owner[0]","=","root.persons[1]")',
+                'binary("root.persons[0].thingOwned[0].storedInRoom[0].owner[0]=root.persons[0]","root.persons[0].thingOwned[0].storedInRoom[0].owner[0]","=","root.persons[0]")',
+                'binary("count(root.persons[0])=1","count(root.persons[0])","=","1")',
+                'binary("count(root.persons[1])=1","count(root.persons[1])","=","1")',
+                'binary("!count(root.persons[0])=1||root.persons[0].thingOwned[0].storedInRoom[0].owner[0]=root.persons[0]","!count(root.persons[0])=1","||","root.persons[0].thingOwned[0].storedInRoom[0].owner[0]=root.persons[0]")',
+                'binary("!count(root.persons[1])=1||root.persons[1].thingOwned[0].storedInRoom[0].owner[0]=root.persons[1]","!count(root.persons[1])=1","||","root.persons[1].thingOwned[0].storedInRoom[0].owner[0]=root.persons[1]")',
+                'number("1",1)',
+                'unary("!count(root.persons[0])=1","!","count(root.persons[0])=1")',
+                'unary("!count(root.persons[1])=1","!","count(root.persons[1])=1")',
+                'part("product")',
+                'part("Person")',
+                'part("Thing")',
+                'part("Room")',
+                'user_associate(("root.persons[0]","root.things[0]"))',
+                'user_associate(("root.persons[1]","root.things[1]"))',
+            }
+        )
+    },
     "enumeration": {
         "test": StableModels(
             {
@@ -231,7 +694,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'column(("Wheel","root.wheel[0]"),0,0,"root.wheel[0]")',
             }
         ),
-        "files": ["require_with_number.lp"],
     },
     "require_with_number_ge": {
         "test": StableModels(
@@ -265,7 +727,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'column(("Wheel","root.wheel[0]"),0,0,"root.wheel[0]")',
             }
         ),
-        "files": ["require_with_number_ge.lp"],
     },
     "require_with_constant": {
         "test": StableModels(
@@ -285,7 +746,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("root.wheel[0]=W28","root.wheel[0]","=","W28")',
             }
         ),
-        "files": ["require_with_constant.lp"],
     },
     "require_two_wheels": {
         "test": StableModels(
@@ -331,7 +791,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'column(("Wheel","root.rearWheel[0]"),0,0,"root.rearWheel[0]")',
             }
         ),
-        "files": ["require_two_wheels.lp"],
     },
     "conditional_require": {
         "test": StableModels(
@@ -363,7 +822,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("!root.wheelSupport[0]=True||root.wheel[0]=Small","!root.wheelSupport[0]=True","||","root.wheel[0]=Small")',
             }
         ),
-        "files": ["conditional_require.lp"],
     },
     "multiple_conditions": {
         "test": StableModels(
@@ -407,7 +865,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constant("Red")',
             }
         ),
-        "files": ["multiple_conditions.lp"],
     },
     "require_with_optional_part": {
         "test": StableModels(
@@ -438,7 +895,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'part("A")',
             }
         ),
-        "files": ["require_with_optional_part.lp"],
     },
     "conditional_require_undef": {
         "test": StableModels(
@@ -457,7 +913,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'type("root.Size[0]","size")',
             }
         ),
-        "files": ["conditional_require_undef.lp"],
     },
     "require_multiple_instances": {
         "test": StableModels(
@@ -494,7 +949,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("root.wheel[0].size[0]=W28","root.wheel[0].size[0]","=","W28")',
             }
         ),
-        "files": ["require_multiple_instances.lp"],
     },
     "require_with_partonomy": {
         "test": StableModels(
@@ -526,7 +980,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'number("1",1)',
             }
         ),
-        "files": ["require_with_partonomy.lp"],
     },
     "require_with_partonomy2": {
         "test": StableModels(
@@ -574,7 +1027,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("!count(root.bag[1])=1||root.bag[1].color[0]=Red","!count(root.bag[1])=1","||","root.bag[1].color[0]=Red")',
             }
         ),
-        "files": ["require_with_partonomy2.lp"],
     },
     "require_with_partonomy_multiple_instances": {
         "test": StableModels(
@@ -658,7 +1110,42 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("!count(root.compartment[1])=1||root.compartment[1].bag[1].color[0]=Red","!count(root.compartment[1])=1","||","root.compartment[1].bag[1].color[0]=Red")',
             }
         ),
-        "files": ["require_with_partonomy_multiple_instances.lp"],
+    },
+    "require_parent": {
+        "test": StableModels(
+            {
+                '            discrete("Color")',
+                'domain("Color","Red")',
+                'domain("Color","White")',
+                'domain("Color","Blue")',
+                'type("root","product")',
+                'type("root.color[0]","Color")',
+                'type("root.bag[0]","Bag")',
+                'type("root.bag[0].color[0]","Color")',
+                'index("root.color[0]",0)',
+                'index("root.bag[0]",0)',
+                'index("root.bag[0].color[0]",0)',
+                'parent("root.color[0]","root")',
+                'parent("root.bag[0]","root")',
+                'parent("root.bag[0].color[0]","root.bag[0]")',
+                'constraint(("root.color",1),"lowerbound")',
+                'constraint(("root.bag",1),"lowerbound")',
+                'constraint(("root.bag[0].color",1),"lowerbound")',
+                'constraint((0,"!count(root.bag[0])=1||root.bag[0].color[0]=root.color[0]"),"boolean")',
+                'function("count(root.bag[0])","count","root.bag[0]")',
+                'set("root.color","root.color[0]")',
+                'set("root.bag","root.bag[0]")',
+                'set("root.bag[0].color","root.bag[0].color[0]")',
+                'set("root.bag[0]","root.bag[0]")',
+                'binary("root.bag[0].color[0]=root.color[0]","root.bag[0].color[0]","=","root.color[0]")',
+                'binary("count(root.bag[0])=1","count(root.bag[0])","=","1")',
+                'binary("!count(root.bag[0])=1||root.bag[0].color[0]=root.color[0]","!count(root.bag[0])=1","||","root.bag[0].color[0]=root.color[0]")',
+                'number("1",1)',
+                'unary("!count(root.bag[0])=1","!","count(root.bag[0])=1")',
+                'part("product")',
+                'part("Bag")',
+            }
+        ),
     },
     "combination": {
         "test": StableModels(
@@ -694,7 +1181,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'column((0,"root"),("root.wheelSupport[0]",("root.wheel[0]",())),1,"root.wheel[0]")',
             }
         ),
-        "files": ["combination.lp"],
     },
     "combination_with_structure": {
         "test": StableModels(
@@ -747,7 +1233,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'column((0,"root"),("root.wheelSupport[0]",("root.wheel[0].size[0]",())),1,"root.wheel[0].size[0]")',
             }
         ),
-        "files": ["combination_with_structure.lp"],
     },
     "combination_at_part_with_wildcard": {
         "test": StableModels(
@@ -809,7 +1294,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'column((0,"root.wheel[0]"),("root.wheel[0].size[0]",("root.wheel[0].material[0]",())),1,"root.wheel[0].material[0]")',
             }
         ),
-        "files": ["combination_at_part_with_wildcard.lp"],
     },
     "combination_at_part_multiple_instances": {
         "test": StableModels(
@@ -892,7 +1376,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'column((0,"root.bike[0]"),("root.bike[0].wheel[0]",("root.bike[0].material[0]",())),1,"root.bike[0].material[0]")',
             }
         ),
-        "files": ["combination_at_part_multiple_instances.lp"],
     },
     "simple_numeric_feature": {
         "test": StableModels(
@@ -938,7 +1421,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("root.a[0]+root.b[0]<6","root.a[0]+root.b[0]","<","6")',
             }
         ),
-        "files": ["simple_arithmetic_plus.lp"],
     },
     "simple_arithmetic_minus": {
         "test": StableModels(
@@ -965,7 +1447,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("root.b[0]-root.a[0]>=3","root.b[0]-root.a[0]",">=","3")',
             }
         ),
-        "files": ["simple_arithmetic_minus.lp"],
     },
     "simple_arithmetic_multiplication": {
         "test": StableModels(
@@ -992,7 +1473,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("root.a[0]*root.b[0]>=10","root.a[0]*root.b[0]",">=","10")',
             }
         ),
-        "files": ["simple_arithmetic_multiplication.lp"],
     },
     "simple_arithmetic_plus_default_right": {
         "test": StableModels(
@@ -1011,7 +1491,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint((0,"root.a[0]=2"),"boolean")',
             }
         ),
-        "files": ["simple_arithmetic_plus_default_right.lp"],
     },
     "simple_arithmetic_plus_default_left": {
         "test": StableModels(
@@ -1030,7 +1509,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint((0,"root.b[0]=2"),"boolean")',
             }
         ),
-        "files": ["simple_arithmetic_plus_default_left.lp"],
     },
     "simple_arithmetic_minus_default_right": {
         "test": StableModels(
@@ -1047,7 +1525,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'range("product.a",1,3)',
             }
         ),
-        "files": ["simple_arithmetic_minus_default_right.lp"],
     },
     "simple_arithmetic_minus_default_left": {
         "test": StableModels(
@@ -1064,7 +1541,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'range("product.b",1,3)',
             }
         ),
-        "files": ["simple_arithmetic_minus_default_left.lp"],
     },
     "parentheses": {
         "test": StableModels(
@@ -1090,7 +1566,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("root.a[0]=(root.b[0])","root.a[0]","=","(root.b[0])")',
             }
         ),
-        "files": ["parentheses.lp"],
     },
     "count": {
         "test": StableModels(
@@ -1117,7 +1592,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("count(root.bag)<=2","count(root.bag)","<=","2")',
             }
         ),
-        "files": ["count.lp"],
     },
     "sum": {
         "test": StableModels(
@@ -1145,7 +1619,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("sum(root.x)<=10","sum(root.x)","<=","10")',
             }
         ),
-        "files": ["sum.lp"],
     },
     "simple_default": {
         "test": StableModels(
@@ -1165,7 +1638,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'default("root.color[0]","White")',
             }
         ),
-        "files": ["simple_default.lp"],
     },
     "minimize": {
         "test": StableModels(
@@ -1182,7 +1654,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'minimize("root.totalWeight[0]",0)',
             }
         ),
-        "files": ["minimize.lp"],
     },
     "maximize": {
         "test": StableModels(
@@ -1199,7 +1670,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'maximize("root.totalOutput[0]",1)',
             }
         ),
-        "files": ["maximize.lp"],
     },
     "minimize_non_root_path": {
         "test": StableModels(
@@ -1222,7 +1692,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'minimize("root.bags[0].weight[0]",1)',
             }
         ),
-        "files": ["minimize_non_root_path.lp"],
     },
     "maximize_non_root_path": {
         "test": StableModels(
@@ -1245,7 +1714,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'minimize("root.bags[0].volume[0]",1)',
             }
         ),
-        "files": ["maximize_non_root_path.lp"],
     },
     "minimize_function": {
         "test": StableModels(
@@ -1278,7 +1746,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'minimize("count(root.bags)",0)',
             }
         ),
-        "files": ["minimize_function.lp"],
     },
     "maximize_function": {
         "test": StableModels(
@@ -1313,7 +1780,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'maximize("sum(root.bags.volume)",0)',
             }
         ),
-        "files": ["maximize_function.lp"],
     },
     "set_constant": {
         "test": StableModels({'user_value("root.color[0]","Yellow")'}),
@@ -1477,5 +1943,22 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             }
         ),
         "files": ["unbounded_two_lb.lp"],
+    },
+    "unbounded_singleshot_association": {
+        "test": StableModels(get_model_from_file("unbounded_singleshot_association.lp")),
+        "files": ["unbounded_association.lp"],
+    },
+    "unbounded_multishot_association": {
+        "test": StableModels(
+            get_model_from_file("unbounded_singleshot_association.lp")
+            | {
+                'inc_set("root.elements")',
+                'incremental("association","root.rack[0].elements[0].type[0]","root.elements",("root.rack[0]","Element","elements",1,1))',
+                'incremental("binary","root.rack[0].elements[0].type[0]=A","root.elements",("root.rack[0].elements[0].type[0]=A","root.rack[0].elements[0].type[0]","=","A"))',
+                'incremental("binary","!count(root.rack[0])=1||root.rack[0].elements[0].type[0]=A","root.elements",("!count(root.rack[0])=1||root.rack[0].elements[0].type[0]=A","!count(root.rack[0])=1","||","root.rack[0].elements[0].type[0]=A"))',
+                'incremental("constraint","!count(root.rack[0])=1||root.rack[0].elements[0].type[0]=A","root.elements",((1,"!count(root.rack[0])=1||root.rack[0].elements[0].type[0]=A"),"boolean"))',
+            }
+        ),
+        "files": ["unbounded_association.lp"],
     },
 }

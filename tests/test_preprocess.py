@@ -32,6 +32,19 @@ class TestPreprocess(TestCase):
         self.run_test("structure_nested")
         self.run_test("structure_nested_optional")
 
+    def test_reference(self) -> None:
+        """
+        Test preprocessing COOM references
+        """
+        self.run_test("simple_reference")
+        self.run_test("reference_require")
+        self.run_test("reference_table")
+        self.run_test("reference_count")
+        self.run_test("reference_sum")
+        self.run_test("reference_parent_this")
+        self.run_test("self_reference")
+        self.run_test("double_reference")
+
     def test_enumeration(self) -> None:
         """
         Test preprocessing COOM enumerations.
@@ -58,6 +71,8 @@ class TestPreprocess(TestCase):
         self.run_test("require_with_partonomy")
         self.run_test("require_with_partonomy2")
         self.run_test("require_with_partonomy_multiple_instances")
+
+        self.run_test("require_parent")
 
     def test_combinations_table(self) -> None:
         """
@@ -120,6 +135,7 @@ class TestPreprocess(TestCase):
         self.run_test("unbounded_singleshot_two_lb_zero_max", max_bound=0)
         self.run_test("unbounded_singleshot_two_lb_one_max", max_bound=1)
         self.run_test("unbounded_singleshot_optimize", max_bound=0)
+        self.run_test("unbounded_singleshot_association", max_bound=0)
 
     def test_unbounded_cardinalities_multishot(self) -> None:
         """
@@ -138,3 +154,4 @@ class TestPreprocess(TestCase):
         self.run_test("unbounded_multishot_two_lb_zero_max", max_bound=0, multishot=True)
         self.run_test("unbounded_multishot_two_lb_one_max", max_bound=1, multishot=True)
         self.run_test("unbounded_multishot_optimize", max_bound=0, multishot=True)
+        self.run_test("unbounded_multishot_association", max_bound=0, multishot=True)

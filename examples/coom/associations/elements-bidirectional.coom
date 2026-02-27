@@ -1,0 +1,38 @@
+product{
+    0..4    Module  modules
+    0..2    Element elements
+}
+
+structure Module {
+    ModuleType type
+    reference 0..1 Element  element
+}
+
+structure Element {
+    ElementType type
+    reference 1..2  Module  modules
+}
+
+enumeration ModuleType {
+    I
+    II
+}
+
+enumeration ElementType {
+    A
+    B
+}
+
+behavior Element {
+    // TODO: Constraint needed? Or embedded in encoding?
+    explanation "References are reciprocal"
+    require modules.elements._name = _name   // require root.elements[0].modules[0].elements[0] = root.elements[0]
+
+    explanation "An ElementA requires exactly one ModuleI"
+    condition type = A
+    require count(modules) = 1 && modules.type = I
+
+    explanation "An ElementB requires exactly two ModuleII"
+    condition type = B
+    require count(modules) = 2 && modules.type = II
+}

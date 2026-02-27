@@ -1,6 +1,6 @@
 % Python helper functions
 #script (python)
-from clingo import String, SymbolType
+from clingo import String, SymbolType, Tuple_, Number
 import math
 
 def dotpath(path):
@@ -45,4 +45,15 @@ def aggregate(f,c,p):
 
 def implication(a,b):
     return String(f'{unary(a,String("!")).string}||{b.string}')
+
+def reverse(x):
+    path = Tuple_([])
+    for p in x.string.split("."):
+        if p == "root":
+            continue
+        open_bracket = p.find("[")
+        name = String(p[:open_bracket])
+        idx = Number(int(p[open_bracket+1:-1]))
+        path = Tuple_([name,Tuple_([path,idx])])
+    return path
 #end.

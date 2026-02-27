@@ -2,23 +2,33 @@
 // Friedrich et al.: (Re)configuration based on model generation (2011)
 
 product {
-    num  0-10      numRooms
-    3    Person    person
+    0..*    Person  persons
+    0..*    Room    rooms
 }
 
 structure Person {
-    num   0-10    numLongThings
-    num   0-10    numShortThings
-    0..*  Room    room
+                0..*    Thing       things
+    reference   0..*    Room        rooms
+
+}
+
+structure Thing {
+                        ThingType   type
+    reference   1..1    Cabinet     storedInCabinet
+}
+enumeration ThingType {
+    Short
+    Long
 }
 
 structure Room {
-   0..4   Cabinet   cabinet
+                0..4    Cabinet     cabinets
+   reference    1..1    Person      owner
 }
 
 structure Cabinet {
-          CabinetType type
-    0..5  Thing       thing
+                    CabinetType     type
+    reference 0..5  Thing           things
 }
 
 enumeration CabinetType {
@@ -28,34 +38,18 @@ enumeration CabinetType {
     High  = ( 2 )
 }
 
-enumeration Thing {
-    attribute num isShort
-    attribute num isLong
-
-    Short = ( 1 0 )
-    Long  = ( 0 1 )
-}
-
-behavior {
-    explanation "In total there can be at most numRooms many rooms."
-    require count(person.room) <= numRooms
-}
-
-behavior Person {
-    explanation "The number of short things of a person must match the requirement."
-    require numShortThings = sum(room.cabinet.thing.isShort)
-
-    explanation "The number of long things of a person must match the requirement."
-    require numLongThings  = sum(room.cabinet.thing.isLong)
-}
-
 behavior Room {
     explanation "The cabinets in a room can take up at most 4 spaces."
-    require 4 >= sum(cabinet.type.space)
+    require sum(cabinets.type.space) <= 4
 }
 
 behavior Cabinet {
     explanation "A long thing can only be put into a high cabinet."
-    condition sum(thing.isLong) > 1
+    condition things.type = Long
     require type = High
+}
+
+behavior Person {
+    explanation "Each thing has to be stored in a room owned by the thing's owner"
+    require things.storedInCabinet._parent.owner = this
 }

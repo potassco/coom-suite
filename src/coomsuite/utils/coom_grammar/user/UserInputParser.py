@@ -1,4 +1,4 @@
-# Generated from /home/heuer/tools/coom-suite/src/coomsuite/utils/coom_grammar/user/UserInput.g4 by ANTLR 4.13.2
+# Generated from UserInput.g4 by ANTLR 4.13.2
 # encoding: utf-8
 from antlr4 import *
 from io import StringIO
@@ -10,38 +10,40 @@ else:
 
 def serializedATN():
     return [
-        4,1,23,101,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
-        6,2,7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,1,0,1,0,5,0,27,8,0,
-        10,0,12,0,30,9,0,1,0,1,0,1,1,1,1,1,1,1,1,5,1,38,8,1,10,1,12,1,41,
-        9,1,1,1,1,1,1,2,1,2,3,2,47,8,2,1,3,1,3,1,3,1,3,1,3,1,4,1,4,1,4,1,
-        5,3,5,58,8,5,1,5,1,5,1,6,1,6,1,6,5,6,65,8,6,10,6,12,6,68,9,6,1,7,
-        1,7,1,7,1,7,1,7,3,7,75,8,7,1,7,1,7,3,7,79,8,7,1,8,1,8,1,8,1,8,3,
-        8,85,8,8,3,8,87,8,8,1,9,1,9,1,10,1,10,3,10,93,8,10,1,11,1,11,1,11,
-        1,11,3,11,99,8,11,1,11,0,0,12,0,2,4,6,8,10,12,14,16,18,20,22,0,1,
-        2,0,8,8,18,19,102,0,28,1,0,0,0,2,33,1,0,0,0,4,46,1,0,0,0,6,48,1,
-        0,0,0,8,53,1,0,0,0,10,57,1,0,0,0,12,61,1,0,0,0,14,69,1,0,0,0,16,
-        86,1,0,0,0,18,88,1,0,0,0,20,92,1,0,0,0,22,98,1,0,0,0,24,27,3,2,1,
-        0,25,27,3,4,2,0,26,24,1,0,0,0,26,25,1,0,0,0,27,30,1,0,0,0,28,26,
-        1,0,0,0,28,29,1,0,0,0,29,31,1,0,0,0,30,28,1,0,0,0,31,32,5,0,0,1,
-        32,1,1,0,0,0,33,34,5,1,0,0,34,35,3,12,6,0,35,39,5,2,0,0,36,38,3,
-        4,2,0,37,36,1,0,0,0,38,41,1,0,0,0,39,37,1,0,0,0,39,40,1,0,0,0,40,
-        42,1,0,0,0,41,39,1,0,0,0,42,43,5,3,0,0,43,3,1,0,0,0,44,47,3,6,3,
-        0,45,47,3,8,4,0,46,44,1,0,0,0,46,45,1,0,0,0,47,5,1,0,0,0,48,49,5,
-        4,0,0,49,50,3,12,6,0,50,51,5,5,0,0,51,52,3,22,11,0,52,7,1,0,0,0,
-        53,54,5,6,0,0,54,55,3,12,6,0,55,9,1,0,0,0,56,58,5,7,0,0,57,56,1,
-        0,0,0,57,58,1,0,0,0,58,59,1,0,0,0,59,60,7,0,0,0,60,11,1,0,0,0,61,
-        66,3,14,7,0,62,63,5,9,0,0,63,65,3,14,7,0,64,62,1,0,0,0,65,68,1,0,
-        0,0,66,64,1,0,0,0,66,67,1,0,0,0,67,13,1,0,0,0,68,66,1,0,0,0,69,78,
-        3,18,9,0,70,71,5,10,0,0,71,74,3,16,8,0,72,73,5,11,0,0,73,75,3,16,
-        8,0,74,72,1,0,0,0,74,75,1,0,0,0,75,76,1,0,0,0,76,77,5,12,0,0,77,
-        79,1,0,0,0,78,70,1,0,0,0,78,79,1,0,0,0,79,15,1,0,0,0,80,87,5,18,
-        0,0,81,84,5,13,0,0,82,83,5,7,0,0,83,85,5,18,0,0,84,82,1,0,0,0,84,
-        85,1,0,0,0,85,87,1,0,0,0,86,80,1,0,0,0,86,81,1,0,0,0,87,17,1,0,0,
-        0,88,89,5,17,0,0,89,19,1,0,0,0,90,93,5,14,0,0,91,93,6,10,-1,0,92,
-        90,1,0,0,0,92,91,1,0,0,0,93,21,1,0,0,0,94,99,5,15,0,0,95,99,5,16,
-        0,0,96,99,3,10,5,0,97,99,3,12,6,0,98,94,1,0,0,0,98,95,1,0,0,0,98,
-        96,1,0,0,0,98,97,1,0,0,0,99,23,1,0,0,0,12,26,28,39,46,57,66,74,78,
-        84,86,92,98
+        4,1,24,108,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
+        6,2,7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,1,0,1,0,
+        5,0,29,8,0,10,0,12,0,32,9,0,1,0,1,0,1,1,1,1,1,1,1,1,5,1,40,8,1,10,
+        1,12,1,43,9,1,1,1,1,1,1,2,1,2,1,2,3,2,50,8,2,1,3,1,3,1,3,1,3,1,3,
+        1,4,1,4,1,4,1,5,1,5,1,5,1,5,1,6,3,6,65,8,6,1,6,1,6,1,7,1,7,1,7,5,
+        7,72,8,7,10,7,12,7,75,9,7,1,8,1,8,1,8,1,8,1,8,3,8,82,8,8,1,8,1,8,
+        3,8,86,8,8,1,9,1,9,1,9,1,9,3,9,92,8,9,3,9,94,8,9,1,10,1,10,1,11,
+        1,11,3,11,100,8,11,1,12,1,12,1,12,1,12,3,12,106,8,12,1,12,0,0,13,
+        0,2,4,6,8,10,12,14,16,18,20,22,24,0,1,2,0,9,9,19,20,109,0,30,1,0,
+        0,0,2,35,1,0,0,0,4,49,1,0,0,0,6,51,1,0,0,0,8,56,1,0,0,0,10,59,1,
+        0,0,0,12,64,1,0,0,0,14,68,1,0,0,0,16,76,1,0,0,0,18,93,1,0,0,0,20,
+        95,1,0,0,0,22,99,1,0,0,0,24,105,1,0,0,0,26,29,3,2,1,0,27,29,3,4,
+        2,0,28,26,1,0,0,0,28,27,1,0,0,0,29,32,1,0,0,0,30,28,1,0,0,0,30,31,
+        1,0,0,0,31,33,1,0,0,0,32,30,1,0,0,0,33,34,5,0,0,1,34,1,1,0,0,0,35,
+        36,5,1,0,0,36,37,3,14,7,0,37,41,5,2,0,0,38,40,3,4,2,0,39,38,1,0,
+        0,0,40,43,1,0,0,0,41,39,1,0,0,0,41,42,1,0,0,0,42,44,1,0,0,0,43,41,
+        1,0,0,0,44,45,5,3,0,0,45,3,1,0,0,0,46,50,3,6,3,0,47,50,3,8,4,0,48,
+        50,3,10,5,0,49,46,1,0,0,0,49,47,1,0,0,0,49,48,1,0,0,0,50,5,1,0,0,
+        0,51,52,5,4,0,0,52,53,3,14,7,0,53,54,5,5,0,0,54,55,3,24,12,0,55,
+        7,1,0,0,0,56,57,5,6,0,0,57,58,3,14,7,0,58,9,1,0,0,0,59,60,5,7,0,
+        0,60,61,3,14,7,0,61,62,3,14,7,0,62,11,1,0,0,0,63,65,5,8,0,0,64,63,
+        1,0,0,0,64,65,1,0,0,0,65,66,1,0,0,0,66,67,7,0,0,0,67,13,1,0,0,0,
+        68,73,3,16,8,0,69,70,5,10,0,0,70,72,3,16,8,0,71,69,1,0,0,0,72,75,
+        1,0,0,0,73,71,1,0,0,0,73,74,1,0,0,0,74,15,1,0,0,0,75,73,1,0,0,0,
+        76,85,3,20,10,0,77,78,5,11,0,0,78,81,3,18,9,0,79,80,5,12,0,0,80,
+        82,3,18,9,0,81,79,1,0,0,0,81,82,1,0,0,0,82,83,1,0,0,0,83,84,5,13,
+        0,0,84,86,1,0,0,0,85,77,1,0,0,0,85,86,1,0,0,0,86,17,1,0,0,0,87,94,
+        5,19,0,0,88,91,5,14,0,0,89,90,5,8,0,0,90,92,5,19,0,0,91,89,1,0,0,
+        0,91,92,1,0,0,0,92,94,1,0,0,0,93,87,1,0,0,0,93,88,1,0,0,0,94,19,
+        1,0,0,0,95,96,5,18,0,0,96,21,1,0,0,0,97,100,5,15,0,0,98,100,6,11,
+        -1,0,99,97,1,0,0,0,99,98,1,0,0,0,100,23,1,0,0,0,101,106,5,16,0,0,
+        102,106,5,17,0,0,103,106,3,12,6,0,104,106,3,14,7,0,105,101,1,0,0,
+        0,105,102,1,0,0,0,105,103,1,0,0,0,105,104,1,0,0,0,106,25,1,0,0,0,
+        12,28,30,41,49,64,73,81,85,91,93,99,105
     ]
 
 class UserInputParser ( Parser ):
@@ -55,32 +57,34 @@ class UserInputParser ( Parser ):
     sharedContextCache = PredictionContextCache()
 
     literalNames = [ "<INVALID>", "'blockinput'", "'{'", "'}'", "'set'", 
-                     "'='", "'add'", "'-'", "'\\u221E'", "'.'", "'['", "'..'", 
-                     "']'", "'last'", "';'", "'true'", "'false'" ]
+                     "'='", "'add'", "'associate'", "'-'", "'\\u221E'", 
+                     "'.'", "'['", "'..'", "']'", "'last'", "';'", "'true'", 
+                     "'false'" ]
 
     symbolicNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                       "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                       "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
                       "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "NAME", "INTEGER", "FLOATING", "NEWLINE", 
-                      "WHITESPACE", "COMMENT", "MULTILINE_COMMENT" ]
+                      "<INVALID>", "<INVALID>", "NAME", "INTEGER", "FLOATING", 
+                      "NEWLINE", "WHITESPACE", "COMMENT", "MULTILINE_COMMENT" ]
 
     RULE_user_input = 0
     RULE_input_block = 1
     RULE_input_operation = 2
     RULE_set_value = 3
     RULE_add_instance = 4
-    RULE_floating = 5
-    RULE_path = 6
-    RULE_path_item = 7
-    RULE_path_index = 8
-    RULE_name = 9
-    RULE_stmt_end = 10
-    RULE_formula_atom = 11
+    RULE_associate = 5
+    RULE_floating = 6
+    RULE_path = 7
+    RULE_path_item = 8
+    RULE_path_index = 9
+    RULE_name = 10
+    RULE_stmt_end = 11
+    RULE_formula_atom = 12
 
     ruleNames =  [ "user_input", "input_block", "input_operation", "set_value", 
-                   "add_instance", "floating", "path", "path_item", "path_index", 
-                   "name", "stmt_end", "formula_atom" ]
+                   "add_instance", "associate", "floating", "path", "path_item", 
+                   "path_index", "name", "stmt_end", "formula_atom" ]
 
     EOF = Token.EOF
     T__0=1
@@ -99,13 +103,14 @@ class UserInputParser ( Parser ):
     T__13=14
     T__14=15
     T__15=16
-    NAME=17
-    INTEGER=18
-    FLOATING=19
-    NEWLINE=20
-    WHITESPACE=21
-    COMMENT=22
-    MULTILINE_COMMENT=23
+    T__16=17
+    NAME=18
+    INTEGER=19
+    FLOATING=20
+    NEWLINE=21
+    WHITESPACE=22
+    COMMENT=23
+    MULTILINE_COMMENT=24
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)
@@ -183,29 +188,29 @@ class UserInputParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 28
+            self.state = 30
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & 82) != 0):
-                self.state = 26
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & 210) != 0):
+                self.state = 28
                 self._errHandler.sync(self)
                 token = self._input.LA(1)
                 if token in [1]:
-                    self.state = 24
+                    self.state = 26
                     self.input_block()
                     pass
-                elif token in [4, 6]:
-                    self.state = 25
+                elif token in [4, 6, 7]:
+                    self.state = 27
                     self.input_operation()
                     pass
                 else:
                     raise NoViableAltException(self)
 
-                self.state = 30
+                self.state = 32
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
-            self.state = 31
+            self.state = 33
             self.match(UserInputParser.EOF)
         except RecognitionException as re:
             localctx.exception = re
@@ -261,23 +266,23 @@ class UserInputParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 33
-            self.match(UserInputParser.T__0)
-            self.state = 34
-            self.path()
             self.state = 35
+            self.match(UserInputParser.T__0)
+            self.state = 36
+            self.path()
+            self.state = 37
             self.match(UserInputParser.T__1)
-            self.state = 39
+            self.state = 41
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while _la==4 or _la==6:
-                self.state = 36
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & 208) != 0):
+                self.state = 38
                 self.input_operation()
-                self.state = 41
+                self.state = 43
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
-            self.state = 42
+            self.state = 44
             self.match(UserInputParser.T__2)
         except RecognitionException as re:
             localctx.exception = re
@@ -301,6 +306,10 @@ class UserInputParser ( Parser ):
 
         def add_instance(self):
             return self.getTypedRuleContext(UserInputParser.Add_instanceContext,0)
+
+
+        def associate(self):
+            return self.getTypedRuleContext(UserInputParser.AssociateContext,0)
 
 
         def getRuleIndex(self):
@@ -328,18 +337,23 @@ class UserInputParser ( Parser ):
         localctx = UserInputParser.Input_operationContext(self, self._ctx, self.state)
         self.enterRule(localctx, 4, self.RULE_input_operation)
         try:
-            self.state = 46
+            self.state = 49
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [4]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 44
+                self.state = 46
                 self.set_value()
                 pass
             elif token in [6]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 45
+                self.state = 47
                 self.add_instance()
+                pass
+            elif token in [7]:
+                self.enterOuterAlt(localctx, 3)
+                self.state = 48
+                self.associate()
                 pass
             else:
                 raise NoViableAltException(self)
@@ -395,13 +409,13 @@ class UserInputParser ( Parser ):
         self.enterRule(localctx, 6, self.RULE_set_value)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 48
-            localctx.op = self.match(UserInputParser.T__3)
-            self.state = 49
-            self.path()
-            self.state = 50
-            self.match(UserInputParser.T__4)
             self.state = 51
+            localctx.op = self.match(UserInputParser.T__3)
+            self.state = 52
+            self.path()
+            self.state = 53
+            self.match(UserInputParser.T__4)
+            self.state = 54
             self.formula_atom()
         except RecognitionException as re:
             localctx.exception = re
@@ -450,9 +464,65 @@ class UserInputParser ( Parser ):
         self.enterRule(localctx, 8, self.RULE_add_instance)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 53
+            self.state = 56
             localctx.op = self.match(UserInputParser.T__5)
-            self.state = 54
+            self.state = 57
+            self.path()
+        except RecognitionException as re:
+            localctx.exception = re
+            self._errHandler.reportError(self, re)
+            self._errHandler.recover(self, re)
+        finally:
+            self.exitRule()
+        return localctx
+
+
+    class AssociateContext(ParserRuleContext):
+        __slots__ = 'parser'
+
+        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
+            super().__init__(parent, invokingState)
+            self.parser = parser
+            self.op = None # Token
+
+        def path(self, i:int=None):
+            if i is None:
+                return self.getTypedRuleContexts(UserInputParser.PathContext)
+            else:
+                return self.getTypedRuleContext(UserInputParser.PathContext,i)
+
+
+        def getRuleIndex(self):
+            return UserInputParser.RULE_associate
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterAssociate" ):
+                listener.enterAssociate(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitAssociate" ):
+                listener.exitAssociate(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitAssociate" ):
+                return visitor.visitAssociate(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+
+
+    def associate(self):
+
+        localctx = UserInputParser.AssociateContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 10, self.RULE_associate)
+        try:
+            self.enterOuterAlt(localctx, 1)
+            self.state = 59
+            localctx.op = self.match(UserInputParser.T__6)
+            self.state = 60
+            self.path()
+            self.state = 61
             self.path()
         except RecognitionException as re:
             localctx.exception = re
@@ -499,21 +569,21 @@ class UserInputParser ( Parser ):
     def floating(self):
 
         localctx = UserInputParser.FloatingContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 10, self.RULE_floating)
+        self.enterRule(localctx, 12, self.RULE_floating)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 57
+            self.state = 64
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==7:
-                self.state = 56
-                self.match(UserInputParser.T__6)
+            if _la==8:
+                self.state = 63
+                self.match(UserInputParser.T__7)
 
 
-            self.state = 59
+            self.state = 66
             _la = self._input.LA(1)
-            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & 786688) != 0)):
+            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & 1573376) != 0)):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -564,21 +634,21 @@ class UserInputParser ( Parser ):
     def path(self):
 
         localctx = UserInputParser.PathContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 12, self.RULE_path)
+        self.enterRule(localctx, 14, self.RULE_path)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 61
+            self.state = 68
             self.path_item()
-            self.state = 66
+            self.state = 73
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while _la==9:
-                self.state = 62
-                self.match(UserInputParser.T__8)
-                self.state = 63
+            while _la==10:
+                self.state = 69
+                self.match(UserInputParser.T__9)
+                self.state = 70
                 self.path_item()
-                self.state = 68
+                self.state = 75
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
@@ -632,32 +702,32 @@ class UserInputParser ( Parser ):
     def path_item(self):
 
         localctx = UserInputParser.Path_itemContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 14, self.RULE_path_item)
+        self.enterRule(localctx, 16, self.RULE_path_item)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 69
+            self.state = 76
             self.name()
-            self.state = 78
+            self.state = 85
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if _la==10:
-                self.state = 70
-                self.match(UserInputParser.T__9)
-                self.state = 71
+            if _la==11:
+                self.state = 77
+                self.match(UserInputParser.T__10)
+                self.state = 78
                 self.path_index()
-                self.state = 74
+                self.state = 81
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==11:
-                    self.state = 72
-                    self.match(UserInputParser.T__10)
-                    self.state = 73
+                if _la==12:
+                    self.state = 79
+                    self.match(UserInputParser.T__11)
+                    self.state = 80
                     self.path_index()
 
 
-                self.state = 76
-                self.match(UserInputParser.T__11)
+                self.state = 83
+                self.match(UserInputParser.T__12)
 
 
         except RecognitionException as re:
@@ -702,28 +772,28 @@ class UserInputParser ( Parser ):
     def path_index(self):
 
         localctx = UserInputParser.Path_indexContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 16, self.RULE_path_index)
+        self.enterRule(localctx, 18, self.RULE_path_index)
         self._la = 0 # Token type
         try:
-            self.state = 86
+            self.state = 93
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [18]:
+            if token in [19]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 80
+                self.state = 87
                 self.match(UserInputParser.INTEGER)
                 pass
-            elif token in [13]:
+            elif token in [14]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 81
-                self.match(UserInputParser.T__12)
-                self.state = 84
+                self.state = 88
+                self.match(UserInputParser.T__13)
+                self.state = 91
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==7:
-                    self.state = 82
-                    self.match(UserInputParser.T__6)
-                    self.state = 83
+                if _la==8:
+                    self.state = 89
+                    self.match(UserInputParser.T__7)
+                    self.state = 90
                     self.match(UserInputParser.INTEGER)
 
 
@@ -773,10 +843,10 @@ class UserInputParser ( Parser ):
     def name(self):
 
         localctx = UserInputParser.NameContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 18, self.RULE_name)
+        self.enterRule(localctx, 20, self.RULE_name)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 88
+            self.state = 95
             self.match(UserInputParser.NAME)
         except RecognitionException as re:
             localctx.exception = re
@@ -818,15 +888,15 @@ class UserInputParser ( Parser ):
     def stmt_end(self):
 
         localctx = UserInputParser.Stmt_endContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 20, self.RULE_stmt_end)
+        self.enterRule(localctx, 22, self.RULE_stmt_end)
         try:
-            self.state = 92
+            self.state = 99
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [14]:
+            if token in [15]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 90
-                self.match(UserInputParser.T__13)
+                self.state = 97
+                self.match(UserInputParser.T__14)
                 pass
             elif token in [-1]:
                 self.enterOuterAlt(localctx, 2)
@@ -886,29 +956,29 @@ class UserInputParser ( Parser ):
     def formula_atom(self):
 
         localctx = UserInputParser.Formula_atomContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 22, self.RULE_formula_atom)
+        self.enterRule(localctx, 24, self.RULE_formula_atom)
         try:
-            self.state = 98
+            self.state = 105
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [15]:
+            if token in [16]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 94
-                localctx.atom_true = self.match(UserInputParser.T__14)
-                pass
-            elif token in [16]:
-                self.enterOuterAlt(localctx, 2)
-                self.state = 95
-                localctx.atom_false = self.match(UserInputParser.T__15)
-                pass
-            elif token in [7, 8, 18, 19]:
-                self.enterOuterAlt(localctx, 3)
-                self.state = 96
-                localctx.atom_num = self.floating()
+                self.state = 101
+                localctx.atom_true = self.match(UserInputParser.T__15)
                 pass
             elif token in [17]:
+                self.enterOuterAlt(localctx, 2)
+                self.state = 102
+                localctx.atom_false = self.match(UserInputParser.T__16)
+                pass
+            elif token in [8, 9, 19, 20]:
+                self.enterOuterAlt(localctx, 3)
+                self.state = 103
+                localctx.atom_num = self.floating()
+                pass
+            elif token in [18]:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 97
+                self.state = 104
                 localctx.atom_path = self.path()
                 pass
             else:

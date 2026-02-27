@@ -4,3 +4,5 @@
 
 #show value(X,V) : value(X,V), type(X,T), discrete(T).
 &show { X : type(X,T), integer(T) }.
+
+#show associate/3.

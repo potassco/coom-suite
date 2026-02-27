@@ -11,7 +11,8 @@ from coomsuite import solve
 from . import get_bound_iter, next_bound_converge
 from .multi_application import COOMMultiSolverApp
 
-ret_dict = {0: "UNKNOWN", 1: "INTERRUPT", 10: "SAT", 20: "UNSAT", 33: "MEMORY", 65: "ERROR", 128: "NO_RUN"}
+# Reference for exit code: https://github.com/potassco/clasp/issues/42#issuecomment-459981038
+ret_dict = {0: "UNKNOWN", 1: "INTERRUPT", 10: "SAT", 20: "UNSAT", 30: "OPT", 33: "MEMORY", 65: "ERROR", 128: "NO_RUN"}
 
 
 class BoundSolver:

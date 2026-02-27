@@ -35,7 +35,8 @@ def unpack_test(test_name: str, tests: dict[str, Any], flingo: bool = False) -> 
     """
     test_dict = tests[test_name]
     program = test_dict.get("program", None)
-    files = test_dict.get("files", None)
+    files = test_dict.get("files", [f"{test_name}.lp"]) if program is None else None
+
     if flingo:
         test = test_dict.get("ftest", test_dict["test"])
     else:
@@ -72,7 +73,7 @@ def run_test(
 
     Args:
         test (clintest.test.Test): The clintest test
-        files (Optional[List[str]], optional): List of files saved in examples/tests
+        files (Optional[List[str]], optional): Test input filename saved in examples/tests
         program (Optional[str], optional): A clingo program. Defaults to ""
         ctl_args (Optional[List[str]], optional): List of arguments for clingo.Control. Defaults to [].
     """
