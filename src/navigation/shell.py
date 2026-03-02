@@ -2,8 +2,10 @@
 Module implementing a command line interface for the navigatior class.
 """
 
+# pylint: disable=unused-argument
+
 import argparse
-import cmd
+from cmd import Cmd
 
 from navigation.navigator import Navigator
 from navigation.utils.output import (
@@ -17,7 +19,7 @@ from navigation.utils.output import (
 from navigation.utils.parsing import _parse_args, _parse_known_args, _parse_models
 
 
-class NavigatorShell(cmd.Cmd):
+class NavigatorShell(Cmd):  # pylint: disable=too-many-public-methods
     """
     Interactive shell for navigating solutions of logic programs.
     """
@@ -45,6 +47,7 @@ class NavigatorShell(cmd.Cmd):
             return self.onecmd(new_line)
 
         print(f"unknown command {cmd}")
+        return None
 
     def do_load(self, arg):
         """load FILE - load a logic program"""
@@ -170,7 +173,7 @@ class NavigatorShell(cmd.Cmd):
         parser.add_argument("atom")
         ns = _parse_args(parser, arg)
         if ns:
-            self.nav.add_assumption(ns.atom, False if ns.sign == "not" else True)
+            self.nav.add_assumption(ns.atom, ns.sign != "not")
 
     def do_remove_assumption(self, arg):
         """remove_assumption [not] ATOM - remove an assumption"""
@@ -179,7 +182,7 @@ class NavigatorShell(cmd.Cmd):
         parser.add_argument("atom")
         ns = _parse_args(parser, arg)
         if ns:
-            self.nav.remove_assumption(ns.atom, False if ns.sign == "not" else True)
+            self.nav.remove_assumption(ns.atom, ns.sign != "not")
 
     def do_clear_assumptions(self, arg):
         """clear_assumptions - clear all assumptions"""

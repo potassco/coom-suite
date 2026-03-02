@@ -8,6 +8,7 @@ from navigation.shell import NavigatorShell
 
 
 def main():
+    """Start the navigation shell."""
     parser = argparse.ArgumentParser(prog="navigation shell")
     parser.add_argument("program", nargs="?")
     parser.add_argument("--script")

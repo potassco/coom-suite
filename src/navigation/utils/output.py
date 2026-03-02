@@ -2,11 +2,10 @@
 Output utilities.
 """
 
-from clingo.solving import Model
 from clingo.symbol import Symbol
 
 
-def _model_as_str(model: Model) -> str:
+def _model_as_str(model: set[Symbol]) -> str:
     """Convert a model to its (sorted) string representation."""
     atoms = []
     for a in model:
@@ -16,11 +15,15 @@ def _model_as_str(model: Model) -> str:
     return "{" + ", ".join(atoms) + "}"
 
 
-def print_model(model: Model):
-    print(_model_as_str(model))
+def print_model(model: set[Symbol] | None) -> None:
+    """Print a single model."""
+    if not model:
+        print("UNSAT")
+    else:
+        print(_model_as_str(model))
 
 
-def print_models(models: list[Model]):
+def print_models(models: list[set[Symbol]]) -> None:
     """Print a list of models."""
     if len(models) == 0:
         print("UNSAT")
@@ -29,12 +32,13 @@ def print_models(models: list[Model]):
         print(f"Model {i+1}: {_model_as_str(m)}")
 
 
-def _weights_as_str(weights: tuple[int | float, int | float]):
+def _weights_as_str(weights: tuple[int, int] | tuple[float, float]) -> str:
     """Convert a pair of weights into a string."""
     return f"+={weights[0]:.2f} ; -={weights[1]:.2f}"
 
 
-def print_weight(weight):
+def print_weight(weight: tuple[int, int] | tuple[float, float]) -> None:
+    """Print the weight of a facet."""
     print(_weights_as_str(weight))
 
 
@@ -54,7 +58,8 @@ def print_assumptions(assumptions: set[tuple[Symbol, bool]]) -> None:
     print("{" + ", ".join(assumptions_str) + "}")
 
 
-def print_rules(rules):
+def print_rules(rules: dict[str, bool]) -> None:
+    """Print rules and their activation status."""
     rules_str = []
     for r in rules:
         rules_str.append(f"{r}: {rules[r]}")

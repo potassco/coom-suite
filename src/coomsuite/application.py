@@ -16,6 +16,8 @@ from fclingo.__main__ import Statistic
 from fclingo.parsing import THEORY, HeadBodyTransformer
 from fclingo.translator import AUX, Translator
 
+from navigation.coom_shell import CoomShell
+
 from .utils import asp2coom, get_encoding
 from .utils.logging import get_logger
 
@@ -157,6 +159,9 @@ class COOMSolverApp(Application):
             control.load(show)
             control.ground()
             control.solve()
+
+            shell = CoomShell(control, True)
+            shell.cmdloop()
 
         elif self._options["solver"] == "flingo":
             self._propagator.register(control)
