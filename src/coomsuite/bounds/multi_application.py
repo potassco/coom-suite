@@ -235,6 +235,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             "minimize",
             "maximize",
             "association",
+            "association_match",
             "replace",
         ]:
             raise ValueError(f"unknown new fact (no corresponding program part exists): {fact}")

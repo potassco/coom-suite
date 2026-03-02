@@ -8,7 +8,7 @@ product {
 
 structure Person {
                 0..*    Thing       things
-    reference   0..*    Room        rooms
+    reference   0..*    Room        roomsOwned
 
 }
 
@@ -50,6 +50,6 @@ behavior Cabinet {
 }
 
 behavior Person {
-    explanation "Each thing has to be stored in a room owned by the thing's owner"
+    explanation "Each thing has to be stored in a cabinet in room owned by the thing's owner"
     require things.storedInCabinet._parent.owner = this
 }
