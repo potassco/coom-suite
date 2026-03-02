@@ -17,24 +17,24 @@ formula_context(F',Ctx) :- coom_binary(F',_,_,_), coom_unary(F,_,F'),   formula_
 formula_context(F',Ctx) :- coom_unary(F',_,_),    coom_unary(F,_,F'),   formula_context(F,Ctx).
 
 % Instantiate binaries and unaries
-binary(X,F,XL,Op,XR) :-
+binary(X,F,@binary(XL,Op,XR),XL,Op,XR) :-
     coom_binary(F,L,Op,R),
     formula_context(F,C),
     type_aux(X,C),
     path_to(X,L,XL),
     path_to(X,R,XR).
 
-unary(X,F,Op,X') :-
+unary(X,F,@unary(X',Op),Op,X') :-
     coom_unary(F,Op,F'),
     formula_context(F,C),
     type_aux(X,C),
     path_to(X,F',X').
-#show binary/5.
-% Generate "ground" formulas
-ground_formula(X,F,@binary(XL,Op,XR)) :- binary(X,F,XL,Op,XR).
-ground_formula(X,F,@unary(X',Op))     :- unary(X,F,Op,X').
 
-% Default binaries for arithmetics if one side is undefined
+% Generate "ground" formulas
+ground_formula(X,F,G) :- binary(X,F,G,_,_,_).
+ground_formula(X,F,G) :- unary(X,F,G,_,_).
+
+% Default binaries for arithmetics if one side is undefined: ignore the undefined term
 % TODO: Does this always give desired behavior?
 ground_formula(X,F,XL) :- coom_binary(F,L,"+",R),
                           formula_context(F,C),
@@ -43,16 +43,19 @@ ground_formula(X,F,XL) :- coom_binary(F,L,"+",R),
 ground_formula(X,F,XR) :- coom_binary(F,L,"+",R),
                           formula_context(F,C),
                           type_aux(X,C), not path_to(X,L,_), path_to(X,R,XR).
+% TODO: Extend to -,*,/,...
 
 
 % Instantiate functions
 function(X,F,T,P) :- coom_function(C,F,T,P), type_aux(X,C).
 
 % Instantiate conditional requirements
+% Collect all "ground" conditions
 conditions_aux(C,X,0,(G,()))  :- coom_context(C,Ctx), type_aux(X,Ctx), coom_condition(C,0,F), ground_formula(X,F,G).
 conditions_aux(C,X,I+1,(G,T)) :- conditions_aux(C,X,I,T), coom_condition(C,I+1,F), ground_formula(X,F,G).
 conditions_aux(C,X,T)         :- conditions_aux(C,X,I,T), not coom_condition(C,I+1,_).
 
+% Combine all conditions in one conjunction
 conditions_binary(C,X,@binary(L,"&&",R),L,R,T) :- conditions_aux(C,X,(R,(L,T))).
 conditions_binary(C,X,@binary(L,"&&",R),L,R,T) :- conditions_binary(C,X,R,_,_,(L,T)).
 
