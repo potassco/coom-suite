@@ -50,6 +50,7 @@ inc_set(P) :- replace(_,((_,X),_,_)), set(P,X), inc_obj(X).
 
 #show inc_set/1.
 
+% incremental(T,N,S,Arg) : expression of type T with name N and arguments Args is incremental due to dependency on the incremental set S
 % incremental expressions are defined recursively
 % - base case: functions over incremental sets are incremental
 incremental("function",  X,P,(X,F,P))            :- function(X,F,P),              inc_set(P).
