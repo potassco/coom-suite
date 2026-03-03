@@ -134,7 +134,16 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                 and args[0].string in self._incremental_expressions
             )
 
-            if is_incremental_constraint or is_incremental_expression:
+            is_incremental_association = name == "association" and str(args[2].string) in self._incremental_expressions
+
+            is_incremental_replace = name == "replace" and args[1].arguments[1].string in self._incremental_expressions
+
+            if (
+                is_incremental_constraint
+                or is_incremental_expression
+                or is_incremental_association
+                or is_incremental_replace
+            ):
                 inc_expressions.append((name, args))
                 # add the fact to the processed_facts
                 self._processed_facts.add(fact)

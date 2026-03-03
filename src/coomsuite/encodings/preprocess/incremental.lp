@@ -5,6 +5,8 @@ inc_obj(@dotpath((F,(X,I)))) :- coom_feature(Ctx,F,T,Min,#sup), type_aux(X,Ctx),
 % - the current max bound is 0,
 % instantiate a dummy incremental object
 inc_obj(@dotpath((F,(X,-1)))) :- coom_feature(Ctx,F,T,0,#sup),  type_aux(X,Ctx), max_bound = 0.
+% any object that is replaced (due to an association) by an incremental object is also incremental
+inc_obj(X) :- replace((X,Y),_), inc_obj(Y).
 
 % helper rules to instantiate the subtree starting from a dummy incremental object
 % - base case: checking for 0..* and max bound 0
@@ -44,6 +46,7 @@ inc_set(P) :- function(_,_,P),   path_step(P,X), inc_obj(X).
 inc_set(P) :- table_column(_,P), path_step(P,X), inc_obj(X).
 %   or in an association
 inc_set(P) :- replace(_,((_,X),_,_)), set(P,X), inc_obj(X).
+% TODO: what about association to unbounded object but empty set?
 
 #show inc_set/1.
 
@@ -52,8 +55,13 @@ inc_set(P) :- replace(_,((_,X),_,_)), set(P,X), inc_obj(X).
 incremental("function",  X,P,(X,F,P))            :- function(X,F,P),              inc_set(P).
 % - base case: table constraints over incremental sets are incremental
 incremental("constraint",X,P,((ID,X),"table"))   :- table_column((ID,X),P),       inc_set(P).
-% - base case: association with an unbounded object
-incremental("association",A,P,(X,T,N,L,U)) :- replace(((A,B),ID),((X,Y),N,I)), set(P,Y), inc_set(P), association(X,T,N,L,U).
+% - base case: replace with an object of an incremental set
+% TODO: not sure if using N as name is okay here?
+% incremental("replace",    A,P,(((A,B),ID),((X,Y),N,I))) :- replace(((A,B),ID),((X,Y),N,I)), set(P,Y), inc_set(P).
+incremental("replace",    N,P,(((A,B),ID),((X,Y),N,I))) :- replace(((A,B),ID),((X,Y),N,I)), set(P,Y), inc_set(P).
+%              the association belonging to the replace is also incremental
+incremental("association",N,P,(X,T,N,L,U))     :- incremental("replace",N,P,_), association(X,T,N,L,U).
+% incremental("association",A,P,(X,T,N,L,U)) :- replace(((A,B),ID),((X,Y),N,I)), set(P,Y), inc_set(P), association(X,T,N,L,U).
 % - recursive: if a sub-expression of X is incremental, then X is also incremental
 % incremental("function",  X,P,(X,F,Y))            :- function(X,F,Y),              incremental(_,Y ,P,_).
 incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,L ,P,_).
