@@ -1,8 +1,13 @@
-#program new_association(x,t,min,max).
-association(x,t,min,max).
+#program new_association_match(x,n,n').
+association_match(x,n,n').
 
-min { associate((x,XT)) : type(XT,t), include(XT) } max :- association(x,t,min,max), include(x).
+#program new_association(x,t,n,min,max).
+association(x,t,n,min,max).
 
-associate((x,XT),I) :- associate((x,XT)), I = #count{ XT' : associate((x,XT')), XT' < XT }.
+min { associate((x,X'),n) : type(X',t), include(X') } max :- association(x,t,n,min,max), include(x).
 
-:- associate((x,XT)), associate((X',XT)), x != X'.
+associate((x,XT),n,I) :- associate((x,XT),n), I = #count{ XT' : associate((x,XT'),n), XT' < XT }.
+
+:- association(x,t,n,min,max), association_match(x,n,N'), associate((x,X'),n,_), not associate((X',x),N',_).
+
+#show associate/3.
