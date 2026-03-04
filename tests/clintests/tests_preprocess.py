@@ -1212,7 +1212,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'column(("Wheel","root.wheel[0]"),0,0,"root.wheel[0]")',
             }
         ),
-        "files": ["imply_integer.lp"],
     },
     "imply_variable": {
         "test": StableModels(
@@ -1273,7 +1272,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'range("product.b",1,3)',
             }
         ),
-        "files": ["imply_binary.lp"],
     },
     "imply_unary": {
         "test": StableModels(
@@ -1298,7 +1296,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'range("product.b",1,3)',
             }
         ),
-        "files": ["imply_unary.lp"],
     },
     "imply_sum": {
         "test": StableModels(
@@ -1327,7 +1324,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'range("product.b",1,3)',
             }
         ),
-        "files": ["imply_sum.lp"],
     },
     "conditional_imply_undef": {
         "test": StableModels(
@@ -1346,7 +1342,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'number("5",5)',
             }
         ),
-        "files": ["conditional_imply_undef.lp"],
     },
     "conditional_imply": {
         "test": StableModels(
@@ -1380,7 +1375,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'number("1",1)',
             }
         ),
-        "files": ["conditional_imply.lp"],
     },
     "multiple_conditions_imply": {
         "test": StableModels(
@@ -1421,7 +1415,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'number("2",2)',
             }
         ),
-        "files": ["multiple_conditions_imply.lp"],
     },
     "combination": {
         "test": StableModels(
