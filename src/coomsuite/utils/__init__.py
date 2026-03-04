@@ -68,6 +68,17 @@ def asp2coom(s: Symbol) -> str:
         path = s.arguments[0].string.removeprefix("root.")
         value = s.arguments[1]
         return f"{path} = {value}"
+    if s.name == "associate":
+        print(s)
+        paths = [o.string.removeprefix("root.") for o in s.arguments[0].arguments]
+        name = s.arguments[1].string
+        idx = s.arguments[2].number
+        try:
+            name2 = s.arguments[3].string
+            idx2 = s.arguments[4].number
+        except IndexError:
+            return f"{paths[0]} -> {paths[1]} ({name},{idx})"
+        return f"{paths[0]} <-> {paths[1]}  ({name},{idx}) ({name2},{idx2})"
     raise ValueError(f"Unrecognized predicate: {s.name}")
 
 
@@ -79,4 +90,5 @@ def coom2asp(c: str) -> str:
         path, value = c.split("=")
         return f'value("root.{path.strip()}",{value.strip()})'
     path = c.strip()
+    # TODO: Add association case
     return f'include("root.{path}")'

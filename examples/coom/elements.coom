@@ -5,6 +5,7 @@ product{
 
 structure Module {
     ModuleType type
+    reference 0..1 Element elements
 }
 
 structure Element {
