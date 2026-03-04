@@ -17,6 +17,8 @@
 #defined constraint/2.
 #defined binary/4.
 #defined unary/3.
+#defined imply/2.
+#defined condition/2.
 
 #defined table/1.
 #defined column/4.

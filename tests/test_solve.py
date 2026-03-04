@@ -123,6 +123,18 @@ class TestClingo(TestCase):
         self.run_test("min")
         self.run_test("max")
 
+    def test_imply(self) -> None:
+        """
+        Test imply statements (clingo).
+        """
+        self.run_test("imply_integer")
+        self.run_test("imply_variable")
+        self.run_test("imply_binary")
+        self.run_test("imply_unary")
+        self.run_test("imply_sum")
+        self.run_test("conditional_imply")
+        self.run_test("multiple_conditions_imply")
+
     def test_associations(self) -> None:
         """
         Test associations (clingo)
@@ -293,6 +305,18 @@ class TestFlingo(TestCase):
         self.run_test("sum")
         self.run_test("min")
         self.run_test("max")
+
+    def test_imply(self) -> None:
+        """
+        Test imply statements (flingo).
+        """
+        self.run_test("imply_integer")
+        self.run_test("imply_variable")
+        self.run_test("imply_binary")
+        self.run_test("imply_unary")
+        self.run_test("imply_sum")
+        self.run_test("conditional_imply")
+        self.run_test("multiple_conditions_imply")
 
     def test_associations(self) -> None:
         """
