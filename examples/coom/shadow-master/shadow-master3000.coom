@@ -1,0 +1,123 @@
+// "Shadow Master" Blinds example
+// Provided by denkbares GmbH
+
+product {
+	0..1	Pole			poleLeft
+	0..1 	Pole			poleRight
+
+			Cover			cover // this feature alone makes the grounding large, discrete enumeration but depending on chosen values
+
+			// Input values
+			num/mm 			assemblyHeight
+			num/mm			passageHeight
+			num.#/mm		inputWidth
+			num/mm			length
+
+			// Calculated values
+			num.####/rad	inclination
+			num.#/mm		orderWidth
+			num.##/qm		area
+			num.##/kg		weight
+
+
+	// Debug		debugValues
+}
+
+// structure Debug {
+// 	num.###/mm	deltaHeight
+// 	num/mm		deltaWidth
+// 	num.###/mm	deltaHeightPow2
+// 	num/mm		deltaWidthPow2
+// 	num.###/mm	sqrtValue
+// 	num.##		atanValue
+// 	num.##		acosValue
+// 	num.######	atanArg
+// 	num.######	acosArg
+// }
+
+structure Pole {
+	num.##/mm		 	distance // Input value
+
+	num.##/mm			height
+	num.##/mm			overhang
+	PoleType			poleType
+}
+
+enumeration PoleType {
+	// _Ohne			// What does this mean?
+	_Fixed
+	_HeightAdjustable
+	_DoublePole
+}
+
+enumeration Cover {
+	attribute	num/gramm	weight
+
+	_AcrylLumera		= (	   1495	)
+	_AcrylPerfora		= (	   1238	)
+	_AcrylAllWeather	= (	   2600	)
+	_AcrylStandardFremd	= (	    800	)
+	_AcrylUniQuer		= (	    599	)
+	_AcrylUniQuerFremd	= (	    673	)
+	_KombiAcryl			= (	   2598	)
+	_KombiSoltis		= (	   2293	)
+	_Satinee			= (	   1487	)
+	_Screen				= (	   2499	)
+}
+
+behavior Pole {
+	imply overhang = (root.inputWidth - distance)
+
+	imply height = (root.passageHeight + (tan(root.inclination) * overhang))
+
+	require overhang > 105
+
+	require distance < 4000
+
+	require height > 1000
+
+	require height < 3200
+
+	condition height > 2200
+	require poleType != _DoublePole
+
+	// default 	overhang = 150
+
+	// default 	distance = 3000
+
+	// default 	height = 2000
+
+	// default 	poleType = _Fixed
+}
+
+behavior {
+	imply inclination = atan(((125 - inputWidth) / ((assemblyHeight - 8.82) + (90 - passageHeight)))) + acos((48.4985 / sqrt(((((assemblyHeight - 8.82) + (90 - passageHeight)) ^ 2) + ((125 - inputWidth) ^ 2)))))
+
+	imply orderWidth = inputWidth + (tan(inclination) * 80)
+
+	imply area = length * (orderWidth / 1000000)
+
+	imply weight = area * (cover.weight / 1000)
+
+	// default 	cover = _AcrylAllWeather
+}
+
+// behavior Debug {
+	// imply deltaHeight = ((root.assemblyHeight - 8.82) + (90 - root.passageHeight))
+
+	// imply deltaWidth = (125 - root.inputWidth)
+
+	// imply deltaWidthPow2 = ((125 - root.inputWidth) ^ 2)
+
+	// imply deltaHeightPow2 = (((root.assemblyHeight - 8.82) + (90 - root.passageHeight)) ^ 2)
+
+	// imply sqrtValue = sqrt(((((root.assemblyHeight - 8.82) + (90 - root.passageHeight)) ^ 2) + ((125 - root.inputWidth) ^ 2)))
+
+	// imply acosValue = acos((48.4985 / sqrt(((((root.assemblyHeight - 8.82) + (90 - root.passageHeight)) ^ 2) + ((125 - root.inputWidth) ^ 2)))))
+
+	// imply atanValue = atan(((125 - root.inputWidth) / ((root.assemblyHeight - 8.82) + (90 - root.passageHeight))))
+
+	// imply acosArg = (48.4985 / sqrt(((((root.assemblyHeight - 8.82) + (90 - root.passageHeight)) ^ 2) + ((125 - root.inputWidth) ^ 2))))
+
+	// imply atanArg = ((125 - root.inputWidth) / ((root.assemblyHeight - 8.82) + (90 - root.passageHeight)))
+// }

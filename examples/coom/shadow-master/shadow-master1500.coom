@@ -1,0 +1,50 @@
+// Shadow Master version for representing generative instances
+// no non-linear calculations but using associations and unbounded cardinalities
+
+product {
+    1..* Blind blinds
+    1..* Engine engines
+}
+
+structure Blind {
+    reference 1..1  Engine      engine
+                    Material    material
+
+                    num         area        // Input value?
+                    num         weight
+}
+
+structure Engine {
+    reference 1..3  Blind       blinds
+
+                    EngineType  type
+}
+
+enumeration Material {
+    num     weight
+
+    _AcrylLumera        = ( 14	)
+	_AcrylPerfora		= ( 12	)
+	_AcrylAllWeather	= ( 26	)
+	_AcrylDefault	    = (  8	)
+}
+
+enumeration EngineType {
+    num     price
+    num     maxLoad
+
+    Simple  = ( 100 60 )
+    Strong  = ( 220 105 )
+}
+
+behavior Blind {
+    imply weight = area * material.weight
+}
+
+behavior Engine {
+    require sum(blinds.weight) <= type.maxLoad // This way or with multiple conditional constraints?
+}
+
+// behavior {
+//     minimize sum(engines.type.maxLoad)
+// }
