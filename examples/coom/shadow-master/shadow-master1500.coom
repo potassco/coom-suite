@@ -2,15 +2,15 @@
 // no non-linear calculations but using associations and unbounded cardinalities
 
 product {
-    1..* Blind blinds
-    1..* Engine engines
+    0..* Blind blinds
+    0..* Engine engines
 }
 
 structure Blind {
     reference 1..1  Engine      engine
-                    Material    material
+                    Material    material    // Input value?
 
-                    num         area        // Input value?
+                    num         area        // Input value
                     num         weight
 }
 
@@ -21,7 +21,7 @@ structure Engine {
 }
 
 enumeration Material {
-    num     weight
+    attribute   num     weight
 
     _AcrylLumera        = ( 14	)
 	_AcrylPerfora		= ( 12	)
@@ -30,11 +30,11 @@ enumeration Material {
 }
 
 enumeration EngineType {
-    num     price
-    num     maxLoad
+    attribute   num     price
+    attribute   num     maxLoad
 
-    Simple  = ( 100 60 )
-    Strong  = ( 220 105 )
+    Simple  = ( 100 40 )
+    Strong  = ( 220 75 )
 }
 
 behavior Blind {
@@ -45,6 +45,6 @@ behavior Engine {
     require sum(blinds.weight) <= type.maxLoad // This way or with multiple conditional constraints?
 }
 
-// behavior {
-//     minimize sum(engines.type.maxLoad)
-// }
+behavior {
+    minimize sum(engines.type.maxLoad)
+}
