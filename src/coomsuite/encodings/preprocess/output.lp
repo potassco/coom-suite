@@ -101,8 +101,21 @@ allow(T,(0,I),O)     :- attribute_constraint((T,_)), coom_option(T,O), I = #coun
 allow(T,(Col,Row),V) :- attribute_constraint((T,_)), allow(T,(0,Row),O), coom_attribute_value(T,O,A,V), attribute_constraint_column(T,Col,A).
 
 % Imply statements
-constraint((C,@binary(X',"=",G)),"boolean") :- imply(C,X',G).
-binary(@binary(X',"=",G),X',"=",G)          :- imply(C,X',G).
+% constraint((C,@binary(X',"=",G)),"boolean") :- imply(C,X',G).
+% binary(@binary(X',"=",G),X',"=",G)          :- imply(C,X',G).
+
+% If imply is not conditional, generate output atom
+imply((C,X'),G)       :- imply((C,_),X',G), not coom_condition(C,_,_).
+
+% Otherwise, check if "ground" condition is actually defined
+imply((C,X'),G)       :- imply((C,X),X',G), ground_condition(C,X,_,_).
+
+condition((C,X'),Con) :- imply((C,X),X',_), conditions(C,X,Con).
+unary(@unary(G,"()"),"()",G)    :- conditions(C,_,_), conditions_binary(C,_,G,_,_,()).
+binary(G,L,"&&",R)              :- conditions(C,_,_), conditions_binary(C,_,G,L,R,_).
+
+#show imply/2.
+#show condition/2.
 
 % Functions
 function(@aggregate(T,X,P),T,@join(X,P)) :- function(X,_,T,P).

@@ -74,6 +74,21 @@ class TestPreprocess(TestCase):
 
         self.run_test("require_parent")
 
+    def test_imply(self) -> None:
+        """
+        Test preprocessing COOM imply constraints.
+        """
+        self.run_test("imply_undef")
+        self.run_test("imply_undef_formula")
+        self.run_test("imply_integer")
+        self.run_test("imply_variable")
+        self.run_test("imply_binary")
+        self.run_test("imply_unary")
+        self.run_test("imply_sum")
+        self.run_test("conditional_imply_undef")
+        self.run_test("conditional_imply")
+        self.run_test("multiple_conditions_imply")
+
     def test_combinations_table(self) -> None:
         """
         Test preprocessing COOM combinations tables.

@@ -77,10 +77,15 @@ replace_aux((R,ID),A,AT')                       :- replace_instantiate(AT,R), AT
 replace_aux((R,ID),A,AT)                        :- replace_aux((R,ID),_,(A,AT)). %, AT != ().
 
 % Constants and numbers
-path_to(X,P,P) :- coom_binary(F,_,_,P), coom_constant(P), formula_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_binary(F,P,_,_), coom_constant(P), formula_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_binary(F,_,_,P), coom_number(P,_), formula_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_binary(F,P,_,_), coom_number(P,_), formula_context(F,T), type_aux(X,T).
+path_to(X,P,P) :- coom_constant(P), coom_binary(F,_,_,P), formula_context(F,T), type_aux(X,T).
+path_to(X,P,P) :- coom_constant(P), coom_binary(F,P,_,_), formula_context(F,T), type_aux(X,T).
+% path_to(X,P,P) :- coom_constant(P), coom_unary(F,_,P),    formula_context(F,T), type_aux(X,T).
+path_to(X,P,P) :- coom_constant(P), coom_imply(Ctx,_,P),  coom_context(Ctx,T),  type_aux(X,T).
+
+path_to(X,P,P) :- coom_number(P,_), coom_binary(F,_,_,P), formula_context(F,T), type_aux(X,T).
+path_to(X,P,P) :- coom_number(P,_), coom_binary(F,P,_,_), formula_context(F,T), type_aux(X,T).
+% path_to(X,P,P) :- coom_number(P,_), coom_unary(F,_,P),    formula_context(F,T), type_aux(X,T).
+path_to(X,P,P) :- coom_number(P,_), coom_imply(Ctx,_,P),  coom_context(Ctx,T),  type_aux(X,T).
 
 % Instantiate binaries and unaries
 binary(X,F,@binary(XL,Op,XR),XL,Op,XR) :- coom_binary(F,L,Op,R),
@@ -116,9 +121,12 @@ path_to(X,F,@aggregate(T,X,P)) :- function(X,F,T,P).
 path_to(X,N,@dotpath(X')) :- coom_feature(Ctx,N,_,_,_), type_aux(X,Ctx), type_aux(X',_), X' =(N,(X,_)).
 path_to(X,A,@dotpath(X')) :- coom_attribute(T,A,_),     type_aux(X,T),   type_aux(X',_), X' =(A,(X,_)).
 
-% Instantiate conditional requirements
-conditions_aux(C,X,0,(G,()))  :- coom_context(C,Ctx), type_aux(X,Ctx), coom_condition(C,0,F), ground_formula(X,F,G).
-conditions_aux(C,X,I+1,(G,T)) :- conditions_aux(C,X,I,T), coom_condition(C,I+1,F), ground_formula(X,F,G).
+% Instantiate conditional constraints
+ground_condition(C,X,I,G) :- coom_context(C,Ctx), type_aux(X,Ctx), coom_condition(C,I,F), ground_formula(X,F,G).
+
+
+conditions_aux(C,X,0,(G,()))  :- ground_condition(C,X,0,G).
+conditions_aux(C,X,I+1,(G,T)) :- conditions_aux(C,X,I,T), ground_condition(C,X,I+1,G).
 conditions_aux(C,X,T)         :- conditions_aux(C,X,I,T), not coom_condition(C,I+1,_).
 
 conditions_binary(C,X,@binary(L,"&&",R),L,R,T) :- conditions_aux(C,X,(R,(L,T))).
@@ -146,8 +154,12 @@ in_tuple(CT,CT',X)      :- in_tuple(CT,(X,CT'),_).
 in_tuple(CT,X)          :- in_tuple(CT,_,X).
 
 % Instantiate imply statements
-imply(C,X',G)                  :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), ground_formula(X,F,G).
-imply(C,X',@aggregate(T,X,P')) :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), function(X,F,T,P').
+% TODO: Possible to combine rules?
+imply_aux((C,X),X',F) :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X').
+
+imply((C,X),X',X'')               :- imply_aux((C,X),X',F), path_to(X,F,X''), not ground_formula(X,F,_).
+imply((C,X),X',G)                 :- imply_aux((C,X),X',F), ground_formula(X,F,G).
+imply((C,X),X',@aggregate(T,X,P)) :- imply_aux((C,X),X',F), function(X,F,T,P).
 
 % Instantiate attribute constraints
 attribute_constraint((T,@dotpath(X)))  :- coom_attribute(T,_,_), type_aux(X,T).
