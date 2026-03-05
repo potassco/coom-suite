@@ -61,7 +61,7 @@ class BoundSolver:
                 elif ret_dict[ret] == "UNSAT":
                     unsat_bound = current_bound
                 else:
-                    print(f"\n Some error occured during solving with max bound = {current_bound}\n")
+                    print(f"\n Some error occured during solving with max bound = {current_bound}\n Exit code: {ret}\n")
                     return None
             except KeyError as exc:
                 raise KeyError("Unknown exit code.") from exc
@@ -104,7 +104,7 @@ class BoundSolver:
                 if ret_dict[ret] == "UNSAT":
                     pass
                 else:
-                    print(f"\n Some error occured during solving with max bound = {max_bound}\n")
+                    print(f"\n Some error occured during solving with max bound = {max_bound}\n Exit code: {ret}\n")
                     return None
             except KeyError as exc:
                 raise KeyError("Unknown exit code.") from exc

@@ -4,6 +4,9 @@ add blinds[2]
 add blinds[3]
 add blinds[4]
 add blinds[5]
+add blinds[6]
+add blinds[7]
+add blinds[8]
 
 set blinds[0].area[0] = 2
 set blinds[1].area[0] = 5
@@ -11,7 +14,11 @@ set blinds[2].area[0] = 3
 set blinds[3].area[0] = 2
 set blinds[4].area[0] = 5
 set blinds[5].area[0] = 1
+set blinds[6].area[0] = 3
+set blinds[7].area[0] = 4
+set blinds[8].area[0] = 2
 
 set blinds[0].material[0] = _AcrylLumera
 set blinds[2].material[0] = _AcrylPerfora
 set blinds[3].material[0] = _AcrylAllWeather
+set blinds[8].material[0] = _AcrylAllWeather

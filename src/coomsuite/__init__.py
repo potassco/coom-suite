@@ -32,7 +32,7 @@ def write_facts(facts: str, outfile: str) -> None:  # nocoverage
     log.info("ASP file saved in %s", outfile)
 
 
-def convert_coom(coom_model: str, coom_user: Optional[str] = None) -> Tuple[str, bool]:  # nocoverage
+def convert_coom(coom_model: str, coom_user: Optional[str] = None) -> Tuple[str, bool, bool]:  # nocoverage
     """
     Converts a COOM instance into ASP
     Args:
@@ -40,21 +40,23 @@ def convert_coom(coom_model: str, coom_user: Optional[str] = None) -> Tuple[str,
         coom_user (str, optional): COOM user input file .coom
     """
     unbounded = False
+    optimize = False
 
     input_stream_model = FileStream(coom_model, encoding="utf-8")
     asp_instance = "\n".join(
         [f"coom_{a}" if a != "" else a for a in run_antlr4_visitor(input_stream_model, grammar="model")]
     )
-
     if "#sup" in asp_instance:
         unbounded = True
+    if "coom_minimize" in asp_instance or "coom_maximize" in asp_instance:
+        optimize = True
     if coom_user is not None:
         input_stream_user = FileStream(coom_user, encoding="utf-8")
         asp_instance += "\n".join(
             [f"coom_{a}" if a != "" else a for a in run_antlr4_visitor(input_stream_user, grammar="user")]
         )
 
-    return asp_instance, unbounded
+    return asp_instance, unbounded, optimize
 
 
 def solve(

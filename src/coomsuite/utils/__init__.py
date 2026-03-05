@@ -69,7 +69,6 @@ def asp2coom(s: Symbol) -> str:
         value = s.arguments[1]
         return f"{path} = {value}"
     if s.name == "associate":
-        print(s)
         paths = [o.string.removeprefix("root.") for o in s.arguments[0].arguments]
         name = s.arguments[1].string
         idx = s.arguments[2].number
