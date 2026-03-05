@@ -2,6 +2,8 @@
 Test cases for solving.
 """
 
+# pylint: disable=R0801
+
 from typing import List, Optional
 from unittest import TestCase
 

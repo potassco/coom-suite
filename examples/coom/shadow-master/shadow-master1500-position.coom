@@ -1,10 +1,14 @@
 // Shadow Master version for representing generative instances
 // no non-linear calculations but using associations and unbounded cardinalities
 
-// TODO: Add constraint that only neighbouring blinds can belong to the same engine
+// TODO: Add constraint that only neighboring blinds can belong to the same engine
 product {
-    0..* Blind blinds
-    0..* Engine engines
+    0..*    Position positions
+}
+
+structure Position {
+            Blind blind
+    0..1    Engine engine
 }
 
 structure Blind {
@@ -43,9 +47,13 @@ behavior Blind {
 }
 
 behavior Engine {
+    // If an engine exists, it has to be associated to the blind in the same position
+    require _parent.blind.engine = this
+
+    explanation "The sum of all associated blinds has to be lesser or equal than the engine's maximum load."
     require sum(blinds.weight) <= type.maxLoad // This way or with multiple conditional constraints?
 }
 
 behavior {
-    minimize sum(engines.type.maxLoad)
+    minimize sum(position.engine.type.maxLoad)
 }

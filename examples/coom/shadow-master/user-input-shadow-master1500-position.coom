@@ -1,0 +1,17 @@
+add position[0].blinds[0]
+add position[1].blinds[0]
+add position[2].blinds[0]
+add position[3].blinds[0]
+add position[4].blinds[0]
+add position[5].blinds[0]
+
+set position[0].blinds[0].area[0] = 2
+set position[1].blinds[0].area[0] = 5
+set position[2].blinds[0].area[0] = 3
+set position[3].blinds[0].area[0] = 2
+set position[4].blinds[0].area[0] = 5
+set position[5].blinds[0].area[0] = 1
+
+set position[0].blinds[0].material[0] = _AcrylLumera
+set position[2].blinds[0].material[0] = _AcrylPerfora
+set position[3].blinds[0].material[0] = _AcrylAllWeather
