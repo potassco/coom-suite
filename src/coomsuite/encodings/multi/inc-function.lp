@@ -7,8 +7,8 @@ defined(f,bound) :- value(f,_,bound).
 % when an incremental function is initialized the corresponding set may have several elements
 % thus it is necessary to actually use the corresponding aggregates
 % at bound 0 possible objects are not introduced with a bound parameter
-value(f,V,bound) :- function(f,agg,p), agg = "count", V = #count{ X  : set(p,X), include(X) ; X : set(p,X), include(X,bound)  }, bound = 0.
-value(f,V,bound) :- function(f,agg,p), agg = "count", V = #count{ X  : set(p,X), bound(X,bound), include(X) ; X : set(p,X), include(X,bound) }, bound > 0.
+value(f,V,bound) :- function(f,agg,p), agg = "count", V = #count{ X  : set(p,X), include(X) ; X : set(p,X), include(X,bound), not include(X,bound-1)  }, bound = 0.
+value(f,V,bound) :- function(f,agg,p), agg = "count", V = #count{ X  : set(p,X), bound(X,bound), include(X) ; X : set(p,X), include(X,bound), not include(X,bound-1) }, bound > 0.
 
 value(f,V,bound) :- function(f,agg,p), agg = "sum",   V = #sum{ V',X : set(p,X),                 value(X,V') }, bound = 0.
 value(f,V,bound) :- function(f,agg,p), agg = "sum",   V = #sum{ V',X : set(p,X), bound(X,bound), value(X,V') }, bound > 0.
@@ -26,7 +26,7 @@ function(f,agg,p).
 defined(f,bound) :- value(f,_,bound).
 
 % compute value step-wise
-value(f,V+V',N+1) :- function(f,agg,p), agg = "count", bound = N+1, value(f,V,N), V' = #count{ X   : set(p,X), bound(X,bound), include(X) ; X : set(p,X), include(X,bound)  }.
+value(f,V+V',N+1) :- function(f,agg,p), agg = "count", bound = N+1, value(f,V,N), V' = #count{ X   : set(p,X), bound(X,bound), include(X) ; X : set(p,X), include(X,bound), not include(X,bound-1) }.
 
 value(f,V+V',N+1) :- function(f,agg,p), agg = "sum",   bound = N+1, value(f,V,N), V' = #sum{ Val,X : set(p,X), bound(X,bound), value(X,Val) }.
 
