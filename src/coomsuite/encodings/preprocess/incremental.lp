@@ -5,8 +5,6 @@ inc_obj(@dotpath((F,(X,I)))) :- coom_feature(Ctx,F,T,Min,#sup), type_aux(X,Ctx),
 % - the current max bound is 0,
 % instantiate a dummy incremental object
 inc_obj(@dotpath((F,(X,-1)))) :- coom_feature(Ctx,F,T,0,#sup),  type_aux(X,Ctx), max_bound = 0.
-% any object that is replaced (due to an association) by an incremental object is also incremental
-% inc_obj(X) :- replace(((X,Y),_),_), inc_obj(Y).
 
 % associate sets based on replace:
 % - if X is replaced by Y, and X in P, Y in P', then P and P' are associated
@@ -51,6 +49,8 @@ inc_set(P) :- table_column(_,P), path_step(P,X), inc_obj(X).
 %   or in an association
 inc_set(P) :- replace(_,((_,X),_,_)), set(P,X), inc_obj(X).
 % TODO: what about association to unbounded object but empty set?
+% probably needs a helper version of replace as replace is needed to derive incremental associations
+% and also set associations
 
 #show inc_set/1.
 
@@ -58,21 +58,15 @@ inc_set(P) :- replace(_,((_,X),_,_)), set(P,X), inc_obj(X).
 % incremental expressions are defined recursively
 % - base case: functions over incremental sets are incremental
 incremental("function",  X,P,(X,F,P))            :- function(X,F,P),              inc_set(P).
-% if the set of the function is associated to an incremental set
+% - base case: functions over sets associated to incremental sets
 incremental("function",  X,P',(X,F,P))           :- function(X,F,P), set_association(P,P'), inc_set(P').
 % - base case: table constraints over incremental sets are incremental
 incremental("constraint",X,P,((ID,X),"table"))   :- table_column((ID,X),P),       inc_set(P).
-
-% base case: replace with an object of an incremental set
-% incremental("replace",    A,P,(((A,B),ID),((X,Y),N,I))) :- replace(((A,B),ID),((X,Y),N,I)), set(P,Y), inc_set(P).
-% incremental("replace",    N,P,(((A,B),ID),((X,Y),N,I))) :- replace(((A,B),ID),((X,Y),N,I)), set(P,Y), inc_set(P).
-%              the association belonging to the replace is also incremental
-% incremental("association",N,P,(X,T,N,L,U))     :- incremental("replace",N,P,_), association(X,T,N,L,U).
-% incremental("association",A,P,(X,T,N,L,U)) :- replace(((A,B),ID),((X,Y),N,I)), set(P,Y), inc_set(P), association(X,T,N,L,U).
-
-% new approach: only handle associations as incremental
+% - base case: association to an object belonging to an incremental set
 incremental("association",N,P,(X,T,N,L,U))       :- association(X,T,N,L,U), replace(_,((X,Y),N,_)), set(P,Y), inc_set(P).
 
+% - recursive: any path expression that is a variable of an incremental association
+incremental("path",      X,P,(X,P))              :- replace(((X,_),_),(_,N,_)),  incremental("association",N,P,_).
 % - recursive: if a sub-expression of X is incremental, then X is also incremental
 % incremental("function",  X,P,(X,F,Y))            :- function(X,F,Y),              incremental(_,Y ,P,_).
 incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,L ,P,_).
@@ -81,5 +75,17 @@ incremental("unary",     X,P,(X,O,X'))           :- unary(X,O,X'),              
 incremental("constraint",X,P,((ID,X),"boolean")) :- constraint((ID,X),"boolean"), incremental(_,X ,P,_).
 incremental("minimize",  X,P,(X,V))              :- minimize(X,V),                incremental(_,X ,P,_).
 incremental("maximize",  X,P,(X,V))              :- maximize(X,V),                incremental(_,X ,P,_).
+
+% usually path expressions are tied to fixed object
+% e.g. "root.elements[1].modules[1].type[0]" is some specific object
+% but if this is a variable replace by an association this is no longer the case
+% as the set of possible replacements of the variable changes with increased bound
+% therefore we check whether an expression is a variable replaced by an incremental association
+% incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R), replace(((L ,_),_),(_,N,_)), incremental("association",N,P,_).
+% incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R), replace(((R ,_),_),(_,N,_)), incremental("association",N,P,_).
+% incremental("unary",     X,P,(X,O,X'))           :- unary(X,O,X'),   replace(((X',_),_),(_,N,_)), incremental("association",N,P,_).
+% TODO: are similar rules needed for constraint and minimize/maximize
+% -> should be fixed by new incremental path atom
+
 
 #show incremental/4.
