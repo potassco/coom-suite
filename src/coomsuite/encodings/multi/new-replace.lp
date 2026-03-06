@@ -9,7 +9,7 @@ defined(X) :- replace(r,a), r = ((X,X'),ID), value(X,_).
 #program new_replace(r,a,b).
 #external active(b).
 replace(r,a).
-{ associate((X,XT),N) } :- replace(r,a), a = ((X,XT),N,I), include(X), active(b).
+{ associate((X,XT),N) : include(XT) } :- replace(r,a), a = ((X,XT),N,I), include(X), active(b).
 
 associate((X,XT),N,I) :- replace(r,a), a = ((X,XT),N,_), associate(A,N), I = #count{ XT' : associate((X,XT'),N), XT' < XT }.
 
