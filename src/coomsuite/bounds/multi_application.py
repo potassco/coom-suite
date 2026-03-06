@@ -111,7 +111,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         # filter out facts that were previously processed
         self._new_processed_facts = non_incremental_facts - self._processed_facts
 
-    def _remove_new_incremental_expressions(self) -> List[Tuple[str, List[Symbol]]]:
+    def _remove_new_incremental_expressions(self, bound) -> List[Tuple[str, List[Symbol]]]:
         """
         Remove all facts from new_processed_facts that are incremental expressions
 
@@ -136,13 +136,15 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
             is_incremental_association = name == "association" and str(args[2].string) in self._incremental_expressions
 
-            # is_incremental_replace = name == "replace" and args[1].arguments[1].string in self._incremental_expressions
+            is_incremental_replace = (
+                name == "replace" and args[1].arguments[1].string in self._incremental_expressions and bound == 0
+            )
 
             if (
                 is_incremental_constraint
                 or is_incremental_expression
                 or is_incremental_association
-                # or is_incremental_replace
+                or is_incremental_replace
             ):
                 inc_expressions.append((name, args))
                 # add the fact to the processed_facts
@@ -165,6 +167,9 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         Returns:
             ProgPart: the program part containing the rules to update the incremental expression
         """
+        if exp_type == "replace":
+            return self._get_prog_part(exp_type, args, bound)
+
         if exp_type not in [
             "function",
             "binary",
@@ -172,7 +177,6 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             "constraint",
             "minimize",
             "maximize",
-            # "replace",
             "association",
         ]:
             raise ValueError(f"unknown type of incremental expression: {exp_type}")
@@ -198,10 +202,15 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                 part_name = "incremental_binary"
                 lhs = args[1].string
                 rhs = args[3].string
-                if lhs not in self._incremental_expressions:
-                    part_name += "_r"
-                elif rhs not in self._incremental_expressions:
+
+                lhs_inc = lhs in self._incremental_expressions
+                rhs_inc = rhs in self._incremental_expressions
+                if lhs_inc and not rhs_inc:
                     part_name += "_l"
+                elif not lhs_inc and rhs_inc:
+                    part_name += "_r"
+                elif not lhs_inc and not rhs_inc:
+                    raise ValueError(f"Incremental binary but not subexpression is incremental: {args}")
 
         return (part_name, args)
 
@@ -230,7 +239,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
         return program_parts
 
-    def _get_prog_part(self, fact: str, bound: int) -> ProgPart:
+    def _get_prog_part(self, name: str, args, bound: int) -> ProgPart:
         """
         Get the program part belonging to a fact
 
@@ -242,7 +251,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             ProgPart: the program part containing the rules for the fact
         """
         # convert fact to name and arguments
-        name, args = _get_fact_name_and_args(fact)
+        # name, args = _get_fact_name_and_args(fact)
 
         # check if the fact corresponds to a valid program part
         if name not in [
@@ -310,7 +319,10 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             exp_args = tuple(exp.arguments[3].arguments)
 
             # first, add the expressions to the incremental_sets dictionary
-            self._incremental_sets[exp_set].add((exp_type, exp_args))
+            # for incremental expressions of type path this is not done
+            # the path incremental expressions are only auxilliary and only used for incremental expressions (below)
+            if exp_type != "path":
+                self._incremental_sets[exp_set].add((exp_type, exp_args))
 
             # second, add it to the set of all incremental expressions
             self._incremental_expressions.add(exp_name)
@@ -409,7 +421,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         # remove all expressions that were detected as incremental from the processed facts
         # (necessary to avoid adding them via the normal new_* program parts,
         # instead we add them using specific incremental program parts later)
-        incremental_expressions = self._remove_new_incremental_expressions()
+        incremental_expressions = self._remove_new_incremental_expressions(bound)
 
         if bound == 0:
             # add the incremental program parts corresponding to each incremental expression
@@ -439,7 +451,8 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                     updated_inc_sets.add(updated_set)
 
                 # add the program part of the fact
-                parts.append(self._get_prog_part(fact, bound))
+                name, args = _get_fact_name_and_args(fact)
+                parts.append(self._get_prog_part(name, args, bound))
 
             # add the program parts belonging to every updated incremental set
             for inc_set in updated_inc_sets:
@@ -478,11 +491,6 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                     # (needs to be grounded before other program parts below)
                     control.add("base", [], "".join(self._new_processed_facts))
                     control.ground([("base", [])])
-
-                from pprint import pprint
-
-                print(f"program parts added at bound={bound}")
-                pprint(parts)
 
                 # ground
                 control.ground(parts)
