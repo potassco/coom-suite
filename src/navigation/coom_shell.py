@@ -15,6 +15,8 @@ class CoomShell(NavigatorShell):
     Coom specific navigation shell.
     """
 
+    prompt = "(coom) "
+
     def __init__(self, control: Control | None = None, grounded: bool | None = None):
         Cmd.__init__(self)
         self.nav = CoomNavigator(control, grounded)
