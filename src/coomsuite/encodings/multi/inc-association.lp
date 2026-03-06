@@ -9,8 +9,9 @@
 % therefore any definitions of include/value for x based on earlier replaces need to be extended to this bound
 % this only needs to be done when b is active
 #external active(b).
-include(x,b) :- include(x,b-1), active(b).
-value(x,V,b) :- value(x,V,b-1), active(b).
-defined(x,b) :- defined(x,b-1), active(b).
+% include of X' not needed as condition for include(X,b-1) already
+include(X,b) :- replace(((X,_),_),((x,_),n,_)), include(X,b-1), active(b).
+value(X,V,b) :- replace(((X,_),_),((x,_),n,_)), value(X,V,b-1), active(b).
+defined(X,b) :- replace(((X,_),_),((x,_),n,_)), defined(x,b-1), active(b).
 
 % TODO: check that evaluation of constraints works with this
