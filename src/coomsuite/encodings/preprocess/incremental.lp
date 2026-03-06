@@ -6,7 +6,11 @@ inc_obj(@dotpath((F,(X,I)))) :- coom_feature(Ctx,F,T,Min,#sup), type_aux(X,Ctx),
 % instantiate a dummy incremental object
 inc_obj(@dotpath((F,(X,-1)))) :- coom_feature(Ctx,F,T,0,#sup),  type_aux(X,Ctx), max_bound = 0.
 % any object that is replaced (due to an association) by an incremental object is also incremental
-inc_obj(X) :- replace((X,Y),_), inc_obj(Y).
+% inc_obj(X) :- replace(((X,Y),_),_), inc_obj(Y).
+
+% associate sets based on replace:
+% - if X is replaced by Y, and X in P, Y in P', then P and P' are associated
+set_association(P,P') :- replace(((X,Y),_),_), set(P,X), set(P',Y).
 
 % helper rules to instantiate the subtree starting from a dummy incremental object
 % - base case: checking for 0..* and max bound 0
@@ -54,15 +58,21 @@ inc_set(P) :- replace(_,((_,X),_,_)), set(P,X), inc_obj(X).
 % incremental expressions are defined recursively
 % - base case: functions over incremental sets are incremental
 incremental("function",  X,P,(X,F,P))            :- function(X,F,P),              inc_set(P).
+% if the set of the function is associated to an incremental set
+incremental("function",  X,P',(X,F,P))           :- function(X,F,P), set_association(P,P'), inc_set(P').
 % - base case: table constraints over incremental sets are incremental
 incremental("constraint",X,P,((ID,X),"table"))   :- table_column((ID,X),P),       inc_set(P).
-% - base case: replace with an object of an incremental set
-% TODO: not sure if using N as name is okay here?
+
+% base case: replace with an object of an incremental set
 % incremental("replace",    A,P,(((A,B),ID),((X,Y),N,I))) :- replace(((A,B),ID),((X,Y),N,I)), set(P,Y), inc_set(P).
-incremental("replace",    N,P,(((A,B),ID),((X,Y),N,I))) :- replace(((A,B),ID),((X,Y),N,I)), set(P,Y), inc_set(P).
+% incremental("replace",    N,P,(((A,B),ID),((X,Y),N,I))) :- replace(((A,B),ID),((X,Y),N,I)), set(P,Y), inc_set(P).
 %              the association belonging to the replace is also incremental
-incremental("association",N,P,(X,T,N,L,U))     :- incremental("replace",N,P,_), association(X,T,N,L,U).
+% incremental("association",N,P,(X,T,N,L,U))     :- incremental("replace",N,P,_), association(X,T,N,L,U).
 % incremental("association",A,P,(X,T,N,L,U)) :- replace(((A,B),ID),((X,Y),N,I)), set(P,Y), inc_set(P), association(X,T,N,L,U).
+
+% new approach: only handle associations as incremental
+incremental("association",N,P,(X,T,N,L,U))       :- association(X,T,N,L,U), replace(_,((X,Y),N,_)), set(P,Y), inc_set(P).
+
 % - recursive: if a sub-expression of X is incremental, then X is also incremental
 % incremental("function",  X,P,(X,F,Y))            :- function(X,F,Y),              incremental(_,Y ,P,_).
 incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,L ,P,_).
