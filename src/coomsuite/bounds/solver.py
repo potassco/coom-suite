@@ -56,7 +56,7 @@ class BoundSolver:
 
             ret = self._solve(current_bound)
             try:
-                if ret_dict[ret] == "SAT":
+                if ret_dict[ret] in ["SAT", "OPT"]:
                     sat_bound = current_bound
                 elif ret_dict[ret] == "UNSAT":
                     unsat_bound = current_bound
@@ -99,7 +99,7 @@ class BoundSolver:
             print(f"\nSolving with max_bound = {max_bound}\n")
             ret = self._solve(max_bound)
             try:
-                if ret_dict[ret] == "SAT":
+                if ret_dict[ret] in ["SAT", "OPT"]:
                     return self._converge(prev_bound, max_bound)
                 if ret_dict[ret] == "UNSAT":
                     pass
