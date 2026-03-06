@@ -15,7 +15,7 @@ from .utils.logging import configure_logging, get_logger
 from .utils.parser import get_parser
 
 
-def solve(serialized_facts: List[str], max_bound: int, args, unknown_args) -> int:
+def solve(serialized_facts: List[str], max_bound: int, args, unknown_args, interactive: bool) -> int:
     """
     Preprocesses and solves a serialized COOM instance.
     """
@@ -37,7 +37,8 @@ def solve(serialized_facts: List[str], max_bound: int, args, unknown_args) -> in
             options={
                 "solver": args.solver,
                 "output_format": args.output,
-            }
+            },
+            interactive=interactive,
         ),
         [tmp_name] + unknown_args,
     )
@@ -73,6 +74,9 @@ def main():
     elif args.command == "solve":
         log.info("Converting and solving COOM file %s", args.input)
 
+        if args.interactive:
+            unknown_args.append("-q")
+
         with TemporaryDirectory() as temp_dir:
             # Parse COOM to ASP serialized facts
             serialized_facts = [convert_instance(args.input, "model", temp_dir)] + (
@@ -82,14 +86,16 @@ def main():
             if args.show_facts:
                 print("\n".join(preprocess(serialized_facts)))  # nocoverage
             elif not args.incremental_bounds:
-                solve(serialized_facts, 99, args, unknown_args=unknown_args)
+                solve(serialized_facts, 99, args, unknown_args=unknown_args, interactive=args.interactive)
             else:
                 ret = 20
                 max_bound = 1
 
                 while ret == 20:
                     print(f"\nSolving with max_bound = {max_bound}\n")
-                    ret = solve(serialized_facts, max_bound, args, unknown_args=unknown_args)
+                    ret = solve(
+                        serialized_facts, max_bound, args, unknown_args=unknown_args, interactive=args.interactive
+                    )
                     max_bound += 1
 
 

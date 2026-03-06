@@ -70,6 +70,7 @@ class COOMSolverApp(Application):
         log_level: str = "",
         options: Optional[Dict[str, Any]] = None,
         istest: bool = False,
+        interactive: bool = False,
     ):
         """
         Create application.
@@ -79,6 +80,7 @@ class COOMSolverApp(Application):
         self._log_level = "WARNING" if log_level == "" else log_level
         self.config = FlingoConfig(MIN_INT, MAX_INT, Flag(False), Flag(False), DEF)
         self._propagator = ClingconTheory()
+        self._interactive = interactive
 
     def parse_log_level(self, log_level: str) -> bool:  # nocoverage
         """
@@ -160,8 +162,9 @@ class COOMSolverApp(Application):
             control.ground()
             control.solve()
 
-            shell = CoomShell(control, True)
-            shell.cmdloop()
+            if self._interactive:
+                shell = CoomShell(control, True)
+                shell.cmdloop()
 
         elif self._options["solver"] == "flingo":
             self._propagator.register(control)

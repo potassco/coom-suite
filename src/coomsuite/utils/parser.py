@@ -105,4 +105,7 @@ def get_parser() -> ArgumentParser:
         action="store_true",
         help="Incrementally increase the maximum for unbounded cardinalities.",
     )
+    parser_solve.add_argument(
+        "--interactive", action="store_true", help="Start a shell to interactively explore the solution space"
+    )
     return parser
