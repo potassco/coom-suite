@@ -48,7 +48,7 @@ def main() -> None:
             write_facts(serialized_facts, temp_file)
 
             if args.show_facts:
-                print("\n".join(preprocess([temp_file], discrete=True)))  # nocoverage
+                print("\n".join(preprocess([temp_file], max_bound=args.initial_bound, discrete=True)))  # nocoverage
             elif unbounded:
                 bound_solver = BoundSolver([temp_file], args.solver, solver_args + ["--opt-mode=ignore"], args.output)
                 bound = bound_solver.get_bounds(
