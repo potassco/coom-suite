@@ -2,6 +2,7 @@
 Utilities.
 """
 
+import re
 from importlib.resources import as_file, files
 from typing import List
 
@@ -78,17 +79,29 @@ def asp2coom(s: Symbol) -> str:
             idx2 = s.arguments[4].number
         except IndexError:
             return f"{paths[0]} -> {paths[1]} ({name},{idx})"
-        return f"{paths[0]} <-> {paths[1]}  ({name},{idx}) ({name2},{idx2})"
+        return f"{paths[0]} <-> {paths[1]} ({name},{idx}) ({name2},{idx2})"
     raise ValueError(f"Unrecognized predicate: {s.name}")
 
 
-def coom2asp(c: str) -> str:
+def coom2asp(c: str) -> List[str]:
     """
     Converts COOM facts to ASP facts.
     """
     if "=" in c:
         path, value = c.split("=")
-        return f'value("root.{path.strip()}",{value.strip()})'
+        return [f'value("root.{path.strip()}",{value.strip()})']
     path = c.strip()
-    # TODO: Add association case
-    return f'include("root.{path}")'
+    if "<->" in c:
+        subbed = re.sub(r"[<>,\-()]", " ", c)
+        subbed = re.sub(r"\s+", ";", subbed.strip())
+        path1, path2, name1, idx1, name2, idx2 = subbed.split(";")
+        return [
+            f'associate(("root.{path1.strip()}","root.{path2.strip()}"),"{name1}",{idx1})',
+            f'associate(("root.{path2.strip()}","root.{path1.strip()}"),"{name2}",{idx2})',
+        ]
+    if "->" in c:
+        subbed = re.sub(r"[>,\-()]", " ", c)
+        subbed = re.sub(r"\s+", ";", subbed.strip())
+        path1, path2, name, idx = subbed.split(";")
+        return [f'associate(("root.{path1.strip()}","root.{path2.strip()}"),"{name.strip()}",{idx.strip()})']
+    return [f'include("root.{path}")']

@@ -42,12 +42,35 @@ class TestMain(TestCase):
         self.assertEqual(asp2coom(parse_term('include("root.carrier[0]")')), "carrier[0]")
         self.assertEqual(asp2coom(parse_term('value("root.color[0]", "Blue")')), 'color[0] = "Blue"')
         self.assertEqual(asp2coom(parse_term('value("root.wheel[0].size[0]", 27)')), "wheel[0].size[0] = 27")
+        self.assertEqual(
+            asp2coom(parse_term('associate(("root.elements[0]","root.modules[0]"),"modules",0)')),
+            "elements[0] -> modules[0] (modules,0)",
+        )
+        self.assertEqual(
+            asp2coom(parse_term('associate(("root.elements[0]","root.modules[0]"),"modules",0)')),
+            "elements[0] -> modules[0] (modules,0)",
+        )
+        self.assertEqual(
+            asp2coom(parse_term('associate(("root.elements[0]","root.modules[0]"),"modules",0,"elements",0)')),
+            "elements[0] <-> modules[0] (modules,0) (elements,0)",
+        )
         self.assertRaises(ValueError, asp2coom, parse_term('instance("")'))
 
     def test_coom2asp(self) -> None:
         """
         Test the COOM to ASP conversion
         """
-        self.assertEqual(coom2asp("carrier[0]"), 'include("root.carrier[0]")')
-        self.assertEqual(coom2asp('color[0] = "Blue"'), 'value("root.color[0]","Blue")')
-        self.assertEqual(coom2asp("wheel[0].size[0] = 27"), 'value("root.wheel[0].size[0]",27)')
+        self.assertEqual(coom2asp("carrier[0]"), ['include("root.carrier[0]")'])
+        self.assertEqual(coom2asp('color[0] = "Blue"'), ['value("root.color[0]","Blue")'])
+        self.assertEqual(coom2asp("wheel[0].size[0] = 27"), ['value("root.wheel[0].size[0]",27)'])
+        self.assertEqual(
+            coom2asp("elements[0] -> modules[0] (modules,0)"),
+            ['associate(("root.elements[0]","root.modules[0]"),"modules",0)'],
+        )
+        self.assertEqual(
+            coom2asp("elements[0] <-> modules[0] (modules,0) (elements,0)"),
+            [
+                'associate(("root.elements[0]","root.modules[0]"),"modules",0)',
+                'associate(("root.modules[0]","root.elements[0]"),"elements",0)',
+            ],
+        )
