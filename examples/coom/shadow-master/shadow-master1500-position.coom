@@ -57,3 +57,11 @@ behavior Engine {
 behavior {
     minimize sum(position.engine.type.maxLoad)
 }
+
+behavior Position {
+    require engine.blinds._id >= _id - 1 && engine.blinds._id <= _id + 1
+    require "root.position[5].engine[0].blinds[1]._id[0] >= 4" && "root.position[5].engine[0].blinds[1]._id[0] <= 6"
+
+    condition blind.withPrevious = True
+    require _previous.blind.engine = engine
+}

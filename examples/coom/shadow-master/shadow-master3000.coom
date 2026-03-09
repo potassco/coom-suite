@@ -44,7 +44,6 @@ structure Pole {
 }
 
 enumeration PoleType {
-	// _Ohne			// What does this mean?
 	_Fixed
 	_HeightAdjustable
 	_DoublePole
