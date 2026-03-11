@@ -59,9 +59,10 @@ behavior {
 }
 
 behavior Position {
-    require engine.blinds._id >= _id - 1 && engine.blinds._id <= _id + 1
-    require "root.position[5].engine[0].blinds[1]._id[0] >= 4" && "root.position[5].engine[0].blinds[1]._id[0] <= 6"
+    explanation "The engine at this position (if it exists) can only power this or neighboring blinds"
+    require engine.blinds = _previous.blind || engine.blinds = blind || engine.blinds = _next.blind
 
+    explanation "If 'withPrevious' is true, the same engine as for the previous blind must be used"
     condition blind.withPrevious = True
     require _previous.blind.engine = engine
 }

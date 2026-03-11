@@ -49,3 +49,28 @@ behavior Engine {
 behavior {
     minimize sum(engines.type.maxLoad)
 }
+
+behavior Blind {
+    // explanation "Only neighbouring blinds can be powered by the same engine"
+    // require engine.blinds = _previous || engine.blinds = this || engine.blinds = _next
+
+    explanation "First blind cannot have 'withPrevious' set to true"
+    condition _id = 0
+    require withPrevious = False
+
+    explanation "First blind gets first engine"
+    condition _id = 0
+    require engine._id = 0
+
+    explanation "If 'withPrevious' is true, the same engine as for the previous blind must be used"
+    condition withPrevious = True
+    require _previous.engine = engine
+
+    explanation "Otherwise, a new engine must be used with ascending index"
+    condition withPrevious = False
+    require engine._id = _previous.engine + 1
+
+    // explanation "Engines must be associated to blinds in ascending order"
+    // condition _next.withPrevious = False
+    // require _next.engine._id = engine._id + 1
+}
