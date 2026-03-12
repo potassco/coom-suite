@@ -57,7 +57,10 @@ class TestMultiApplication(TestCase):
             ('number("5",5).', ("new_number", [parse_term('"5"'), parse_term("5")])),
             # for replace the addition of the bound as an argument is conditional
             (
-                'replace((("root.elements[0].modules[0]","root.modules[0]"),0),(("root.elements[0]","root.modules[0]"),"modules",0)).',
+                (
+                    'replace((("root.elements[0].modules[0]","root.modules[0]"),0),'
+                    '(("root.elements[0]","root.modules[0]"),"modules",0)).'
+                ),
                 (
                     "new_replace",
                     [
@@ -96,7 +99,10 @@ class TestMultiApplication(TestCase):
         app._incremental_expressions = {"modules"}
         self.assertEqual(
             app._get_prog_part(
-                'replace((("root.elements[0].modules[0]","root.modules[0]"),0),(("root.elements[0]","root.modules[0]"),"modules",0)).',
+                (
+                    'replace((("root.elements[0].modules[0]","root.modules[0]"),0),'
+                    '(("root.elements[0]","root.modules[0]"),"modules",0)).'
+                ),
                 1,
             ),
             (

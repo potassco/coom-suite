@@ -141,7 +141,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             # - replaces do not really behave incrementally as the above cases
             # - however the possible include/values that a replace defines behave incrementally
             #   (if the corresponding association is incremental)
-            # - this is handled by the addition of the bound parameter to the prog part of replace done in _get_prog_part
+            # - this is handled by the addition of the bound parameter to the prog part of replace in _get_prog_part
             # - but as for bound 0 program parts are not used (only base) replace facts need to be handled separately
             is_incremental_replace = (
                 name == "replace" and args[1].arguments[1].string in self._incremental_expressions and bound == 0
