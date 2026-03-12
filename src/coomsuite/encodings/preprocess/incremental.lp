@@ -76,16 +76,4 @@ incremental("constraint",X,P,((ID,X),"boolean")) :- constraint((ID,X),"boolean")
 incremental("minimize",  X,P,(X,V))              :- minimize(X,V),                incremental(_,X ,P,_).
 incremental("maximize",  X,P,(X,V))              :- maximize(X,V),                incremental(_,X ,P,_).
 
-% usually path expressions are tied to fixed object
-% e.g. "root.elements[1].modules[1].type[0]" is some specific object
-% but if this is a variable replace by an association this is no longer the case
-% as the set of possible replacements of the variable changes with increased bound
-% therefore we check whether an expression is a variable replaced by an incremental association
-% incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R), replace(((L ,_),_),(_,N,_)), incremental("association",N,P,_).
-% incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R), replace(((R ,_),_),(_,N,_)), incremental("association",N,P,_).
-% incremental("unary",     X,P,(X,O,X'))           :- unary(X,O,X'),   replace(((X',_),_),(_,N,_)), incremental("association",N,P,_).
-% TODO: are similar rules needed for constraint and minimize/maximize
-% -> should be fixed by new incremental path atom
-
-
 #show incremental/4.
