@@ -217,7 +217,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                 elif not lhs_inc and rhs_inc:
                     part_name += "_r"
                 elif not lhs_inc and not rhs_inc:
-                    raise ValueError(f"Incremental binary but not subexpression is incremental: {args}")
+                    raise ValueError(f"Incremental binary but no subexpression is incremental: {args}")  # nocoverage
 
         return (part_name, args)
 

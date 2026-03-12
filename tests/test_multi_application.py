@@ -55,6 +55,17 @@ class TestMultiApplication(TestCase):
         for fact, part in [
             ('allow(7,(1,0),"S").', ("new_allow", [parse_term("7"), parse_term("(1,0)"), parse_term('"S"')])),
             ('number("5",5).', ("new_number", [parse_term('"5"'), parse_term("5")])),
+            # for replace the addition of the bound as an argument is conditional
+            (
+                'replace((("root.elements[0].modules[0]","root.modules[0]"),0),(("root.elements[0]","root.modules[0]"),"modules",0)).',
+                (
+                    "new_replace",
+                    [
+                        parse_term('(("root.elements[0].modules[0]","root.modules[0]"),0)'),
+                        parse_term('(("root.elements[0]","root.modules[0]"),"modules",0)'),
+                    ],
+                ),
+            ),
             # program parts that get the bound added to arguments
             (
                 'type("root.bags[1]","Bags").',
@@ -80,6 +91,25 @@ class TestMultiApplication(TestCase):
         ]:
             self.assertEqual(app._get_prog_part(fact, 1), part, f"failed with fact={fact}, part={part}")
 
+        # replace with added bound parameter
+        # this is the case if the association of the replace is an incremental expression
+        app._incremental_expressions = {"modules"}
+        self.assertEqual(
+            app._get_prog_part(
+                'replace((("root.elements[0].modules[0]","root.modules[0]"),0),(("root.elements[0]","root.modules[0]"),"modules",0)).',
+                1,
+            ),
+            (
+                "new_replace",
+                [
+                    parse_term('(("root.elements[0].modules[0]","root.modules[0]"),0)'),
+                    parse_term('(("root.elements[0]","root.modules[0]"),"modules",0)'),
+                    parse_term("1"),
+                ],
+            ),
+            "missing bound as argument for replace with incremental association",
+        )
+
         # invalid program part
         self.assertRaises(ValueError, app._get_prog_part, 'part("test").', 0)
 
@@ -97,6 +127,7 @@ class TestMultiApplication(TestCase):
         for exp_type, args, part in [
             ("unary", [name], ("incremental_unary", [name, bound_term])),
             ("constraint", [name], ("incremental_constraint", [name, bound_term])),
+            ("replace", [name], ("new_replace", [name, bound_term])),
             # first the function prog parts has prefix new
             ("function", [name], ("new_incremental_function", [name, bound_term])),
             # then it has prefix update
