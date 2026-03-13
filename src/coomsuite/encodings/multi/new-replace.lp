@@ -20,4 +20,9 @@ include(X,b) :- replace(r,a), r = ((X,X'),ID), include(X'), #false : replace(((X
 value(X,V,b) :- replace(r,a), r = ((X,X'),ID), value(X',V), #false : replace(((X,X'),ID),(A,N,I)), not associate(A,N,I).
 defined(X,b) :- replace(r,a), r = ((X,X'),ID), value(X,_,b).
 
-#show associate/3.
+#show associate((X,X'),N,I) : associate((X,X'),N,I), not association_match(X,N,_),
+                              replace(r,a), a = ((X,X'),N,_).
+#show associate((X,X'),N,I,N',I') : associate((X,X'),N,I), replace(r,a), a = ((X,X'),N,_),
+                                     associate((X',X),N',I'), association_match(X,N,N'), X < X'.
+#show associate((X,X'),N,I,N',I') : associate((X',X),N,I), replace(r,a), a = ((X',X),N,_),
+                                     associate((X,X'),N',I'), association_match(X,N,N'), X < X'.

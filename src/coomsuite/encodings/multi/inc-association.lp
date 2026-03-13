@@ -13,5 +13,3 @@
 include(X,b) :- replace(((X,_),_),((x,_),n,_)), include(X,b-1), active(b).
 value(X,V,b) :- replace(((X,_),_),((x,_),n,_)), value(X,V,b-1), active(b).
 defined(X,b) :- replace(((X,_),_),((x,_),n,_)), defined(x,b-1), active(b).
-
-% TODO: check that evaluation of constraints works with this
