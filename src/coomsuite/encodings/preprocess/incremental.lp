@@ -64,6 +64,8 @@ incremental("function",  X,P',(X,F,P))           :- function(X,F,P), set_associa
 incremental("constraint",X,P,((ID,X),"table"))   :- table_column((ID,X),P),       inc_set(P).
 % - base case: association to an object belonging to an incremental set
 incremental("association",N,P,(X,T,N,L,U))       :- association(X,T,N,L,U), replace(_,((X,Y),N,_)), set(P,Y), inc_set(P).
+incremental("association",N,P,(X,T,N,L,U))       :- association(X,T,N,L,U), incremental("association",N',P,_),
+                                                    association_match(X,N,N').
 
 % - recursive: any path expression that is a variable of an incremental association
 incremental("path",      X,P,(X,P))              :- replace(((X,_),_),(_,N,_)),  incremental("association",N,P,_).

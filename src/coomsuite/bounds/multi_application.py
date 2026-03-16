@@ -16,6 +16,28 @@ from . import get_bound_iter, next_bound_converge
 ProgPart: TypeAlias = Tuple[str, List[Symbol]]
 
 
+def print_prog_parts(parts: List[ProgPart], name_filter: List[str] | None = None) -> None:
+    for part in parts:
+        name = part[0]
+
+        x = name
+        for prefix in ["update_", "new_", "incremental_"]:
+            x = x.removeprefix(prefix)
+        for suffix in ["_r", "_l"]:
+            x = x.removesuffix(suffix)
+        if name_filter and x not in name_filter:
+            continue
+
+        part_str = name
+        part_str += "("
+        for i, arg in enumerate(part[1]):
+            part_str += str(arg)
+            if i < len(part[1]) - 1:
+                part_str += ","
+        part_str += ")"
+        print(part_str)
+
+
 def _get_fact_name_and_args(fact: str) -> Tuple[str, List[Symbol]]:
     """
     Convert a fact given as a string to its name and arguments
@@ -194,8 +216,14 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         match exp_type:
             case "replace":
                 part_name = "new_replace"
-            case "unary" | "constraint" | "minimize" | "maximize" | "association":
+            case "unary" | "constraint" | "minimize" | "maximize":
                 part_name = "incremental_" + exp_type
+            case "association":
+                name = tuple(args[:-1])
+                prefix = "update_" if name in self._is_initialized else "new_"
+                part_name = prefix + "incremental_association"
+                print(f"adding part_name {part_name} for {exp_type} with arguments {args}")
+                self._is_initialized.add(name)
             case "function":
                 # determine the name of the function
                 name = args[0].string
@@ -487,7 +515,10 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                 # collect program parts
                 parts = self._compute_prog_parts(bound)
 
+                print_prog_parts(parts, ["association", "replace"])
+
                 if bound == 0:
+                    # print(f"adding the following facts: {self._new_processed_facts}")
                     # ground base with the remaining preprocessed facts added
                     # (needs to be grounded before other program parts below)
                     control.add("base", [], "".join(self._new_processed_facts))

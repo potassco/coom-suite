@@ -7,6 +7,10 @@ defined(f,bound) :- value(f,_,bound).
 % when an incremental function is initialized the corresponding set may have several elements
 % thus it is necessary to actually use the corresponding aggregates
 % at bound 0 possible objects are not introduced with a bound parameter
+% TODO: revisit if all the conditions in the aggregates are actually needed?
+% - include(X,bound) should be sufficient for bound = 0, the not inlcude(X,bound-1) can be removed?
+% - but the include(x,bound) is still required as the corresponding X do not have a include/1
+% - all the usage of bound(x,bound) in this new_* program part should not be necessary
 value(f,V,bound) :- function(f,agg,p), agg = "count", bound = 0,
                     V = #count{ X : set(p,X), include(X) ;
                                 X : set(p,X), include(X,bound), not include(X,bound-1) }.
