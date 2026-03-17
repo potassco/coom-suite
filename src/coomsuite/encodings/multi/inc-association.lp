@@ -9,7 +9,7 @@ association(x,t,n,l,u).
 % assign indices
 associate(A,n,I) :- associate(A,n), A = (x,X'), I = #count{ XT : associate((x,XT),n), XT < X' }.
 % ensure matching of associations
-:- association_match(x,n,N'), associate((x,X'),n,_), not associate((X',x),N',_).
+:- association_match(x,n,N'), associate((x,X'),n), not associate((X',x),N').
 
 #external max_bound(b).
 % enforce lower and upper bound, this is done separately from the choice above as
@@ -33,7 +33,7 @@ associate(A,n,I) :- associate(A,n), A = (x,X'), I = #count{ XT : associate((x,XT
 
 associate(A,n,I) :- associate(A,n), A = (x,X'), bound(X',b), I = #count{ XT : associate((x,XT),n), XT < X' }.
 
-:- association_match(x,n,N'), associate((x,X'),n,_), bound(X',b), not associate((X',x),N',_).
+:- association_match(x,n,N'), associate((x,X'),n), bound(X',b), not associate((X',x),N').
 
 % any possible replacements from earlier bounds are still valid for the association
 % therefore any definitions of include/value for x based on earlier replaces need

@@ -21,7 +21,7 @@ Min { associate((X,X'),N) : type(X',T), include(X') } Max :- association(X,T,N,M
 associate(A,N,I) :- associate(A,N), A = (X,XT), I = #count{ XT': associate((X,XT'),N), XT' < XT }.
 
 % Match bidirectional associations
-:- association(X,T,N,_,_), association_match(X,N,N'), associate((X,X'),N,_), not associate((X',X),N',_).
+:- association(X,T,N,_,_), association_match(X,N,N'), associate((X,X'),N), not associate((X',X),N').
 
 value(X,V) :- replace(((X,X'),ID),_), value(X',V), #false : replace(((X,X'),ID),(A,N,I)), not associate(A,N,I).
 include(X) :- replace(((X,X'),ID),_), include(X'), #false : replace(((X,X'),ID),(A,N,I)), not associate(A,N,I).
