@@ -203,18 +203,6 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         Returns:
             ProgPart: the program part containing the rules to update the incremental expression
         """
-        if exp_type not in [
-            "function",
-            "binary",
-            "unary",
-            "constraint",
-            "minimize",
-            "maximize",
-            "association",
-            "replace",
-        ]:
-            raise ValueError(f"unknown type of incremental expression: {exp_type}")
-
         # determine the name and arguments of the program part
         part_name = ""
         # to the arguments we just need to add the current max_bound
@@ -252,6 +240,8 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                     part_name += "_r"
                 elif not lhs_inc and not rhs_inc:
                     raise ValueError(f"Incremental binary but no subexpression is incremental: {args}")  # nocoverage
+            case _:
+                raise ValueError(f"unknown type of incremental expression: {exp_type}")
 
         return (part_name, args)
 
