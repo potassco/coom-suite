@@ -226,7 +226,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             case "unary" | "constraint" | "minimize" | "maximize":
                 part_name = "incremental_" + exp_type
             case "association":
-                name = tuple(args[:-1])
+                name = str(args[:-1])
                 prefix = "update_" if name in self._is_initialized else "new_"
                 part_name = prefix + "incremental_association"
                 self._is_initialized.add(name)
