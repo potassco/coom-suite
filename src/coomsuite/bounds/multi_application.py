@@ -17,6 +17,13 @@ ProgPart: TypeAlias = Tuple[str, List[Symbol]]
 
 
 def print_prog_parts(parts: List[ProgPart], name_filter: List[str] | None = None) -> None:
+    """
+    Print a list of program parts, optionally include a filter (useful for debugging).
+
+    The name_filter is a list of program part names. Any part names not included in the filter are not printed.
+    Note that any prefixes of program parts (such as new_, update_, incremental_) as well as suffixes (_r, _l)
+    do not need to be included in the name_filter.
+    """
     for part in parts:
         name = part[0]
 
@@ -222,7 +229,6 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                 name = tuple(args[:-1])
                 prefix = "update_" if name in self._is_initialized else "new_"
                 part_name = prefix + "incremental_association"
-                print(f"adding part_name {part_name} for {exp_type} with arguments {args}")
                 self._is_initialized.add(name)
             case "function":
                 # determine the name of the function
@@ -514,8 +520,6 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
                 # collect program parts
                 parts = self._compute_prog_parts(bound)
-
-                print_prog_parts(parts, ["association", "replace"])
 
                 if bound == 0:
                     # print(f"adding the following facts: {self._new_processed_facts}")
