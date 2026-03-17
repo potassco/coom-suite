@@ -16,7 +16,7 @@ from . import get_bound_iter, next_bound_converge
 ProgPart: TypeAlias = Tuple[str, List[Symbol]]
 
 
-def print_prog_parts(parts: List[ProgPart], name_filter: List[str] | None = None) -> None:
+def print_prog_parts(parts: List[ProgPart], name_filter: List[str] | None = None) -> None:  # nocoverage
     """
     Print a list of program parts, optionally include a filter (useful for debugging).
 

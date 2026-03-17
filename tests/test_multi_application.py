@@ -138,6 +138,9 @@ class TestMultiApplication(TestCase):
             ("function", [name], ("new_incremental_function", [name, bound_term])),
             # then it has prefix update
             ("function", [name], ("update_incremental_function", [name, bound_term])),
+            # same test sequence with association
+            ("association", [name], ("new_incremental_association", [name, bound_term])),
+            ("association", [name], ("update_incremental_association", [name, bound_term])),
         ]:
             self.assertEqual(
                 app._get_incremental_prog_part(exp_type, args, bound),
