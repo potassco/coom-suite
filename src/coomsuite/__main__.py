@@ -55,7 +55,10 @@ def main() -> None:
             elif unbounded:
                 bound_solver = BoundSolver([temp_file], args.solver, solver_args, args.output)
                 bound = bound_solver.get_bounds(
-                    algorithm=args.bounds, initial_bound=args.initial_bound, use_multishot=args.multishot
+                    algorithm=args.bounds,
+                    initial_bound=args.initial_bound,
+                    step=args.step,
+                    use_multishot=args.multishot,
                 )
 
                 print(f"\n The minimal upper bound is {bound}")

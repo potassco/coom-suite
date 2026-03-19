@@ -22,6 +22,7 @@ class BoundSolver:
     facts: List[str]
     solver: str
     clingo_args: List[str]
+    step: int
     output_format: str
 
     def __init__(
@@ -66,11 +67,14 @@ class BoundSolver:
                 raise KeyError("Unknown exit code.") from exc
 
     def get_bounds(
-        self, algorithm: str = "linear", initial_bound: int = 0, use_multishot: bool = False
+        self, algorithm: str = "linear", initial_bound: int = 0, step: Optional[int] = None, use_multishot: bool = False
     ) -> Optional[int]:
         """
         Compute the minimal bound for the problem.
         """
+        if step is None:
+            step = 1 if algorithm == "linear" else 2
+
         # multi shot solving
         if use_multishot:  # nocoverage
             multishot_solver = COOMMultiSolverApp(
@@ -91,7 +95,7 @@ class BoundSolver:
             return multishot_solver.max_bound
 
         # single shot solving
-        bounds_iter = get_bound_iter(algorithm, initial_bound)
+        bounds_iter = get_bound_iter(algorithm, initial_bound, step)
         max_bound = initial_bound
         prev_bound = -1
         while True:
