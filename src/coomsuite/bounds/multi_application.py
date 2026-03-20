@@ -454,16 +454,6 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             # exp_to_remove = set()
             for name, args in incremental_expressions:
                 parts.append(self._get_incremental_prog_part(name, args, bound))
-            #     if name == "replace":
-            #         exp_to_remove.add((name, tuple(args)))
-
-            # from pprint import pprint
-
-            # print("expressions that should be removed:")
-            # pprint(exp_to_remove)
-
-            # for inc_set in self._incremental_sets:
-            #     self._incremental_sets[inc_set] = self._incremental_sets[inc_set] - exp_to_remove
         else:
             # keep track of which incremental sets are updated,
             # i.e. which incremental sets received a new member
@@ -512,7 +502,6 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                 parts = self._compute_prog_parts(bound)
 
                 if bound == 0:
-                    # print(f"adding the following facts: {self._new_processed_facts}")
                     # ground base with the remaining preprocessed facts added
                     # (needs to be grounded before other program parts below)
                     control.add("base", [], "".join(self._new_processed_facts))
