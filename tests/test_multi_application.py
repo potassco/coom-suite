@@ -5,7 +5,7 @@ Test cases for multishot application class.
 # pylint: disable=protected-access
 
 from contextlib import redirect_stdout
-from typing import Any, List, Optional, Set, Tuple
+from typing import Any, List, Set, Tuple
 from unittest import TestCase
 from unittest.mock import ANY, call, create_autospec, patch
 
@@ -272,7 +272,7 @@ class TestMultiApplication(TestCase):
                 'incremental("binary","5<count(root.bags.pockets)",'
                 '("5<count(root.bags.pockets)","5","<","count(root.bags.pockets)")).'
             ),
-            ('incremental("constraint","5<count(root.bags.pockets)",' '((4,"5<count(root.bags.pockets)"),"boolean")).'),
+            'incremental("constraint","5<count(root.bags.pockets)",((4,"5<count(root.bags.pockets)"),"boolean")).',
         }
 
         app._update_incremental_data(incremental_facts)
@@ -523,14 +523,6 @@ class TestMultiApplication(TestCase):
             app._incremental_parts = {("unary", tuple())}
             # mocked return value of _remove_new_incremental_expressions
             mock_remove.side_effect = [[]]
-
-            # mocked return value of _check_if_updates_incremental_set
-            def mock_check_updates_side_effect(fact: str) -> Optional[str]:
-                match fact:
-                    case 'set("root.bags","root.bags[1]").':
-                        return '"root.bags"'
-                    case _:
-                        return None
 
             # mocked return value of _get_prog_part
             non_inc_parts = [
