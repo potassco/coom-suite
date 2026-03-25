@@ -134,6 +134,7 @@ class TestMultiApplication(TestCase):
             ("unary", [name], ("incremental_unary", [name, bound_term])),
             ("constraint", [name], ("incremental_constraint", [name, bound_term])),
             ("replace", [name], ("new_replace", [name, bound_term])),
+            ("association_match", [name], ("new_association_match", [name])),
             # first the function prog parts has prefix new
             ("function", [name], ("new_incremental_function", [name, bound_term])),
             # then it has prefix update
@@ -211,6 +212,7 @@ class TestMultiApplication(TestCase):
             'function("count(root.bags[0].pockets)","count","root.bags[0].pockets").',
             'binary("root.color[0]=Blue","root.color[0]","=","Blue").',
             'unary("-7","-","7").',
+            'association_match("root.elements[0]","modules2","elements2").',
         }
         # incremental expressions part of the initial value of _new_processed_facts
         incremental = {
@@ -218,6 +220,8 @@ class TestMultiApplication(TestCase):
             'function("count(root.bags.pockets)","count","root.bags.pockets").',
             'binary("5<count(root.bags.pockets)","5","<","count(root.bags.pockets)").',
             'unary("(count(root.bags.pockets))","()","count(root.bags.pockets)").',
+            'association_match("root.elements[0]","modules","elements").',
+            'replace((("root.elements[0].modules[0]","root.modules[0]"),0),(("root.elements[0]","root.modules[0]"),"modules",0)).',
         }
 
         # initialize attributes accordingly
@@ -227,6 +231,7 @@ class TestMultiApplication(TestCase):
             "5<count(root.bags.pockets)",
             "count(root.bags.pockets)",
             "(count(root.bags.pockets))",
+            "modules",
         }
 
         # remove the new incremental expressions
