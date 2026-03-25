@@ -6,10 +6,6 @@ inc_obj(@dotpath((F,(X,I)))) :- coom_feature(Ctx,F,T,Min,#sup), type_aux(X,Ctx),
 % instantiate a dummy incremental object
 inc_obj(@dotpath((F,(X,-1)))) :- coom_feature(Ctx,F,T,0,#sup),  type_aux(X,Ctx), max_bound = 0.
 
-% associate sets based on replace:
-% - if X is replaced by Y, and X in P, Y in P', then P and P' are associated
-set_association(P,P') :- replace(((X,Y),_),_), set(P,X), set(P',Y).
-
 % helper rules to instantiate the subtree starting from a dummy incremental object
 % - base case: checking for 0..* and max bound 0
 help_aux((F,(X,-1)),T)            :- coom_feature(Ctx,F,T,Min,#sup),     type_aux(X,Ctx), Min = 0, max_bound = 0, T != "num".
@@ -49,6 +45,11 @@ inc_set(P) :- table_column(_,P), path_step(P,X), inc_obj(X).
 %   or in an association
 inc_set(P) :- replace(_,((_,X),_,_)), set(P,X), inc_obj(X).
 
+% associate sets based on replace:
+% - if X is replaced by Y, and X in P, Y in P', then P and P' are associated
+set_association(P,P') :- replace(((X,Y),_),_), set(P,X), set(P',Y).
+% if P is associated to an incremental set then it is incremental as well
+inc_set(P) :- set_association(P,P'), inc_set(P').
 
 % mark types with unbounded cardinality as incremental
 inc_type(T) :- coom_feature(Ctx,F,T,Min,#sup).
@@ -59,8 +60,6 @@ inc_type(T) :- coom_feature(Ctx,F,T,Min,#sup).
 % incremental expressions are defined recursively
 % - base case: functions over incremental sets are incremental
 incremental("function",  X,(X,F,P))            :- function(X,F,P),              inc_set(P).
-% - base case: functions over sets associated to incremental sets
-incremental("function",  X,(X,F,P))           :- function(X,F,P), set_association(P,P'), inc_set(P').
 % - base case: table constraints over incremental sets are incremental
 incremental("constraint",X,((ID,X),"table"))   :- table_column((ID,X),P),       inc_set(P).
 % - base case: association to an incremental type
@@ -72,7 +71,6 @@ incremental("association",N,(X,T,N,L,U))       :- association(X,T,N,L,U), increm
 % - recursive: any path expression that is a variable of an incremental association
 incremental("path",      X,())              :- replace(((X,_),_),(_,N,_)),  incremental("association",N,_).
 % - recursive: if a sub-expression of X is incremental, then X is also incremental
-% incremental("function",  X,P,(X,F,Y))            :- function(X,F,Y),              incremental(_,Y ,P,_).
 incremental("binary",    X,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,L ,_).
 incremental("binary",    X,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,R ,_).
 incremental("unary",     X,(X,O,X'))           :- unary(X,O,X'),                incremental(_,X',_).
