@@ -93,7 +93,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         self._processed_facts: Set[str] = set()
         """Processed facts from all previous preprocessing steps"""
 
-        self._incremental_parts: Set[Tuple[str, Tuple[Symbol]]] = set()
+        self._incremental_parts: Set[Tuple[str, Tuple[Symbol, ...]]] = set()
         """The set of all incremental program parts"""
         self._incremental_expressions: Set[str] = set()
         """The set of all incremental expressions (represented by their name)"""

@@ -5,7 +5,7 @@ Test cases for multishot application class.
 # pylint: disable=protected-access
 
 from contextlib import redirect_stdout
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, List, Optional, Set, Tuple
 from unittest import TestCase
 from unittest.mock import ANY, call, create_autospec, patch
 
@@ -173,19 +173,6 @@ class TestMultiApplication(TestCase):
         # test invalid incremental fact
         self.assertRaises(ValueError, app._get_incremental_prog_part, "number", [], 0)
 
-    def test_check_if_updates_incremental_set(self) -> None:
-        """
-        Test helper function that checks if a fact updates an incremental set.
-        """
-        app = COOMMultiSolverApp([])
-
-        app._incremental_sets["name"] = set()
-
-        for fact, result in [('set("other",2).', None), ('set("name",1).', "name"), ("p.", None)]:
-            self.assertEqual(
-                app._check_if_updates_incremental_set(fact), result, f"failed with fact={fact}, result={result}"
-            )
-
     def test_update_bound(self) -> None:
         """
         Test the update bounds function of multi application class.
@@ -260,8 +247,8 @@ class TestMultiApplication(TestCase):
         app = COOMMultiSolverApp([])
 
         # initial incremental data
-        inc_sets_dict: Dict[str, Set[Tuple[str, Tuple[Symbol, ...]]]] = {}
-        inc_sets_dict["root.bags.pockets"] = {
+        inc_parts: Set[Tuple[str, Tuple[Symbol, ...]]] = set()
+        inc_parts = {
             (
                 "function",
                 (String("count(root.bags.pockets)"), String("count"), String("root.bags.pockets")),
@@ -270,7 +257,7 @@ class TestMultiApplication(TestCase):
         inc_expressions = {"5<count(root.bags.pockets)"}
 
         # initialize attributes
-        app._incremental_sets = inc_sets_dict.copy()
+        app._incremental_parts = inc_parts.copy()
         app._incremental_expressions = inc_expressions.copy()
 
         # incremental facts for updating incremental data
@@ -278,83 +265,43 @@ class TestMultiApplication(TestCase):
             'inc_set("root.bags.size.volume").',
             'inc_set("root.bags.pockets").',
             (
-                'incremental("function","sum(root.bags.size.volume)","root.bags.size.volume",'
+                'incremental("function","sum(root.bags.size.volume)",'
                 '("sum(root.bags.size.volume)","sum","root.bags.size.volume")).'
             ),
             (
-                'incremental("binary","5<count(root.bags.pockets)","root.bags.pockets",'
+                'incremental("binary","5<count(root.bags.pockets)",'
                 '("5<count(root.bags.pockets)","5","<","count(root.bags.pockets)")).'
             ),
-            (
-                'incremental("constraint","5<count(root.bags.pockets)","root.bags.pockets",'
-                '((4,"5<count(root.bags.pockets)"),"boolean")).'
-            ),
+            ('incremental("constraint","5<count(root.bags.pockets)",' '((4,"5<count(root.bags.pockets)"),"boolean")).'),
         }
 
         app._update_incremental_data(incremental_facts)
 
         # add everything to the expected results
-        inc_sets_dict["root.bags.pockets"].add(
+        inc_parts.add(
             (
                 "constraint",
                 (parse_term('(4,"5<count(root.bags.pockets)")'), String("boolean")),
             )
         )
-        inc_sets_dict["root.bags.pockets"].add(
+        inc_parts.add(
             (
                 "binary",
                 (String("5<count(root.bags.pockets)"), String("5"), String("<"), String("count(root.bags.pockets)")),
             )
         )
-        inc_sets_dict["root.bags.size.volume"] = {
+        inc_parts.add(
             (
                 "function",
                 (String("sum(root.bags.size.volume)"), String("sum"), String("root.bags.size.volume")),
             )
-        }
+        )
         inc_expressions.add("sum(root.bags.size.volume)")
 
         # test value of _incremental_set dictionary
-        self.assertEqual(app._incremental_sets, inc_sets_dict)
+        self.assertEqual(app._incremental_parts, inc_parts)
         # test value of _incremental_expressions set
         self.assertEqual(app._incremental_expressions, inc_expressions)
-
-    def test_get_prog_part_of_incremental_set(self) -> None:
-        """
-        Test function computing all program parts of an incremental set.
-        """
-        app = COOMMultiSolverApp([])
-
-        # initialize data
-        app._incremental_sets = {}
-        app._incremental_sets["root.bags.pockets"] = set()
-        expected_parts = []
-        bound = 2
-
-        # add elements to the incremental set and respective program parts to expected return
-        for name, args, part_name in [
-            (
-                "function",
-                [String("count(root.bags.pockets)"), String("count"), String("root.bags.pockets")],
-                "new_incremental_function",
-            ),
-            (
-                "constraint",
-                [parse_term('(4,"5<count(root.bags.pockets)")'), String("boolean")],
-                "incremental_constraint",
-            ),
-            (
-                "unary",
-                [String("(count(root.bags.pockets))"), String("()"), String("count(root.bags.pockets)")],
-                "incremental_unary",
-            ),
-        ]:
-            app._incremental_sets["root.bags.pockets"].add((name, tuple(args)))
-            expected_parts.append((part_name, args + [Number(bound)]))
-
-        parts = app._get_prog_part_of_incremental_set("root.bags.pockets", bound)
-
-        self.assertCountEqual(parts, expected_parts)
 
     def _get_mock_control(self, solve_is_sat: List[bool]) -> Control:
         """
@@ -570,10 +517,10 @@ class TestMultiApplication(TestCase):
 
         with (
             patch.object(app, "_remove_new_incremental_expressions", autospec=True) as mock_remove,
-            patch.object(app, "_check_if_updates_incremental_set", autospec=True) as mock_check_updates,
             patch.object(app, "_get_prog_part", autospec=True) as mock_get_part,
-            patch.object(app, "_get_prog_part_of_incremental_set", autospec=True) as mock_get_part_inc_set,
         ):
+            # mock value of _incremental_parts
+            app._incremental_parts = {("unary", tuple())}
             # mocked return value of _remove_new_incremental_expressions
             mock_remove.side_effect = [[]]
 
@@ -585,8 +532,6 @@ class TestMultiApplication(TestCase):
                     case _:
                         return None
 
-            mock_check_updates.side_effect = mock_check_updates_side_effect
-
             # mocked return value of _get_prog_part
             non_inc_parts = [
                 ("new_set", [String('"root.color"'), String('"root.color[0]"')]),
@@ -595,8 +540,7 @@ class TestMultiApplication(TestCase):
             mock_get_part.side_effect = non_inc_parts.copy()
 
             # mocked return value of _get_prog_part_of_incremental_set
-            inc_parts = [("update_incremental_function", [Number(1)]), ("incremental_unary", [Number(1)])]
-            mock_get_part_inc_set.side_effect = [inc_parts.copy()]
+            inc_parts = [("incremental_unary", [Number(1)])]
 
             # initial value of _new_processed_facts
             new_facts = [
@@ -609,13 +553,11 @@ class TestMultiApplication(TestCase):
             parts = app._compute_prog_parts(1)
 
             # check if the correct parts are returned
-            self.assertEqual(parts, non_inc_parts + inc_parts)
-            # check calls to _check_if_updates_incremental_set
-            self.assertCountEqual(mock_check_updates.call_args_list, [call(x) for x in new_facts])
+            self.assertEqual(
+                parts, non_inc_parts + inc_parts, f"parts is {parts}, expected {non_inc_parts + inc_parts}"
+            )
             # check calls to _get_prog_part
             self.assertCountEqual(mock_get_part.call_args_list, [call(x, 1) for x in new_facts])
-            # check call to _get_part_of_incremental_set
-            self.assertEqual(mock_get_part_inc_set.call_args_list, [call('"root.bags"', 1)])
 
     def test_main_control_calls(self) -> None:
         """
