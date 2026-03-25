@@ -45,7 +45,7 @@ def print_prog_parts(parts: List[ProgPart], name_filter: List[str] | None = None
         print(part_str)
 
 
-def _get_fact_name_and_args(fact: str) -> Tuple[str, Tuple[Symbol, ...]]:
+def _get_fact_name_and_args(fact: str) -> ProgPart:
     """
     Convert a fact given as a string to its name and arguments
 
@@ -53,7 +53,7 @@ def _get_fact_name_and_args(fact: str) -> Tuple[str, Tuple[Symbol, ...]]:
         fact (str): The fact in string representation (with trailing '.')
 
     Returns:
-        Tuple[str, List[Symbol]]: A tuple of the name of the fact and the list of its arguments (as clingo.Symbol)
+        ProgPart: A tuple of the name of the fact and the tuple of its arguments
     """
     x = parse_term(fact[:-1])
     return (x.name, tuple(x.arguments))
@@ -93,7 +93,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         self._processed_facts: Set[str] = set()
         """Processed facts from all previous preprocessing steps"""
 
-        self._incremental_parts: Set[Tuple[str, Tuple[Symbol, ...]]] = set()
+        self._incremental_parts: Set[ProgPart] = set()
         """The set of all incremental program parts"""
         self._incremental_expressions: Set[str] = set()
         """The set of all incremental expressions (represented by their name)"""
@@ -135,12 +135,12 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         # filter out facts that were previously processed
         self._new_processed_facts = non_incremental_facts - self._processed_facts
 
-    def _remove_new_incremental_expressions(self, bound: int) -> List[Tuple[str, Tuple[Symbol, ...]]]:
+    def _remove_new_incremental_expressions(self, bound: int) -> List[ProgPart]:
         """
         Remove all facts from new_processed_facts that are incremental expressions
 
         Returns:
-            List[Tuple[str, List[Symbol]]]: list of incremental expressions represented as tuples (name, args)
+            List[ProgPart]: list of incremental expressions represented as tuples (name, args)
         """
         inc_expressions = []
         for fact in self._new_processed_facts:
@@ -414,7 +414,6 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         else:
             # collect program parts for all the new facts
             for fact in self._new_processed_facts:
-                # add the program part of the fact
                 parts.append(self._get_prog_part(fact, bound))
 
             # add the program parts belonging to every incremental set
