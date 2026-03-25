@@ -1,5 +1,5 @@
 product {
-    1..*    Module  modules
+    0..*    Module  modules
     0..2    Element elements
 }
 
