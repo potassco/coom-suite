@@ -220,7 +220,10 @@ class TestMultiApplication(TestCase):
             'binary("5<count(root.bags.pockets)","5","<","count(root.bags.pockets)").',
             'unary("(count(root.bags.pockets))","()","count(root.bags.pockets)").',
             'association_match("root.elements[0]","modules","elements").',
-            'replace((("root.elements[0].modules[0]","root.modules[0]"),0),(("root.elements[0]","root.modules[0]"),"modules",0)).',
+            (
+                'replace((("root.elements[0].modules[0]","root.modules[0]"),0),'
+                '(("root.elements[0]","root.modules[0]"),"modules",0)).'
+            ),
         }
 
         # initialize attributes accordingly
