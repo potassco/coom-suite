@@ -27,13 +27,13 @@ class TestMultiApplication(TestCase):
         for fact, result in [
             (
                 'set("root.totalVolume","root.totalVolume[0]").',
-                ("set", [parse_term('"root.totalVolume"'), parse_term('"root.totalVolume[0]"')]),
+                ("set", (parse_term('"root.totalVolume"'), parse_term('"root.totalVolume[0]"'))),
             ),
             (
                 'index("root.color[0]",0).',
-                ("index", [parse_term('"root.color[0]"'), parse_term("0")]),
+                ("index", (parse_term('"root.color[0]"'), parse_term("0"))),
             ),
-            ('allow(7,(1,0),"S").', ("allow", [parse_term("7"), parse_term("(1,0)"), parse_term('"S"')])),
+            ('allow(7,(1,0),"S").', ("allow", (parse_term("7"), parse_term("(1,0)"), parse_term('"S"')))),
         ]:
             self.assertEqual(_get_fact_name_and_args(fact), result, f"failed with fact={fact}, result={result}")
 
@@ -53,8 +53,8 @@ class TestMultiApplication(TestCase):
         app = COOMMultiSolverApp([])
 
         for fact, part in [
-            ('allow(7,(1,0),"S").', ("new_allow", [parse_term("7"), parse_term("(1,0)"), parse_term('"S"')])),
-            ('number("5",5).', ("new_number", [parse_term('"5"'), parse_term("5")])),
+            ('allow(7,(1,0),"S").', ("new_allow", (parse_term("7"), parse_term("(1,0)"), parse_term('"S"')))),
+            ('number("5",5).', ("new_number", (parse_term('"5"'), parse_term("5")))),
             # for replace the addition of the bound as an argument is conditional
             (
                 (
@@ -63,32 +63,32 @@ class TestMultiApplication(TestCase):
                 ),
                 (
                     "new_replace",
-                    [
+                    (
                         parse_term('(("root.elements[0].modules[0]","root.modules[0]"),0)'),
                         parse_term('(("root.elements[0]","root.modules[0]"),"modules",0)'),
-                    ],
+                    ),
                 ),
             ),
             # program parts that get the bound added to arguments
             (
                 'type("root.bags[1]","Bags").',
-                ("new_type", [parse_term('"root.bags[1]"'), parse_term('"Bags"'), parse_term("1")]),
+                ("new_type", (parse_term('"root.bags[1]"'), parse_term('"Bags"'), parse_term("1"))),
             ),
             (
                 'constraint(("root.color",1),"lowerbound").',
-                ("new_constraint", [parse_term('("root.color",1)'), parse_term('"lowerbound"'), parse_term("1")]),
+                ("new_constraint", (parse_term('("root.color",1)'), parse_term('"lowerbound"'), parse_term("1"))),
             ),
             (
                 'column(("Size","root.bags[0].size[0]"),0,0,"root.bags[0].size[0]").',
                 (
                     "new_column",
-                    [
+                    (
                         parse_term('("Size","root.bags[0].size[0]")'),
                         parse_term("0"),
                         parse_term("0"),
                         parse_term('"root.bags[0].size[0]"'),
                         parse_term("1"),
-                    ],
+                    ),
                 ),
             ),
         ]:
@@ -107,11 +107,11 @@ class TestMultiApplication(TestCase):
             ),
             (
                 "new_replace",
-                [
+                (
                     parse_term('(("root.elements[0].modules[0]","root.modules[0]"),0)'),
                     parse_term('(("root.elements[0]","root.modules[0]"),"modules",0)'),
                     parse_term("1"),
-                ],
+                ),
             ),
             "missing bound as argument for replace with incremental association",
         )
@@ -131,17 +131,17 @@ class TestMultiApplication(TestCase):
 
         # test unary, constraint and function
         for exp_type, args, part in [
-            ("unary", [name], ("incremental_unary", [name, bound_term])),
-            ("constraint", [name], ("incremental_constraint", [name, bound_term])),
-            ("replace", [name], ("new_replace", [name, bound_term])),
-            ("association_match", [name], ("new_association_match", [name])),
+            ("unary", (name,), ("incremental_unary", (name, bound_term))),
+            ("constraint", (name,), ("incremental_constraint", (name, bound_term))),
+            ("replace", (name,), ("new_replace", (name, bound_term))),
+            ("association_match", (name,), ("new_association_match", (name,))),
             # first the function prog parts has prefix new
-            ("function", [name], ("new_incremental_function", [name, bound_term])),
+            ("function", (name,), ("new_incremental_function", (name, bound_term))),
             # then it has prefix update
-            ("function", [name], ("update_incremental_function", [name, bound_term])),
+            ("function", (name,), ("update_incremental_function", (name, bound_term))),
             # same test sequence with association
-            ("association", [name], ("new_incremental_association", [name, bound_term])),
-            ("association", [name], ("update_incremental_association", [name, bound_term])),
+            ("association", (name,), ("new_incremental_association", (name, bound_term))),
+            ("association", (name,), ("update_incremental_association", (name, bound_term))),
         ]:
             self.assertEqual(
                 app._get_incremental_prog_part(exp_type, args, bound),
@@ -153,9 +153,8 @@ class TestMultiApplication(TestCase):
         lhs_name = parse_term('"lhs"')
         op_name = parse_term('"op"')
         rhs_name = parse_term('"rhs"')
-        binary_args = [name, lhs_name, op_name, rhs_name]
-        part_args = binary_args.copy()
-        part_args.append(bound_term)
+        binary_args = (name, lhs_name, op_name, rhs_name)
+        part_args = binary_args + (bound_term,)
         for inc_expressions, part_name in [
             # 1: only the right sub-expression is incremental
             ({rhs_name.string}, "incremental_binary_r"),
@@ -166,7 +165,7 @@ class TestMultiApplication(TestCase):
         ]:
             app._incremental_expressions = inc_expressions
             self.assertEqual(
-                app._get_incremental_prog_part("binary", binary_args.copy(), bound),
+                app._get_incremental_prog_part("binary", binary_args, bound),
                 (part_name, part_args),
                 f"failed with inc_expressions={inc_expressions}, part_name={part_name}",
             )
@@ -531,13 +530,13 @@ class TestMultiApplication(TestCase):
 
             # mocked return value of _get_prog_part
             non_inc_parts = [
-                ("new_set", [String('"root.color"'), String('"root.color[0]"')]),
-                ("new_set", [String('"root.bags"'), String('"root.bags[1]"')]),
+                ("new_set", (String('"root.color"'), String('"root.color[0]"'))),
+                ("new_set", (String('"root.bags"'), String('"root.bags[1]"'))),
             ]
             mock_get_part.side_effect = non_inc_parts.copy()
 
             # mocked return value of _get_prog_part_of_incremental_set
-            inc_parts = [("incremental_unary", [Number(1)])]
+            inc_parts = [("incremental_unary", (Number(1),))]
 
             # initial value of _new_processed_facts
             new_facts = [

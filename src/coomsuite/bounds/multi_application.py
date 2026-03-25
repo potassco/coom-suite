@@ -13,7 +13,7 @@ from coomsuite.utils import get_encoding
 
 from . import get_bound_iter, next_bound_converge
 
-ProgPart: TypeAlias = Tuple[str, List[Symbol]]
+ProgPart: TypeAlias = Tuple[str, Tuple[Symbol, ...]]
 
 
 def print_prog_parts(parts: List[ProgPart], name_filter: List[str] | None = None) -> None:  # nocoverage
@@ -45,7 +45,7 @@ def print_prog_parts(parts: List[ProgPart], name_filter: List[str] | None = None
         print(part_str)
 
 
-def _get_fact_name_and_args(fact: str) -> Tuple[str, List[Symbol]]:
+def _get_fact_name_and_args(fact: str) -> Tuple[str, Tuple[Symbol, ...]]:
     """
     Convert a fact given as a string to its name and arguments
 
@@ -56,7 +56,7 @@ def _get_fact_name_and_args(fact: str) -> Tuple[str, List[Symbol]]:
         Tuple[str, List[Symbol]]: A tuple of the name of the fact and the list of its arguments (as clingo.Symbol)
     """
     x = parse_term(fact[:-1])
-    return (x.name, x.arguments)
+    return (x.name, tuple(x.arguments))
 
 
 class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-attributes
@@ -135,7 +135,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         # filter out facts that were previously processed
         self._new_processed_facts = non_incremental_facts - self._processed_facts
 
-    def _remove_new_incremental_expressions(self, bound: int) -> List[Tuple[str, List[Symbol]]]:
+    def _remove_new_incremental_expressions(self, bound: int) -> List[Tuple[str, Tuple[Symbol, ...]]]:
         """
         Remove all facts from new_processed_facts that are incremental expressions
 
@@ -195,7 +195,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
         return inc_expressions
 
-    def _get_incremental_prog_part(self, exp_type: str, args: List[Symbol], bound: int) -> ProgPart:
+    def _get_incremental_prog_part(self, exp_type: str, args: Tuple[Symbol, ...], bound: int) -> ProgPart:
         """
         Get the incremental program part for an expression
 
@@ -210,7 +210,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         # determine the name and arguments of the program part
         part_name = ""
         # to the arguments we just need to add the current max_bound
-        args.append(Number(bound))
+        args += (Number(bound),)
         # the name of the program part depends on the type of the expression
         match exp_type:
             case "association_match":
@@ -299,7 +299,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                 needs_bound = True
 
         if needs_bound:
-            args.append(Number(bound))
+            args += (Number(bound),)
 
         # determine the corresponding program part
         program_part = (f"new_{name}", args)
@@ -419,7 +419,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
             # add the program parts belonging to every incremental set
             for part in self._incremental_parts:
-                parts.append(self._get_incremental_prog_part(part[0], list(part[1]), bound))
+                parts.append(self._get_incremental_prog_part(part[0], part[1], bound))
 
         return parts
 
