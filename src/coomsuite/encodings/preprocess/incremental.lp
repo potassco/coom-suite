@@ -78,4 +78,7 @@ incremental("constraint",X,P,((ID,X),"boolean")) :- constraint((ID,X),"boolean")
 incremental("minimize",  X,P,(X,V))              :- minimize(X,V),                incremental(_,X ,P,_).
 incremental("maximize",  X,P,(X,V))              :- maximize(X,V),                incremental(_,X ,P,_).
 
-#show incremental/4.
+% #show incremental/4.
+
+incremental(A,B,C) :- incremental(A,B,_,C).
+#show incremental/3.
