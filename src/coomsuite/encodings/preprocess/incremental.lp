@@ -57,28 +57,26 @@ inc_set(P) :- replace(_,((_,X),_,_)), set(P,X), inc_obj(X).
 % incremental(T,N,S,Arg) : expression of type T with name N and arguments Args is incremental due to dependency on the incremental set S
 % incremental expressions are defined recursively
 % - base case: functions over incremental sets are incremental
-incremental("function",  X,P,(X,F,P))            :- function(X,F,P),              inc_set(P).
+incremental("function",  X,(X,F,P))            :- function(X,F,P),              inc_set(P).
 % - base case: functions over sets associated to incremental sets
-incremental("function",  X,P',(X,F,P))           :- function(X,F,P), set_association(P,P'), inc_set(P').
+incremental("function",  X,(X,F,P))           :- function(X,F,P), set_association(P,P'), inc_set(P').
 % - base case: table constraints over incremental sets are incremental
-incremental("constraint",X,P,((ID,X),"table"))   :- table_column((ID,X),P),       inc_set(P).
+incremental("constraint",X,((ID,X),"table"))   :- table_column((ID,X),P),       inc_set(P).
 % - base case: association to an object belonging to an incremental set
-incremental("association",N,P,(X,T,N,L,U))       :- association(X,T,N,L,U), replace(_,((X,Y),N,_)), set(P,Y), inc_set(P).
-incremental("association",N,P,(X,T,N,L,U))       :- association(X,T,N,L,U), incremental("association",N',P,_),
+incremental("association",N,(X,T,N,L,U))       :- association(X,T,N,L,U), replace(_,((X,Y),N,_)), set(P,Y), inc_set(P).
+
+incremental("association",N,(X,T,N,L,U))       :- association(X,T,N,L,U), incremental("association",N',_),
                                                     association_match(X,N,N').
 
 % - recursive: any path expression that is a variable of an incremental association
-incremental("path",      X,P,(X,P))              :- replace(((X,_),_),(_,N,_)),  incremental("association",N,P,_).
+incremental("path",      X,())              :- replace(((X,_),_),(_,N,_)),  incremental("association",N,_).
 % - recursive: if a sub-expression of X is incremental, then X is also incremental
 % incremental("function",  X,P,(X,F,Y))            :- function(X,F,Y),              incremental(_,Y ,P,_).
-incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,L ,P,_).
-incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,R ,P,_).
-incremental("unary",     X,P,(X,O,X'))           :- unary(X,O,X'),                incremental(_,X',P,_).
-incremental("constraint",X,P,((ID,X),"boolean")) :- constraint((ID,X),"boolean"), incremental(_,X ,P,_).
-incremental("minimize",  X,P,(X,V))              :- minimize(X,V),                incremental(_,X ,P,_).
-incremental("maximize",  X,P,(X,V))              :- maximize(X,V),                incremental(_,X ,P,_).
+incremental("binary",    X,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,L ,_).
+incremental("binary",    X,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,R ,_).
+incremental("unary",     X,(X,O,X'))           :- unary(X,O,X'),                incremental(_,X',_).
+incremental("constraint",X,((ID,X),"boolean")) :- constraint((ID,X),"boolean"), incremental(_,X ,_).
+incremental("minimize",  X,(X,V))              :- minimize(X,V),                incremental(_,X ,_).
+incremental("maximize",  X,(X,V))              :- maximize(X,V),                incremental(_,X ,_).
 
-% #show incremental/4.
-
-incremental(A,B,C) :- incremental(A,B,_,C).
 #show incremental/3.
