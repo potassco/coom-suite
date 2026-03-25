@@ -160,7 +160,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             # check if the fact is an incremental association
             is_incremental_association = name == "association" and str(args[2].string) in self._incremental_expressions
 
-            # check if the replace of an association variable is incremental
+            # check if a replace refers to an incremental association
             # this is only necessary for bound 0
             # - replaces do not really behave incrementally as the above cases
             # - however the possible include/values that a replace defines behave incrementally
@@ -171,11 +171,20 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                 name == "replace" and args[1].arguments[1].string in self._incremental_expressions and bound == 0
             )
 
+            # check if a association match refers to an incremental association
+            # only done for bound 0 similarly to replace above
+            is_incremental_match = (
+                name == "association_match"
+                and (args[1].string in self._incremental_expressions or args[2].string in self._incremental_expressions)
+                and bound == 0
+            )
+
             if (
                 is_incremental_constraint
                 or is_incremental_expression
                 or is_incremental_association
                 or is_incremental_replace
+                or is_incremental_match
             ):
                 inc_expressions.append((name, args))
                 # add the fact to the processed_facts
@@ -204,6 +213,10 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         args.append(Number(bound))
         # the name of the program part depends on the type of the expression
         match exp_type:
+            case "association_match":
+                part_name = "new_association_match"
+                # remove the bound argument
+                args = args[:-1]
             case "replace":
                 part_name = "new_replace"
             case "unary" | "constraint" | "minimize" | "maximize":

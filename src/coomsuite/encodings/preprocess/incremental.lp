@@ -65,9 +65,6 @@ incremental("constraint",X,((ID,X),"table"))   :- table_column((ID,X),P),       
 % - base case: association to an incremental type
 incremental("association",N,(X,T,N,L,U))       :- association(X,T,N,L,U), inc_type(T).
 
-incremental("association",N,(X,T,N,L,U))       :- association(X,T,N,L,U), incremental("association",N',_),
-                                                    association_match(X,N,N').
-
 % - recursive: any path expression that is a variable of an incremental association
 incremental("path",      X,())              :- replace(((X,_),_),(_,N,_)),  incremental("association",N,_).
 % - recursive: if a sub-expression of X is incremental, then X is also incremental
