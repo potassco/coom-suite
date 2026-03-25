@@ -48,9 +48,10 @@ inc_set(P) :- function(_,_,P),   path_step(P,X), inc_obj(X).
 inc_set(P) :- table_column(_,P), path_step(P,X), inc_obj(X).
 %   or in an association
 inc_set(P) :- replace(_,((_,X),_,_)), set(P,X), inc_obj(X).
-% TODO: what about association to unbounded object but empty set?
-% probably needs a helper version of replace as replace is needed to derive incremental associations
-% and also set associations
+
+
+% mark types with unbounded cardinality as incremental
+inc_type(T) :- coom_feature(Ctx,F,T,Min,#sup).
 
 #show inc_set/1.
 
@@ -62,8 +63,8 @@ incremental("function",  X,(X,F,P))            :- function(X,F,P),              
 incremental("function",  X,(X,F,P))           :- function(X,F,P), set_association(P,P'), inc_set(P').
 % - base case: table constraints over incremental sets are incremental
 incremental("constraint",X,((ID,X),"table"))   :- table_column((ID,X),P),       inc_set(P).
-% - base case: association to an object belonging to an incremental set
-incremental("association",N,(X,T,N,L,U))       :- association(X,T,N,L,U), replace(_,((X,Y),N,_)), set(P,Y), inc_set(P).
+% - base case: association to an incremental type
+incremental("association",N,(X,T,N,L,U))       :- association(X,T,N,L,U), inc_type(T).
 
 incremental("association",N,(X,T,N,L,U))       :- association(X,T,N,L,U), incremental("association",N',_),
                                                     association_match(X,N,N').
