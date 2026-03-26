@@ -139,6 +139,11 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         """
         Remove all facts from new_processed_facts that are incremental expressions
 
+        Program parts for incremental expressions are added by iterating over self._incremental_parts.
+        This is done because the facts for incremental expressions are only added once,
+        but then have to be updated for every new bound. To ensure that any new incremental
+        facts are also added in the correct way they are removed from the _new_processed_facts.
+
         Returns:
             List[ProgPart]: list of incremental expressions represented as tuples (name, args)
         """
@@ -201,7 +206,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
         Args:
             exp_type (str): string representing the type of the expression
-            args (List[Symbol]): the arguments of the expression
+            args (Tuple[Symbol, ...]): the arguments of the expression
             bounds (int): the current bound to use as parameter of the program part
 
         Returns:
@@ -223,6 +228,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                 part_name = "incremental_" + exp_type
             case "association":
                 name = str(args[:-1])
+                # prefix of the program part depends on whether the association is initialized
                 prefix = "update_" if name in self._is_initialized else "new_"
                 part_name = prefix + "incremental_association"
                 self._is_initialized.add(name)
@@ -247,7 +253,9 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                 elif not lhs_inc and rhs_inc:
                     part_name += "_r"
                 elif not lhs_inc and not rhs_inc:
+                    # one subexpression has to be incremental as otherwise the binary would not be incremental
                     raise ValueError(f"Incremental binary but no subexpression is incremental: {args}")  # nocoverage
+                # if both lhs and rhs are incremental no suffix is added
             case _:
                 raise ValueError(f"unknown type of incremental expression: {exp_type}")
 
@@ -324,13 +332,13 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             exp_name = exp.arguments[1].string
             exp_args = tuple(exp.arguments[2].arguments)
 
-            # first, add the expressions to the incremental_sets dictionary
-            # for incremental expressions of type path this is not done
-            # the path incremental expressions are only auxilliary and only used for incremental expressions (below)
+            # first, add the expressions to the set of incremental parts
+            # for incremental expressions of type path this is not done, as paths are only auxiliary
+            # and only used for the set of all incremental expressions (below)
             if exp_type != "path":
                 self._incremental_parts.add((exp_type, exp_args))
 
-            # second, add it to the set of all incremental expressions
+            # second, add its name to the set of all incremental expressions
             self._incremental_expressions.add(exp_name)
 
     def _find_minimal_bound(self, control: Control) -> None:
@@ -408,7 +416,6 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
         if bound == 0:
             # add the incremental program parts corresponding to each incremental expression
-            # exp_to_remove = set()
             for name, args in incremental_expressions:
                 parts.append(self._get_incremental_prog_part(name, args, bound))
         else:
