@@ -1,0 +1,28 @@
+// Shadow Master version for representing generative instances
+// no non-linear calculations but using associations and unbounded cardinalities
+
+// TODO: Add constraint that only neighbouring blinds can belong to the same engine
+product {
+    0..6 Blind blinds
+    0..6 Engine engines
+}
+
+structure Blind {
+    1..1  Engine      engine
+}
+
+structure Engine {
+    1..3  Blind       blinds
+}
+
+behavior {
+    for e in blinds.engine:
+        require e in engines
+
+    for b in engines.blinds:
+        require b in blinds
+}
+
+behavior Blind {
+    require _id-1 <= engine._id <= _id+1
+}

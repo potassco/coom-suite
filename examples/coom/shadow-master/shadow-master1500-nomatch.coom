@@ -1,0 +1,28 @@
+// Shadow Master version for representing generative instances
+// no non-linear calculations but using associations and unbounded cardinalities
+
+// TODO: Add constraint that only neighbouring blinds can belong to the same engine
+product {
+    0..6 Blind blinds
+    0..6 Engine engines
+}
+
+structure Blind {
+    reference 1..1  Engine      engine
+}
+
+structure Engine {
+    reference 1..3  Blind       blinds
+}
+
+behavior Blind {
+    require this in engine.blinds // what is COOM syntax for this?
+}
+
+behavior Engine {
+    require blinds.engine = this
+}
+
+behavior Blind {
+    require _id-1 <= engine._id <= _id+1
+}
