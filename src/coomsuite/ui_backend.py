@@ -66,7 +66,10 @@ class CoomBackend(ExplanationBackend):  # type: ignore
             raise RuntimeError("No content found in context")
 
         decoded_coom_solution = base64.b64decode(coom_solution).decode("utf-8")
-        asp_facts = [coom2asp(l) for l in decoded_coom_solution.splitlines() if l.strip()]
+        asp_facts = []
+        for l in decoded_coom_solution.splitlines():
+            if l.strip():
+                asp_facts.append(coom2asp(l))
         self.clear_assumptions()
 
         for f in asp_facts:

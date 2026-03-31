@@ -79,5 +79,14 @@ def _parse_user_input_warnings(warning: Symbol) -> str:
             else:
                 value = info.arguments[1].string
             return f'Value "{value}" is not in domain of variable "{variable}".'
+        case "invalid association":
+            var1, var2 = [a.string for a in info.arguments]
+            return f'No possible association between "{var1}" and "{var2}" exists.'
+        case "too many associations":
+            variable = info.arguments[0].string
+            target_type = info.arguments[1].string
+            name = info.arguments[2].string
+            maximum = info.arguments[3].number
+            return f'Too many user associations for association "{name}" between variable "{variable}" and variables of type "{target_type}".\nHas to be at most {maximum}.'  # pylint: disable=line-too-long
         case _:  # nocoverage
             raise ValueError(f"Unknown warning type: {warning_type}")

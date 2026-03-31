@@ -1,0 +1,29 @@
+product {
+         A a
+         B b
+    0..4 X x
+}
+
+structure A {
+    1..2 Y y
+    reference X x
+}
+
+structure B {
+    1..* Y y
+    reference X x
+}
+
+enumeration Y { I II }
+
+structure X {
+    reference 1..4 Y y
+}
+
+behavior X {
+    require count(y) = 4
+}
+
+behavior {
+    require count(x) = 4
+}

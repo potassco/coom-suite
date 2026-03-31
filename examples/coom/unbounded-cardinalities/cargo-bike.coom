@@ -32,6 +32,6 @@ behavior {
     require totalVolume >= requestedVolume
 }
 
-behavior {
-    minimize sum(bags.size.weight)
-}
+// behavior {
+//     minimize sum(bags.size.weight)
+// }

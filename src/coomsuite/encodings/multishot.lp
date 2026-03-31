@@ -8,10 +8,15 @@
 #include "multi/new-constant.lp".
 #include "multi/new-number.lp".
 #include "multi/new-optimize.lp".
+#include "multi/new-association.lp".
+#include "multi/new-replace.lp".
 
-#defined value/3.
 #include "multi/inc-function.lp".
 #include "multi/inc-unary.lp".
 #include "multi/inc-binary.lp".
 #include "multi/inc-constraint.lp".
 #include "multi/inc-optimize.lp".
+#include "multi/inc-association.lp".
+
+#defined value/3.
+#defined include/2.

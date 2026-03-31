@@ -1,0 +1,61 @@
+// Hardware racks problem
+// Falkner et al.: OOASP: Connecting Object-Oriented and Logic Programming (2015)
+
+product {
+    0..*  Frame       frame
+          num 0-10    numA
+          num 0-10    numB
+
+}
+
+structure Frame {
+    0..5  Module      module
+}
+
+structure Module {
+          ModuleType  type
+          Element     element
+          num 1-5     position
+}
+
+enumeration ModuleType { A B }
+
+enumeration Element {
+    attribute num isA
+    attribute num isB
+
+    A = ( 1 0 )
+    B = ( 0 1 )
+}
+
+behavior {
+    explanation "The number of elements of type A has to equal the required number."
+    require numA = sum(frame.module.element.isA)
+
+    explanation "The number of elements of type B has to equal the required number."
+    require numB = sum(frame.module.element.isB)
+}
+
+behavior Module {
+    explanation "Elements of type A require a module of type A"
+    condition element = A
+    require   type = A
+
+    explanation "Elements of type B require a module of type B"
+    condition element = B
+    require   type = B
+}
+
+behavior Frame {
+    explanation "Modules must occupy different positions in a frame"
+    require module[0].position != module[1].position
+    require module[0].position != module[2].position
+    require module[0].position != module[3].position
+    require module[0].position != module[4].position
+    require module[1].position != module[2].position
+    require module[1].position != module[3].position
+    require module[1].position != module[4].position
+    require module[2].position != module[3].position
+    require module[2].position != module[4].position
+    require module[3].position != module[4].position
+}

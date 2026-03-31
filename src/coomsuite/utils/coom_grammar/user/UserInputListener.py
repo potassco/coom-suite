@@ -1,4 +1,4 @@
-# Generated from /home/heuer/tools/coom-suite/src/coomsuite/utils/coom_grammar/user/UserInput.g4 by ANTLR 4.13.2
+# Generated from UserInput.g4 by ANTLR 4.13.2
 from antlr4 import *
 if "." in __name__:
     from .UserInputParser import UserInputParser
@@ -50,6 +50,15 @@ class UserInputListener(ParseTreeListener):
 
     # Exit a parse tree produced by UserInputParser#add_instance.
     def exitAdd_instance(self, ctx:UserInputParser.Add_instanceContext):
+        pass
+
+
+    # Enter a parse tree produced by UserInputParser#associate.
+    def enterAssociate(self, ctx:UserInputParser.AssociateContext):
+        pass
+
+    # Exit a parse tree produced by UserInputParser#associate.
+    def exitAssociate(self, ctx:UserInputParser.AssociateContext):
         pass
 
 

@@ -1,0 +1,14 @@
+// Is this a desired behavior/way of modelling for references to the same class?
+// Two solutions expected iwith constraint below
+product {
+    2..2 Bag     left_bag
+    2..2 Bag     right_bag
+}
+
+structure Bag {
+    reference 1..1 Bag other_side
+}
+
+behavior {
+    require left_bag.other_side != left_bag
+}

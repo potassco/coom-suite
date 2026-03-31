@@ -29,10 +29,11 @@ def main() -> None:
     # log.error("error")
 
     log.info("Converting COOM file %s", args.input)
-    serialized_facts, unbounded = convert_coom(args.input, coom_user=args.user_input if args.user_input else None)
+    serialized_facts, unbounded, optimize = convert_coom(
+        args.input, coom_user=args.user_input if args.user_input else None
+    )
 
     if args.command == "convert":
-        # asp_instance = convert_instance(args.input, "model", args.output)
         if args.output is None:
             print(serialized_facts)
         else:
@@ -42,23 +43,27 @@ def main() -> None:
         log.info("Solving COOM file %s", args.input)
 
         with TemporaryDirectory() as temp_dir:
-            # # Parse COOM to ASP serialized facts
-            # serialized_facts = [convert_instance(args.input, "model", temp_dir)] + (
-            #     [convert_instance(args.user_input, "user", temp_dir)] if args.user_input else []
-            # )
             temp_file = join(temp_dir, "serialized-facts.lp")
             log.info("Saving serialized facts to %s", temp_file)
             write_facts(serialized_facts, temp_file)
 
             if args.show_facts:
-                print("\n".join(preprocess([temp_file], discrete=True)))  # nocoverage
+                print(
+                    "\n".join(
+                        preprocess([temp_file], max_bound=args.initial_bound, discrete=True, multishot=args.multishot)
+                    )
+                )  # nocoverage
             elif unbounded:
-                bound_solver = BoundSolver([temp_file], args.solver, solver_args, args.output)
+                bound_solver = BoundSolver([temp_file], args.solver, solver_args + ["--opt-mode=ignore"], args.output)
                 bound = bound_solver.get_bounds(
                     algorithm=args.bounds, initial_bound=args.initial_bound, use_multishot=args.multishot
                 )
-
-                print(f"\n The minimal upper bound is {bound}")
+                if optimize and bound is not None:
+                    print(f"\n Optimizing with minimal upper bound {bound}.")
+                    solve([temp_file], args.solver, bound, solver_args, args.output)
+                    print(f"\n The minimal upper bound is {bound}.")
+                else:
+                    print(f"\n The minimal upper bound is {bound}.")
             else:
                 solve([temp_file], args.solver, 0, solver_args, args.output)
 

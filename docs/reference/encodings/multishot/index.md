@@ -46,7 +46,7 @@ The facts added by a new step of the preprocessing can be divided into two group
 ## Object Facts
 
 Facts of the first group are the predicates `parent`, `index`, `set`, and `type` describing a new object.
-These are added through respective program parts in the [`new-object`][new-object] encoding.
+These are added through respective program parts in the [new object][new-object] encoding.
 
 [new-object]: new-object.md
 
@@ -108,3 +108,24 @@ This is used in the evaluation of incremental constraints in the respective [enc
 The classification of which constraints and expressions are incremental is handled by a [multi-shot specific addition][multi-preprocessing] to the preprocessing encoding.
 
 [multi-preprocessing]: preprocessing.md
+
+## Extending the Input Language
+
+This section gives a general workflow for updating the multishot encoding for extensions of the input language.
+
+For any new predicates produced by the preprocessing new programs parts are needed analogous to the [new object][new-object] and [new simple constraint][simple-constraint] encodings.
+Usually these encodings are just the respective rules from the single shot approach encapsulated into a new program part.
+The arguments of the new predicate correspond to the arguments of the new program part.
+This is not necessary if new facts over the new predicate can only be produced by the initial preprocessing step.
+
+Additionally, the [multi-shot specific preprocessing][multishot-preprocessing] may need to be updated for new predicates.
+This is the case if the new predicate produces incremental constraints or may be included in existing incremental constraints (see above).
+The preprocessing then needs to be extended to detect those cases.
+(Here it is important to keep the edge case of a cardinality `0..*` with `max_bound=0` in mind.)
+It is then also necessary to add new incremental program parts analogous to the [new incremental constraint][incremental-constraint] and [new incremental table][incremental-table] encodings.
+
+[multishot-preprocessing]: #multi-shot-specific-preprocessing
+
+Finally, the [python implementation][multi-application] needs to be updated.
+
+[multi-application]: ../../python/bounds/multi_application.md#extending-the-input-language

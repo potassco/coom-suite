@@ -1,0 +1,38 @@
+product {
+    1..*    Module  modules
+    0..2    Element elements
+}
+
+structure Module {
+    ModuleType type
+    reference 1..1 Element elements
+}
+
+structure Element {
+    ElementType type
+    reference 0..*  Module      modules
+}
+
+enumeration ModuleType {
+    I
+    II
+}
+
+enumeration ElementType {
+    A
+    B
+}
+
+behavior Element {
+    explanation "An ElementA can only connect to ModuleI"
+    condition type = A
+    require modules.type = I
+
+    explanation "An ElementB can only connect to ModuleII"
+    condition type = B
+    require modules.type =  II
+}
+
+behavior {
+    require count(modules) = 5
+}

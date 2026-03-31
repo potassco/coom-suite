@@ -11,7 +11,8 @@ from coomsuite import solve
 from . import get_bound_iter, next_bound_converge
 from .multi_application import COOMMultiSolverApp
 
-ret_dict = {0: "UNKNOWN", 1: "INTERRUPT", 10: "SAT", 20: "UNSAT", 33: "MEMORY", 65: "ERROR", 128: "NO_RUN"}
+# Reference for exit code: https://github.com/potassco/clasp/issues/42#issuecomment-459981038
+ret_dict = {0: "UNKNOWN", 1: "INTERRUPT", 10: "SAT", 20: "UNSAT", 30: "OPT", 33: "MEMORY", 65: "ERROR", 128: "NO_RUN"}
 
 
 class BoundSolver:
@@ -55,12 +56,12 @@ class BoundSolver:
 
             ret = self._solve(current_bound)
             try:
-                if ret_dict[ret] == "SAT":
+                if ret_dict[ret] in ["SAT", "OPT"]:
                     sat_bound = current_bound
                 elif ret_dict[ret] == "UNSAT":
                     unsat_bound = current_bound
                 else:
-                    print(f"\n Some error occured during solving with max bound = {current_bound}\n")
+                    print(f"\n Some error occured during solving with max bound = {current_bound}\n Exit code: {ret}\n")
                     return None
             except KeyError as exc:
                 raise KeyError("Unknown exit code.") from exc
@@ -98,12 +99,12 @@ class BoundSolver:
             print(f"\nSolving with max_bound = {max_bound}\n")
             ret = self._solve(max_bound)
             try:
-                if ret_dict[ret] == "SAT":
+                if ret_dict[ret] in ["SAT", "OPT"]:
                     return self._converge(prev_bound, max_bound)
                 if ret_dict[ret] == "UNSAT":
                     pass
                 else:
-                    print(f"\n Some error occured during solving with max bound = {max_bound}\n")
+                    print(f"\n Some error occured during solving with max bound = {max_bound}\n Exit code: {ret}\n")
                     return None
             except KeyError as exc:
                 raise KeyError("Unknown exit code.") from exc

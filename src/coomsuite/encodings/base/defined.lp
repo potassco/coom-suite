@@ -1,14 +1,18 @@
 #defined type/1.
 #defined part/1.
 
+#defined type/2.
+#defined index/2.
+#defined parent/2.
+
+#defined association/5.
+#defined association_match/3.
+#defined replace/2.
+
 #defined discrete/1.
 #defined domain/2.
 #defined integer/1.
 #defined range/3.
-
-#defined type/2.
-#defined index/2.
-#defined parent/2.
 
 #defined constraint/2.
 #defined binary/4.
@@ -31,3 +35,4 @@
 
 #defined user_include/1.
 #defined user_value/2.
+#defined user_associate/1.

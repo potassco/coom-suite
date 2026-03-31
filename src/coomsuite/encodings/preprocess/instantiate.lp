@@ -1,20 +1,21 @@
 % Max bound for unbounded cardinalities
-#const max_bound = 100.
+#const max_bound = 0.
 
 %%% Instantiate complete instance tree
 % Root is always included
 type_aux((),"product") :- coom_structure("product").
 
-% Create auxiliary predicate for every feature
-type_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,_,  Max),      type_aux(X,Ctx), I = 0..Max-1, T != "num".
-type_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,Min,#sup),     type_aux(X,Ctx), I = 0..Min+max_bound-1, T != "num".
-type_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",_,  Max),  type_aux(X,Ctx), I = 0..Max-1.
+% Create auxiliary atoms for features
+type_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,   _,   Max),  type_aux(X,Ctx), I = 0..Max-1, Max != #sup, T != "num".
+type_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,   Min, #sup), type_aux(X,Ctx), I = 0..Min+max_bound-1,    T != "num".
+type_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",_,  Max),  type_aux(X,Ctx), I = 0..Max-1, Max != #sup.
 type_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), type_aux(X,Ctx), I = 0..Min+max_bound-1.
 
-
-% Create auxiliary prediate for attribute variables
+% Create auxiliary atoms for attribute variables
 type_aux((A,(X,0)),A) :- type_aux(X,T), coom_enumeration(T), coom_attribute_value(T,_,A,_).
 
+% Instantiate associations
+association_aux(X,N,T,Min,Max) :- coom_reference(C,N,T,Min,Max), type_aux(X,C).
 
 %%% Constraints
 % Get formula context
@@ -36,25 +37,44 @@ formula_context(F',Ctx) :- coom_binary(F',_,_,_), coom_unary(F,_,F'), formula_co
 formula_context(F',Ctx) :- coom_unary(F',_,_),    coom_unary(F,_,F'), formula_context(F,Ctx).
 
 % Instantiate paths
-path_start(X,P)  :- coom_binary(F,P,_,_),     coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
-path_start(X,P)  :- coom_binary(F,_,_,P),     coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
-path_start(X,P)  :- coom_unary(F,_,P),        coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
-path_start(X,P)  :- coom_combinations(C,_,P), coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
-path_start(X,P)  :- coom_function(Ctx,_,_,P), coom_path(P,0,_), type_aux(X,Ctx).
-path_start(X,P)  :- coom_imply(C,P,_),        coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
-path_start(X,P)  :- coom_minimize(C,_,P),     coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
-path_start(X,P)  :- coom_maximize(C,_,P),     coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
+path_start(X,P) :- coom_binary(F,P,_,_),     coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
+path_start(X,P) :- coom_binary(F,_,_,P),     coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
+path_start(X,P) :- coom_unary(F,_,P),        coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
+path_start(X,P) :- coom_combinations(C,_,P), coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
+path_start(X,P) :- coom_function(Ctx,_,_,P), coom_path(P,0,_), type_aux(X,Ctx).
+path_start(X,P) :- coom_imply(C,P,_),        coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
+path_start(X,P) :- coom_minimize(C,_,P),     coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
+path_start(X,P) :- coom_maximize(C,_,P),     coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
 
-% Determine all ground paths
-path_to(X,P,0,X')  :- coom_path(P,0,N),
-                      path_start(X,P),     type_aux(X',_),  X' =(N,(X,_)).
-path_to(X,P,1,X')  :- coom_path(P,0,"root"), coom_path(P,1,N),
-                      path_start(X,P),     type_aux(X',_),  X' =(N,((),_)).
+% Determine all ground paths while tracking associations used
+path_to(X,P,0,X',X',())                 :- coom_path(P,0,N),
+                                           path_start(X,P), type_aux(X',_),  X' = (N,(X,_)).
+path_to(X,P,0,AP,X',(((X,X'),N,AI),())) :- coom_path(P,0,N),
+                                           path_start(X,P), type_aux(X',T),  association_aux(X,N,T,_,Max), AP = (N,(X,AI)), AI=0..Max-1.
+path_to(X,P,1,X',X',())                 :- coom_path(P,0,"root"), coom_path(P,1,N),
+                                           path_start(X,P), type_aux(X',_),  X' = (N,((),_)).
+path_to(X,P,0,X',X',())                 :- coom_path(P,0,"_parent"),
+                                           path_start(X,P), type_aux(X',_),  X = (_,(X',_)).
 
-path_to(X,P,I,X'') :- coom_path(P,I,N),
-                      path_to(X,P,I-1,X'), type_aux(X'',_), X''=(N,(X',_)).
+% TODO: Associations starting at root?
 
-path_to(X,P,@dotpath(X')) :- not coom_path(P,I+1,_), path_to(X,P,I,X').
+path_to(X,P,I,AP',X'',A)                   :- coom_path(P,I,N),
+                                              path_to(X,P,I-1,AP,X',A), type_aux(X'',_), X''=(N,(X',J)), AP' = (N,(AP,J)).
+path_to(X,P,I,AP',X'',(((X',X''),N,AI),A)) :- coom_path(P,I,N),
+                                              path_to(X,P,I-1,AP,X',A), type_aux(X'',T), association_aux(X',N,T,_,Max), AP' = (N,(AP,AI)), AI=0..Max-1.
+path_to(X,P,I,AP',X'',A)                   :- coom_path(P,I,"_parent"),
+                                              path_to(X,P,I-1,AP,X',A), type_aux(X'',_), X'=(_,(X'',_)), AP' = ("_parent",(AP,0)).
+
+path_to(X,P,AP,X',A) :- not coom_path(P,I+1,_), path_to(X,P,I,AP,X',A).
+path_to(X,P,@dotpath(X')) :- path_to(X,P,X',_,_).
+
+% Special case for "this" keyword
+path_to(X,"this",@dotpath(X)) :- path_start(X,"this").
+
+% Replace variables based on associations
+replace_instantiate(AT,(@dotpath(AP),@dotpath(X'))) :- path_to(X,P,AP,X',AT), AP != X'.
+replace_aux((R,ID),A,AT')                       :- replace_instantiate(AT,R), AT = (A,AT'), ID = #count{ T : replace_instantiate(T,R), T < AT }.
+replace_aux((R,ID),A,AT)                        :- replace_aux((R,ID),_,(A,AT)). %, AT != ().
 
 % Constants and numbers
 path_to(X,P,P) :- coom_binary(F,_,_,P), coom_constant(P), formula_context(F,T), type_aux(X,T).

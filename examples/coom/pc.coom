@@ -30,6 +30,7 @@ structure HDUnit {
          num    0-1000  price
     1..4 HDisk          hdisk
     1..2 HDController   hdcontroller
+    // TODO: Missing DiskPort and ControllerPort with association between them
 }
 
 enumeration HDisk {

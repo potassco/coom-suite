@@ -1,0 +1,59 @@
+product {
+    2..2    Module  modules
+    4..4    Element elements
+}
+
+structure Module {
+    reference 1..1 Element      elt
+    reference 1..1 Element      elt2
+}
+
+structure Element {
+    reference 1..1  Module      mdl
+}
+
+behavior Element {
+    require mdl.elt = this
+}
+
+// module[0]
+// module[1]
+
+// element[0]
+// element[1]
+// element[2]
+// element[3]
+
+// Answer 1:
+// assoc(element[0],mld,module[0],elt)
+// assoc(element[1],mld,module[1],elt)
+// assoc(element[2],mld,module[0],elt2)
+// assoc(element[3],mld,module[1],elt2)
+// assoc(element[0],mld,module[1],elt)
+
+assoc((element[0],module[0]),mdl)
+assoc((element[1],module[1]),mdl)
+assoc((element[2],module[2]),mdl)
+assoc((element[3],module[3]),mdl)
+
+// (element[0],mld,module[1],elt)
+
+// (element[1],mld,module[0],elt)
+// (element[1],mld,module[1],elt)
+
+// (element[0],mld,module[0],elt2)
+// (element[0],mld,module[1],elt2)
+
+associate(P1,P2,N1,MIN,MAX) (P1 = Module, P2=Element, N1=elt)
+associate(module,element,elt1,1,1)
+associate(module,element,elt2,1,1)
+associate(element,module,mdl,1,1)
+type(element[0],element).
+name(module,element,elt).
+name(module,element,elt2).
+name(element,module,mdl).
+
+MIN { assoc(P1X,N1,P2X,N2) : type(P2X,P2), name(P2,P1,N2) } MAX :- associate(P1,P2,N1,MIN,MAX), type(P1X,P1), P1 < P2.
+MIN { assoc(P1X,N1,P2X,N2) : type(P2X,P2), name(P2,P1,N2) } MAX :- associate(P1,P2,N1,MIN,MAX), type(P1X,P1), P2 < P1.
+
+1 { assoc(element[0],mdl,,associate(element,module,mdl,1,1), type(element[0],element).
