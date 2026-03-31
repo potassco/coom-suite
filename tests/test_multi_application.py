@@ -187,7 +187,7 @@ class TestMultiApplication(TestCase):
         }
 
         # remove the new incremental expressions
-        removed = app._remove_new_incremental_expressions(0)
+        removed = app._remove_new_incremental_expressions()
 
         # check that return value of function matches the incremental expressions
         # note that return value has type List[Tuple[str, List[Symbol]]]

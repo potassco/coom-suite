@@ -11,6 +11,7 @@ from coomsuite import solve
 from . import get_bound_iter, next_bound_converge
 from .multi_application import COOMMultiSolverApp
 
+# pylint: disable=line-too-long
 # Reference for exit code: https://github.com/potassco/clasp/issues/42#issuecomment-459981038
 ret_dict = {0: "UNKNOWN", 1: "INTERRUPT", 10: "SAT", 20: "UNSAT", 30: "OPT", 33: "MEMORY", 65: "ERROR", 128: "NO_RUN"}
 
@@ -93,7 +94,7 @@ class BoundSolver:
                 self.clingo_args,
             )
 
-            return multishot_solver.max_bound
+            return multishot_solver.current_max_bound
 
         # single shot solving
         bounds_iter = get_bound_iter(algorithm, initial_bound, step)

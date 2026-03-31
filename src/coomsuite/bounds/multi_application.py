@@ -139,7 +139,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         # filter out facts that were previously processed
         self._new_processed_facts = non_incremental_facts - self._processed_facts
 
-    def _remove_new_incremental_expressions(self, bound: int) -> List[ProgPart]:
+    def _remove_new_incremental_expressions(self) -> List[ProgPart]:
         """
         Remove all facts from new_processed_facts that are incremental expressions
 
@@ -257,7 +257,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             "minimize",
             "maximize",
         ]:
-            raise ValueError(f"unknown new fact (no corresponding program part exists): {fact}")
+            raise ValueError(f"unknown new fact (no corresponding program part exists): {fact}")  # nocoverage
 
         # some program parts need the current bound as an additional argument
         needs_bound = False
@@ -370,7 +370,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         # remove all expressions that were detected as incremental from the processed facts
         # (necessary to avoid adding them via the normal new_* program parts,
         # instead we add them using specific incremental program parts later)
-        incremental_expressions = self._remove_new_incremental_expressions(bound)
+        incremental_expressions = self._remove_new_incremental_expressions()
 
         if bound == 0:
             # add the incremental program parts corresponding to each incremental expression
