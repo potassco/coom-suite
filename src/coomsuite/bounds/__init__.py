@@ -2,7 +2,7 @@
 General helper functions for solving unbounded cardinalities.
 """
 
-from itertools import count, dropwhile
+from itertools import chain, count, dropwhile
 from typing import Iterator, Optional
 
 
@@ -27,9 +27,9 @@ def get_bound_iter(algorithm: str, start: int, step: int) -> Iterator[int]:
     iterator: Iterator[int]
     match algorithm:
         case "linear":
-            iterator = count(start + 1, step)
+            iterator = count(start=start, step=step)
         case "exponential":
-            iterator = dropwhile(lambda x: x <= start, _exponential_iter(step))
+            iterator = chain([start], dropwhile(lambda x: x <= start, _exponential_iter(step)))
         case _:
             raise ValueError(f"unknown algorithm for bound iter: {algorithm}")
 

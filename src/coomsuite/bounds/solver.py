@@ -23,7 +23,6 @@ class BoundSolver:
     facts: List[str]
     solver: str
     clingo_args: List[str]
-    step: int
     output_format: str
 
     def __init__(
@@ -80,6 +79,7 @@ class BoundSolver:
         if use_multishot:  # nocoverage
             multishot_solver = COOMMultiSolverApp(
                 serialized_facts=self.facts,
+                step=step,
                 initial_bound=initial_bound,
                 algorithm=algorithm,
                 options={
@@ -97,20 +97,22 @@ class BoundSolver:
 
         # single shot solving
         bounds_iter = get_bound_iter(algorithm, initial_bound, step)
-        max_bound = initial_bound
+        current_max_bound = next(bounds_iter)
         prev_bound = -1
         while True:
-            print(f"\nSolving with max_bound = {max_bound}\n")
-            ret = self._solve(max_bound)
+            print(f"\nSolving with max_bound = {current_max_bound}\n")
+            ret = self._solve(current_max_bound)
             try:
                 if ret_dict[ret] in ["SAT", "OPT"]:
-                    return self._converge(prev_bound, max_bound)
+                    return self._converge(prev_bound, current_max_bound)
                 if ret_dict[ret] == "UNSAT":
                     pass
                 else:
-                    print(f"\n Some error occured during solving with max bound = {max_bound}\n Exit code: {ret}\n")
+                    print(
+                        f"\n Some error occured during solving with max bound = {current_max_bound}\n Exit code: {ret}\n"
+                    )
                     return None
             except KeyError as exc:
                 raise KeyError("Unknown exit code.") from exc
-            prev_bound = max_bound
-            max_bound = next(bounds_iter)
+            prev_bound = current_max_bound
+            current_max_bound = next(bounds_iter)

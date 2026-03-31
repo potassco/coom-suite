@@ -67,6 +67,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
     def __init__(
         self,
         serialized_facts: List[str],
+        step: Optional[int] = None,
         algorithm: str = "linear",
         initial_bound: int = 0,
         log_level: str = "",
@@ -80,10 +81,13 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
         self._serialized_facts: List[str] = serialized_facts
         """The instance to solve given as serialized facts"""
-        self.max_bound: int = initial_bound
-        """The current max bound"""
-        self._bound_iter: Iterator[int] = get_bound_iter(algorithm, initial_bound)
+
+        if step is None:
+            step = 1 if algorithm == "linear" else 2
+        self._bound_iter: Iterator[int] = get_bound_iter(algorithm, initial_bound, step)
         """Iterator determining the bounds"""
+        self.current_max_bound: int = next(self._bound_iter)
+        """The current max bound"""
 
         self._prev_bound: Optional[int] = None
         """The previous max bound"""
@@ -104,8 +108,8 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         """
         Update the current maximum bound
         """
-        self._prev_bound = self.max_bound
-        self.max_bound = next(self._bound_iter)
+        self._prev_bound = self.current_max_bound
+        self.current_max_bound = next(self._bound_iter)
 
     def _preprocess_new_bound(self, bound: int) -> None:
         """
@@ -309,9 +313,9 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         """
         # unsat_bound and sat_bound give the range of the optimal bound
         unsat_bound = -1 if self._prev_bound is None else self._prev_bound
-        sat_bound = self.max_bound
+        sat_bound = self.current_max_bound
         # last_bound stores the bound from the last solve call
-        last_bound = self.max_bound
+        last_bound = self.current_max_bound
 
         while True:
             # compute next bound to check
@@ -320,7 +324,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             # check if we found the optimal bound
             if current_bound is None:
                 print("\nOptimal bound found")
-                self.max_bound = sat_bound
+                self.current_max_bound = sat_bound
                 break
 
             # if we do not have the optimal bound yet we do another solve
@@ -396,11 +400,11 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         control.load(get_encoding("show-clingo.lp"))
 
         while True:
-            print(f"\nNew max bound is = {self.max_bound} (previous was {self._prev_bound})\n")
+            print(f"\nNew max bound is = {self.current_max_bound} (previous was {self._prev_bound})\n")
 
             # grounding and assigning active externals
             # in steps of 1 to enable deactivation of specific bounds later (when converging to minimal bound)
-            for bound in range(0 if self._prev_bound is None else self._prev_bound + 1, self.max_bound + 1):
+            for bound in range(0 if self._prev_bound is None else self._prev_bound + 1, self.current_max_bound + 1):
                 print(f"Grounding with bound = {bound}")
 
                 # preprocessing
@@ -422,12 +426,12 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                 control.assign_external(Function("active", [Number(bound)]), True)
 
             # update max bound external
-            control.assign_external(Function("max_bound", [Number(self.max_bound)]), True)
+            control.assign_external(Function("max_bound", [Number(self.current_max_bound)]), True)
             if self._prev_bound is not None:
                 control.release_external(Function("max_bound", [Number(self._prev_bound)]))
 
             # solve
-            print(f"\nSolving with bound = {self.max_bound}\n")
+            print(f"\nSolving with bound = {self.current_max_bound}\n")
             ret = control.solve()
             if ret.satisfiable:
                 self._find_minimal_bound(control)

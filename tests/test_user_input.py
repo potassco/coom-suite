@@ -26,9 +26,8 @@ class TestUserInputCheck(TestCase):
         program = test_dict.get("program", None)
         if not program:
             program = []
-            for test_file in test_dict["files"]:
-                with open(join("examples", "tests", "solve", test_file), encoding="utf-8") as f:
-                    program.extend(f.readlines())
+            with open(join("examples", "tests", "solve", f"{test}.lp"), encoding="utf-8") as f:
+                program.extend(f.readlines())
         with self.assertLogs(log, level="WARNING") as ctx:
             check_user_input(program)
         self.assertEqual(ctx.output, [f"WARNING:main:{expected_msg}"])
