@@ -31,6 +31,10 @@ def main() -> None:
     log.info("Converting COOM file %s", args.input)
     serialized_facts, unbounded = convert_coom(args.input, coom_user=args.user_input if args.user_input else None)
 
+    incremental = False
+    if unbounded or args.incremental:
+        incremental = True
+
     if args.command == "convert":
         # asp_instance = convert_instance(args.input, "model", args.output)
         if args.output is None:
@@ -52,7 +56,7 @@ def main() -> None:
 
             if args.show_facts:
                 print("\n".join(preprocess([temp_file], discrete=True)))  # nocoverage
-            elif unbounded:
+            elif incremental:
                 bound_solver = BoundSolver([temp_file], args.solver, solver_args, args.output)
                 bound = bound_solver.get_bounds(
                     algorithm=args.bounds, initial_bound=args.initial_bound, use_multishot=args.multishot

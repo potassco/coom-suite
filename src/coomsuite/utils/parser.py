@@ -101,6 +101,10 @@ def get_parser() -> ArgumentParser:
         "--output", "-o", type=str, help="Set console output format", choices=["asp", "coom"], default="asp"
     )
     parser_solve.add_argument("--show-facts", action="store_true", help="Show preprocessed fact format")
+
+    parser_solve.add_argument(
+        "--incremental", "-i", action="store_true", help="Incrementally increases the max bound for all cardinalities"
+    )
     parser_solve.add_argument(
         "--bounds",
         "-b",
@@ -119,7 +123,7 @@ def get_parser() -> ArgumentParser:
     )
     parser_solve.add_argument(
         "--initial-bound",
-        "-i",
+        # "-i",
         type=int,
         default=0,
         help="Initial bound for the incremental search algorithm. Default is 0.",
