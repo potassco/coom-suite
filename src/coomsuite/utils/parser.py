@@ -125,11 +125,9 @@ def get_parser() -> ArgumentParser:
         help="Initial bound for the incremental search algorithm. Default is 0.",
     )
     parser_solve.add_argument(
-        "--step",
-        type=int,
-        help="""
-        Parameter for getting the next bound in incremental search algorithm:
-            - For --bounds=linear, this is the linear increment. Default is 1.
-            - For --bounds=exponential, this is the base of the exponential. Default is 2.""",
+        "--step", type=int, help="Step size for linear incremental search algorithm. Default is 1."
+    )
+    parser_solve.add_argument(
+        "--base", type=float, help="Base of the exponential for exponential incremental search algorithm. Default is 2."
     )
     return parser

@@ -58,6 +58,7 @@ def main() -> None:
                 bound = bound_solver.get_bounds(
                     algorithm=args.bounds,
                     step=args.step,
+                    base=args.base,
                     initial_bound=args.initial_bound,
                     use_multishot=args.multishot,
                 )
