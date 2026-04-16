@@ -21,6 +21,7 @@ class BoundSolver:
     Module for solving problems with open bounds/cardinalities.
     """
 
+    # pylint: disable=too-many-arguments
     facts: List[str]
     solver: str
     clingo_args: List[str]
@@ -71,25 +72,23 @@ class BoundSolver:
         self,
         algorithm: str = "linear",
         initial_bound: int = 0,
-        step: Optional[int] = None,
-        base: Optional[float] = None,
+        step: Optional[int] = 1,
+        base: Optional[float] = 2.0,
         use_multishot: bool = False,
     ) -> Optional[int]:
         """
         Compute the minimal bound for the problem.
         """
-
-        step = 1 if step is None else step
-        base = 2 if base is None else base
+        # pylint: disable=too-many-positional-arguments
 
         # multi shot solving
         if use_multishot:  # nocoverage
             multishot_solver = COOMMultiSolverApp(
                 serialized_facts=self.facts,
+                algorithm=algorithm,
+                initial_bound=initial_bound,
                 step=step,
                 base=base,
-                initial_bound=initial_bound,
-                algorithm=algorithm,
                 options={
                     "solver": self.solver,
                     "output_format": self.output_format,

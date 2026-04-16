@@ -105,7 +105,7 @@ def get_parser() -> ArgumentParser:
         "--bounds",
         "-b",
         type=str,
-        help="Solve with search for bounds for problems with unbounded cardinalities.",
+        help="Solve with search for bounds for problems with unbounded cardinalities (Default is linear)",
         choices=["linear", "exponential"],
         default="linear",
     )
@@ -122,12 +122,15 @@ def get_parser() -> ArgumentParser:
         "-i",
         type=int,
         default=0,
-        help="Initial bound for the incremental search algorithm. Default is 0.",
+        help="Initial bound for the incremental search algorithm (Default is 0)",
     )
     parser_solve.add_argument(
-        "--step", type=int, help="Step size for linear incremental search algorithm. Default is 1."
+        "--step", type=int, default=1, help="Step size for linear incremental search algorithm (Default is 1)"
     )
     parser_solve.add_argument(
-        "--base", type=float, help="Base of the exponential for exponential incremental search algorithm. Default is 2."
+        "--base",
+        type=float,
+        default=2.0,
+        help="Base of the exponential for exponential incremental search algorithm (Default is 2.0)",
     )
     return parser

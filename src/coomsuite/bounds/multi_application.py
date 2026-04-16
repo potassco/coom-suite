@@ -67,10 +67,10 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
     def __init__(
         self,
         serialized_facts: List[str],
-        step: Optional[int] = None,
-        base: Optional[float] = None,
         algorithm: str = "linear",
         initial_bound: int = 0,
+        step: Optional[int] = 1,
+        base: Optional[float] = 2.0,
         log_level: str = "",
         options: Optional[Dict[str, Any]] = None,
         istest: bool = False,
@@ -83,8 +83,6 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         self._serialized_facts: List[str] = serialized_facts
         """The instance to solve given as serialized facts"""
 
-        step = 1 if step is None else step
-        base = 2 if base is None else base
         self._bound_iter: Iterator[int] = get_bound_iter(algorithm, initial_bound, step, base)
         """Iterator determining the bounds"""
         self.current_max_bound: int = next(self._bound_iter)
