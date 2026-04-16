@@ -142,6 +142,7 @@ nav:
       - COOM: reference/coom/index.md
       - Encodings:
           - reference/encodings/index.md
+          - reference/encodings/preprocessing.md
           - Multi-shot Encodings:
               - reference/encodings/multishot/index.md
               - Multi-shot Preprocessing: reference/encodings/multishot/preprocessing.md
