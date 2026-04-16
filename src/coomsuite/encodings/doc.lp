@@ -166,6 +166,15 @@ Args:
     - V: The value of the table entry
 *%
 
+%*! default(X,V)
+
+Defines a default value
+
+Args:
+    - X: The variable that gets assigned a default value
+    - V: The default value
+*%
+
 %%% User input
 
 %*! user_include(X)
