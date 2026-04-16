@@ -1,5 +1,10 @@
 # Changes
 
+## v1.1.1
+
+- `--step` option only for linear search
+- added `--base` option to parametrize exponential search
+
 ## v1.1.0
 
 - added support for parsing and solving simple defaults

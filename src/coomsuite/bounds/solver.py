@@ -21,6 +21,7 @@ class BoundSolver:
     Module for solving problems with open bounds/cardinalities.
     """
 
+    # pylint: disable=too-many-arguments
     facts: List[str]
     solver: str
     clingo_args: List[str]
@@ -68,21 +69,26 @@ class BoundSolver:
                 raise KeyError("Unknown exit code.") from exc
 
     def get_bounds(
-        self, algorithm: str = "linear", initial_bound: int = 0, step: Optional[int] = None, use_multishot: bool = False
+        self,
+        algorithm: str = "linear",
+        initial_bound: int = 0,
+        step: Optional[int] = 1,
+        base: Optional[float] = 2.0,
+        use_multishot: bool = False,
     ) -> Optional[int]:
         """
         Compute the minimal bound for the problem.
         """
-        if step is None:
-            step = 1 if algorithm == "linear" else 2
+        # pylint: disable=too-many-positional-arguments
 
         # multi shot solving
         if use_multishot:  # nocoverage
             multishot_solver = COOMMultiSolverApp(
                 serialized_facts=self.facts,
-                step=step,
-                initial_bound=initial_bound,
                 algorithm=algorithm,
+                initial_bound=initial_bound,
+                step=step,
+                base=base,
                 options={
                     "solver": self.solver,
                     "output_format": self.output_format,
@@ -97,7 +103,7 @@ class BoundSolver:
             return multishot_solver.current_max_bound
 
         # single shot solving
-        bounds_iter = get_bound_iter(algorithm, initial_bound, step)
+        bounds_iter = get_bound_iter(algorithm, initial_bound, step, base)
         current_max_bound = next(bounds_iter)
         prev_bound = -1
         while True:

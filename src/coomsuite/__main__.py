@@ -57,8 +57,9 @@ def main() -> None:
                 bound_solver = BoundSolver([temp_file], args.solver, solver_args + ["--opt-mode=ignore"], args.output)
                 bound = bound_solver.get_bounds(
                     algorithm=args.bounds,
-                    step=args.step,
                     initial_bound=args.initial_bound,
+                    step=args.step,
+                    base=args.base,
                     use_multishot=args.multishot,
                 )
                 if optimize and bound is not None:

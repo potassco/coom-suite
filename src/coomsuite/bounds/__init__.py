@@ -6,14 +6,16 @@ from itertools import chain, count, dropwhile
 from typing import Iterator, Optional
 
 
-def _exponential_iter(step: int) -> Iterator[int]:
+def _exponential_iter(base: float) -> Iterator[int]:
     n = 0
     while True:
-        yield step**n
+        yield round(base**n)
         n += 1
 
 
-def get_bound_iter(algorithm: str, start: int, step: int) -> Iterator[int]:
+def get_bound_iter(
+    algorithm: str, start: int, step: Optional[int] = None, base: Optional[float] = None
+) -> Iterator[int]:
     """
     Get an iterator over the bounds for a selected algorithm.
 
@@ -27,9 +29,12 @@ def get_bound_iter(algorithm: str, start: int, step: int) -> Iterator[int]:
     iterator: Iterator[int]
     match algorithm:
         case "linear":
-            iterator = count(start=start, step=step)
+            iterator = count(start=start, step=1 if step is None else step)
         case "exponential":
-            iterator = chain([start], dropwhile(lambda x: x <= start, _exponential_iter(step)))
+            iterator = chain(
+                [start],
+                dropwhile(lambda x: x <= start, _exponential_iter(2.0 if base is None else base)),
+            )
         case _:
             raise ValueError(f"unknown algorithm for bound iter: {algorithm}")
 

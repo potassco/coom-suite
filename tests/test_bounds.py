@@ -34,19 +34,19 @@ class TestBound(TestCase):
         """
         Test the exponential bound iterator.
         """
-        bound_iter = get_bound_iter(algorithm="exponential", start=0, step=2)
+        bound_iter = get_bound_iter(algorithm="exponential", start=0, base=2.0)
         self.assertEqual(next(bound_iter), 0)
         self.assertEqual(next(bound_iter), 1)
         self.assertEqual(next(bound_iter), 2)
         self.assertEqual(next(bound_iter), 4)
         self.assertEqual(next(bound_iter), 8)
 
-        bound_iter = get_bound_iter(algorithm="exponential", start=3, step=2)
+        bound_iter = get_bound_iter(algorithm="exponential", start=3, base=2.0)
         self.assertEqual(next(bound_iter), 3)
         self.assertEqual(next(bound_iter), 4)
         self.assertEqual(next(bound_iter), 8)
 
-        bound_iter = get_bound_iter(algorithm="exponential", start=4, step=3)
+        bound_iter = get_bound_iter(algorithm="exponential", start=4, base=3.0)
         self.assertEqual(next(bound_iter), 4)
         self.assertEqual(next(bound_iter), 9)
         self.assertEqual(next(bound_iter), 27)
@@ -55,7 +55,7 @@ class TestBound(TestCase):
         """
         Test invalid input for algorithm of bound iterator.
         """
-        self.assertRaises(ValueError, get_bound_iter, "test", 0, 1)
+        self.assertRaises(ValueError, get_bound_iter, "test", start=0)
 
     def test_converge(self) -> None:
         """
@@ -105,13 +105,13 @@ class TestBound(TestCase):
         """
         solver = BoundSolver([], solver="clingo", clingo_args=[], output_format="asp")
 
-        for algorithm, initial_bound, step, solve_returns, converge_return, expected_converge_call in [
-            ("linear", 0, None, [10], 0, call(-1, 0)),
-            ("linear", 2, 2, [20, 10], 3, call(2, 4)),
-            ("linear", 1, 1, [65], None, None),
-            ("exponential", 3, 2, [10], 1, call(-1, 3)),
-            ("exponential", 3, 2, [20, 10], 4, call(3, 4)),
-            ("exponential", 1, 2, [65], None, None),
+        for algorithm, initial_bound, step, base, solve_returns, converge_return, expected_converge_call in [
+            ("linear", 0, None, None, [10], 0, call(-1, 0)),
+            ("linear", 2, 2, None, [20, 10], 3, call(2, 4)),
+            ("linear", 1, 1, None, [65], None, None),
+            ("exponential", 3, None, 2.0, [10], 1, call(-1, 3)),
+            ("exponential", 3, None, 2.0, [20, 10], 4, call(3, 4)),
+            ("exponential", 1, None, 2.0, [65], None, None),
         ]:
             with (
                 patch.object(solver, "_solve", autospec=True, side_effect=solve_returns) as mock_solve,
@@ -121,7 +121,7 @@ class TestBound(TestCase):
                 # mock_converge.side_effect = [converge_return]
 
                 with redirect_stdout(None):
-                    minimal_bound = solver.get_bounds(algorithm, initial_bound, step, use_multishot=False)
+                    minimal_bound = solver.get_bounds(algorithm, initial_bound, step, base, use_multishot=False)
 
                 fail_msg = (
                     f"failed with algorithm={algorithm}, initial_bound={initial_bound}, solve_returns={solve_returns}, "
