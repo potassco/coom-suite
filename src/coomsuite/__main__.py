@@ -31,10 +31,6 @@ def main() -> None:
     log.info("Converting COOM file %s", args.input)
     serialized_facts, unbounded = convert_coom(args.input, coom_user=args.user_input if args.user_input else None)
 
-    incremental = False
-    if unbounded or args.incremental:
-        incremental = True
-
     if args.command == "convert":
         # asp_instance = convert_instance(args.input, "model", args.output)
         if args.output is None:
@@ -44,6 +40,10 @@ def main() -> None:
 
     elif args.command == "solve":
         log.info("Solving COOM file %s", args.input)
+
+        incremental = False
+        if unbounded or args.incremental:
+            incremental = True
 
         with TemporaryDirectory() as temp_dir:
             # # Parse COOM to ASP serialized facts
