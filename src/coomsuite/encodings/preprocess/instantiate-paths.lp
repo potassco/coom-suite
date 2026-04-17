@@ -1,4 +1,16 @@
-% Instantiate paths
+%%% Determie object against which paths are evaluated
+
+%*! path_start(X,P)
+
+Identifies objects relative to which a path expression can be evaluated.
+Derived from all possible occurrences of a path: formulas, combinations table columns,
+imply and optimization statements.
+
+Args:
+    - X: The internal object identifier
+    - P: The path identifier
+*%
+
 path_start(X,P)  :- coom_binary(F,P,_,_),     coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
 path_start(X,P)  :- coom_binary(F,_,_,P),     coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
 path_start(X,P)  :- coom_unary(F,_,P),        coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
@@ -9,6 +21,19 @@ path_start(X,P)  :- coom_minimize(C,_,P),     coom_path(P,0,_), type_aux(X,Ctx),
 path_start(X,P)  :- coom_maximize(C,_,P),     coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
 
 %%% Determine all "ground" paths
+
+%*! path_to(X,P,I,Y)
+
+States that the path expression `P` evaluated relative to `X` resolves to `Y` at step `I`.
+Helper version of `path_to/3`.
+
+Args:
+    - X: The starting internal object identifier
+    - P: The path identifier
+    - I: The current step of the path
+    - Y: The resolved target at the current step (internal format)
+
+*%
 
 % Initialize normal paths
 path_to(X,P,0,X') :-
@@ -32,7 +57,21 @@ path_to(X,P,I,X'') :-
     type_aux(X'',_),
     X''=(N,(X',_)).
 
-% Get object(s) where path is pointing to if path endes
+%%% Determine all complete paths
+
+%*! path_to(X,P,Y)
+
+States that the path expression `P` evaluated relative to `X` resolves to `Y`.
+Projection of `path_to/4` for complete paths of objects.
+Special rules for paths of function, constants, numbers and cardinalities.
+
+Args:
+    - X: The starting internal object identifier
+    - P: The path identifier
+    - Y: The resolved target (dotpath string, formula id, constant, or number)
+*%
+
+% Get objects to which a path is pointing to when the path ends
 path_to(X,P,@dotpath(X')) :-
     path_to(X,P,I,X'),
     not coom_path(P,I+1,_).
