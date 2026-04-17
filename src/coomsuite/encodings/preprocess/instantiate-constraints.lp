@@ -1,4 +1,3 @@
-
 % Instantiate conditional requirements
 % Collect all "ground" conditions
 conditions_aux(C,X,0,(G,()))  :- coom_context(C,Ctx), type_aux(X,Ctx), coom_condition(C,0,F), ground_formula(X,F,G).
@@ -14,21 +13,6 @@ conditions(C,X,@unary(G,"()")) :- conditions_binary(C,X,G,_,_,()).
 
 conditional_requirement(C,G,G') :- coom_context(C,Ctx), type_aux(X,Ctx), conditions(C,X,G),
                                    coom_require(C,F'),  ground_formula(X,F',G').
-
-% Instantiate combination tables
-table(C,X) :- coom_combinations(C,_,_), coom_context(C,Ctx), type_aux(X,Ctx).
-
-combinations_tuple((C,Ctx),Col,(X,())) :- table(C,Ctx),
-                                          coom_combinations(C,Col,P), not coom_combinations(C,Col+1,_),
-                                          path_to(Ctx,P,X).
-combinations_tuple((C,Ctx),Col,(X',X)) :- combinations_tuple((C,Ctx),Col+1,X),
-                                          coom_combinations(C,Col,P), Col >= 0,
-                                          path_to(Ctx,P,X').
-combinations_tuple(C,CT) :- combinations_tuple(C,0,CT).
-
-in_tuple((X,CT'),CT',X) :- combinations_tuple(_,CT), CT=(X,CT').
-in_tuple(CT,CT',X)      :- in_tuple(CT,(X,CT'),_).
-in_tuple(CT,X)          :- in_tuple(CT,_,X).
 
 % Instantiate imply statements
 imply(C,X',G)                  :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), ground_formula(X,F,G).
