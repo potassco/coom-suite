@@ -97,7 +97,7 @@ function(X,F,T,P) :- coom_function(C,F,T,P), type_aux(X,C).
 
 States that formula `F` instantiated for object `X` produces ground formula `G`.
 The ground formula is represented by a string produced by the respective output function.
-Projections of `binary/6` and `unary/5`.
+Projections of `binary` (arity 6) and `unary` (arity 5).
 
 Args:
     - X: The internal object identifier

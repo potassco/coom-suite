@@ -16,7 +16,7 @@ conditions_aux(C,X,I+1,(G,T)) :- conditions_aux(C,X,I,T), coom_condition(C,I+1,F
 
 %*! conditions_aux(C,X,T)
 
-Projection of `conditions_aux/4` of complete conjunctions of conditions.
+Projection of `conditions_aux` of arity 4 for complete conjunctions of conditions.
 
 Args:
     - C: The constraint identifier
@@ -27,7 +27,7 @@ conditions_aux(C,X,T)         :- conditions_aux(C,X,I,T), not coom_condition(C,I
 
 %*! conditions_binary(C,X,F,L,R,T)
 
-Combines the tuple of conditions of `conditions_aux/3` into a conjunction.
+Combines the tuple of conditions of `conditions_aux` (arity 3) into a conjunction.
 
 Args:
     - C: The constraint identifier

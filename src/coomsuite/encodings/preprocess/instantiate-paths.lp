@@ -25,7 +25,7 @@ path_start(X,P)  :- coom_maximize(C,_,P),     coom_path(P,0,_), type_aux(X,Ctx),
 %*! path_to(X,P,I,Y)
 
 States that the path expression `P` evaluated relative to `X` resolves to `Y` at step `I`.
-Helper version of `path_to/3`.
+Helper version of `path_to` (arity 3).
 
 Args:
     - X: The starting internal object identifier
@@ -61,7 +61,7 @@ path_to(X,P,I,X'') :-
 %*! path_to(X,P,Y)
 
 States that the path expression `P` evaluated relative to `X` resolves to `Y`.
-Projection of `path_to/4` for complete paths of objects.
+Projection of `path_to` (arity 4) for complete paths of objects.
 Special rules for paths of function, constants, numbers and cardinalities.
 
 Args:

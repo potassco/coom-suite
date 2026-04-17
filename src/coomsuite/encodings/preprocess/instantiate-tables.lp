@@ -15,7 +15,7 @@ table(C,X) :- coom_combinations(C,_,_), coom_context(C,Ctx), type_aux(X,Ctx).
 
 Builds a nested tuple of the ground column variables of a table,
 constructed starting from the last column.
-Helper version of `combinations_tuple/2`.
+Helper version of `combinations_tuple` of arity 2.
 
 Args:
     - C: The table constraint indentifier
@@ -34,7 +34,7 @@ combinations_tuple((C,Ctx),Col,(X',X)) :- combinations_tuple((C,Ctx),Col+1,X),
 
 %*! combinations_tuple(C,CT)
 
-Projection of `combinations_tuple/3`.
+Projection of `combinations_tuple` of arity 3.
 
 Args:
     - C: The table constraint identifier
@@ -46,7 +46,7 @@ combinations_tuple(C,CT) :- combinations_tuple(C,0,CT).
 %*! in_tuple(CT,CT',X)
 
 States that `X` is a member of the column cross product tuple `CT`.
-Helper version of `in_tuple/2`.
+Helper version of `in_tuple` (arity 2).
 
 Args:
     - CT: The column cross product tuple identifier
@@ -63,7 +63,7 @@ in_tuple(CT,CT',X)      :- in_tuple(CT,(X,CT'),_).
 
 States that object `X` is a member of the column cross product tuple `CT`
 of some combination table.
-Projection of `in_tuple/3`.
+Projection of `in_tuple` (arity 3).
 
 Args:
     - CT: The column cross product tuple identifier
