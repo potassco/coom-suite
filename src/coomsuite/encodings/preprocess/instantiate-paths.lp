@@ -32,7 +32,6 @@ Args:
     - P: The path identifier
     - I: The current step of the path
     - Y: The resolved target at the current step (internal format)
-
 *%
 
 % Initialize normal paths

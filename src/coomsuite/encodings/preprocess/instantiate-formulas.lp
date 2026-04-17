@@ -6,7 +6,6 @@ Declares a formula.
 
 Args:
     - F: The formula identifier
-
 *%
 
 formula_node(F) :- coom_binary(F,_,_,_).
@@ -48,7 +47,6 @@ Args:
     - XL: The resolved left subexpression
     - Op: The binary operation
     - XR: The resolved right subexpression
-
 *%
 
 binary(X,F,@binary(XL,Op,XR),XL,Op,XR) :-
@@ -70,7 +68,6 @@ Args:
     - S: The ground formula identifier (string)
     - Op: The binary operation
     - X': The resolved subexpression
-
 *%
 
 unary(X,F,@unary(X',Op),Op,X') :-
@@ -90,7 +87,6 @@ Args:
     - F: The formula identifier
     - T: The function type
     - P: The path representing the argument of the function
-
 *%
 
 function(X,F,T,P) :- coom_function(C,F,T,P), type_aux(X,C).

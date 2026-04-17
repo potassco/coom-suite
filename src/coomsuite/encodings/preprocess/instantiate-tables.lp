@@ -21,7 +21,6 @@ Args:
     - C: The table constraint indentifier
     - Col: The current column index
     - Tuple: The nested tuple of ground column variables from the currnet to the last column
-
 *%
 
 % Base case: produce tuple (X,()) where X is the ground variable of the last column of the table
@@ -40,7 +39,6 @@ Projection of `combinations_tuple/3`.
 Args:
     - C: The table constraint identifier
     - CT: The complete tuple of ground variables for each column
-
 *%
 
 combinations_tuple(C,CT) :- combinations_tuple(C,0,CT).
@@ -54,7 +52,6 @@ Args:
     - CT: The column cross product tuple identifier
     - CT': The remaining colum cross product tuple to unpack
     - X: The path of the column variable
-
 *%
 
 % Base case: top level combinations tuples
