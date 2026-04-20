@@ -108,7 +108,9 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         Update the current maximum bound
         """
         self._prev_bound = self.current_max_bound
-        self.current_max_bound = next(self._bound_iter)
+        # self.current_max_bound = next(self._bound_iter)
+        while self.current_max_bound == self._prev_bound:
+            self.current_max_bound = next(self._bound_iter)
 
     def _preprocess_new_bound(self, bound: int) -> None:
         """

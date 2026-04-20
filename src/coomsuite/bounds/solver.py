@@ -122,4 +122,6 @@ class BoundSolver:
             except KeyError as exc:
                 raise KeyError("Unknown exit code.") from exc
             prev_bound = current_max_bound
-            current_max_bound = next(bounds_iter)
+            # current_max_bound = next(bounds_iter)
+            while current_max_bound == prev_bound:
+                current_max_bound = next(bounds_iter)
