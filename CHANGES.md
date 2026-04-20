@@ -1,5 +1,9 @@
 # Changes
 
+## v1.1.2
+
+- fixed a bug with repeating bounds
+
 ## v1.1.1
 
 - `--step` option only for linear search

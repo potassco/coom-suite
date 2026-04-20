@@ -3,13 +3,14 @@ General helper functions for solving unbounded cardinalities.
 """
 
 from itertools import chain, count, dropwhile
+from math import ceil
 from typing import Iterator, Optional
 
 
 def _exponential_iter(base: float) -> Iterator[int]:
     n = 0
     while True:
-        yield round(base**n)
+        yield ceil(base**n)
         n += 1
 
 
