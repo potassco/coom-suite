@@ -2,8 +2,9 @@ name: run CI test
 
 on:
   push:
-    branches: [devel, main, master, wip]
+    branches: [ devel, main, master, wip ]
   pull_request:
+    types: [ opened, synchronize, reopened, ready_for_review ]
   workflow_call:
 
 env:
@@ -11,12 +12,13 @@ env:
 
 jobs:
   build:
+    # if: github.event.pull_request.draft == false
     name: test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
 
     steps:
       - uses: actions/checkout@v5
