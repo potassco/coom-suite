@@ -3,7 +3,8 @@ name: run CI test
 on:
   push:
     branches: [ devel, main, master, wip ]
-  pull_request: # types: [ opened, synchronize, reopened, ready_for_review ]
+  pull_request:
+    types: [ opened, synchronize, reopened, ready_for_review ]
   workflow_call:
 
 env:
