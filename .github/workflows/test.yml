@@ -3,8 +3,7 @@ name: run CI test
 on:
   push:
     branches: [ devel, main, master, wip ]
-  pull_request:
-    types: [ opened, synchronize, reopened, ready_for_review ]
+  pull_request: # types: [ opened, synchronize, reopened, ready_for_review ]
   workflow_call:
 
 env:
@@ -12,7 +11,7 @@ env:
 
 jobs:
   build:
-    # if: github.event.pull_request.draft == false
+    if: github.event.pull_request.draft == false
     name: test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
