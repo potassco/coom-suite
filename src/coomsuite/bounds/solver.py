@@ -54,7 +54,7 @@ class BoundSolver:
                 return sat_bound
 
             print("\nOptimal bound not yet found")
-            print(f"Solving with bound = {current_bound}\n")
+            print(f"Solving with max_bound = {current_bound}\n")
 
             ret = self._solve(current_bound)
             try:
@@ -63,7 +63,7 @@ class BoundSolver:
                 elif ret_dict[ret] == "UNSAT":
                     unsat_bound = current_bound
                 else:
-                    print(f"\n Some error occured during solving with max bound = {current_bound}\n Exit code: {ret}\n")
+                    print(f"\n Some error occured during solving with max_bound = {current_bound}\n Exit code: {ret}\n")
                     return None
             except KeyError as exc:
                 raise KeyError("Unknown exit code.") from exc
@@ -116,7 +116,7 @@ class BoundSolver:
                     pass
                 else:
                     print(
-                        f"\n Some error occured during solving with max bound = {current_max_bound}\n Exit code: {ret}\n"
+                        f"\n Some error occured during solving with max_bound = {current_max_bound}\n Exit code: {ret}\n"
                     )
                     return None
             except KeyError as exc:
