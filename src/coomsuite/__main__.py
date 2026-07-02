@@ -61,6 +61,7 @@ def main() -> None:
                     step=args.step,
                     base=args.base,
                     use_multishot=args.multishot,
+                    grounding=args.grounding,
                 )
                 if optimize and bound is not None:
                     print(f"\n Optimizing with minimal upper bound {bound}.")

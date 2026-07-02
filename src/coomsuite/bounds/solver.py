@@ -10,6 +10,7 @@ from coomsuite import solve
 
 from . import get_bound_iter, next_bound_converge
 from .multi_application import COOMMultiSolverApp
+from .multi_jump import COOMMultiSolverAppJump
 
 # pylint: disable=line-too-long
 # Reference for exit code: https://github.com/potassco/clasp/issues/42#issuecomment-459981038
@@ -75,25 +76,41 @@ class BoundSolver:
         step: Optional[int] = 1,
         base: Optional[float] = 2.0,
         use_multishot: bool = False,
+        grounding: str = "stepwise",
     ) -> Optional[int]:
         """
         Compute the minimal bound for the problem.
         """
-        # pylint: disable=too-many-positional-arguments
+        # pylint: disable=too-many-arguments,too-many-positional-arguments
 
         # multi shot solving
         if use_multishot:  # nocoverage
-            multishot_solver = COOMMultiSolverApp(
-                serialized_facts=self.facts,
-                algorithm=algorithm,
-                initial_bound=initial_bound,
-                step=step,
-                base=base,
-                options={
-                    "solver": self.solver,
-                    "output_format": self.output_format,
-                },
-            )
+            multishot_solver: COOMMultiSolverApp
+            if grounding == "stepwise":
+                multishot_solver = COOMMultiSolverApp(
+                    serialized_facts=self.facts,
+                    algorithm=algorithm,
+                    initial_bound=initial_bound,
+                    step=step,
+                    base=base,
+                    options={
+                        "solver": self.solver,
+                        "output_format": self.output_format,
+                    },
+                )
+            else:
+                multishot_solver = COOMMultiSolverAppJump(
+                    serialized_facts=self.facts,
+                    algorithm=algorithm,
+                    initial_bound=initial_bound,
+                    step=step,
+                    base=base,
+                    function_mode="extend" if grounding == "jump-extend" else "full",
+                    options={
+                        "solver": self.solver,
+                        "output_format": self.output_format,
+                    },
+                )
 
             clingo_main(
                 multishot_solver,
