@@ -45,8 +45,6 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
         self._function_mode: str = function_mode
         """The encoding used for incremental functions ("extend" or "full")"""
 
-        self._grounded_incremental_bounds: Set[int] = set()
-        """The set of bounds at which the incremental program parts have already been grounded"""
         self._function_grounded_bounds: Dict[str, Set[int]] = {}
         """For each incremental function the set of bounds at which it has already been grounded"""
 
@@ -76,26 +74,24 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
         self._function_grounded_bounds.setdefault(name, set()).add(bound)
         return part
 
-    def _ground_incremental_at(self, control: Control, bound: int) -> None:
+    def _get_incremental_parts_at(self, bound: int) -> List[ProgPart]:
         """
-        Ground all incremental program parts at the given bound (does nothing if already grounded).
+        Get all incremental program parts at the given bound (without grounding them).
 
         Args:
-            control (Control): the clingo control object
-            bound (int): the bound to ground the incremental parts at
-        """
-        if bound in self._grounded_incremental_bounds:
-            return
+            bound (int): the bound to get the incremental parts at
 
-        parts = []
+        Returns:
+            List[ProgPart]: the incremental program parts to ground at the given bound
+        """
+        parts: List[ProgPart] = []
         for exp_type, exp_args in self._incremental_parts:
             if exp_type == "function":
                 parts.append(self._get_function_prog_part(exp_args, bound))
             else:
                 parts.append(self._get_incremental_prog_part(exp_type, exp_args, bound))
 
-        self._grounded_incremental_bounds.add(bound)
-        control.ground(parts)
+        return parts
 
     def _converge_update_max_bound(self, control: Control, last_bound: int, current_bound: int) -> None:
         # In the jump approach max_bound stays fixed at its starting value: the starting max_bound
@@ -138,19 +134,16 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
                     # (needs to be grounded before the other program parts below)
                     control.add("base", [], "".join(self._new_processed_facts))
                     control.ground([("base", [])])
-                    # ground the incremental parts discovered at bound 0
-                    self._ground_incremental_at(control, 0)
                 else:
                     for fact in self._new_processed_facts:
                         non_incremental_parts.append(self._get_prog_part(fact, bound))
 
-            print(f"Grounding with bound = {self.current_max_bound}")
-            # ground all collected non-incremental program parts in one batch
-            control.ground(non_incremental_parts)
+            # get the incremental program parts at the target bound only
+            incremental_parts = self._get_incremental_parts_at(target)
 
-            # ground the incremental program parts at the target bound only
-            if target != 0:
-                self._ground_incremental_at(control, target)
+            print(f"Grounding with bound = {self.current_max_bound}")
+            # ground all collected non-incremental and incremental (for target bound) parts together
+            control.ground(non_incremental_parts + incremental_parts)
 
             # assign the externals only AFTER all grounding for this jump is done: grounding a
             # program part that contains an `#external` for an already-assigned external (the

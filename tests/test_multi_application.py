@@ -576,7 +576,6 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
         for mode in ("extend", "full"):
             app = COOMMultiSolverAppJump([], function_mode=mode)
             self.assertEqual(app._function_mode, mode)
-            self.assertEqual(app._grounded_incremental_bounds, set())
             self.assertEqual(app._function_grounded_bounds, {})
 
     def test_jump_get_function_prog_part(self) -> None:
@@ -622,35 +621,24 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
         )
         self.assertEqual(app._function_grounded_bounds, {"f": {3, 4, 5, 7}})
 
-    def test_jump_ground_incremental_at(self) -> None:
+    def test_jump_get_incremental_parts_at(self) -> None:
         """
-        Test grounding the incremental program parts at a bound for the jump strategy.
+        Test getting the incremental program parts at a bound for the jump strategy.
         """
         app = COOMMultiSolverAppJump([], function_mode="full")
         function = ("function", (String("f"), String("count"), String("p")))
         unary = ("unary", (String("u"),))
         app._incremental_parts = {function, unary}
 
-        control = create_autospec(Control)
-        app._ground_incremental_at(control, 3)
-
-        # the bound is recorded and the function/non-function parts are grounded in one call
-        self.assertEqual(app._grounded_incremental_bounds, {3})
-        self.assertEqual(control.ground.call_count, 1)
-        grounded_parts = control.ground.call_args[0][0]
+        # the function/non-function parts are returned without grounding
+        parts = app._get_incremental_parts_at(3)
         self.assertCountEqual(
-            grounded_parts,
+            parts,
             [
                 ("incremental_function_full", function[1] + (Number(3),)),
                 ("incremental_unary", unary[1] + (Number(3),)),
             ],
         )
-
-        # grounding an already grounded bound does nothing
-        control = create_autospec(Control)
-        app._grounded_incremental_bounds = {5}
-        app._ground_incremental_at(control, 5)
-        control.ground.assert_not_called()
 
     def test_jump_find_minimal_bound(self) -> None:
         """
@@ -716,7 +704,7 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
             redirect_stdout(None),
             patch.object(app, "_preprocess_new_bound", autospec=True),
             patch.object(app, "_get_prog_part", autospec=True, return_value=("new_set", ())),
-            patch.object(app, "_ground_incremental_at", autospec=True),
+            patch.object(app, "_get_incremental_parts_at", autospec=True, return_value=[]),
             patch.object(app, "_find_minimal_bound", autospec=True),
         ):
             app.main(control, [])
@@ -762,7 +750,7 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
         with (
             redirect_stdout(None),
             patch.object(app, "_preprocess_new_bound", autospec=True),
-            patch.object(app, "_ground_incremental_at", autospec=True),
+            patch.object(app, "_get_incremental_parts_at", autospec=True, return_value=[]),
             patch.object(app, "_find_minimal_bound", autospec=True) as mock_find,
         ):
             app.main(control, [])
