@@ -299,6 +299,18 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             # second, add its name to the set of all incremental expressions
             self._incremental_expressions.add(exp_name)
 
+    def _converge_update_max_bound(self, control: Control, last_bound: int, current_bound: int) -> None:
+        """
+        Update the max_bound external when moving from last_bound to current_bound during converge.
+
+        Args:
+            control (Control): the clingo control object
+            last_bound (int): the bound of the previous solve call
+            current_bound (int): the bound of the next solve call
+        """
+        control.release_external(Function("max_bound", [Number(last_bound)]))
+        control.assign_external(Function("max_bound", [Number(current_bound)]), True)
+
     def _find_minimal_bound(self, control: Control) -> None:
         """
         Find the minimal bound for an instance once a satisfiable bound was found
@@ -343,8 +355,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                     control.assign_external(Function("active", [Number(i)]), True)
 
             # set max_bound externals
-            control.release_external(Function("max_bound", [Number(last_bound)]))
-            control.assign_external(Function("max_bound", [Number(current_bound)]), True)
+            self._converge_update_max_bound(control, last_bound, current_bound)
 
             ret = control.solve()
             # update bound of last solve call
@@ -387,6 +398,32 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
         return parts
 
+    def _assign_max_bound_and_solve(self, control: Control) -> bool:
+        """
+        Assign the max_bound external, solve, and converge to the minimal bound if SAT.
+
+        Args:
+            control (Control): the clingo control object
+
+        Returns:
+            bool: True when the minimal bound has been found (the caller should stop looping),
+                False after updating to the next bound to try.
+        """
+        # update max bound external
+        if self._prev_bound is not None:
+            control.release_external(Function("max_bound", [Number(self._prev_bound)]))
+        control.assign_external(Function("max_bound", [Number(self.current_max_bound)]), True)
+
+        # solve
+        print(f"\nSolving with bound = {self.current_max_bound}\n")
+        ret = control.solve()
+        if ret.satisfiable:
+            self._find_minimal_bound(control)
+            return True
+
+        self._update_bound()
+        return False
+
     def main(self, control: Control, files: Sequence[str]) -> None:
         """
         Main function of the multishot application class
@@ -425,16 +462,5 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                 # update active external
                 control.assign_external(Function("active", [Number(bound)]), True)
 
-            # update max bound external
-            if self._prev_bound is not None:
-                control.release_external(Function("max_bound", [Number(self._prev_bound)]))
-            control.assign_external(Function("max_bound", [Number(self.current_max_bound)]), True)
-
-            # solve
-            print(f"\nSolving with bound = {self.current_max_bound}\n")
-            ret = control.solve()
-            if ret.satisfiable:
-                self._find_minimal_bound(control)
+            if self._assign_max_bound_and_solve(control):
                 break
-
-            self._update_bound()

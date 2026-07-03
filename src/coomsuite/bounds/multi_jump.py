@@ -9,7 +9,6 @@ from clingo.symbol import Function, Number, Symbol
 
 from coomsuite.utils import get_encoding
 
-from . import next_bound_converge
 from .multi_application import COOMMultiSolverApp, ProgPart
 
 
@@ -98,48 +97,12 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
         self._grounded_incremental_bounds.add(bound)
         control.ground(parts)
 
-    def _find_minimal_bound(self, control: Control) -> None:
-        """
-        Find the minimal bound for an instance once a satisfiable bound was found.
-
-        The active external is changed as for the stepwise approach.
-        However, the max_bound external stays active is not changed at all. The starting max_bound value
-        already includes all possible objects we need as we only go below this bound in converge. For the
-        lower bounds we do not have the specific incremental rules due to the jump approach but just using
-        the one for the higher bound works as well (instead of having to ground new rules).
-
-        Args:
-            control (Control): the control object (with all non-incremental parts already grounded)
-        """
-        unsat_bound = -1 if self._prev_bound is None else self._prev_bound
-        sat_bound = self.current_max_bound
-        last_bound = self.current_max_bound
-
-        while True:
-            current_bound = next_bound_converge(unsat_bound, sat_bound)
-
-            if current_bound is None:
-                print("\nOptimal bound found")
-                self.current_max_bound = sat_bound
-                break
-
-            print("\nOptimal bound not yet found")
-            print(f"Solving with bound = {current_bound}\n")
-
-            # toggle the remaining active externals between the last and the current bound
-            if current_bound < last_bound:
-                for i in range(current_bound + 1, last_bound + 1):
-                    control.assign_external(Function("active", [Number(i)]), False)
-            else:
-                for i in range(last_bound + 1, current_bound + 1):
-                    control.assign_external(Function("active", [Number(i)]), True)
-
-            ret = control.solve()
-            last_bound = current_bound
-            if ret.satisfiable:
-                sat_bound = current_bound
-            else:
-                unsat_bound = current_bound
+    def _converge_update_max_bound(self, control: Control, last_bound: int, current_bound: int) -> None:
+        # In the jump approach max_bound stays fixed at its starting value: the starting max_bound
+        # already includes all possible objects we need as we only go below this bound in converge.
+        # For the lower bounds we do not have the specific incremental rules due to the jump approach,
+        # but just using the ones for the higher bound works as well (instead of grounding new rules).
+        pass
 
     def main(self, control: Control, files: Sequence[str]) -> None:
         """
@@ -195,15 +158,6 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
             # externals must be (re)assigned once no further grounding will touch them.
             for bound in range(start, target + 1):
                 control.assign_external(Function("active", [Number(bound)]), True)
-            if self._prev_bound is not None:
-                control.release_external(Function("max_bound", [Number(self._prev_bound)]))
-            control.assign_external(Function("max_bound", [Number(self.current_max_bound)]), True)
 
-            # solve
-            print(f"\nSolving with bound = {self.current_max_bound}\n")
-            ret = control.solve()
-            if ret.satisfiable:
-                self._find_minimal_bound(control)
+            if self._assign_max_bound_and_solve(control):
                 break
-
-            self._update_bound()
