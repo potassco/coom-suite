@@ -544,7 +544,7 @@ class TestMultiApplication(TestCase):
                 call.ground(ANY),
                 call.assign_external(Function("active", [Number(3)], True), True),
                 # releasing previous max bound and assigning new max bound
-                call.assign_external(Function("max_bound", [Number(2)], True), False),
+                call.release_external(Function("max_bound", [Number(2)], True)),
                 call.assign_external(Function("max_bound", [Number(3)], True), True),
                 call.solve(),
             ]
