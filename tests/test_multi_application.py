@@ -13,6 +13,7 @@ from clingo import Control, SolveResult
 from clingo.symbol import Function, Number, String, Symbol, parse_term
 
 from coomsuite.bounds.multi_application import COOMMultiSolverApp, _get_fact_name_and_args
+from coomsuite.bounds.multi_jump import COOMMultiSolverAppJump
 
 
 class TestMultiApplication(TestCase):
@@ -557,3 +558,225 @@ class TestMultiApplication(TestCase):
 
             for i, (real, expected) in enumerate(zip(control.mock_calls, expected_calls)):  # type: ignore[attr-defined]
                 self.assertEqual(real, expected, f"the {i}th call to mock control does not match the expected call")
+
+
+class TestMultiJumpApplication(TestMultiApplication, TestCase):
+    """
+    Test cases for multishot jump application class.
+    """
+
+    def test_jump_init(self) -> None:
+        """
+        Test initialization of the jump multishot application class.
+        """
+        # invalid function mode raises a ValueError
+        self.assertRaises(ValueError, COOMMultiSolverAppJump, [], function_mode="invalid")
+
+        # valid function mode initializes the additional data structures
+        for mode in ("extend", "full"):
+            app = COOMMultiSolverAppJump([], function_mode=mode)
+            self.assertEqual(app._function_mode, mode)
+            self.assertEqual(app._grounded_incremental_bounds, set())
+            self.assertEqual(app._function_grounded_bounds, {})
+
+    def test_jump_get_function_prog_part(self) -> None:
+        """
+        Test selecting the incremental function program part for the jump strategy.
+        """
+        args = (String("f"), String("count"), String("p"))
+
+        # full mode always uses the self-contained full part, regardless of grounded bounds
+        app = COOMMultiSolverAppJump([], function_mode="full")
+        self.assertEqual(
+            app._get_function_prog_part(args, 3),
+            ("incremental_function_full", args + (Number(3),)),
+        )
+        self.assertEqual(app._function_grounded_bounds, {"f": {3}})
+        # even with a lower grounded bound present, full mode stays full
+        self.assertEqual(
+            app._get_function_prog_part(args, 5),
+            ("incremental_function_full", args + (Number(5),)),
+        )
+        self.assertEqual(app._function_grounded_bounds, {"f": {3, 5}})
+
+        # extend mode uses the full part the first time (no lower grounded bound)
+        app = COOMMultiSolverAppJump([], function_mode="extend")
+        self.assertEqual(
+            app._get_function_prog_part(args, 3),
+            ("incremental_function_full", args + (Number(3),)),
+        )
+        # afterwards it extends from the closest lower grounded bound
+        self.assertEqual(
+            app._get_function_prog_part(args, 5),
+            ("incremental_function_extend", args + (Number(3), Number(5))),
+        )
+        # a bound below an already grounded one extends from the closest lower bound (3, not 5)
+        self.assertEqual(
+            app._get_function_prog_part(args, 4),
+            ("incremental_function_extend", args + (Number(3), Number(4))),
+        )
+        # the closest lower grounded bound is selected (5, given grounded bounds {3,4,5})
+        self.assertEqual(
+            app._get_function_prog_part(args, 7),
+            ("incremental_function_extend", args + (Number(5), Number(7))),
+        )
+        self.assertEqual(app._function_grounded_bounds, {"f": {3, 4, 5, 7}})
+
+    def test_jump_ground_incremental_at(self) -> None:
+        """
+        Test grounding the incremental program parts at a bound for the jump strategy.
+        """
+        app = COOMMultiSolverAppJump([], function_mode="full")
+        function = ("function", (String("f"), String("count"), String("p")))
+        unary = ("unary", (String("u"),))
+        app._incremental_parts = {function, unary}
+
+        control = create_autospec(Control)
+        app._ground_incremental_at(control, 3)
+
+        # the bound is recorded and the function/non-function parts are grounded in one call
+        self.assertEqual(app._grounded_incremental_bounds, {3})
+        self.assertEqual(control.ground.call_count, 1)
+        grounded_parts = control.ground.call_args[0][0]
+        self.assertCountEqual(
+            grounded_parts,
+            [
+                ("incremental_function_full", function[1] + (Number(3),)),
+                ("incremental_unary", unary[1] + (Number(3),)),
+            ],
+        )
+
+        # grounding an already grounded bound does nothing
+        control = create_autospec(Control)
+        app._grounded_incremental_bounds = {5}
+        app._ground_incremental_at(control, 5)
+        control.ground.assert_not_called()
+
+    def test_jump_find_minimal_bound(self) -> None:
+        """
+        Test the convergence function of the jump multishot application class.
+        """
+        app = COOMMultiSolverAppJump([], function_mode="full")
+
+        def assign(name: str, bound: int, value: bool) -> Any:
+            return call.assign_external(Function(name, [Number(bound)], True), value)
+
+        down_6 = [
+            assign("active", 7, False),
+            assign("active", 8, False),
+            call.solve(),
+        ]
+        up_7 = [
+            assign("active", 7, True),
+            call.solve(),
+        ]
+        down_5 = [
+            assign("active", 6, False),
+            call.solve(),
+        ]
+
+        for prev_init, max_init, sat_values, calls, max_return in [
+            (0, 1, [], [], 1),
+            (4, 8, [False, True], down_6 + up_7, 7),
+            (4, 8, [False, False], down_6 + up_7, 8),
+            (4, 8, [True, True], down_6 + down_5, 5),
+            (4, 8, [True, False], down_6 + down_5, 6),
+        ]:
+            app._prev_bound = prev_init
+            app.current_max_bound = max_init
+            control = self._get_mock_control(sat_values)
+
+            with redirect_stdout(None):
+                app._find_minimal_bound(control)
+
+            fail_msg = (
+                f"failed with prev_init={prev_init}, max_init={max_init}, "
+                f"sat_values={sat_values}, max_return={max_return}"
+            )
+            self.assertEqual(app.current_max_bound, max_return, fail_msg)
+            self.assertEqual(control.mock_calls, calls, fail_msg)  # type: ignore[attr-defined]
+
+    def test_jump_main_control_calls(self) -> None:
+        """
+        Test calls to the control object in the jump multishot main function.
+        """
+        app = COOMMultiSolverAppJump([], initial_bound=2, function_mode="full")
+        # a (non-incremental) fact so that the bound > 0 branch collecting program parts is exercised
+        app._new_processed_facts = {'set("root.bags","root.bags[1]").'}
+
+        control = self._get_mock_control([False, True])
+
+        def assign(name: str, bound: int, value: bool) -> Any:
+            return call.assign_external(Function(name, [Number(bound)], True), value)
+
+        def release(name: str, bound: int) -> Any:
+            return call.release_external(Function(name, [Number(bound)], True))
+
+        with (
+            redirect_stdout(None),
+            patch.object(app, "_preprocess_new_bound", autospec=True),
+            patch.object(app, "_get_prog_part", autospec=True, return_value=("new_set", ())),
+            patch.object(app, "_ground_incremental_at", autospec=True),
+            patch.object(app, "_find_minimal_bound", autospec=True),
+        ):
+            app.main(control, [])
+
+            expected_calls = [
+                call.load(ANY),
+                call.load(ANY),
+                # base program is grounded first (with the bound-0 facts)
+                call.add("base", [], ANY),
+                call.ground([("base", [])]),
+                # the collected non-incremental parts are grounded in one batch per jump
+                call.ground(ANY),
+                # externals are assigned only after all grounding of the jump is done
+                assign("active", 0, True),
+                assign("active", 1, True),
+                assign("active", 2, True),
+                assign("max_bound", 2, True),
+                call.solve(),
+                # second jump (target bound 3)
+                call.ground(ANY),
+                assign("active", 3, True),
+                release("max_bound", 2),
+                assign("max_bound", 3, True),
+                call.solve(),
+            ]
+
+            self.assertEqual(
+                len(control.mock_calls),  # type: ignore[attr-defined]
+                len(expected_calls),
+                "number of calls to mock control does not match expected number of calls",
+            )
+            for i, (real, expected) in enumerate(zip(control.mock_calls, expected_calls)):  # type: ignore[attr-defined]
+                self.assertEqual(real, expected, f"the {i}th call to mock control does not match the expected call")
+
+    def test_jump_main_initial_bound_zero(self) -> None:
+        """
+        Test the jump main function when the initial bound is zero (single satisfiable jump).
+        """
+        app = COOMMultiSolverAppJump([], initial_bound=0, function_mode="full")
+
+        control = self._get_mock_control([True])
+
+        with (
+            redirect_stdout(None),
+            patch.object(app, "_preprocess_new_bound", autospec=True),
+            patch.object(app, "_ground_incremental_at", autospec=True),
+            patch.object(app, "_find_minimal_bound", autospec=True) as mock_find,
+        ):
+            app.main(control, [])
+
+            expected_calls = [
+                call.load(ANY),
+                call.load(ANY),
+                call.add("base", [], ANY),
+                call.ground([("base", [])]),
+                call.ground(ANY),
+                # no incremental grounding for the target (target == 0) and no previous max bound
+                call.assign_external(Function("active", [Number(0)], True), True),
+                call.assign_external(Function("max_bound", [Number(0)], True), True),
+                call.solve(),
+            ]
+            self.assertEqual(control.mock_calls, expected_calls)  # type: ignore[attr-defined]
+            mock_find.assert_called_once()
