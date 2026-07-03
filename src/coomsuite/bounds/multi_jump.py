@@ -102,8 +102,11 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
         """
         Find the minimal bound for an instance once a satisfiable bound was found.
 
-        As in stepwise version but at each candidate bound there is an additional grounding step to obtain the
-        rules for incremental parts at that bound.
+        The active external is changed as for the stepwise approach.
+        However, the max_bound external stays active is not changed at all. The starting max_bound value
+        already includes all possible objects we need as we only go below this bound in converge. For the
+        lower bounds we do not have the specific incremental rules due to the jump approach but just using
+        the one for the higher bound works as well (instead of having to ground new rules).
 
         Args:
             control (Control): the control object (with all non-incremental parts already grounded)
@@ -123,13 +126,6 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
             print("\nOptimal bound not yet found")
             print(f"Solving with bound = {current_bound}\n")
 
-            # ground the incremental parts at the candidate bound (objects are already grounded)
-            self._ground_incremental_at(control, current_bound)
-
-            # grounding the incremental parts at current_bound re-declares (and thus resets) the
-            # active(current_bound) external, so it has to be re-activated explicitly
-            control.assign_external(Function("active", [Number(current_bound)]), True)
-
             # toggle the remaining active externals between the last and the current bound
             if current_bound < last_bound:
                 for i in range(current_bound + 1, last_bound + 1):
@@ -137,10 +133,6 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
             else:
                 for i in range(last_bound + 1, current_bound + 1):
                     control.assign_external(Function("active", [Number(i)]), True)
-
-            # set max_bound externals
-            control.release_external(Function("max_bound", [Number(last_bound)]))
-            control.assign_external(Function("max_bound", [Number(current_bound)]), True)
 
             ret = control.solve()
             last_bound = current_bound
