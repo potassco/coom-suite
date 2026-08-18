@@ -9,6 +9,7 @@ from clingcon import ClingconTheory
 from clingo import Control, Model, Symbol
 from clingo.application import Application, ApplicationOptions, Flag
 from clingo.ast import Location, Position, ProgramBuilder, Rule, parse_files
+from clingo.script import enable_python
 from clingo.symbol import Function, SymbolType
 from flingo.__main__ import CSP, DEF, MAX_INT, MIN_INT
 from flingo.__main__ import AppConfig as FlingoConfig
@@ -147,6 +148,8 @@ class COOMSolverApp(Application):
         """
         encoding = get_encoding(f"encoding-base-{self._options['solver']}.lp")
         show = get_encoding(f"show-{self._options['solver']}.lp")
+        enable_python()
+
         for f in files:
             control.load(f)
 

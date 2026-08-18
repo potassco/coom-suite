@@ -10,6 +10,8 @@
 #include "base/constraints.lp".
 #include "base/clingo/defaults.lp".
 
+#include "base/python.lp".
+
 #include "base/clingo/optimization.lp".
 
 #include "base/clingo/user.lp".

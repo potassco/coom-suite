@@ -1,0 +1,14 @@
+product {
+    Garment garment
+}
+
+enumeration Garment {
+    attribute str tag
+
+    G1 = ( "Comfy,Loose" )
+    G2 = ( "Elegant,Transparent" )
+    G3 = ( "Comfy,Sporty" )
+}
+behavior {
+    require garment.tag contains Comfy
+}

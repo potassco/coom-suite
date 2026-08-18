@@ -155,7 +155,7 @@ class ASPModelVisitor(ModelVisitor):
                 if c.floating() is not None:
                     option_value = c.floating().getText()
                 elif c.name() is not None:
-                    option_value = f'"{c.name().getText()}"'
+                    option_value = f'"{c.name().getText().replace("\"","")}"'
                 self.output_asp.append(
                     f'attribute_value("{parent_name}","{option_name}","{attr_name}",{option_value}).'
                 )
