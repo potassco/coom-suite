@@ -5,8 +5,8 @@ Contains custom clintest Tests
 from typing import Set, Union
 
 from clingo import Symbol
-from clingo.solving import Model
 from clintest.assertion import Equals, False_, Implies, Optimal, SubsetOf, SupersetOf, True_
+from clintest.protocol import Model
 from clintest.quantifier import All, Exact, Last
 from clintest.test import And, Assert, Test
 
