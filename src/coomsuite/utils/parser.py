@@ -143,4 +143,11 @@ def get_parser() -> ArgumentParser:
         only ground solved bounds using the extend/full incremental-function encoding.
         (If --multishot is not used this is ignored).)""",
     )
+    parser_solve.add_argument(
+        "--fix-externals",
+        action="store_true",
+        help="""
+        Fix externals whose value cannot change anymore.
+        """,
+    )
     return parser

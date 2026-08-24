@@ -71,6 +71,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         initial_bound: int = 0,
         step: Optional[int] = 1,
         base: Optional[float] = 2.0,
+        fix_externals: bool = False,
         log_level: str = "",
         options: Optional[Dict[str, Any]] = None,
         istest: bool = False,
@@ -90,6 +91,11 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
         self._prev_bound: Optional[int] = None
         """The previous max bound"""
+
+        self._fix_externals: bool = fix_externals
+        """Whether externals whose value cannot change anymore are fixed (and lose their external status)"""
+        self._fixed_active_bound: int = -1
+        """The highest bound for which the active external was fixed to true"""
 
         self._new_processed_facts: Set[str] = set()
         """Processed facts added by current preprocessing step"""
@@ -299,6 +305,42 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             # second, add its name to the set of all incremental expressions
             self._incremental_expressions.add(exp_name)
 
+    def _fix_active(self, control: Control, bound: int) -> None:
+        """
+        Fix the active externals up to bound to true (removing their external status).
+
+        Once solving with some bound b was unsatisfiable, no later solve call will use a smaller bound.
+        Therefore, all bounds <= b can be permanently set to true by adding them as facts
+        (and thus removing their external status).
+
+        Args:
+            control (Control): the clingo control object
+            bound (int): the highest bound to fix to true
+        """
+        if not self._fix_externals or bound <= self._fixed_active_bound:
+            return
+
+        control.ground([("fix_active", [Number(self._fixed_active_bound + 1), Number(bound)])])
+        self._fixed_active_bound = bound
+
+    def _release_active(self, control: Control, lower: int, upper: int) -> None:
+        """
+        Release the active externals from lower to upper.
+
+        Once solving with some bound b was satisfiable, no later solve call will use a larger bound,
+        so that all bounds above b can be released.
+
+        Args:
+            control (Control): the clingo control object
+            lower (int): the lowest bound to release
+            upper (int): the highest bound to release
+        """
+        if not self._fix_externals:
+            return
+
+        for bound in range(lower, upper + 1):
+            control.release_external(Function("active", [Number(bound)]))
+
     def _converge_update_max_bound(self, control: Control, last_bound: int, current_bound: int) -> None:
         """
         Update the max_bound external when moving from last_bound to current_bound during converge.
@@ -328,6 +370,9 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         sat_bound = self.current_max_bound
         # last_bound stores the bound from the last solve call
         last_bound = self.current_max_bound
+        # released_bound stores the lowest bound above which all active externals are released
+        # (initially nothing is released as no bound above sat_bound was ever grounded)
+        released_bound = sat_bound
 
         while True:
             # compute next bound to check
@@ -363,8 +408,13 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             # update sat/unsat bound depending on result of solve
             if ret.satisfiable:
                 sat_bound = current_bound
+                # all bounds above the new sat bound are never active again
+                self._release_active(control, sat_bound + 1, released_bound)
+                released_bound = sat_bound
             else:
                 unsat_bound = current_bound
+                # all bounds up to the new unsat bound stay active
+                self._fix_active(control, unsat_bound)
 
     def _compute_prog_parts(self, bound: int) -> List[ProgPart]:
         """
@@ -420,6 +470,9 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         if ret.satisfiable:
             self._find_minimal_bound(control)
             return True
+
+        # all bounds up to the current (unsatisfiable) bound stay active
+        self._fix_active(control, self.current_max_bound)
 
         self._update_bound()
         return False

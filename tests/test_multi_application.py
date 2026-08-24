@@ -381,6 +381,112 @@ class TestMultiApplication(TestCase):
             # check what calls were made to the control object
             self.assertEqual(control.mock_calls, calls, fail_msg)  # type: ignore[attr-defined]
 
+    def test_init_fix_externals(self) -> None:
+        """
+        Test initialization of the attributes for fixing externals.
+        """
+        # fixing externals is opt in
+        app = COOMMultiSolverApp([])
+        self.assertFalse(app._fix_externals)
+
+        app = COOMMultiSolverApp([], fix_externals=True)
+        self.assertTrue(app._fix_externals)
+        # initially no bound is fixed
+        self.assertEqual(app._fixed_active_bound, -1)
+
+    def test_fix_active(self) -> None:
+        """
+        Test fixing the active externals.
+        """
+
+        def ground_fix(lower: int, upper: int) -> Any:
+            return call.ground([("fix_active", [Number(lower), Number(upper)])])
+
+        # without the option nothing is fixed
+        app = COOMMultiSolverApp([])
+        control = self._get_mock_control([])
+        app._fix_active(control, 6)
+        self.assertEqual(control.mock_calls, [])  # type: ignore[attr-defined]
+        self.assertEqual(app._fixed_active_bound, -1)
+
+        # with the option all bounds up to the given bound are fixed
+        app = COOMMultiSolverApp([], fix_externals=True)
+        control = self._get_mock_control([])
+        app._fix_active(control, 6)
+        self.assertEqual(control.mock_calls, [ground_fix(0, 6)])  # type: ignore[attr-defined]
+        self.assertEqual(app._fixed_active_bound, 6)
+
+        # bounds that are already fixed are not fixed again
+        app._fix_active(control, 6)
+        self.assertEqual(control.mock_calls, [ground_fix(0, 6)])  # type: ignore[attr-defined]
+        self.assertEqual(app._fixed_active_bound, 6)
+
+        # a higher bound only fixes the bounds that are not fixed yet
+        app._fix_active(control, 8)
+        self.assertEqual(control.mock_calls, [ground_fix(0, 6), ground_fix(7, 8)])  # type: ignore[attr-defined]
+        self.assertEqual(app._fixed_active_bound, 8)
+
+    def test_release_active(self) -> None:
+        """
+        Test releasing the active externals.
+        """
+
+        def release(bound: int) -> Any:
+            return call.release_external(Function("active", [Number(bound)], True))
+
+        # without the option nothing is released
+        app = COOMMultiSolverApp([])
+        control = self._get_mock_control([])
+        app._release_active(control, 6, 8)
+        self.assertEqual(control.mock_calls, [])  # type: ignore[attr-defined]
+
+        # with the option all bounds in the range are released
+        app = COOMMultiSolverApp([], fix_externals=True)
+        control = self._get_mock_control([])
+        app._release_active(control, 6, 8)
+        self.assertEqual(control.mock_calls, [release(6), release(7), release(8)])  # type: ignore[attr-defined]
+
+    def test_find_minimal_bound_fix_externals(self) -> None:
+        """
+        Test computing the minimal bound with fixing of externals.
+        """
+        app = COOMMultiSolverApp([], fix_externals=True)
+
+        def assign(name: str, bound: int, value: bool) -> Any:
+            return call.assign_external(Function(name, [Number(bound)], True), value)
+
+        def release(name: str, bound: int) -> Any:
+            return call.release_external(Function(name, [Number(bound)], True))
+
+        # solving with bound 6 (unsatisfiable) and then with bound 7 (satisfiable)
+        expected_calls = [
+            # solve with bound 6
+            assign("active", 7, False),
+            assign("active", 8, False),
+            release("max_bound", 8),
+            assign("max_bound", 6, True),
+            call.solve(),
+            # unsatisfiable: all bounds up to 6 stay active
+            call.ground([("fix_active", [Number(0), Number(6)])]),
+            # solve with bound 7
+            assign("active", 7, True),
+            release("max_bound", 6),
+            assign("max_bound", 7, True),
+            call.solve(),
+            # satisfiable: bound 8 is never active again
+            release("active", 8),
+        ]
+
+        app._prev_bound = 4
+        app.current_max_bound = 8
+        control = self._get_mock_control([False, True])
+
+        with redirect_stdout(None):
+            app._find_minimal_bound(control)
+
+        self.assertEqual(app.current_max_bound, 7)
+        self.assertEqual(control.mock_calls, expected_calls)  # type: ignore[attr-defined]
+
     def test_preprocess_new_bound(self) -> None:
         """
         Test preprocessing and updates to data structures for a new bound.
@@ -559,6 +665,55 @@ class TestMultiApplication(TestCase):
             for i, (real, expected) in enumerate(zip(control.mock_calls, expected_calls)):  # type: ignore[attr-defined]
                 self.assertEqual(real, expected, f"the {i}th call to mock control does not match the expected call")
 
+    def test_main_control_calls_fix_externals(self) -> None:
+        """
+        Test calls to the control object in the main function with fixing of externals.
+        """
+        app = COOMMultiSolverApp([], initial_bound=2, fix_externals=True)
+
+        control = self._get_mock_control([False, True])
+
+        with (
+            redirect_stdout(None),
+            patch.object(app, "_preprocess_new_bound", autospec=True),
+            patch.object(app, "_compute_prog_parts", autospec=True),
+            patch.object(app, "_find_minimal_bound", autospec=True),
+        ):
+            app.main(control, [])
+
+            expected_calls = [
+                call.load(ANY),
+                call.load(ANY),
+                call.add("base", [], ANY),
+                call.ground([("base", [])]),
+                # ground each bound in 0..2 and set the active external
+                call.ground(ANY),
+                call.assign_external(Function("active", [Number(0)], True), True),
+                call.ground(ANY),
+                call.assign_external(Function("active", [Number(1)], True), True),
+                call.ground(ANY),
+                call.assign_external(Function("active", [Number(2)], True), True),
+                call.assign_external(Function("max_bound", [Number(2)], True), True),
+                call.solve(),
+                # unsatisfiable: all bounds up to 2 stay active
+                call.ground([("fix_active", [Number(0), Number(2)])]),
+                # grounding and assigning active for next bound
+                call.ground(ANY),
+                call.assign_external(Function("active", [Number(3)], True), True),
+                call.release_external(Function("max_bound", [Number(2)], True)),
+                call.assign_external(Function("max_bound", [Number(3)], True), True),
+                call.solve(),
+            ]
+
+            self.assertEqual(
+                len(control.mock_calls),  # type: ignore[attr-defined]
+                len(expected_calls),
+                "number of calls to mock control does not match expected number of calls",
+            )
+
+            for i, (real, expected) in enumerate(zip(control.mock_calls, expected_calls)):  # type: ignore[attr-defined]
+                self.assertEqual(real, expected, f"the {i}th call to mock control does not match the expected call")
+
 
 class TestMultiJumpApplication(TestMultiApplication, TestCase):
     """
@@ -683,6 +838,45 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
             )
             self.assertEqual(app.current_max_bound, max_return, fail_msg)
             self.assertEqual(control.mock_calls, calls, fail_msg)  # type: ignore[attr-defined]
+
+    def test_jump_fix_max_bound(self) -> None:
+        """
+        Test fixing the max bound external during converge of the jump multishot application class.
+        """
+        app = COOMMultiSolverAppJump([], function_mode="full", fix_externals=True)
+
+        def assign(name: str, bound: int, value: bool) -> Any:
+            return call.assign_external(Function(name, [Number(bound)], True), value)
+
+        def release(name: str, bound: int) -> Any:
+            return call.release_external(Function(name, [Number(bound)], True))
+
+        # solving with bound 6 (unsatisfiable) and then with bound 7 (satisfiable)
+        expected_calls = [
+            # the max bound is fixed once, before the first solve of converge
+            call.ground([("fix_max_bound", [Number(8)])]),
+            # solve with bound 6 (max_bound stays at 8 for the jump strategy)
+            assign("active", 7, False),
+            assign("active", 8, False),
+            call.solve(),
+            # unsatisfiable: all bounds up to 6 stay active
+            call.ground([("fix_active", [Number(0), Number(6)])]),
+            # solve with bound 7 (the max bound is not fixed again)
+            assign("active", 7, True),
+            call.solve(),
+            # satisfiable: bound 8 is never active again
+            release("active", 8),
+        ]
+
+        app._prev_bound = 4
+        app.current_max_bound = 8
+        control = self._get_mock_control([False, True])
+
+        with redirect_stdout(None):
+            app._find_minimal_bound(control)
+
+        self.assertEqual(app.current_max_bound, 7)
+        self.assertEqual(control.mock_calls, expected_calls)  # type: ignore[attr-defined]
 
     def test_jump_main_control_calls(self) -> None:
         """

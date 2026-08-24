@@ -34,11 +34,14 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
         step: Optional[int] = 1,
         base: Optional[float] = 2.0,
         function_mode: str = "extend",
+        fix_externals: bool = False,
         log_level: str = "",
         options: Optional[Dict[str, Any]] = None,
         istest: bool = False,
     ):  # pylint: disable=too-many-arguments,too-many-positional-arguments
-        super().__init__(serialized_facts, algorithm, initial_bound, step, base, log_level, options, istest)
+        super().__init__(
+            serialized_facts, algorithm, initial_bound, step, base, fix_externals, log_level, options, istest
+        )
 
         if function_mode not in ("extend", "full"):
             raise ValueError(f"unknown function mode for jump grounding: {function_mode}")
@@ -93,11 +96,19 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
 
         return parts
 
+    def _find_minimal_bound(self, control: Control) -> None:
+        """
+        Extend find_minimal_bound by permanently fixing the max_bound (if using fix_externals option).
+        """
+        if self._fix_externals:
+            control.ground([("fix_max_bound", [Number(self.current_max_bound)])])
+
+        super()._find_minimal_bound(control)
+
     def _converge_update_max_bound(self, control: Control, last_bound: int, current_bound: int) -> None:
-        # In the jump approach max_bound stays fixed at its starting value: the starting max_bound
-        # already includes all possible objects we need as we only go below this bound in converge.
-        # For the lower bounds we do not have the specific incremental rules due to the jump approach,
-        # but just using the ones for the higher bound works as well (instead of grounding new rules).
+        # In the jump approach the max_bound stays fixed at the value when starting converge.
+        # Even though we do not have specific rules for the smaller max bounds,
+        # we can just keep using the ones for the starting max bound.
         pass
 
     def main(self, control: Control, files: Sequence[str]) -> None:
@@ -145,10 +156,7 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
             # ground all collected non-incremental and incremental (for target bound) parts together
             control.ground(non_incremental_parts + incremental_parts)
 
-            # assign the externals only AFTER all grounding for this jump is done: grounding a
-            # program part that contains an `#external` for an already-assigned external (the
-            # incremental parts re-declare active/max_bound) resets it to its default (false), so the
-            # externals must be (re)assigned once no further grounding will touch them.
+            # assign externals values after all grounding is done
             for bound in range(start, target + 1):
                 control.assign_external(Function("active", [Number(bound)]), True)
 

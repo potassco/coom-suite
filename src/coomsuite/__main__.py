@@ -62,6 +62,7 @@ def main() -> None:
                     base=args.base,
                     use_multishot=args.multishot,
                     grounding=args.grounding,
+                    fix_externals=args.fix_externals,
                 )
                 if optimize and bound is not None:
                     print(f"\n Optimizing with minimal upper bound {bound}.")

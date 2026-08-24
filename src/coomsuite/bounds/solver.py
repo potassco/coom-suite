@@ -77,6 +77,7 @@ class BoundSolver:
         base: Optional[float] = 2.0,
         use_multishot: bool = False,
         grounding: str = "stepwise",
+        fix_externals: bool = False,
     ) -> Optional[int]:
         """
         Compute the minimal bound for the problem.
@@ -93,6 +94,7 @@ class BoundSolver:
                     initial_bound=initial_bound,
                     step=step,
                     base=base,
+                    fix_externals=fix_externals,
                     options={
                         "solver": self.solver,
                         "output_format": self.output_format,
@@ -106,6 +108,7 @@ class BoundSolver:
                     step=step,
                     base=base,
                     function_mode="extend" if grounding == "jump-extend" else "full",
+                    fix_externals=fix_externals,
                     options={
                         "solver": self.solver,
                         "output_format": self.output_format,
