@@ -14,9 +14,18 @@ from .utils.logging import get_logger
 log = get_logger("main")
 
 
-def preprocess(files: List[str], max_bound: int = 0, discrete: bool = False, multishot: bool = False) -> List[str]:
+def preprocess(
+    files: List[str],
+    max_bound: int = 0,
+    discrete: bool = False,
+    multishot: bool = False,
+    object_bounds: bool = False,
+) -> List[str]:  # pylint: disable=too-many-arguments,too-many-positional-arguments
     """
     Preprocesses COOM ASP facts into a "grounded" configuration fact format
+
+    With object_bounds the bound at which every object becomes available is computed as well
+    (only needed for multishot solving with jump grounding).
     """
     # pylint: disable=not-context-manager
     input_files = files
@@ -25,7 +34,13 @@ def preprocess(files: List[str], max_bound: int = 0, discrete: bool = False, mul
         ctl.load(f)
 
     enable_python()
-    ctl.load(get_encoding("preprocess.lp" if not multishot else "preprocess-multishot.lp"))
+    if object_bounds:
+        encoding = "preprocess-multishot-jump.lp"
+    elif multishot:
+        encoding = "preprocess-multishot.lp"
+    else:
+        encoding = "preprocess.lp"
+    ctl.load(get_encoding(encoding))
 
     if discrete:
         ctl.add("base", [], "discrete.")  # nocoverage
