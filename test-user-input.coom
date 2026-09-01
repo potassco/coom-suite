@@ -1,0 +1,19 @@
+// directly sets a value or adds a part, can also be encoded as integrity constraint of course
+set frame[0] = Small
+add basket[0]
+
+// these user inputs correspond to constraints, as they only restrict the domain of the attributes
+set frontWheel[0] > 20
+set totalPrice[0] <= 2500
+set color[0] != White
+
+// optimization directives
+maximize storageVolume[0]
+minimize totalPrice[0]
+
+// Is this part of the user input or should be in another query language?
+query color[0]
+
+// other queries, relevant here?
+// get 5 different models
+// get a similar model
