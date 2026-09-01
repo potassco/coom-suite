@@ -21,6 +21,18 @@ class TestMultiApplication(TestCase):
     Test cases for multishot application class.
     """
 
+    def assert_control_calls(self, control: Control, expected_calls: List[Any]) -> None:
+        """
+        Check that the calls to the mock control object match the expected calls.
+        """
+        self.assertEqual(
+            len(control.mock_calls),  # type: ignore[attr-defined]
+            len(expected_calls),
+            "number of calls to mock control does not match expected number of calls",
+        )
+        for i, (real, expected) in enumerate(zip(control.mock_calls, expected_calls)):  # type: ignore[attr-defined]
+            self.assertEqual(real, expected, f"the {i}th call to mock control does not match the expected call")
+
     def test_multi_application_helper_function(self) -> None:
         """
         Test helper function used in multishot application class.
@@ -487,58 +499,27 @@ class TestMultiApplication(TestCase):
         self.assertEqual(app.current_max_bound, 7)
         self.assertEqual(control.mock_calls, expected_calls)  # type: ignore[attr-defined]
 
-    def test_preprocess_new_bound(self) -> None:
+    def test_preprocess_bound(self) -> None:
         """
-        Test preprocessing and updates to data structures for a new bound.
+        Test preprocessing for a single bound (grounding stepwise preprocesses every bound).
         """
-        # initial values for preocessed and new processed facts
-        initial_processed = {'domain("Color","Green").'}
-        initial_new_processed = {'domain("Color","Blue").'}
+        non_incremental = {'domain("Color","Green").', 'domain("Color","Red").'}
+        incremental = {'inc_set("root.bags.pockets").'}
 
-        # new facts added by preprocessing (mocked below)
-        non_incremental = {'domain("Color","Red").'}
-        incremental = {
-            'inc_set("root.bags.pockets").',
-            (
-                'incremental("function","count(root.bags.pockets)","root.bags.pockets",'
-                '("count(root.bags.pockets)","count","root.bags.pockets"))'
-            ),
-        }
-
-        # define expected values after calling preprocess_new_bound
-        # expected processed facts
-        expected_processed = initial_processed | initial_new_processed
-        # expected new processed facts
-        expected_new_processed = non_incremental
-        # expected arguments to update incremental data method
-        expected_update_args = incremental
-
-        # bound to process at
-        bound = 2
-
-        # mock preprocess function
         with patch("coomsuite.bounds.multi_application.preprocess", autospec=True) as mock_preprocess:
-            # mock return value
             mock_preprocess.side_effect = [list(non_incremental | incremental)]
-
-            # initialize multi solver
             app = COOMMultiSolverApp([])
-            app._processed_facts = initial_processed.copy()
-            app._new_processed_facts = initial_new_processed.copy()
-
-            # mock update incremental data function
+            # facts that were already processed for smaller bounds
+            app._processed_facts = {'domain("Color","Green").'}
             with patch.object(app, "_update_incremental_data", autospec=True) as mock_update:
-                # call multi solver preprocess function
-                app._preprocess_new_bound(bound)
+                new_facts = app._preprocess_bound(2)
 
-                # check arguments of call to preprocess
-                self.assertEqual(mock_preprocess.call_args, call([], max_bound=bound, discrete=True, multishot=True))
-                # check _processed_facts
-                self.assertEqual(app._processed_facts, expected_processed)
-                # check _new_processed_facts
-                self.assertEqual(app._new_processed_facts, expected_new_processed)
-                # check arguments of call to _update_incremental_data
-                self.assertEqual(mock_update.call_args, call(expected_update_args))
+        # the bounds of the objects are only computed when grounding in jumps
+        self.assertEqual(mock_preprocess.call_args, call([], max_bound=2, discrete=True, multishot=True))
+        self.assertEqual(mock_update.call_args, call(incremental))
+        # only the facts that were not processed before are returned
+        self.assertEqual(new_facts, {'domain("Color","Red").'})
+        self.assertEqual(app._processed_facts, non_incremental)
 
     def test_compute_prog_parts_at_zero(self) -> None:
         """
@@ -625,7 +606,7 @@ class TestMultiApplication(TestCase):
 
         with (
             redirect_stdout(None),
-            patch.object(app, "_preprocess_new_bound", autospec=True),
+            patch.object(app, "_preprocess_bound", autospec=True, return_value=set()),
             patch.object(app, "_compute_prog_parts", autospec=True),
             patch.object(app, "_find_minimal_bound", autospec=True),
         ):
@@ -656,14 +637,7 @@ class TestMultiApplication(TestCase):
                 call.solve(),
             ]
 
-            self.assertEqual(
-                len(control.mock_calls),  # type: ignore[attr-defined]
-                len(expected_calls),
-                "number of calls to mock control does not match expected number of calls",
-            )
-
-            for i, (real, expected) in enumerate(zip(control.mock_calls, expected_calls)):  # type: ignore[attr-defined]
-                self.assertEqual(real, expected, f"the {i}th call to mock control does not match the expected call")
+            self.assert_control_calls(control, expected_calls)
 
     def test_main_control_calls_fix_externals(self) -> None:
         """
@@ -675,7 +649,7 @@ class TestMultiApplication(TestCase):
 
         with (
             redirect_stdout(None),
-            patch.object(app, "_preprocess_new_bound", autospec=True),
+            patch.object(app, "_preprocess_bound", autospec=True, return_value=set()),
             patch.object(app, "_compute_prog_parts", autospec=True),
             patch.object(app, "_find_minimal_bound", autospec=True),
         ):
@@ -705,14 +679,7 @@ class TestMultiApplication(TestCase):
                 call.solve(),
             ]
 
-            self.assertEqual(
-                len(control.mock_calls),  # type: ignore[attr-defined]
-                len(expected_calls),
-                "number of calls to mock control does not match expected number of calls",
-            )
-
-            for i, (real, expected) in enumerate(zip(control.mock_calls, expected_calls)):  # type: ignore[attr-defined]
-                self.assertEqual(real, expected, f"the {i}th call to mock control does not match the expected call")
+            self.assert_control_calls(control, expected_calls)
 
 
 class TestMultiJumpApplication(TestMultiApplication, TestCase):

@@ -117,20 +117,34 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         while self.current_max_bound == self._prev_bound:
             self.current_max_bound = next(self._bound_iter)
 
-    def _preprocess_new_bound(self, bound: int) -> None:
+    def _run_preprocess(self, bound: int) -> Set[str]:
         """
-        Preprocess the serialized facts for the given bound and update the fact data structures
+        Run the preprocessing of the serialized facts for the given bound
 
         Args:
             bound (int): the value of max_bound to preprocess
+
+        Returns:
+            Set[str]: the facts resulting from preprocessing
         """
-        # update facts that were already processed
-        self._processed_facts.update(self._new_processed_facts)
+        return set(preprocess(self._serialized_facts, max_bound=bound, discrete=True, multishot=True))
 
-        # preprocess with bound
-        facts = set(preprocess(self._serialized_facts, max_bound=bound, discrete=True, multishot=True))
+    def _preprocess_bound(self, bound: int) -> Set[str]:
+        """
+        Preprocess the serialized facts for the given bound and update the fact data structures
 
-        # split facts into incremental and non-incremental facts
+        The facts about incremental expressions are not returned but directly added to the internal
+        data structures (see _update_incremental_data).
+
+        Args:
+            bound (int): the value of max_bound to preprocess
+
+        Returns:
+            Set[str]: the facts that were not processed before
+        """
+        facts = self._run_preprocess(bound)
+
+        # split facts into incremental facts and non-incremental facts
         incremental_facts = set()
         non_incremental_facts = set()
         for x in facts:
@@ -143,7 +157,10 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         self._update_incremental_data(incremental_facts)
 
         # filter out facts that were previously processed
-        self._new_processed_facts = non_incremental_facts - self._processed_facts
+        new_facts = non_incremental_facts - self._processed_facts
+        self._processed_facts.update(new_facts)
+
+        return new_facts
 
     def _remove_new_incremental_expressions(self) -> List[ProgPart]:
         """
@@ -158,6 +175,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             List[ProgPart]: list of incremental expressions represented as tuples (name, args)
         """
         inc_expressions = []
+        remaining_facts = set()
         for fact in self._new_processed_facts:
             name, args = _get_fact_name_and_args(fact)
 
@@ -177,9 +195,11 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                 inc_expressions.append((name, args))
                 # add the fact to the processed_facts
                 self._processed_facts.add(fact)
+            else:
+                remaining_facts.add(fact)
 
         # filter new_processed_facts to remove the incremental expressions
-        self._new_processed_facts = self._new_processed_facts - self._processed_facts
+        self._new_processed_facts = remaining_facts
 
         return inc_expressions
 
@@ -498,7 +518,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
                 print(f"Grounding with bound = {bound}")
 
                 # preprocessing
-                self._preprocess_new_bound(bound)
+                self._new_processed_facts = self._preprocess_bound(bound)
 
                 # collect program parts
                 parts = self._compute_prog_parts(bound)
