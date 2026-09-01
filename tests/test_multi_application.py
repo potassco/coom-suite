@@ -5,7 +5,7 @@ Test cases for multishot application class.
 # pylint: disable=protected-access
 
 from contextlib import redirect_stdout
-from typing import Any, List, Set, Tuple
+from typing import Any, Dict, List, Set, Tuple
 from unittest import TestCase
 from unittest.mock import ANY, call, create_autospec, patch
 
@@ -14,6 +14,20 @@ from clingo.symbol import Function, Number, String, Symbol, parse_term
 
 from coomsuite.bounds.multi_application import COOMMultiSolverApp, _get_fact_name_and_args
 from coomsuite.bounds.multi_jump import COOMMultiSolverAppJump
+
+
+def empty_groups(target: int, start: int) -> Dict[int, Set[str]]:
+    """
+    Stub for _preprocess_up_to yielding an empty group for every bound of the range.
+    """
+    return {bound: set() for bound in range(start, target + 1)}
+
+
+def groups_with_fact(target: int, start: int) -> Dict[int, Set[str]]:
+    """
+    Stub for _preprocess_up_to yielding a (non-incremental) fact at the target bound of the range.
+    """
+    return empty_groups(target, start) | {target: {'set("root.bags","root.bags[1]").'}}
 
 
 class TestMultiApplication(TestCase):
@@ -687,6 +701,68 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
     Test cases for multishot jump application class.
     """
 
+    def test_jump_bound_of_fact(self) -> None:
+        """
+        Test determining the bound a fact becomes available at.
+        """
+        app = COOMMultiSolverAppJump([])
+        app._object_bounds = {"root": 0, "root.bags[0]": 1, "root.bags[1]": 2, "root.bags[1].pockets[2]": 3}
+
+        # a fact without any object path, and a fact referring to a single object
+        self.assertEqual(app._bound_of_fact('domain("Color","Red").'), 0)
+        self.assertEqual(app._bound_of_fact('type("root.bags[1]","Bag").'), 2)
+        # a fact referring to several objects takes the maximum
+        self.assertEqual(app._bound_of_fact('parent("root.bags[1].pockets[2]","root.bags[1]").'), 3)
+        # a set path is covered by the object it starts at
+        self.assertEqual(app._bound_of_fact('constraint(("root.bags[1].pockets",0),"lowerbound").'), 2)
+        # an unknown object path does not contribute
+        self.assertEqual(app._bound_of_fact('type("root.frame[9]","Frame").'), 0)
+
+    def test_jump_preprocess_up_to(self) -> None:
+        """
+        Test preprocessing for a jump range and grouping of the new facts by bound.
+        """
+        # new facts added by preprocessing (mocked below)
+        obj_bound = {'obj_bound("root",0).', 'obj_bound("root.bags[0]",1).', 'obj_bound("root.bags[1]",2).'}
+        non_incremental = {
+            'domain("Color","Green").',  # already processed, hence not part of any group
+            'domain("Color","Red").',  # no object path, hence bound 0 (clamped to the start of the range)
+            'type("root.bags[0]","Bag").',
+            'type("root.bags[1]","Bag").',
+            'constraint(("root.bags[1].pockets",0),"lowerbound").',
+        }
+        incremental = {'inc_set("root.bags.pockets").'}
+
+        # mock preprocess function
+        with patch("coomsuite.bounds.multi_jump.preprocess", autospec=True) as mock_preprocess:
+            mock_preprocess.side_effect = [list(non_incremental | incremental | obj_bound)]
+
+            app = COOMMultiSolverAppJump([])
+            # facts that were already processed for smaller bounds
+            app._processed_facts = {'domain("Color","Green").'}
+
+            # mock update incremental data function
+            with patch.object(app, "_update_incremental_data", autospec=True) as mock_update:
+                groups = app._preprocess_up_to(2, 1)
+
+        # preprocessing is done once, for the target bound
+        self.assertEqual(
+            mock_preprocess.call_args, call([], max_bound=2, discrete=True, multishot=True, object_bounds=True)
+        )
+        self.assertEqual(mock_update.call_args, call(incremental))
+        # object bounds are collected separately and are not part of any group
+        self.assertEqual(app._object_bounds, {"root": 0, "root.bags[0]": 1, "root.bags[1]": 2})
+        # the new facts are grouped by bound (facts of bound 0 are clamped to the start of the range)
+        self.assertEqual(
+            groups,
+            {
+                1: {'domain("Color","Red").', 'type("root.bags[0]","Bag").'},
+                2: {'type("root.bags[1]","Bag").', 'constraint(("root.bags[1].pockets",0),"lowerbound").'},
+            },
+        )
+        # all new facts are marked as processed
+        self.assertEqual(app._processed_facts, non_incremental)
+
     def test_jump_init(self) -> None:
         """
         Test initialization of the jump multishot application class.
@@ -850,8 +926,6 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
         Test calls to the control object in the jump multishot main function.
         """
         app = COOMMultiSolverAppJump([], initial_bound=2, function_mode="full")
-        # a (non-incremental) fact so that the bound > 0 branch collecting program parts is exercised
-        app._new_processed_facts = {'set("root.bags","root.bags[1]").'}
 
         control = self._get_mock_control([False, True])
 
@@ -863,7 +937,7 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
 
         with (
             redirect_stdout(None),
-            patch.object(app, "_preprocess_new_bound", autospec=True),
+            patch.object(app, "_preprocess_up_to", autospec=True, side_effect=groups_with_fact),
             patch.object(app, "_get_prog_part", autospec=True, return_value=("new_set", ())),
             patch.object(app, "_get_incremental_parts_at", autospec=True, return_value=[]),
             patch.object(app, "_find_minimal_bound", autospec=True),
@@ -892,13 +966,7 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
                 call.solve(),
             ]
 
-            self.assertEqual(
-                len(control.mock_calls),  # type: ignore[attr-defined]
-                len(expected_calls),
-                "number of calls to mock control does not match expected number of calls",
-            )
-            for i, (real, expected) in enumerate(zip(control.mock_calls, expected_calls)):  # type: ignore[attr-defined]
-                self.assertEqual(real, expected, f"the {i}th call to mock control does not match the expected call")
+            self.assert_control_calls(control, expected_calls)
 
     def test_jump_main_initial_bound_zero(self) -> None:
         """
@@ -910,7 +978,7 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
 
         with (
             redirect_stdout(None),
-            patch.object(app, "_preprocess_new_bound", autospec=True),
+            patch.object(app, "_preprocess_up_to", autospec=True, side_effect=empty_groups),
             patch.object(app, "_get_incremental_parts_at", autospec=True, return_value=[]),
             patch.object(app, "_find_minimal_bound", autospec=True) as mock_find,
         ):

@@ -2,14 +2,19 @@
 Clingo application class for solving COOM configuration problems with multi-shot solving using jump grounding.
 """
 
+import re
 from typing import Any, Dict, List, Optional, Sequence, Set, Tuple
 
 from clingo import Control
 from clingo.symbol import Function, Number, Symbol
 
+from coomsuite.preprocess import preprocess
 from coomsuite.utils import get_encoding
 
-from .multi_application import COOMMultiSolverApp, ProgPart
+from .multi_application import COOMMultiSolverApp, ProgPart, _get_fact_name_and_args
+
+OBJECT_PATH = re.compile(r"root(?:\.[A-Za-z_]\w*\[-?\d+\])*")
+"""Matches the object paths (as constructed by the dotpath function of the preprocessing) inside a fact"""
 
 
 class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-instance-attributes
@@ -50,6 +55,71 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
 
         self._function_grounded_bounds: Dict[str, Set[int]] = {}
         """For each incremental function the set of bounds at which it has already been grounded"""
+
+        self._object_bounds: Dict[str, int] = {}
+        """For every object its bound, i.e. the smallest max_bound at which the object exists"""
+
+    def _run_preprocess(self, bound: int) -> Set[str]:
+        """
+        Extend the preprocessing to also compute the bound of every object
+
+        The bounds of the objects are needed to group the preprocessed facts by bound
+        (see _preprocess_up_to) and are stored in _object_bounds. As they do not correspond
+        to any program part they are not part of the returned facts.
+
+        Args:
+            bound (int): the value of max_bound to preprocess
+
+        Returns:
+            Set[str]: the facts resulting from preprocessing (without the bounds of the objects)
+        """
+        facts = preprocess(self._serialized_facts, max_bound=bound, discrete=True, multishot=True, object_bounds=True)
+
+        remaining_facts = set()
+        for fact in facts:
+            if fact.startswith("obj_bound"):
+                _, args = _get_fact_name_and_args(fact)
+                self._object_bounds[args[0].string] = args[1].number
+            else:
+                remaining_facts.add(fact)
+
+        return remaining_facts
+
+    def _bound_of_fact(self, fact: str) -> int:
+        """
+        Determine the bound at which a fact becomes available.
+
+        A fact is available as soon as all objects it refers to exist, i.e. at the maximum of
+        the bounds of these objects (see the obj_bound predicate of the preprocessing).
+        Facts not referring to any object are available from bound 0 on.
+
+        Args:
+            fact (str): The fact represented as a string (with trailing '.')
+
+        Returns:
+            int: the bound at which the fact becomes available
+        """
+        return max((self._object_bounds.get(path, 0) for path in OBJECT_PATH.findall(fact)), default=0)
+
+    def _preprocess_up_to(self, target: int, start: int) -> Dict[int, Set[str]]:
+        """
+        Preprocess the serialized facts once for the given target bound and group the new facts by bound.
+
+        Args:
+            target (int): the value of max_bound to preprocess
+            start (int): the first bound that has not been processed yet
+
+        Returns:
+            Dict[int, Set[str]]: for every bound in [start, target] the new facts belonging to it
+        """
+        new_facts = self._preprocess_bound(target)
+
+        # group the new facts by the bound they become available at
+        groups: Dict[int, Set[str]] = {bound: set() for bound in range(start, target + 1)}
+        for fact in new_facts:
+            groups[min(max(self._bound_of_fact(fact), start), target)].add(fact)
+
+        return groups
 
     def _get_function_prog_part(self, args: Tuple[Symbol, ...], bound: int) -> ProgPart:
         """
@@ -131,12 +201,14 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
             target = self.current_max_bound
 
             # collect the non-incremental program parts across the whole jump range
-            # preprocessing is still done in steps of 1 (to assign each object its bound),
+            # the parts are still collected per bound (to assign each object its bound),
             # but the grounding of the collected parts is deferred until after the range is processed
             non_incremental_parts: List[ProgPart] = []
+            # preprocessing is done once for the whole jump range, the resulting facts are grouped by the
+            # bound they belong to (the groups are the same as preprocessing every bound separately)
+            groups = self._preprocess_up_to(target, start)
             for bound in range(start, target + 1):
-                # preprocessing
-                self._preprocess_new_bound(bound)
+                self._new_processed_facts = groups[bound]
                 # remove incremental expressions (grounded via incremental parts, not new_* parts)
                 self._remove_new_incremental_expressions()
 
