@@ -27,7 +27,7 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
 
     For incremental functions there are two possible modes:
     - extend: similar to the approach of grounding stepwise, the value for the new bound is obtained by extending the
-      value of the previous bound and accounting for all objects betwwen the previous and the new bound
+      value of the previous bound and accounting for all objects between the previous and the new bound
     - full: does not reuse the old value and recomputes the full aggregates
     """
 

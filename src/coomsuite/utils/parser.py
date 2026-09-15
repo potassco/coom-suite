@@ -141,13 +141,13 @@ def get_parser() -> ArgumentParser:
         help="""
         Multishot grounding strategy: 'stepwise' grounds every bound, 'jump-extend'/'jump-full'
         only ground solved bounds using the extend/full incremental-function encoding.
-        (If --multishot is not used this is ignored).)""",
+        (If --multishot is not used this flag is ignored.)""",
     )
     parser_solve.add_argument(
         "--fix-externals",
         action="store_true",
         help="""
         Fix externals whose value cannot change anymore.
-        """,
+        (If --multishot is not used this flag is ignored.)""",
     )
     return parser
