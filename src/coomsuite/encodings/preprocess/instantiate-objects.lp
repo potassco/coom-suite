@@ -25,3 +25,16 @@ type_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), type_aux
 
 % Create auxiliary instantiations for attribute values
 type_aux((A,(X,0)),A) :- type_aux(X,T), coom_enumeration(T), coom_attribute_value(T,_,A,_).
+
+%*! child(X,N,X')
+
+Auxiliary predicate matching a parent and child object.
+Equivalent to matching the nested tuple `X' = (N,(X,_))` against `type_aux` directly.
+
+Args:
+    - X: The internal object identifier of the parent
+    - N: The name of the feature or attribute
+    - X': The internal object identifier of the child
+*%
+
+child(X,N,X') :- type_aux(X',_), X' = (N,(X,_)).

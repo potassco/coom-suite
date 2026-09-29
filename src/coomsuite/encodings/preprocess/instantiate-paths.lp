@@ -38,23 +38,20 @@ Args:
 path_to(X,P,0,X') :-
     coom_path(P,0,N),
     path_start(X,P),
-    type_aux(X',_),
-    X' =(N,(X,_)).
+    child(X,N,X').
 
 % Initialize paths starting with "root"
 path_to(X,P,1,X') :-
     coom_path(P,0,"root"),
     coom_path(P,1,N),
     path_start(X,P),
-    type_aux(X',_),
-    X' =(N,((),_)).
+    child((),N,X').
 
 % Recursively follow path
 path_to(X,P,I,X'') :-
     coom_path(P,I,N),
     path_to(X,P,I-1,X'),
-    type_aux(X'',_),
-    X''=(N,(X',_)).
+    child(X',N,X'').
 
 %%% Determine all complete paths
 
@@ -86,5 +83,5 @@ path_to(X,F,G) :- ground_formula(X,F,G).
 path_to(X,F,@aggregate(T,X,P)) :- function(X,F,T,P).
 
 % Auxiliary paths for cardinalities
-path_to(X,N,@dotpath(X')) :- coom_feature(Ctx,N,_,_,_), type_aux(X,Ctx), type_aux(X',_), X' =(N,(X,_)).
-path_to(X,A,@dotpath(X')) :- coom_attribute(T,A,_),     type_aux(X,T),   type_aux(X',_), X' =(A,(X,_)).
+path_to(X,N,PX) :- coom_feature(Ctx,N,_,_,_), type_aux(X,Ctx), child(X,N,X'), obj_path(X',PX).
+path_to(X,A,PX) :- coom_attribute(T,A,_),     type_aux(X,T),   child(X,A,X'), obj_path(X',PX).
