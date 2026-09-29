@@ -38,3 +38,14 @@ Args:
 *%
 
 child(X,N,X') :- type_aux(X',_), X' = (N,(X,_)).
+
+%*! obj_path(X,P)
+
+Associate every instantiated object with its formatted dotpath.
+
+Args:
+    - X: The internal object identifier
+    - P: The dot path of the object (output format)
+*%
+
+obj_path(X,@fmt_dotpath(X)) :- type_aux(X,_).

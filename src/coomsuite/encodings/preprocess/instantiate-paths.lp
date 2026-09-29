@@ -68,9 +68,10 @@ Args:
 *%
 
 % Get objects to which a path is pointing to when the path ends
-path_to(X,P,@dotpath(X')) :-
+path_to(X,P,PX) :-
     path_to(X,P,I,X'),
-    not coom_path(P,I+1,_).
+    not coom_path(P,I+1,_),
+    obj_path(X',PX).
 
 % Auxiliary paths for constants and numbers
 path_to(X,P,P) :- coom_binary(F,_,_,P), coom_constant(P), formula_context(F,T), type_aux(X,T).

@@ -29,11 +29,11 @@ range(@join(Ctx,N),Min,Max) :- coom_feature(Ctx,N,"num",_,_), coom_range(Ctx,N,M
 % Instances (of structures, enumerations and attributes in COOM)
 type("root","product") :- coom_structure("product").
 
-type(@dotpath(X),T)             :- type_aux(X,T), not coom_attribute(_,T,_).
-type(@dotpath(X),@join(T,A))    :- type_aux(X,A),     coom_attribute(T,A,_), type_aux(P,T), X=(_,(P,_)).
+type(PX,T)              :- obj_path(X,PX), type_aux(X,T), not coom_attribute(_,T,_).
+type(PX,@join(T,A)) :- obj_path(X,PX), type_aux(X,A), coom_attribute(T,A,_), type_aux(P,T), X=(_,(P,_)).
 
-index(@dotpath(X),Idx)          :- type_aux(X,T), X=((_,(_,Idx))).
-parent(@dotpath(X),@dotpath(P)) :- type_aux(X,_), X=(_,(P,_)).
+index(PX,Idx)           :- obj_path(X,PX), type_aux(X,T), X=((_,(_,Idx))).
+parent(PX,PP)           :- obj_path(X,PX), type_aux(X,_), X=(_,(P,_)), obj_path(P,PP).
 
 #show type/2.
 #show index/2.
@@ -46,7 +46,7 @@ constraint((C,G),"boolean") :- coom_require(C,F), ground_formula((),F,G), not co
 
 % Local constraints without conditions get converted into conditional requirement
 % to add an "definedness" condition on their context variable
-local_constraint(C,@dotpath(X),G) :- coom_require(C,F), ground_formula(X,F,G), not coom_condition(C,_,_), X != ().
+local_constraint(C,PX,G) :- coom_require(C,F), ground_formula(X,F,G), not coom_condition(C,_,_), X != (), obj_path(X,PX).
 function(@unary(X,"count"),"count",X)     :- local_constraint(C,X,G).
 set(X,X)                                  :- local_constraint(_,X,_).
 binary(@binary(Fun,"=","1"),Fun,"=","1")  :- local_constraint(_,X,_), function(Fun,"count",X).
@@ -69,9 +69,9 @@ unary(G,Op,F')   :- unary(_,_,G,Op,F').
 #show unary/3.
 
 % Table constraints
-constraint((C,@dotpath(X)),"table") :- table(C,X).
-column((C,@dotpath(X)),CT,Col,X') :- coom_combinations(C,Col,P),
-                                               path_to(X,P,X'), in_tuple(CT,X').
+constraint((C,PX),"table") :- table(C,X), obj_path(X,PX).
+column((C,PX),CT,Col,X') :- coom_combinations(C,Col,P), obj_path(X,PX),
+                            path_to(X,P,X'), in_tuple(CT,X').
 allow(C,XY,V) :- coom_allow(C,XY,V).
 
 #show column/4.

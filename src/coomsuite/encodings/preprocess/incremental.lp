@@ -33,7 +33,7 @@ help_path_to(X,P,X'') :- coom_path(P,I,N), help_path_to(X,P,X'),
 path_step(@join(X,P),@dotpath(X')) :- help_path_to(X,P,X'), not help_aux(X,_).
 
 % compute sets used in the column of a table
-table_column((C,@dotpath(X)),@join(X,P)) :- table(C,X), coom_combinations(C,_,P).
+table_column((C,PX),@fmt_join(X,P)) :- table(C,X), coom_combinations(C,_,P), obj_path(X,PX).
 
 % incremental sets: a set is incremental if:
 % - there is a path from an unbounded object to the set

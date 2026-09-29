@@ -89,7 +89,7 @@ Represents an auxiliary table costraint for attribute values.
 Args:
     - C: The attribute constraint identifier (a tuple of type name and object path)
 *%
-attribute_constraint((T,@dotpath(X)))  :- coom_attribute(T,_,_), type_aux(X,T).
+attribute_constraint((T,PX))  :- coom_attribute(T,_,_), type_aux(X,T), obj_path(X,PX).
 
 %*! attribute_constraint_column(T,Col,A)
 
