@@ -1,28 +1,34 @@
 % Python helper functions
 #script (python)
-from clingo import String, SymbolType
-import math
+from clingo import Function, String, SymbolType
+from functools import lru_cache
 
-def dotpath(path):
-    if path.type in (SymbolType.String, SymbolType.Number):
+_ROOT = Function("", [])
+_NOT = String("!")
+
+@lru_cache(maxsize=None)
+def fmt_dotpath(path):
+    """
+    Formats the internal dotpath representation.
+
+    An object (F,(X,I)) is the I-th instance of feature F under parent X,
+    so its path is the path of X extended by one component.
+    """
+    type_ = path.type
+    if type_ is SymbolType.String or type_ is SymbolType.Number:
         return path
-    path = unpack(path, [])
-    return String(".".join(["root"]+[f"{p[0]}[{p[1]}]" for p in path]))
+    if path == _ROOT:
+        return String("root")
+    feature, parent_index = path.arguments
+    parent, index = parent_index.arguments
+    return String(f"{fmt_dotpath(parent).string}.{feature.string}[{index.number}]")
 
-def unpack(p, l):
-    """
-    Recursively unpacks a nested path expression into a list of tuples.
-    """
-    if str(p) != "()":
-        t = (p.arguments[0].string, str(p.arguments[1].arguments[1].number))
-        l.insert(0, t)
-        unpack(p.arguments[1].arguments[0], l)
-    return l
-
-def binary(l,op,r):
+@lru_cache(maxsize=None)
+def fmt_binary(l,op,r):
     return String(f"{l.string}{op.string}{r.string}")
 
-def unary(f,op):
+@lru_cache(maxsize=None)
+def fmt_unary(f,op):
     if op.string == "()":
         return String(f"({f.string})")
     elif op.string in ["-","!","+"]:
@@ -32,17 +38,20 @@ def unary(f,op):
     else:
         return String(f"{op.string}({f.string})")
 
-def join(p1,p2):
-    context = dotpath(p1).string
+@lru_cache(maxsize=None)
+def fmt_join(p1,p2):
+    context = fmt_dotpath(p1).string
     if context == "":
         return p2
     else:
         return String(f"{context}.{p2.string}")
 
-def aggregate(f,c,p):
-    joined = join(c,p).string
+@lru_cache(maxsize=None)
+def fmt_aggregate(f,c,p):
+    joined = fmt_join(c,p).string
     return String(f"{f.string}({joined})")
 
-def implication(a,b):
-    return String(f'{unary(a,String("!")).string}||{b.string}')
+@lru_cache(maxsize=None)
+def fmt_implication(a,b):
+    return String(f'{fmt_unary(a,_NOT).string}||{b.string}')
 #end.

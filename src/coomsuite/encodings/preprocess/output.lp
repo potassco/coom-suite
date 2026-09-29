@@ -4,21 +4,21 @@ discrete(T) :- coom_enumeration(T).
 domain(T,V) :- coom_option(T,V).
 
 % Enumeration attributes
-discrete(@join(T,A)) :- coom_attribute(T,A,"str").
-domain(@join(T,A),V) :- coom_attribute_value(T,_,A,V), coom_attribute(T,A,"str").
+discrete(@fmt_join(T,A)) :- coom_attribute(T,A,"str").
+domain(@fmt_join(T,A),V) :- coom_attribute_value(T,_,A,V), coom_attribute(T,A,"str").
 
-integer(@join(T,A))       :- coom_attribute(T,A,"num"), not discrete.
-range(@join(T,A),Min,Max) :- coom_attribute(T,A,"num"), not discrete,
-                             Min = #min { V: coom_attribute_value(T,_,A,V) },
-                             Max = #max { V: coom_attribute_value(T,_,A,V) }.
+integer(@fmt_join(T,A))       :- coom_attribute(T,A,"num"), not discrete.
+range(@fmt_join(T,A),Min,Max) :- coom_attribute(T,A,"num"), not discrete,
+                                 Min = #min { V: coom_attribute_value(T,_,A,V) },
+                                 Max = #max { V: coom_attribute_value(T,_,A,V) }.
 
 % Temporary fix: For clingo, huge ranges might make grounding to large, translate numeric attributes to discrete attributes
-discrete(@join(T,A)) :- coom_attribute(T,A,"num"), discrete.
-domain(@join(T,A),V) :- coom_attribute_value(T,_,A,V), coom_attribute(T,A,"num"), discrete.
+discrete(@fmt_join(T,A)) :- coom_attribute(T,A,"num"), discrete.
+domain(@fmt_join(T,A),V) :- coom_attribute_value(T,_,A,V), coom_attribute(T,A,"num"), discrete.
 
 % Numeric features
-integer(@join(Ctx,N))       :- coom_feature(Ctx,N,"num",_,_).
-range(@join(Ctx,N),Min,Max) :- coom_feature(Ctx,N,"num",_,_), coom_range(Ctx,N,Min,Max).
+integer(@fmt_join(Ctx,N))       :- coom_feature(Ctx,N,"num",_,_).
+range(@fmt_join(Ctx,N),Min,Max) :- coom_feature(Ctx,N,"num",_,_), coom_range(Ctx,N,Min,Max).
 
 #show discrete/1.
 #show domain/2.
@@ -30,7 +30,7 @@ range(@join(Ctx,N),Min,Max) :- coom_feature(Ctx,N,"num",_,_), coom_range(Ctx,N,M
 type("root","product") :- coom_structure("product").
 
 type(PX,T)              :- obj_path(X,PX), type_aux(X,T), not coom_attribute(_,T,_).
-type(PX,@join(T,A)) :- obj_path(X,PX), type_aux(X,A), coom_attribute(T,A,_), type_aux(P,T), X=(_,(P,_)).
+type(PX,@fmt_join(T,A)) :- obj_path(X,PX), type_aux(X,A), coom_attribute(T,A,_), type_aux(P,T), X=(_,(P,_)).
 
 index(PX,Idx)           :- obj_path(X,PX), type_aux(X,T), X=((_,(_,Idx))).
 parent(PX,PP)           :- obj_path(X,PX), type_aux(X,_), X=(_,(P,_)), obj_path(P,PP).
@@ -47,19 +47,19 @@ constraint((C,G),"boolean") :- coom_require(C,F), ground_formula((),F,G), not co
 % Local constraints without conditions get converted into conditional requirement
 % to add an "definedness" condition on their context variable
 local_constraint(C,PX,G) :- coom_require(C,F), ground_formula(X,F,G), not coom_condition(C,_,_), X != (), obj_path(X,PX).
-function(@unary(X,"count"),"count",X)     :- local_constraint(C,X,G).
-set(X,X)                                  :- local_constraint(_,X,_).
-binary(@binary(Fun,"=","1"),Fun,"=","1")  :- local_constraint(_,X,_), function(Fun,"count",X).
-number("1",1)                             :- local_constraint(_,_,_).
-conditional_requirement(C,Con,G)          :- local_constraint(C,X,G), function(Fun,"count",X), binary(Con,Fun,"=","1").
+function(@fmt_unary(X,"count"),"count",X)    :- local_constraint(C,X,G).
+set(X,X)                                     :- local_constraint(_,X,_).
+binary(@fmt_binary(Fun,"=","1"),Fun,"=","1") :- local_constraint(_,X,_), function(Fun,"count",X).
+number("1",1)                                :- local_constraint(_,_,_).
+conditional_requirement(C,Con,G)             :- local_constraint(C,X,G), function(Fun,"count",X), binary(Con,Fun,"=","1").
 
 
 % Conditional requirements get converted into a disjuction
-constraint((C,@implication(Con,Req)),"boolean")        :- conditional_requirement(C,Con,Req).
-binary(@implication(Con,Req),@unary(Con,"!"),"||",Req) :- conditional_requirement(_,Con,Req).
-unary(@unary(Con,"!"),"!",Con)                         :- conditional_requirement(_,Con,_).
-unary(@unary(G,"()"),"()",G)                           :- conditions_binary(_,_,G,_,_,()).
-binary(G,L,"&&",R)                                     :- conditions_binary(_,_,G,L,R,_).
+constraint((C,@fmt_implication(Con,Req)),"boolean")            :- conditional_requirement(C,Con,Req).
+binary(@fmt_implication(Con,Req),@fmt_unary(Con,"!"),"||",Req) :- conditional_requirement(_,Con,Req).
+unary(@fmt_unary(Con,"!"),"!",Con)                             :- conditional_requirement(_,Con,_).
+unary(@fmt_unary(G,"()"),"()",G)                               :- conditions_binary(_,_,G,_,_,()).
+binary(G,L,"&&",R)                                             :- conditions_binary(_,_,G,L,R,_).
 
 binary(G,L,Op,R) :- binary(_,_,G,L,Op,R).
 unary(G,Op,F')   :- unary(_,_,G,Op,F').
@@ -81,18 +81,18 @@ allow(C,XY,V) :- coom_allow(C,XY,V).
 % table constraint guarantees that correct values are assigned to enumeration attributes
 constraint(C,"table") :- attribute_constraint(C).
 column((T,X),0,0,X)   :- attribute_constraint((T,X)).
-column((T,P),0,Col,X) :- attribute_constraint((T,P)), parent(X,P), type(X,@join(T,A)), attribute_constraint_column(T,Col,A).
+column((T,P),0,Col,X) :- attribute_constraint((T,P)), parent(X,P), type(X,@fmt_join(T,A)), attribute_constraint_column(T,Col,A).
 
 allow(T,(0,I),O)     :- attribute_constraint((T,_)), coom_option(T,O), I = #count{ O' : coom_option(T,O'), O' < O}.
 allow(T,(Col,Row),V) :- attribute_constraint((T,_)), allow(T,(0,Row),O), coom_attribute_value(T,O,A,V), attribute_constraint_column(T,Col,A).
 
 % Imply statements
-constraint((C,@binary(X',"=",G)),"boolean") :- imply(C,X',G).
-binary(@binary(X',"=",G),X',"=",G)          :- imply(C,X',G).
+constraint((C,@fmt_binary(X',"=",G)),"boolean") :- imply(C,X',G).
+binary(@fmt_binary(X',"=",G),X',"=",G)          :- imply(C,X',G).
 
 % Functions
-function(@aggregate(T,X,P),T,@join(X,P)) :- function(X,_,T,P).
-set(@join(X,P),X')                       :- function(X,_,_,P), path_to(X,P,X').
+function(@fmt_aggregate(T,X,P),T,@fmt_join(X,P)) :- function(X,_,T,P).
+set(@fmt_join(X,P),X')                           :- function(X,_,_,P), path_to(X,P,X').
 
 #show function/3.
 #show set/2.
@@ -100,8 +100,8 @@ set(@join(X,P),X')                       :- function(X,_,_,P), path_to(X,P,X').
 % Partonomy and cardinality constraints
 part(T) :- coom_structure(T).
 
-constraint((@join(X,N),Min),"lowerbound") :- cardinality_aux(X,N,Min).
-set(@join(X,N),X')                        :- cardinality_aux(X,N,_), path_to(X,N,X').
+constraint((@fmt_join(X,N),Min),"lowerbound") :- cardinality_aux(X,N,Min).
+set(@fmt_join(X,N),X')                        :- cardinality_aux(X,N,_), path_to(X,N,X').
 
 #show part/1.
 

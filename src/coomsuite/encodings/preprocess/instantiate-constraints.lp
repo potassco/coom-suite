@@ -39,9 +39,9 @@ Args:
 *%
 % Combine all conditions in one conjunction
 % Base case: for conditions_aux/3 pack the first two conditons into a conjunction
-conditions_binary(C,X,@binary(L,"&&",R),L,R,T) :- conditions_aux(C,X,(R,(L,T))).
+conditions_binary(C,X,@fmt_binary(L,"&&",R),L,R,T) :- conditions_aux(C,X,(R,(L,T))).
 % Extend recursively: add the next conditions to the conjunction
-conditions_binary(C,X,@binary(L,"&&",R),L,R,T) :- conditions_binary(C,X,R,_,_,(L,T)).
+conditions_binary(C,X,@fmt_binary(L,"&&",R),L,R,T) :- conditions_binary(C,X,R,_,_,(L,T)).
 
 %*! conditions(C,X,G)
 
@@ -52,8 +52,8 @@ Args:
     - X: The internal object identifier
     - G: The ground formula identifier for the combined condition
 *%
-conditions(C,X,G)              :- conditions_aux(C,X,(G,())).
-conditions(C,X,@unary(G,"()")) :- conditions_binary(C,X,G,_,_,()).
+conditions(C,X,G)                  :- conditions_aux(C,X,(G,())).
+conditions(C,X,@fmt_unary(G,"()")) :- conditions_binary(C,X,G,_,_,()).
 
 %*! conditional_requirement(C,G,G')
 
@@ -78,8 +78,8 @@ Args:
     - X': The path expression of the implied variable
     - G: The ground formula or aggregate identifier for the implied value
 *%
-imply(C,X',G)                  :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), ground_formula(X,F,G).
-imply(C,X',@aggregate(T,X,P')) :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), function(X,F,T,P').
+imply(C,X',G)                      :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), ground_formula(X,F,G).
+imply(C,X',@fmt_aggregate(T,X,P')) :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), function(X,F,T,P').
 
 %%% Instantiate attribute constraints
 %*! attribute_constraint(C)

@@ -49,7 +49,7 @@ Args:
     - XR: The resolved right subexpression
 *%
 
-binary(X,F,@binary(XL,Op,XR),XL,Op,XR) :-
+binary(X,F,@fmt_binary(XL,Op,XR),XL,Op,XR) :-
     coom_binary(F,L,Op,R),
     formula_context(F,C),
     type_aux(X,C),
@@ -70,7 +70,7 @@ Args:
     - X': The resolved subexpression
 *%
 
-unary(X,F,@unary(X',Op),Op,X') :-
+unary(X,F,@fmt_unary(X',Op),Op,X') :-
     coom_unary(F,Op,F'),
     formula_context(F,C),
     type_aux(X,C),

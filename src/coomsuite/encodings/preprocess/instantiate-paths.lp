@@ -80,8 +80,8 @@ path_to(X,P,P) :- coom_binary(F,_,_,P), coom_number(P,_), formula_context(F,T), 
 path_to(X,P,P) :- coom_binary(F,P,_,_), coom_number(P,_), formula_context(F,T), type_aux(X,T).
 
 % Auxiliary paths for formulas and functions
-path_to(X,F,G) :- ground_formula(X,F,G).
-path_to(X,F,@aggregate(T,X,P)) :- function(X,F,T,P).
+path_to(X,F,G)                     :- ground_formula(X,F,G).
+path_to(X,F,@fmt_aggregate(T,X,P)) :- function(X,F,T,P).
 
 % Auxiliary paths for cardinalities
 path_to(X,N,PX) :- coom_feature(Ctx,N,_,_,_), type_aux(X,Ctx), child(X,N,X'), obj_path(X',PX).

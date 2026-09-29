@@ -6,7 +6,7 @@
 Auxiliary predicate representing an instantiated object of a specific type.
 Object are (internally) represented as nested tuples, e.g. `(frame, ((), 0))` for `root.frame[0]`.
 The general pattern is `(object, (parent, index))`.
-This internal representation is later converted using `@dotpath`.
+This internal representation is later converted using `@fmt_dotpath`.
 
 Args:
     - X: The object represented as a nested tuple
@@ -17,10 +17,10 @@ Args:
 type_aux((),"product") :- coom_structure("product").
 
 % Recursively instantiate the configuration tree
-type_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,    _,  Max),  type_aux(X,Ctx), I = 0..Max-1, T != "num".
-type_aux((F,(X,I)),T)            :- coom_feature(Ctx,F,T,    Min,#sup), type_aux(X,Ctx), I = 0..Min+max_bound-1, T != "num".
-type_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",_,  Max),  type_aux(X,Ctx), I = 0..Max-1.
-type_aux((F,(X,I)),@join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), type_aux(X,Ctx), I = 0..Min+max_bound-1.
+type_aux((F,(X,I)),T)                :- coom_feature(Ctx,F,T,    _,  Max),  type_aux(X,Ctx), I = 0..Max-1, T != "num".
+type_aux((F,(X,I)),T)                :- coom_feature(Ctx,F,T,    Min,#sup), type_aux(X,Ctx), I = 0..Min+max_bound-1, T != "num".
+type_aux((F,(X,I)),@fmt_join(Ctx,F)) :- coom_feature(Ctx,F,"num",_,  Max),  type_aux(X,Ctx), I = 0..Max-1.
+type_aux((F,(X,I)),@fmt_join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), type_aux(X,Ctx), I = 0..Min+max_bound-1.
 
 
 % Create auxiliary instantiations for attribute values
