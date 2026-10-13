@@ -49,12 +49,14 @@ Args:
     - XR: The resolved right subexpression
 *%
 
+binary_ctx(X,F,L,Op,R) :- coom_binary(F,L,Op,R), formula_context(F,C), type_aux(X,C).
+binary_lhs(X,F,XL)     :- binary_ctx(X,F,L,_,_), path_to(X,L,XL).
+binary_rhs(X,F,XR)     :- binary_ctx(X,F,_,_,R), path_to(X,R,XR).
+
 binary(X,F,@fmt_binary(XL,Op,XR),XL,Op,XR) :-
-    coom_binary(F,L,Op,R),
-    formula_context(F,C),
-    type_aux(X,C),
-    path_to(X,L,XL),
-    path_to(X,R,XR).
+    binary_ctx(X,F,_,Op,_),
+    binary_lhs(X,F,XL),
+    binary_rhs(X,F,XR).
 
 % Instantiate unaries
 
@@ -70,10 +72,10 @@ Args:
     - X': The resolved subexpression
 *%
 
+unary_ctx(X,F,Op,F') :- coom_unary(F,Op,F'), formula_context(F,C), type_aux(X,C).
+
 unary(X,F,@fmt_unary(X',Op),Op,X') :-
-    coom_unary(F,Op,F'),
-    formula_context(F,C),
-    type_aux(X,C),
+    unary_ctx(X,F,Op,F'),
     path_to(X,F',X').
 
 % Instantiate functions
@@ -111,11 +113,7 @@ ground_formula(X,F,G) :- unary(X,F,G,_,_).
 % Instantiate ground formulas using default arithmetic
 % I.e. if one side of an arithmetic expression is undefined it is ignored
 % TODO: Does this always give desired behavior?
-ground_formula(X,F,XL) :- coom_binary(F,L,"+",R),
-                          formula_context(F,C),
-                          type_aux(X,C), path_to(X,L,XL), not path_to(X,R,_).
+ground_formula(X,F,XL) :- binary_ctx(X,F,_,"+",_), binary_lhs(X,F,XL), not binary_rhs(X,F,_).
 
-ground_formula(X,F,XR) :- coom_binary(F,L,"+",R),
-                          formula_context(F,C),
-                          type_aux(X,C), not path_to(X,L,_), path_to(X,R,XR).
+ground_formula(X,F,XR) :- binary_ctx(X,F,_,"+",_), not binary_lhs(X,F,_), binary_rhs(X,F,XR).
 % TODO: Extend to -,*,/,...

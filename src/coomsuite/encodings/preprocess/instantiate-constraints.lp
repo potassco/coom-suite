@@ -65,8 +65,8 @@ Args:
     - G': The ground formula for the requirement
 *%
 
-conditional_requirement(C,G,G') :- coom_context(C,Ctx), type_aux(X,Ctx), conditions(C,X,G),
-                                   coom_require(C,F'),  ground_formula(X,F',G').
+conditional_requirement_aux(C,X,G,F') :- conditions(C,X,G), coom_require(C,F').
+conditional_requirement(C,G,G') :- conditional_requirement_aux(C,X,G,F'), ground_formula(X,F',G').
 
 %%% Instantiate imply statements
 %*! imply(C,X',G)
@@ -78,8 +78,9 @@ Args:
     - X': The path expression of the implied variable
     - G: The ground formula or aggregate identifier for the implied value
 *%
-imply(C,X',G)                      :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), ground_formula(X,F,G).
-imply(C,X',@fmt_aggregate(T,X,P')) :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X'), function(X,F,T,P').
+imply_aux(C,X,P,F)                 :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx).
+imply(C,X',G)                      :- imply_aux(C,X,P,F), path_to(X,P,X'), ground_formula(X,F,G).
+imply(C,X',@fmt_aggregate(T,X,P')) :- imply_aux(C,X,P,F), path_to(X,P,X'), function(X,F,T,P').
 
 %%% Instantiate attribute constraints
 %*! attribute_constraint(C)

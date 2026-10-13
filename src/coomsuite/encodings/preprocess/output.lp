@@ -112,13 +112,16 @@ number(C,N) :- coom_number(C,N).
 #show number/2.
 
 % Defaults
-default(X',V) :- coom_default(ID,P,V), coom_context(ID,T), type_aux(X,T), path_to(X,P,X').
+default_aux(X,P,V) :- coom_default(ID,P,V), coom_context(ID,T), type_aux(X,T).
+default(X',V)      :- default_aux(X,P,V), path_to(X,P,X').
 
 #show default/2.
 
 % Optimization
-minimize(X',V) :- coom_minimize(C,V,P), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X').
-maximize(X',V) :- coom_maximize(C,V,P), coom_context(C,Ctx), type_aux(X,Ctx), path_to(X,P,X').
+minimize_aux(X,P,V) :- coom_minimize(C,V,P), coom_context(C,Ctx), type_aux(X,Ctx).
+maximize_aux(X,P,V) :- coom_maximize(C,V,P), coom_context(C,Ctx), type_aux(X,Ctx).
+minimize(X',V)      :- minimize_aux(X,P,V), path_to(X,P,X').
+maximize(X',V)      :- maximize_aux(X,P,V), path_to(X,P,X').
 
 #show minimize/2.
 #show maximize/2.
