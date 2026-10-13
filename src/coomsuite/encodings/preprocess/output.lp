@@ -70,8 +70,7 @@ unary(G,Op,F')   :- unary(_,_,G,Op,F').
 
 % Table constraints
 constraint((C,PX),"table") :- table(C,X), obj_path(X,PX).
-column((C,PX),CT,Col,X') :- coom_combinations(C,Col,P), obj_path(X,PX),
-                            path_to(X,P,X'), in_tuple(CT,X').
+column((C,PX),CT,Col,X') :- combinations_column((C,X),CT,Col,X'), obj_path(X,PX).
 allow(C,XY,V) :- coom_allow(C,XY,V).
 
 #show column/4.

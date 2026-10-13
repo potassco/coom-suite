@@ -43,6 +43,23 @@ Args:
 
 combinations_tuple(C,CT) :- combinations_tuple(C,0,CT).
 
+%*! combinations_column(C,CT,Col,X)
+
+States that `X` is the ground variable of column `Col` in the tuple `CT` of table instance `C`.
+
+Args:
+    - C: The table instance (a pair of the table constraint identifier and the internal object identifier)
+    - CT: The complete tuple of ground variables for each column
+    - Col: The column index
+    - X: The ground variable at column `Col` of `CT`
+*%
+
+combinations_column(C,CT,0,X)     :- combinations_tuple(C,CT), CT=(X,_).
+combinations_column(C,CT,Col+1,X) :- combinations_column(C,CT,Col,_), combinations_suffix(CT,Col+1,(X,_)).
+
+combinations_suffix(CT,0,CT)     :- combinations_tuple(_,CT).
+combinations_suffix(CT,Col+1,CT'):- combinations_suffix(CT,Col,(_,CT')), CT' != ().
+
 %*! in_tuple(CT,CT',X)
 
 States that `X` is a member of the column cross product tuple `CT`.
