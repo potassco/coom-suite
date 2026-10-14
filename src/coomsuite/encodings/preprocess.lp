@@ -8,4 +8,5 @@
 #include "preprocess/python.lp".
 #include "preprocess/defined.lp".
 
-#include "preprocess/doc.lp".
+#include "preprocess/doc-input.lp".
+#include "preprocess/doc-internal.lp".

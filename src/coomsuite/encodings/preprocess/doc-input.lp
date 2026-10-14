@@ -122,7 +122,7 @@ Args:
 
 %*! coom_path(P,I,N)
 
-Declares the `I`th step of a path expression
+Declares the `I`th step of a path expression.
 
 Args:
     - P: The path identifier
@@ -132,7 +132,7 @@ Args:
 
 %*! coom_constant(C)
 
-Declares a string constant
+Declares a string constant.
 
 Args:
     - C: The constant
@@ -140,7 +140,7 @@ Args:
 
 %*! coom_number(C,N)
 
-Declares a numeric literal
+Declares a numeric literal.
 
 Args:
     - C: The string representation of the number (used in formulas)
@@ -205,7 +205,7 @@ Declares a maximization statement.
 Args:
     - C: The constraint identifier
     - V: The optimization priority
-    - P: The formula to minimize
+    - P: The formula to maximize
 *%
 
 %*! coom_default(ID,P,V)

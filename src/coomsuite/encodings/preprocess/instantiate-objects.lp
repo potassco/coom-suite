@@ -1,18 +1,6 @@
 % Max bound for unbounded cardinalities
 #const max_bound = 10.
 
-%*! type_aux(X,T)
-
-Auxiliary predicate representing an instantiated object of a specific type.
-Object are (internally) represented as nested tuples, e.g. `(frame, ((), 0))` for `root.frame[0]`.
-The general pattern is `(object, (parent, index))`.
-This internal representation is later converted using `@fmt_dotpath`.
-
-Args:
-    - X: The object represented as a nested tuple
-    - T: The type of the object
-*%
-
 % Instantiate the root object
 type_aux((),"product") :- coom_structure("product").
 
@@ -26,26 +14,6 @@ type_aux((F,(X,I)),@fmt_join(Ctx,F)) :- coom_feature(Ctx,F,"num",Min,#sup), type
 % Create auxiliary instantiations for attribute values
 type_aux((A,(X,0)),A) :- type_aux(X,T), coom_enumeration(T), coom_attribute_value(T,_,A,_).
 
-%*! child(X,N,X')
-
-Auxiliary predicate matching a parent and child object.
-Equivalent to matching the nested tuple `X' = (N,(X,_))` against `type_aux` directly.
-
-Args:
-    - X: The internal object identifier of the parent
-    - N: The name of the feature or attribute
-    - X': The internal object identifier of the child
-*%
-
 child(X,N,X') :- type_aux(X',_), X' = (N,(X,_)).
-
-%*! obj_path(X,P)
-
-Associate every instantiated object with its formatted dotpath.
-
-Args:
-    - X: The internal object identifier
-    - P: The dot path of the object (output format)
-*%
 
 obj_path(X,@fmt_dotpath(X)) :- type_aux(X,_).
