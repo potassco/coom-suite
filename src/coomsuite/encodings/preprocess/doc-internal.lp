@@ -185,28 +185,6 @@ Args:
     - X: The ground variable at column `Col` of `CT`
 *%
 
-%*! in_tuple(CT,CT',X)
-
-States that `X` is a member of the column cross product tuple `CT`.
-Helper version of `in_tuple` (arity 2).
-
-Args:
-    - CT: The column cross product tuple identifier
-    - CT': The remaining column cross product tuple to unpack
-    - X: The path of the column variable
-*%
-
-%*! in_tuple(CT,X)
-
-States that object `X` is a member of the column cross product tuple `CT`
-of some combination table.
-Projection of `in_tuple` (arity 3).
-
-Args:
-    - CT: The column cross product tuple identifier
-    - X: The path of the column variable
-*%
-
 %%% instantiate-constraints.lp
 
 %*! conditions_aux(C,X,I,T)

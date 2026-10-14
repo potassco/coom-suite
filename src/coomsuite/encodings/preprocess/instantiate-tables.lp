@@ -18,10 +18,3 @@ combinations_column(C,CT,Col+1,X) :- combinations_column(C,CT,Col,_), combinatio
 
 combinations_suffix(CT,0,CT)     :- combinations_tuple(_,CT).
 combinations_suffix(CT,Col+1,CT'):- combinations_suffix(CT,Col,(_,CT')), CT' != ().
-
-% Base case: top level combinations tuples
-in_tuple((X,CT'),CT',X) :- combinations_tuple(_,CT), CT=(X,CT').
-% Recursively unpack the CT' tuple
-in_tuple(CT,CT',X)      :- in_tuple(CT,(X,CT'),_).
-
-in_tuple(CT,X)          :- in_tuple(CT,_,X).
