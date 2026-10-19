@@ -27,12 +27,10 @@ def get_parser() -> ArgumentParser:
     """
     parser = ArgumentParser(
         prog="coomsuite",
-        description=dedent(
-            """\
+        description=dedent("""\
             The COOM suite is a package providing functionality
             to parse and solve product configuration problems specified in COOM.
-            """
-        ),
+            """),
     )
     levels = [
         ("error", logging.ERROR),
