@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/myint/autoflake
-    rev: v2.3.1
+    rev: v2.4.0
     hooks:
       - id: autoflake
         args:
@@ -13,26 +13,26 @@ repos:
         exclude: ^(.github/|src/coomsuite/utils/coom_grammar/)
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
         exclude: ^(.github/|src/coomsuite/utils/coom_grammar/)
 
   - repo: https://github.com/pycqa/isort
-    rev: 6.0.1
+    rev: 10.0.0b1
     hooks:
       - id: isort
         exclude: ^(.github/|src/coomsuite/utils/coom_grammar/)
 
   - repo: https://github.com/psf/black
-    rev: 25.1.0
+    rev: 26.10.1
     hooks:
       - id: black
         exclude: ^(.github/|src/coomsuite/utils/coom_grammar/)
 
   - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.22
+    rev: 1.0.0
     hooks:
       - id: mdformat
         args: ["--wrap", "79"]
