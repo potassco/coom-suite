@@ -2,7 +2,7 @@
 
 Reference to the clingo base encoding of the COOM Suite.
 
-::: src/coomsuite/encodings/doc2.lp
+::: src/coomsuite/encodings/encoding-base-clingo-show.lp
     handler: asp
     options:
         encodings:
