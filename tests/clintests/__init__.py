@@ -64,7 +64,7 @@ class EqualsFlingo(Equals):
         super().__init__(symbols)
         self.__symbols = self._Equals__symbols  # type: ignore # pylint: disable=no-member
 
-    def holds_for(self, model: Model) -> bool:
+    def holds_for(self, model: Model) -> bool:  # type: ignore
         return self.__symbols == {
             s for s in model.symbols(shown=True, theory=True) if s.name not in ["__csp", "__def", "__csp_cost"]
         }
