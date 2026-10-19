@@ -10,9 +10,8 @@ from clingo import Control, Model, Symbol
 from clingo.application import Application, ApplicationOptions, Flag
 from clingo.ast import Location, Position, ProgramBuilder, Rule, parse_files
 from clingo.symbol import Function, SymbolType
-from flingo.__main__ import CSP, DEF, MAX_INT, MIN_INT
+from flingo.__main__ import CSP, DEF, MAX_INT, MIN_INT, Statistic
 from flingo.__main__ import AppConfig as FlingoConfig
-from flingo.__main__ import Statistic
 from flingo.parsing import THEORY, HeadBodyTransformer
 from flingo.translator import AUX, Translator
 
@@ -96,12 +95,10 @@ class COOMSolverApp(Application):
         options.add(
             group,
             "log",
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 Provide logging level.
                                             <level> ={debug|info|error|warning}
-                                            (default: warning)"""
-            ),
+                                            (default: warning)"""),
             self.parse_log_level,
             argument="<level>",
         )
