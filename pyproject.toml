@@ -37,6 +37,7 @@ doc = [
     "clindocs>=1.5.1",
     "mkdocs-literate-nav",
     "pygments_clingo",
+    "tree-sitter==0.25.2",
 ]
 grammar = ["antlr4-tools"]
 dev = ["coomsuite[test,typecheck,lint_pylint,grammar]"]

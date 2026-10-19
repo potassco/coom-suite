@@ -8,6 +8,7 @@ Reference to the clingo base encoding of the COOM Suite.
         encodings:
             git_link: true
             source: true
+        predicate_table: true
         glossary:
             include_references: false
         start_level: 1
