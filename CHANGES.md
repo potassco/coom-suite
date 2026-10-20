@@ -1,8 +1,22 @@
 # Changes
 
+## v1.1.2
+
+- fixed a bug with repeating bounds
+
+## v1.1.1
+
+- `--step` option only for linear search
+- added `--base` option to parametrize exponential search
+
 ## v1.1.0
 
 - added support for parsing and solving simple defaults
+- added `--step` option to parametrize linear step size/exponential base for
+  search algorithm of minimal upper bounds
+- fixed a bug with user include for unbounded cardinalities
+- fixed a bug with optimization in incremental bound solving
+- minor fixes
 
 ## v1.0.0
 

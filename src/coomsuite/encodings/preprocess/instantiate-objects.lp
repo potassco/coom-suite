@@ -1,5 +1,5 @@
 % Max bound for unbounded cardinalities
-#const max_bound = 10.
+#const max_bound = 0.
 
 % Instantiate the root object
 type_aux((),"product") :- coom_structure("product").

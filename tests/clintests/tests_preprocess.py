@@ -1,6 +1,6 @@
 """
 Contains a dictionary with all clintest tests for preprocessing
-and the corresponding files or programs they should be run with.
+and the corresponding files (usually corresponds to "testname.lp")or programs they should be run with.
 
 The key of the dictionary corresponds to the name of the test.
 
@@ -231,7 +231,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'column(("Wheel","root.wheel[0]"),0,0,"root.wheel[0]")',
             }
         ),
-        "files": ["require_with_number.lp"],
     },
     "require_with_number_ge": {
         "test": StableModels(
@@ -265,7 +264,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'column(("Wheel","root.wheel[0]"),0,0,"root.wheel[0]")',
             }
         ),
-        "files": ["require_with_number_ge.lp"],
     },
     "require_with_constant": {
         "test": StableModels(
@@ -285,7 +283,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("root.wheel[0]=W28","root.wheel[0]","=","W28")',
             }
         ),
-        "files": ["require_with_constant.lp"],
     },
     "require_two_wheels": {
         "test": StableModels(
@@ -331,7 +328,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'column(("Wheel","root.rearWheel[0]"),0,0,"root.rearWheel[0]")',
             }
         ),
-        "files": ["require_two_wheels.lp"],
     },
     "conditional_require": {
         "test": StableModels(
@@ -363,7 +359,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("!root.wheelSupport[0]=True||root.wheel[0]=Small","!root.wheelSupport[0]=True","||","root.wheel[0]=Small")',
             }
         ),
-        "files": ["conditional_require.lp"],
     },
     "multiple_conditions": {
         "test": StableModels(
@@ -407,7 +402,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constant("Red")',
             }
         ),
-        "files": ["multiple_conditions.lp"],
     },
     "require_with_optional_part": {
         "test": StableModels(
@@ -438,7 +432,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'part("A")',
             }
         ),
-        "files": ["require_with_optional_part.lp"],
     },
     "conditional_require_undef": {
         "test": StableModels(
@@ -457,7 +450,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'type("root.Size[0]","size")',
             }
         ),
-        "files": ["conditional_require_undef.lp"],
     },
     "require_multiple_instances": {
         "test": StableModels(
@@ -494,7 +486,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("root.wheel[0].size[0]=W28","root.wheel[0].size[0]","=","W28")',
             }
         ),
-        "files": ["require_multiple_instances.lp"],
     },
     "require_with_partonomy": {
         "test": StableModels(
@@ -526,7 +517,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'number("1",1)',
             }
         ),
-        "files": ["require_with_partonomy.lp"],
     },
     "require_with_partonomy2": {
         "test": StableModels(
@@ -574,7 +564,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("!count(root.bag[1])=1||root.bag[1].color[0]=Red","!count(root.bag[1])=1","||","root.bag[1].color[0]=Red")',
             }
         ),
-        "files": ["require_with_partonomy2.lp"],
     },
     "require_with_partonomy_multiple_instances": {
         "test": StableModels(
@@ -658,7 +647,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("!count(root.compartment[1])=1||root.compartment[1].bag[1].color[0]=Red","!count(root.compartment[1])=1","||","root.compartment[1].bag[1].color[0]=Red")',
             }
         ),
-        "files": ["require_with_partonomy_multiple_instances.lp"],
     },
     "combination": {
         "test": StableModels(
@@ -694,7 +682,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'column((0,"root"),("root.wheelSupport[0]",("root.wheel[0]",())),1,"root.wheel[0]")',
             }
         ),
-        "files": ["combination.lp"],
     },
     "combination_with_structure": {
         "test": StableModels(
@@ -747,7 +734,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'column((0,"root"),("root.wheelSupport[0]",("root.wheel[0].size[0]",())),1,"root.wheel[0].size[0]")',
             }
         ),
-        "files": ["combination_with_structure.lp"],
     },
     "combination_at_part_with_wildcard": {
         "test": StableModels(
@@ -809,7 +795,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'column((0,"root.wheel[0]"),("root.wheel[0].size[0]",("root.wheel[0].material[0]",())),1,"root.wheel[0].material[0]")',
             }
         ),
-        "files": ["combination_at_part_with_wildcard.lp"],
     },
     "combination_at_part_multiple_instances": {
         "test": StableModels(
@@ -892,7 +877,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'column((0,"root.bike[0]"),("root.bike[0].wheel[0]",("root.bike[0].material[0]",())),1,"root.bike[0].material[0]")',
             }
         ),
-        "files": ["combination_at_part_multiple_instances.lp"],
     },
     "combination_multi_valued_path": {
         "test": StableModels(
@@ -1075,7 +1059,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("root.a[0]+root.b[0]<6","root.a[0]+root.b[0]","<","6")',
             }
         ),
-        "files": ["simple_arithmetic_plus.lp"],
     },
     "simple_arithmetic_minus": {
         "test": StableModels(
@@ -1102,7 +1085,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("root.b[0]-root.a[0]>=3","root.b[0]-root.a[0]",">=","3")',
             }
         ),
-        "files": ["simple_arithmetic_minus.lp"],
     },
     "simple_arithmetic_multiplication": {
         "test": StableModels(
@@ -1129,7 +1111,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("root.a[0]*root.b[0]>=10","root.a[0]*root.b[0]",">=","10")',
             }
         ),
-        "files": ["simple_arithmetic_multiplication.lp"],
     },
     "simple_arithmetic_plus_default_right": {
         "test": StableModels(
@@ -1148,7 +1129,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint((0,"root.a[0]=2"),"boolean")',
             }
         ),
-        "files": ["simple_arithmetic_plus_default_right.lp"],
     },
     "simple_arithmetic_plus_default_left": {
         "test": StableModels(
@@ -1167,7 +1147,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint((0,"root.b[0]=2"),"boolean")',
             }
         ),
-        "files": ["simple_arithmetic_plus_default_left.lp"],
     },
     "simple_arithmetic_minus_default_right": {
         "test": StableModels(
@@ -1184,7 +1163,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'range("product.a",1,3)',
             }
         ),
-        "files": ["simple_arithmetic_minus_default_right.lp"],
     },
     "simple_arithmetic_minus_default_left": {
         "test": StableModels(
@@ -1201,7 +1179,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'range("product.b",1,3)',
             }
         ),
-        "files": ["simple_arithmetic_minus_default_left.lp"],
     },
     "parentheses": {
         "test": StableModels(
@@ -1227,7 +1204,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("root.a[0]=(root.b[0])","root.a[0]","=","(root.b[0])")',
             }
         ),
-        "files": ["parentheses.lp"],
     },
     "count": {
         "test": StableModels(
@@ -1254,7 +1230,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("count(root.bag)<=2","count(root.bag)","<=","2")',
             }
         ),
-        "files": ["count.lp"],
     },
     "sum": {
         "test": StableModels(
@@ -1282,7 +1257,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("sum(root.x)<=10","sum(root.x)","<=","10")',
             }
         ),
-        "files": ["sum.lp"],
     },
     "simple_default": {
         "test": StableModels(
@@ -1302,7 +1276,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'default("root.color[0]","White")',
             }
         ),
-        "files": ["simple_default.lp"],
     },
     "minimize": {
         "test": StableModels(
@@ -1319,7 +1292,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'minimize("root.totalWeight[0]",0)',
             }
         ),
-        "files": ["minimize.lp"],
     },
     "maximize": {
         "test": StableModels(
@@ -1336,7 +1308,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'maximize("root.totalOutput[0]",1)',
             }
         ),
-        "files": ["maximize.lp"],
     },
     "minimize_non_root_path": {
         "test": StableModels(
@@ -1359,7 +1330,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'minimize("root.bags[0].weight[0]",1)',
             }
         ),
-        "files": ["minimize_non_root_path.lp"],
     },
     "maximize_non_root_path": {
         "test": StableModels(
@@ -1382,7 +1352,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'minimize("root.bags[0].volume[0]",1)',
             }
         ),
-        "files": ["maximize_non_root_path.lp"],
     },
     "minimize_function": {
         "test": StableModels(
@@ -1415,7 +1384,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'minimize("count(root.bags)",0)',
             }
         ),
-        "files": ["minimize_function.lp"],
     },
     "maximize_function": {
         "test": StableModels(
@@ -1450,7 +1418,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'maximize("sum(root.bags.volume)",0)',
             }
         ),
-        "files": ["maximize_function.lp"],
     },
     "set_constant": {
         "test": StableModels({'user_value("root.color[0]","Yellow")'}),
@@ -1509,8 +1476,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             get_model_from_file("unbounded_singleshot_optimize.lp")
             | {
                 'inc_set("root.bags")',
-                'incremental("function","count(root.bags)","root.bags",("count(root.bags)","count","root.bags"))',
-                'incremental("minimize","count(root.bags)","root.bags",("count(root.bags)",0))',
+                'incremental("function","count(root.bags)",("count(root.bags)","count","root.bags"))',
+                'incremental("minimize","count(root.bags)",("count(root.bags)",0))',
             }
         ),
         "files": ["unbounded_optimize.lp"],
@@ -1521,12 +1488,12 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             | {
                 'inc_set("root.bags.size.volume")',
                 'inc_set("root.bags.pockets")',
-                'incremental("function","sum(root.bags.size.volume)","root.bags.size.volume",("sum(root.bags.size.volume)","sum","root.bags.size.volume"))',
-                'incremental("function","count(root.bags.pockets)","root.bags.pockets",("count(root.bags.pockets)","count","root.bags.pockets"))',
-                'incremental("binary","root.totalVolume[0]=sum(root.bags.size.volume)","root.bags.size.volume",("root.totalVolume[0]=sum(root.bags.size.volume)","root.totalVolume[0]","=","sum(root.bags.size.volume)"))',
-                'incremental("binary","5<count(root.bags.pockets)","root.bags.pockets",("5<count(root.bags.pockets)","5","<","count(root.bags.pockets)"))',
-                'incremental("constraint","root.totalVolume[0]=sum(root.bags.size.volume)","root.bags.size.volume",((0,"root.totalVolume[0]=sum(root.bags.size.volume)"),"boolean"))',
-                'incremental("constraint","5<count(root.bags.pockets)","root.bags.pockets",((4,"5<count(root.bags.pockets)"),"boolean"))',
+                'incremental("function","sum(root.bags.size.volume)",("sum(root.bags.size.volume)","sum","root.bags.size.volume"))',
+                'incremental("function","count(root.bags.pockets)",("count(root.bags.pockets)","count","root.bags.pockets"))',
+                'incremental("binary","root.totalVolume[0]=sum(root.bags.size.volume)",("root.totalVolume[0]=sum(root.bags.size.volume)","root.totalVolume[0]","=","sum(root.bags.size.volume)"))',
+                'incremental("binary","5<count(root.bags.pockets)",("5<count(root.bags.pockets)","5","<","count(root.bags.pockets)"))',
+                'incremental("constraint","root.totalVolume[0]=sum(root.bags.size.volume)",((0,"root.totalVolume[0]=sum(root.bags.size.volume)"),"boolean"))',
+                'incremental("constraint","5<count(root.bags.pockets)",((4,"5<count(root.bags.pockets)"),"boolean"))',
             }
         ),
         "files": ["unbounded_zero_lb.lp"],
@@ -1539,22 +1506,22 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'inc_set("root.bags.pockets")',
                 'inc_set("root.bags[0].pockets")',
                 'inc_set("root.bags[1].pockets")',
-                'incremental("function","sum(root.bags.size.volume)","root.bags.size.volume",("sum(root.bags.size.volume)","sum","root.bags.size.volume"))',
-                'incremental("function","count(root.bags.pockets)","root.bags.pockets",("count(root.bags.pockets)","count","root.bags.pockets"))',
-                'incremental("function","count(root.bags[0].pockets)","root.bags[0].pockets",("count(root.bags[0].pockets)","count","root.bags[0].pockets"))',
-                'incremental("function","count(root.bags[1].pockets)","root.bags[1].pockets",("count(root.bags[1].pockets)","count","root.bags[1].pockets"))',
-                'incremental("constraint","root.bags[0]","root.bags[0].pockets",((7,"root.bags[0]"),"table"))',
-                'incremental("constraint","root.bags[1]","root.bags[1].pockets",((7,"root.bags[1]"),"table"))',
-                'incremental("binary","root.totalVolume[0]=sum(root.bags.size.volume)","root.bags.size.volume",("root.totalVolume[0]=sum(root.bags.size.volume)","root.totalVolume[0]","=","sum(root.bags.size.volume)"))',
-                'incremental("binary","5<count(root.bags.pockets)","root.bags.pockets",("5<count(root.bags.pockets)","5","<","count(root.bags.pockets)"))',
-                'incremental("binary","2<=count(root.bags[0].pockets)","root.bags[0].pockets",("2<=count(root.bags[0].pockets)","2","<=","count(root.bags[0].pockets)"))',
-                'incremental("binary","2<=count(root.bags[1].pockets)","root.bags[1].pockets",("2<=count(root.bags[1].pockets)","2","<=","count(root.bags[1].pockets)"))',
-                'incremental("constraint","root.totalVolume[0]=sum(root.bags.size.volume)","root.bags.size.volume",((0,"root.totalVolume[0]=sum(root.bags.size.volume)"),"boolean"))',
-                'incremental("constraint","5<count(root.bags.pockets)","root.bags.pockets",((4,"5<count(root.bags.pockets)"),"boolean"))',
-                'incremental("binary","!count(root.bags[0])=1||2<=count(root.bags[0].pockets)","root.bags[0].pockets",("!count(root.bags[0])=1||2<=count(root.bags[0].pockets)","!count(root.bags[0])=1","||","2<=count(root.bags[0].pockets)"))',
-                'incremental("binary","!count(root.bags[1])=1||2<=count(root.bags[1].pockets)","root.bags[1].pockets",("!count(root.bags[1])=1||2<=count(root.bags[1].pockets)","!count(root.bags[1])=1","||","2<=count(root.bags[1].pockets)"))',
-                'incremental("constraint","!count(root.bags[0])=1||2<=count(root.bags[0].pockets)","root.bags[0].pockets",((5,"!count(root.bags[0])=1||2<=count(root.bags[0].pockets)"),"boolean"))',
-                'incremental("constraint","!count(root.bags[1])=1||2<=count(root.bags[1].pockets)","root.bags[1].pockets",((5,"!count(root.bags[1])=1||2<=count(root.bags[1].pockets)"),"boolean"))',
+                'incremental("function","sum(root.bags.size.volume)",("sum(root.bags.size.volume)","sum","root.bags.size.volume"))',
+                'incremental("function","count(root.bags.pockets)",("count(root.bags.pockets)","count","root.bags.pockets"))',
+                'incremental("function","count(root.bags[0].pockets)",("count(root.bags[0].pockets)","count","root.bags[0].pockets"))',
+                'incremental("function","count(root.bags[1].pockets)",("count(root.bags[1].pockets)","count","root.bags[1].pockets"))',
+                'incremental("constraint","root.bags[0]",((7,"root.bags[0]"),"table"))',
+                'incremental("constraint","root.bags[1]",((7,"root.bags[1]"),"table"))',
+                'incremental("binary","root.totalVolume[0]=sum(root.bags.size.volume)",("root.totalVolume[0]=sum(root.bags.size.volume)","root.totalVolume[0]","=","sum(root.bags.size.volume)"))',
+                'incremental("binary","5<count(root.bags.pockets)",("5<count(root.bags.pockets)","5","<","count(root.bags.pockets)"))',
+                'incremental("binary","2<=count(root.bags[0].pockets)",("2<=count(root.bags[0].pockets)","2","<=","count(root.bags[0].pockets)"))',
+                'incremental("binary","2<=count(root.bags[1].pockets)",("2<=count(root.bags[1].pockets)","2","<=","count(root.bags[1].pockets)"))',
+                'incremental("constraint","root.totalVolume[0]=sum(root.bags.size.volume)",((0,"root.totalVolume[0]=sum(root.bags.size.volume)"),"boolean"))',
+                'incremental("constraint","5<count(root.bags.pockets)",((4,"5<count(root.bags.pockets)"),"boolean"))',
+                'incremental("binary","!count(root.bags[0])=1||2<=count(root.bags[0].pockets)",("!count(root.bags[0])=1||2<=count(root.bags[0].pockets)","!count(root.bags[0])=1","||","2<=count(root.bags[0].pockets)"))',
+                'incremental("binary","!count(root.bags[1])=1||2<=count(root.bags[1].pockets)",("!count(root.bags[1])=1||2<=count(root.bags[1].pockets)","!count(root.bags[1])=1","||","2<=count(root.bags[1].pockets)"))',
+                'incremental("constraint","!count(root.bags[0])=1||2<=count(root.bags[0].pockets)",((5,"!count(root.bags[0])=1||2<=count(root.bags[0].pockets)"),"boolean"))',
+                'incremental("constraint","!count(root.bags[1])=1||2<=count(root.bags[1].pockets)",((5,"!count(root.bags[1])=1||2<=count(root.bags[1].pockets)"),"boolean"))',
             }
         ),
         "files": ["unbounded_two_lb.lp"],
@@ -1566,17 +1533,17 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'inc_set("root.bags.size.volume")',
                 'inc_set("root.bags.pockets")',
                 'inc_set("root.bags[0].pockets")',
-                'incremental("function","sum(root.bags.size.volume)","root.bags.size.volume",("sum(root.bags.size.volume)","sum","root.bags.size.volume"))',
-                'incremental("function","count(root.bags.pockets)","root.bags.pockets",("count(root.bags.pockets)","count","root.bags.pockets"))',
-                'incremental("function","count(root.bags[0].pockets)","root.bags[0].pockets",("count(root.bags[0].pockets)","count","root.bags[0].pockets"))',
-                'incremental("constraint","root.bags[0]","root.bags[0].pockets",((7,"root.bags[0]"),"table"))',
-                'incremental("binary","root.totalVolume[0]=sum(root.bags.size.volume)","root.bags.size.volume",("root.totalVolume[0]=sum(root.bags.size.volume)","root.totalVolume[0]","=","sum(root.bags.size.volume)"))',
-                'incremental("binary","5<count(root.bags.pockets)","root.bags.pockets",("5<count(root.bags.pockets)","5","<","count(root.bags.pockets)"))',
-                'incremental("binary","2<=count(root.bags[0].pockets)","root.bags[0].pockets",("2<=count(root.bags[0].pockets)","2","<=","count(root.bags[0].pockets)"))',
-                'incremental("constraint","root.totalVolume[0]=sum(root.bags.size.volume)","root.bags.size.volume",((0,"root.totalVolume[0]=sum(root.bags.size.volume)"),"boolean"))',
-                'incremental("constraint","5<count(root.bags.pockets)","root.bags.pockets",((4,"5<count(root.bags.pockets)"),"boolean"))',
-                'incremental("binary","!count(root.bags[0])=1||2<=count(root.bags[0].pockets)","root.bags[0].pockets",("!count(root.bags[0])=1||2<=count(root.bags[0].pockets)","!count(root.bags[0])=1","||","2<=count(root.bags[0].pockets)"))',
-                'incremental("constraint","!count(root.bags[0])=1||2<=count(root.bags[0].pockets)","root.bags[0].pockets",((5,"!count(root.bags[0])=1||2<=count(root.bags[0].pockets)"),"boolean"))',
+                'incremental("function","sum(root.bags.size.volume)",("sum(root.bags.size.volume)","sum","root.bags.size.volume"))',
+                'incremental("function","count(root.bags.pockets)",("count(root.bags.pockets)","count","root.bags.pockets"))',
+                'incremental("function","count(root.bags[0].pockets)",("count(root.bags[0].pockets)","count","root.bags[0].pockets"))',
+                'incremental("constraint","root.bags[0]",((7,"root.bags[0]"),"table"))',
+                'incremental("binary","root.totalVolume[0]=sum(root.bags.size.volume)",("root.totalVolume[0]=sum(root.bags.size.volume)","root.totalVolume[0]","=","sum(root.bags.size.volume)"))',
+                'incremental("binary","5<count(root.bags.pockets)",("5<count(root.bags.pockets)","5","<","count(root.bags.pockets)"))',
+                'incremental("binary","2<=count(root.bags[0].pockets)",("2<=count(root.bags[0].pockets)","2","<=","count(root.bags[0].pockets)"))',
+                'incremental("constraint","root.totalVolume[0]=sum(root.bags.size.volume)",((0,"root.totalVolume[0]=sum(root.bags.size.volume)"),"boolean"))',
+                'incremental("constraint","5<count(root.bags.pockets)",((4,"5<count(root.bags.pockets)"),"boolean"))',
+                'incremental("binary","!count(root.bags[0])=1||2<=count(root.bags[0].pockets)",("!count(root.bags[0])=1||2<=count(root.bags[0].pockets)","!count(root.bags[0])=1","||","2<=count(root.bags[0].pockets)"))',
+                'incremental("constraint","!count(root.bags[0])=1||2<=count(root.bags[0].pockets)",((5,"!count(root.bags[0])=1||2<=count(root.bags[0].pockets)"),"boolean"))',
             }
         ),
         "files": ["unbounded_zero_lb.lp"],
@@ -1590,27 +1557,27 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'inc_set("root.bags[0].pockets")',
                 'inc_set("root.bags[1].pockets")',
                 'inc_set("root.bags[2].pockets")',
-                'incremental("function","sum(root.bags.size.volume)","root.bags.size.volume",("sum(root.bags.size.volume)","sum","root.bags.size.volume"))',
-                'incremental("function","count(root.bags.pockets)","root.bags.pockets",("count(root.bags.pockets)","count","root.bags.pockets"))',
-                'incremental("function","count(root.bags[0].pockets)","root.bags[0].pockets",("count(root.bags[0].pockets)","count","root.bags[0].pockets"))',
-                'incremental("function","count(root.bags[1].pockets)","root.bags[1].pockets",("count(root.bags[1].pockets)","count","root.bags[1].pockets"))',
-                'incremental("function","count(root.bags[2].pockets)","root.bags[2].pockets",("count(root.bags[2].pockets)","count","root.bags[2].pockets"))',
-                'incremental("constraint","root.bags[0]","root.bags[0].pockets",((7,"root.bags[0]"),"table"))',
-                'incremental("constraint","root.bags[1]","root.bags[1].pockets",((7,"root.bags[1]"),"table"))',
-                'incremental("constraint","root.bags[2]","root.bags[2].pockets",((7,"root.bags[2]"),"table"))',
-                'incremental("binary","root.totalVolume[0]=sum(root.bags.size.volume)","root.bags.size.volume",("root.totalVolume[0]=sum(root.bags.size.volume)","root.totalVolume[0]","=","sum(root.bags.size.volume)"))',
-                'incremental("binary","5<count(root.bags.pockets)","root.bags.pockets",("5<count(root.bags.pockets)","5","<","count(root.bags.pockets)"))',
-                'incremental("binary","2<=count(root.bags[0].pockets)","root.bags[0].pockets",("2<=count(root.bags[0].pockets)","2","<=","count(root.bags[0].pockets)"))',
-                'incremental("binary","2<=count(root.bags[1].pockets)","root.bags[1].pockets",("2<=count(root.bags[1].pockets)","2","<=","count(root.bags[1].pockets)"))',
-                'incremental("binary","2<=count(root.bags[2].pockets)","root.bags[2].pockets",("2<=count(root.bags[2].pockets)","2","<=","count(root.bags[2].pockets)"))',
-                'incremental("constraint","root.totalVolume[0]=sum(root.bags.size.volume)","root.bags.size.volume",((0,"root.totalVolume[0]=sum(root.bags.size.volume)"),"boolean"))',
-                'incremental("constraint","5<count(root.bags.pockets)","root.bags.pockets",((4,"5<count(root.bags.pockets)"),"boolean"))',
-                'incremental("binary","!count(root.bags[0])=1||2<=count(root.bags[0].pockets)","root.bags[0].pockets",("!count(root.bags[0])=1||2<=count(root.bags[0].pockets)","!count(root.bags[0])=1","||","2<=count(root.bags[0].pockets)"))',
-                'incremental("binary","!count(root.bags[1])=1||2<=count(root.bags[1].pockets)","root.bags[1].pockets",("!count(root.bags[1])=1||2<=count(root.bags[1].pockets)","!count(root.bags[1])=1","||","2<=count(root.bags[1].pockets)"))',
-                'incremental("binary","!count(root.bags[2])=1||2<=count(root.bags[2].pockets)","root.bags[2].pockets",("!count(root.bags[2])=1||2<=count(root.bags[2].pockets)","!count(root.bags[2])=1","||","2<=count(root.bags[2].pockets)"))',
-                'incremental("constraint","!count(root.bags[0])=1||2<=count(root.bags[0].pockets)","root.bags[0].pockets",((5,"!count(root.bags[0])=1||2<=count(root.bags[0].pockets)"),"boolean"))',
-                'incremental("constraint","!count(root.bags[1])=1||2<=count(root.bags[1].pockets)","root.bags[1].pockets",((5,"!count(root.bags[1])=1||2<=count(root.bags[1].pockets)"),"boolean"))',
-                'incremental("constraint","!count(root.bags[2])=1||2<=count(root.bags[2].pockets)","root.bags[2].pockets",((5,"!count(root.bags[2])=1||2<=count(root.bags[2].pockets)"),"boolean"))',
+                'incremental("function","sum(root.bags.size.volume)",("sum(root.bags.size.volume)","sum","root.bags.size.volume"))',
+                'incremental("function","count(root.bags.pockets)",("count(root.bags.pockets)","count","root.bags.pockets"))',
+                'incremental("function","count(root.bags[0].pockets)",("count(root.bags[0].pockets)","count","root.bags[0].pockets"))',
+                'incremental("function","count(root.bags[1].pockets)",("count(root.bags[1].pockets)","count","root.bags[1].pockets"))',
+                'incremental("function","count(root.bags[2].pockets)",("count(root.bags[2].pockets)","count","root.bags[2].pockets"))',
+                'incremental("constraint","root.bags[0]",((7,"root.bags[0]"),"table"))',
+                'incremental("constraint","root.bags[1]",((7,"root.bags[1]"),"table"))',
+                'incremental("constraint","root.bags[2]",((7,"root.bags[2]"),"table"))',
+                'incremental("binary","root.totalVolume[0]=sum(root.bags.size.volume)",("root.totalVolume[0]=sum(root.bags.size.volume)","root.totalVolume[0]","=","sum(root.bags.size.volume)"))',
+                'incremental("binary","5<count(root.bags.pockets)",("5<count(root.bags.pockets)","5","<","count(root.bags.pockets)"))',
+                'incremental("binary","2<=count(root.bags[0].pockets)",("2<=count(root.bags[0].pockets)","2","<=","count(root.bags[0].pockets)"))',
+                'incremental("binary","2<=count(root.bags[1].pockets)",("2<=count(root.bags[1].pockets)","2","<=","count(root.bags[1].pockets)"))',
+                'incremental("binary","2<=count(root.bags[2].pockets)",("2<=count(root.bags[2].pockets)","2","<=","count(root.bags[2].pockets)"))',
+                'incremental("constraint","root.totalVolume[0]=sum(root.bags.size.volume)",((0,"root.totalVolume[0]=sum(root.bags.size.volume)"),"boolean"))',
+                'incremental("constraint","5<count(root.bags.pockets)",((4,"5<count(root.bags.pockets)"),"boolean"))',
+                'incremental("binary","!count(root.bags[0])=1||2<=count(root.bags[0].pockets)",("!count(root.bags[0])=1||2<=count(root.bags[0].pockets)","!count(root.bags[0])=1","||","2<=count(root.bags[0].pockets)"))',
+                'incremental("binary","!count(root.bags[1])=1||2<=count(root.bags[1].pockets)",("!count(root.bags[1])=1||2<=count(root.bags[1].pockets)","!count(root.bags[1])=1","||","2<=count(root.bags[1].pockets)"))',
+                'incremental("binary","!count(root.bags[2])=1||2<=count(root.bags[2].pockets)",("!count(root.bags[2])=1||2<=count(root.bags[2].pockets)","!count(root.bags[2])=1","||","2<=count(root.bags[2].pockets)"))',
+                'incremental("constraint","!count(root.bags[0])=1||2<=count(root.bags[0].pockets)",((5,"!count(root.bags[0])=1||2<=count(root.bags[0].pockets)"),"boolean"))',
+                'incremental("constraint","!count(root.bags[1])=1||2<=count(root.bags[1].pockets)",((5,"!count(root.bags[1])=1||2<=count(root.bags[1].pockets)"),"boolean"))',
+                'incremental("constraint","!count(root.bags[2])=1||2<=count(root.bags[2].pockets)",((5,"!count(root.bags[2])=1||2<=count(root.bags[2].pockets)"),"boolean"))',
             }
         ),
         "files": ["unbounded_two_lb.lp"],

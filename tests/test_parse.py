@@ -65,7 +65,7 @@ class TestCOOMModelParser(TestCase):
 
     def test_feature(self) -> None:
         """
-        Test parsing the 'feature' keyword.
+        Test parsing the COOM features.
         """
         self.assertEqual(
             parse_coom("product{Wheel wheel Frame frame}"),
@@ -137,15 +137,13 @@ class TestCOOMModelParser(TestCase):
             ],
         )
         self.assertEqual(
-            parse_coom(
-                """\
+            parse_coom("""\
                 enumeration Capacity {
                         attribute num/l volume
                         attribute num/gr weight
                         B10  = ( 10,  100)
                         B20  = ( 20,  250)
-                    }"""
-            ),
+                    }"""),
             [
                 'enumeration("Capacity").',
                 'attribute("Capacity","volume","num").',
@@ -160,14 +158,12 @@ class TestCOOMModelParser(TestCase):
         )
 
         self.assertEqual(
-            parse_coom(
-                """\
+            parse_coom("""\
                 enumeration Size {
                         attribute color
                         Small  = ( Red )
                         Big    = ( Blue )
-                    }"""
-            ),
+                    }"""),
             [
                 'enumeration("Size").',
                 'attribute("Size","color","str").',
@@ -248,12 +244,10 @@ class TestCOOMModelParser(TestCase):
         )
 
         self.assertEqual(
-            parse_coom(
-                """behavior {
+            parse_coom("""behavior {
                             combinations  (wheelSupport	 rearWheel)
                             allow         (True          (W14, W16))
-                            allow         (False         (W18, W20))}"""
-            ),
+                            allow         (False         (W18, W20))}"""),
             [
                 "behavior(0).",
                 'context(0,"product").',
@@ -271,12 +265,10 @@ class TestCOOMModelParser(TestCase):
         )
 
         self.assertEqual(
-            parse_coom(
-                """behavior {
+            parse_coom("""behavior {
                             combinations  (color	 size)
                             allow         (Red       -*-)
-                            allow         (Yellow    S)}"""
-            ),
+                            allow         (Yellow    S)}"""),
             [
                 "behavior(0).",
                 'context(0,"product").',
@@ -291,12 +283,10 @@ class TestCOOMModelParser(TestCase):
         )
 
         self.assertEqual(
-            parse_coom(
-                """behavior Bike {
+            parse_coom("""behavior Bike {
                             combinations  (wheelSupport	 rearWheel)
                             allow         (True          (W14, W16))
-                            allow         (False         (W18, W20))}"""
-            ),
+                            allow         (False         (W18, W20))}"""),
             [
                 "behavior(0).",
                 'context(0,"Bike").',

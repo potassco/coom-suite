@@ -3,6 +3,7 @@
 #include "preprocess/instantiate-formulas.lp".
 #include "preprocess/instantiate-tables.lp".
 #include "preprocess/instantiate-constraints.lp".
+#include "preprocess/user.lp".
 
 #include "preprocess/output.lp".
 #include "preprocess/python.lp".

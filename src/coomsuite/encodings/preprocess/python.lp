@@ -1,6 +1,6 @@
 % Python helper functions
 #script (python)
-from clingo import Function, String, SymbolType
+from clingo import Function, Number, String, SymbolType, Tuple_
 from functools import lru_cache
 
 _ROOT = Function("", [])
@@ -54,4 +54,19 @@ def fmt_aggregate(f,c,p):
 @lru_cache(maxsize=None)
 def fmt_implication(a,b):
     return String(f'{fmt_unary(a,_NOT).string}||{b.string}')
+
+@lru_cache(maxsize=None)
+def parse_dotpath(x):
+    """
+    Parses a dotpath string (as produced by fmt_dotpath) back into the internal representation.
+    """
+    path = Tuple_([])
+    for p in x.string.split("."):
+        if p == "root":
+            continue
+        open_bracket = p.find("[")
+        name = String(p[:open_bracket])
+        idx = Number(int(p[open_bracket+1:-1]))
+        path = Tuple_([name,Tuple_([path,idx])])
+    return path
 #end.

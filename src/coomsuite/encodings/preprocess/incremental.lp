@@ -21,7 +21,7 @@ help_child(X,N,X') :- help_aux(X',_), X' = (N,(X,_)).
 
 % rules to instantiate a helper version of path_to/4 atoms based on help_aux/2
 % - start by projecting out the original path_to/4 atoms
-% - path index is not needed here
+% - drop any arguments that are not needed here
 help_path_to(X,P,X')  :- path_to(X,P,_,X').
 % - then define the paths for any new help_aux atoms
 help_path_to(X,P,X')  :- coom_path(P,0,N), path_start(X,P),
@@ -31,33 +31,35 @@ help_path_to(X,P,X')  :- coom_path(P,0,"root"), coom_path(P,1,N), path_start(X,P
 help_path_to(X,P,X'') :- coom_path(P,I,N), help_path_to(X,P,X'),
                          help_child(X',N,X'').
 
-% map path_to/4 atoms to path_step/2 by using output formatting
+% map help_path_to/3 atoms to path_step/2 by using output formatting
 % - needs to be filtered by help_aux to remove sets belonging to the helper objects
 path_step(@fmt_join(X,P),@fmt_dotpath(X')) :- help_path_to(X,P,X'), not help_aux(X,_).
 
 % compute sets used in the column of a table
+
+% incremental sets: a set is incremental if there is a path from an incremental object to the set
+possible_inc_set(P) :- path_step(P,X), inc_obj(X).
+% but we only consider those that are used in ...
+% a function
+inc_set(P) :- function(_,_,P), possible_inc_set(P).
+% - the column of a table
+%   here we first have to compute the sets of table columns
 table_column((C,PX),@fmt_join(X,P)) :- table(C,X), coom_combinations(C,_,P), obj_path(X,PX).
+inc_set(P) :- table_column(_,P), possible_inc_set(P).
 
-% incremental sets: a set is incremental if:
-% - there is a path from an unbounded object to the set
-% - limit to only sets used in functions or as part of a table
-inc_set(P) :- function(_,_,P),   path_step(P,X'), inc_obj(X').
-inc_set(P) :- table_column(_,P), path_step(P,X'), inc_obj(X').
-
-#show inc_set/1.
-
+% incremental(T,N,Arg) : expression of type T with name N and arguments Args is incremental
 % incremental expressions are defined recursively
 % - base case: functions over incremental sets are incremental
-incremental("function",  X,P,(X,F,P))            :- function(X,F,P),              inc_set(P).
+incremental("function",  X,(X,F,P))            :- function(X,F,P),              inc_set(P).
 % - base case: table constraints over incremental sets are incremental
-incremental("constraint",X,P,((ID,X),"table"))   :- table_column((ID,X),P),       inc_set(P).
+incremental("constraint",X,((ID,X),"table"))   :- table_column((ID,X),P),       inc_set(P).
 % - recursive: if a sub-expression of X is incremental, then X is also incremental
-% incremental("function",  X,P,(X,F,Y))            :- function(X,F,Y),              incremental(_,Y ,P,_).
-incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,L ,P,_).
-incremental("binary",    X,P,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,R ,P,_).
-incremental("unary",     X,P,(X,O,X'))           :- unary(X,O,X'),                incremental(_,X',P,_).
-incremental("constraint",X,P,((ID,X),"boolean")) :- constraint((ID,X),"boolean"), incremental(_,X ,P,_).
-incremental("minimize",  X,P,(X,V))              :- minimize(X,V),                incremental(_,X ,P,_).
-incremental("maximize",  X,P,(X,V))              :- maximize(X,V),                incremental(_,X ,P,_).
+incremental("binary",    X,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,L ,_).
+incremental("binary",    X,(X,L,O,R))          :- binary(X,L,O,R),              incremental(_,R ,_).
+incremental("unary",     X,(X,O,X'))           :- unary(X,O,X'),                incremental(_,X',_).
+incremental("constraint",X,((ID,X),"boolean")) :- constraint((ID,X),"boolean"), incremental(_,X ,_).
+incremental("minimize",  X,(X,V))              :- minimize(X,V),                incremental(_,X ,_).
+incremental("maximize",  X,(X,V))              :- maximize(X,V),                incremental(_,X ,_).
 
-#show incremental/4.
+#show inc_set/1.
+#show incremental/3.

@@ -11,7 +11,9 @@ from coomsuite import solve
 from . import get_bound_iter, next_bound_converge
 from .multi_application import COOMMultiSolverApp
 
-ret_dict = {0: "UNKNOWN", 1: "INTERRUPT", 10: "SAT", 20: "UNSAT", 33: "MEMORY", 65: "ERROR", 128: "NO_RUN"}
+# pylint: disable=line-too-long
+# Reference for exit code: https://github.com/potassco/clasp/issues/42#issuecomment-459981038
+ret_dict = {0: "UNKNOWN", 1: "INTERRUPT", 10: "SAT", 20: "UNSAT", 30: "OPT", 33: "MEMORY", 65: "ERROR", 128: "NO_RUN"}
 
 
 class BoundSolver:
@@ -19,6 +21,7 @@ class BoundSolver:
     Module for solving problems with open bounds/cardinalities.
     """
 
+    # pylint: disable=too-many-arguments
     facts: List[str]
     solver: str
     clingo_args: List[str]
@@ -51,32 +54,41 @@ class BoundSolver:
                 return sat_bound
 
             print("\nOptimal bound not yet found")
-            print(f"Solving with bound = {current_bound}\n")
+            print(f"Solving with max_bound = {current_bound}\n")
 
             ret = self._solve(current_bound)
             try:
-                if ret_dict[ret] == "SAT":
+                if ret_dict[ret] in ["SAT", "OPT"]:
                     sat_bound = current_bound
                 elif ret_dict[ret] == "UNSAT":
                     unsat_bound = current_bound
                 else:
-                    print(f"\n Some error occured during solving with max bound = {current_bound}\n")
+                    print(f"\n Some error occured during solving with max_bound = {current_bound}\n Exit code: {ret}\n")
                     return None
             except KeyError as exc:
                 raise KeyError("Unknown exit code.") from exc
 
     def get_bounds(
-        self, algorithm: str = "linear", initial_bound: int = 0, use_multishot: bool = False
+        self,
+        algorithm: str = "linear",
+        initial_bound: int = 0,
+        step: Optional[int] = 1,
+        base: Optional[float] = 2.0,
+        use_multishot: bool = False,
     ) -> Optional[int]:
         """
         Compute the minimal bound for the problem.
         """
+        # pylint: disable=too-many-positional-arguments
+
         # multi shot solving
         if use_multishot:  # nocoverage
             multishot_solver = COOMMultiSolverApp(
                 serialized_facts=self.facts,
-                initial_bound=initial_bound,
                 algorithm=algorithm,
+                initial_bound=initial_bound,
+                step=step,
+                base=base,
                 options={
                     "solver": self.solver,
                     "output_format": self.output_format,
@@ -88,24 +100,28 @@ class BoundSolver:
                 self.clingo_args,
             )
 
-            return multishot_solver.max_bound
+            return multishot_solver.current_max_bound
 
         # single shot solving
-        bounds_iter = get_bound_iter(algorithm, initial_bound)
-        max_bound = initial_bound
+        bounds_iter = get_bound_iter(algorithm, initial_bound, step, base)
+        current_max_bound = next(bounds_iter)
         prev_bound = -1
         while True:
-            print(f"\nSolving with max_bound = {max_bound}\n")
-            ret = self._solve(max_bound)
+            print(f"\nSolving with max_bound = {current_max_bound}\n")
+            ret = self._solve(current_max_bound)
             try:
-                if ret_dict[ret] == "SAT":
-                    return self._converge(prev_bound, max_bound)
+                if ret_dict[ret] in ["SAT", "OPT"]:
+                    return self._converge(prev_bound, current_max_bound)
                 if ret_dict[ret] == "UNSAT":
                     pass
                 else:
-                    print(f"\n Some error occured during solving with max bound = {max_bound}\n")
+                    print(
+                        f"\n Some error occured during solving with max_bound = {current_max_bound}\n Exit code: {ret}\n"
+                    )
                     return None
             except KeyError as exc:
                 raise KeyError("Unknown exit code.") from exc
-            prev_bound = max_bound
-            max_bound = next(bounds_iter)
+            prev_bound = current_max_bound
+
+            while current_max_bound == prev_bound:
+                current_max_bound = next(bounds_iter)
