@@ -94,6 +94,49 @@ Args:
     - Ctx: The context type (i.e. the type of object this formula is evaluated against)
 *%
 
+%*! binary_ctx(X,F,L,Op,R)
+
+Auxiliary predicate instantiating the binary formula `F` relative to every object `X` of its context type.
+
+Args:
+    - X: The internal object identifier (object against which `F` is instantiated)
+    - F: The formula identifier
+    - L: The identifier of the left subformula
+    - Op: The binary operation
+    - R: The identifier of the right subformula
+*%
+
+%*! binary_lhs(X,F,XL)
+
+The left subformula of `binary_ctx` resolved relative to object `X`.
+
+Args:
+    - X: The internal object identifier
+    - F: The formula identifier
+    - XL: The resolved left subexpression
+*%
+
+%*! binary_rhs(X,F,XR)
+
+The right subformula of `binary_ctx` resolved relative to object `X`.
+
+Args:
+    - X: The internal object identifier
+    - F: The formula identifier
+    - XR: The resolved right subexpression
+*%
+
+%*! unary_ctx(X,F,Op,F')
+
+Auxiliary predicate instantiating the unary formula `F` relative to every object `X` of its context type.
+
+Args:
+    - X: The internal object identifier (object against which `F` is instantiated)
+    - F: The formula identifier
+    - Op: The unary operation
+    - F': The identifier of the subformula
+*%
+
 %*! binary(X,F,S,XL,Op,XR)
 
 Defines a binary expression (internal representation).
@@ -185,6 +228,17 @@ Args:
     - X: The ground variable at column `Col` of `CT`
 *%
 
+%*! combinations_suffix(CT,Col,CT')
+
+Auxiliary predicate to iterate over the columns of a complete tuple.
+States that `CT'` is the suffix of `CT` starting at column `Col`.
+
+Args:
+    - CT: The complete tuple of ground variables for each column
+    - Col: The column index
+    - CT': The nested tuple of ground column variables from column `Col` to the last column
+*%
+
 %%% instantiate-constraints.lp
 
 %*! conditions_aux(C,X,I,T)
@@ -232,6 +286,18 @@ Args:
     - G: The ground formula identifier for the combined condition
 *%
 
+%*! conditional_requirement_aux(C,X,G,F')
+
+Auxiliary predicate pairing the instantiated conditions of constraint `C` relative to object `X`
+with the (not yet instantiated) required formula.
+
+Args:
+    - C: The constraint identifier
+    - X: The internal object identifier
+    - G: The ground formula for the condition
+    - F': The formula identifier of the requirement
+*%
+
 %*! conditional_requirement(C,G,G')
 
 Represents an instantiated conditional constraint.
@@ -240,6 +306,17 @@ Args:
     - C: The constraint identifier
     - G: The ground formula for the condition
     - G': The ground formula for the requirement
+*%
+
+%*! imply_aux(C,X,P,F)
+
+Auxiliary predicate instantiating imply statement `C` relative to every object `X` of its context type.
+
+Args:
+    - C: The constraint identifier
+    - X: The internal object identifier
+    - P: The path of the variable that gets assigned the value
+    - F: The formula whose value is assigned
 *%
 
 %*! imply(C,X',G)
@@ -278,4 +355,77 @@ Args:
     - X: The internal object identifier of the parent
     - N: The feature or attribute name
     - Min: The minimum cardinality (1 for attributes)
+*%
+
+%%% user.lp
+
+%*! user_path(P)
+
+The object of a user include statement in internal representation (converted using `@parse_dotpath`).
+
+Args:
+    - P: The included object represented as a nested tuple
+*%
+
+%*! user_path_aux(P,X)
+
+States that `X` is the user included object `P` or one of its ancestors.
+
+Args:
+    - P: The user included object (internal representation)
+    - X: The object or an ancestor of it (internal representation)
+*%
+
+%*! user_path_unbounded(P)
+
+States that the path to the user included object `P` contains an object of a feature with unbounded cardinality.
+Such objects are possibly not instantiated for the current `max_bound`,
+in which case all objects on the path are additionally instantiated as `type_aux`.
+
+Args:
+    - P: The user included object (internal representation)
+*%
+
+%%% output.lp
+
+%*! local_constraint(C,PX,G)
+
+Represents an unconditional requirement instantiated relative to a non-root object.
+It gets converted into a conditional requirement with the condition `count(PX)=1`,
+i.e. it is only enforced if the object is included in the configuration.
+
+Args:
+    - C: The constraint identifier
+    - PX: The dot path of the object (output format)
+    - G: The ground formula of the requirement
+*%
+
+%*! default_aux(X,P,V)
+
+Auxiliary predicate instantiating a default statement relative to every object `X` of its context type.
+
+Args:
+    - X: The internal object identifier
+    - P: The path of the variable that gets assigned a default
+    - V: The default value
+*%
+
+%*! minimize_aux(X,P,V)
+
+Auxiliary predicate instantiating a minimization statement relative to every object `X` of its context type.
+
+Args:
+    - X: The internal object identifier
+    - P: The formula to minimize
+    - V: The optimization priority
+*%
+
+%*! maximize_aux(X,P,V)
+
+Auxiliary predicate instantiating a maximization statement relative to every object `X` of its context type.
+
+Args:
+    - X: The internal object identifier
+    - P: The formula to maximize
+    - V: The optimization priority
 *%
