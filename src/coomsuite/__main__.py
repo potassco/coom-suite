@@ -41,10 +41,6 @@ def main() -> None:
     elif args.command == "solve":
         log.info("Solving COOM file %s", args.input)
 
-        incremental = False
-        if unbounded or args.incremental:
-            incremental = True
-
         with TemporaryDirectory() as temp_dir:
             # # Parse COOM to ASP serialized facts
             # serialized_facts = [convert_instance(args.input, "model", temp_dir)] + (
@@ -56,7 +52,7 @@ def main() -> None:
 
             if args.show_facts:
                 print("\n".join(preprocess([temp_file], discrete=True)))  # nocoverage
-            elif incremental:
+            elif unbounded:
                 bound_solver = BoundSolver([temp_file], args.solver, solver_args, args.output)
                 bound = bound_solver.get_bounds(
                     algorithm=args.bounds, initial_bound=args.initial_bound, use_multishot=args.multishot
