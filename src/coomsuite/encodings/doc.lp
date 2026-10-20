@@ -176,6 +176,35 @@ Args:
     - V: The default value
 *%
 
+%*! explanation(C,E)
+
+Defines an explanation for a constraint (used for messages in the UI).
+
+Args:
+    - C: The constraint identifier
+    - E: The explanation string
+*%
+
+%%% Optimization
+
+%*! minimize(X,P)
+
+Defines a variable or formula whose value is minimized.
+
+Args:
+    - X: The variable or formula to minimize
+    - P: The optimization priority
+*%
+
+%*! maximize(X,P)
+
+Defines a variable or formula whose value is maximized.
+
+Args:
+    - X: The variable or formula to maximize
+    - P: The optimization priority
+*%
+
 %%% User input
 
 %*! user_include(X)

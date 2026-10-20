@@ -35,8 +35,6 @@ help_path_to(X,P,X'') :- coom_path(P,I,N), help_path_to(X,P,X'),
 % - needs to be filtered by help_aux to remove sets belonging to the helper objects
 path_step(@fmt_join(X,P),@fmt_dotpath(X')) :- help_path_to(X,P,X'), not help_aux(X,_).
 
-% compute sets used in the column of a table
-
 % incremental sets: a set is incremental if there is a path from an incremental object to the set
 possible_inc_set(P) :- path_step(P,X), inc_obj(X).
 % but we only consider those that are used in ...
@@ -63,3 +61,5 @@ incremental("maximize",  X,(X,V))              :- maximize(X,V),                
 
 #show inc_set/1.
 #show incremental/3.
+
+#include "doc-incremental.lp".
