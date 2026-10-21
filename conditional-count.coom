@@ -1,0 +1,15 @@
+product {
+    2..2 Top top
+}
+
+enumeration Top {
+    attribute subType
+
+    T1 = ( BaseLayer )
+    T2 = ( Normal )
+}
+
+behavior {
+	explanation "At least one selected top must be of type BaseLayer."
+	require count(t for t in top if t.subType = BaseLayer) >= 1
+}

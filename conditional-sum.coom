@@ -11,7 +11,5 @@ enumeration Module {
 }
 
 behavior {
-    // require 12 = sum(m.ects for m in module if m.group = A)
-    require 21 = sum(module.ects)
-    // require 12 = sum(m.ects if m.group = a for m in module )
+    require 12 = sum(m.ects for m in module if m.group = A)
 }
