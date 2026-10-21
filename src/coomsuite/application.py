@@ -3,7 +3,8 @@ Clingo application class extended to solve COOM configuration problems
 """
 
 import textwrap
-from typing import Any, Callable, Dict, List, Optional, Sequence
+from collections.abc import Callable, Sequence
+from typing import Any
 
 from clingcon import ClingconTheory
 from clingo import Control, Model, Symbol
@@ -22,7 +23,7 @@ from .utils.logging import get_logger
 log = get_logger("main")
 
 
-def _get_valuation(model: Model) -> List[Symbol]:
+def _get_valuation(model: Model) -> list[Symbol]:
     return [
         Function("value", assignment.arguments)
         for assignment in model.symbols(theory=True)
@@ -35,13 +36,13 @@ def _get_valuation(model: Model) -> List[Symbol]:
     ]
 
 
-def _sym_to_prg(symbols: Sequence[Symbol], output: Optional[str] = "asp") -> str:  # nocoverage
+def _sym_to_prg(symbols: Sequence[Symbol], output: str | None = "asp") -> str:  # nocoverage
     """
     Turns symbols into a program.
     """
     sorted_symbols = sorted(symbols)
     if output == "asp":
-        output_list = [f"{str(s)}" for s in sorted_symbols]
+        output_list = [f"{s!s}" for s in sorted_symbols]
     elif output == "coom":
         output_list = [f"{asp2coom(s)}" for s in sorted_symbols]
     else:
@@ -54,7 +55,7 @@ class COOMSolverApp(Application):
     Application class extending clingo.
     """
 
-    _options: Dict[str, Any]
+    _options: dict[str, Any]
     _istest: bool
     _log_level: str
     config: FlingoConfig
@@ -65,7 +66,7 @@ class COOMSolverApp(Application):
     def __init__(
         self,
         log_level: str = "",
-        options: Optional[Dict[str, Any]] = None,
+        options: dict[str, Any] | None = None,
         istest: bool = False,
     ):
         """
@@ -109,6 +110,7 @@ class COOMSolverApp(Application):
     def on_model(self, model: Model) -> None:  # nocoverage
         """
         Function called after finding each model.
+
         Args:
             model (Model): clingo Model
         """
@@ -126,7 +128,6 @@ class COOMSolverApp(Application):
         """
         Print a model on the console.
         """
-
         if self._options["solver"] == "clingo":
             output_symbols = model.symbols(shown=True)
         elif self._options["solver"] == "flingo":

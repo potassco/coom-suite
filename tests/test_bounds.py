@@ -134,7 +134,6 @@ class TestBound(TestCase):
         # Test exception for invalid exit code
         for algorithm in ["linear", "exponential"]:
             with self.assertRaises(KeyError, msg=f"failed with algorithm={algorithm} and exit code=99"):
-
                 with (
                     patch.object(solver, "_solve", autospec=True) as mock_solve,
                     patch.object(solver, "_converge", autospec=True) as mock_converge,

@@ -15,12 +15,12 @@ log = get_logger("main")
 
 class TestUserInputCheck(TestCase):
     """
-    Test user input check
+    Test user input check.
     """
 
     def user_check(self, test: str, expected_msg: str) -> None:
         """
-        Runs a test checking the user input for validity.
+        Run a test checking the user input for validity.
         """
         test_dict = TESTS_SOLVE[test]
         program = test_dict.get("program", None)
@@ -34,7 +34,7 @@ class TestUserInputCheck(TestCase):
 
     def test_user_input_check(self) -> None:
         """
-        Test user input check
+        Test user input check.
         """
         self.user_check("set_invalid_variable", 'Invalid user input.\nVariable "root.color[0]" does not exist.')
         self.user_check("add_invalid_variable", 'Invalid user input.\nVariable "root.basket[0]" does not exist.')

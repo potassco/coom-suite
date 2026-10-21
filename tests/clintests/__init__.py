@@ -1,8 +1,6 @@
 """
-Contains custom clintest Tests
+Contains custom clintest Tests.
 """
-
-from typing import Set, Union
 
 from clingo import Symbol
 from clingo.solving import Model
@@ -16,15 +14,14 @@ TEST_UNSAT = Assert(Exact(0), False_())
 
 def NumModels(n: int) -> Test:  # pylint: disable=invalid-name
     """
-    clintest.Test for checking that a program has a certain number of models
+    clintest.Test for checking that a program has a certain number of models.
     """
     return Assert(Exact(n), True_())
 
 
 def StableModels(*args: set[Symbol | str]) -> Test:  # pylint: disable=invalid-name
     """
-    clintest.Test for checking that a program has a certain set of stable models.
-    Works with clingo and flingo
+    clintest.Test for checking that a program has a certain set of stable models that works with clingo and flingo.
 
     Args:
         args: The set of stable models as a set of sets of strings or clingo symbols
@@ -34,10 +31,10 @@ def StableModels(*args: set[Symbol | str]) -> Test:  # pylint: disable=invalid-n
 
 def OptimalModel(model: set[Symbol | str], flingo: bool = False) -> Test:  # pylint: disable=invalid-name
     """
-    clintest.Test for checking that a program has a certain optimal stable model
+    clintest.Test for checking that a program has a certain optimal stable model.
 
     Args:
-        args: The optimal stable model as a set of sets of strings or clingo symbols
+        model: The optimal stable model as a set of sets of strings or clingo symbols
         flingo (bool): Whether to prepare the test for use with the flingo solver
     """
     if flingo:
@@ -47,7 +44,7 @@ def OptimalModel(model: set[Symbol | str], flingo: bool = False) -> Test:  # pyl
 
 def Supersets(*args: set[Symbol | str]) -> Test:  # pylint: disable=invalid-name
     """
-    clintest.Test for checking models of a program against a set of models using superset relation
+    clintest.Test for checking models of a program against a set of models using superset relation.
     """
     return And(NumModels(len(args)), *(Assert(Exact(1), SupersetOf(a)) for a in args))
 
@@ -60,11 +57,14 @@ class EqualsFlingo(Equals):
         symbol (Symbol): A clingo symbol.
     """
 
-    def __init__(self, symbols: Set[Union[Symbol, str]]) -> None:
+    def __init__(self, symbols: set[Symbol | str]) -> None:  # noqa: D107
         super().__init__(symbols)
         self.__symbols = self._Equals__symbols  # type: ignore # pylint: disable=no-member
 
     def holds_for(self, model: Model) -> bool:  # type: ignore
+        """
+        Return whether this assertions holds for `model`.
+        """
         return self.__symbols == {
             s for s in model.symbols(shown=True, theory=True) if s.name not in ["__csp", "__def", "__csp_cost"]
         }
@@ -81,7 +81,7 @@ class EqualsFlingo(Equals):
 
 #     def __init__(self, symbols: Set[Union[Symbol, str]], check_theory: bool = False) -> None:
 #         super().__init__(symbols)
-#         self.__symbols = self._SupersetOf__symbols  # type: ignore # pylint: disable=no-member
+#         self.__symbols = self._SupersetOf__symbols # pylint: disable=no-member
 #         self.__check_theory = check_theory
 
 #     def holds_for(self, model: Model) -> bool:
@@ -100,7 +100,7 @@ class EqualsFlingo(Equals):
 
 #     def __init__(self, symbol: Union[Symbol, str], check_theory: bool = False) -> None:
 #         super().__init__(symbol)
-#         self.__symbol = self._Contains__symbol  # type: ignore # pylint: disable=no-member
+#         self.__symbol = self._Contains__symbol  # pylint: disable=no-member
 #         self.__check_theory = check_theory
 
 #     def holds_for(self, model: Model) -> bool:

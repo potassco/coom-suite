@@ -2,7 +2,8 @@
 Clingo application class for solving COOM configuration problems with multi-shot solving.
 """
 
-from typing import Any, Dict, Iterator, List, Optional, Sequence, Set, Tuple, TypeAlias
+from collections.abc import Iterator, Sequence
+from typing import Any, TypeAlias
 
 from clingo import Control
 from clingo.symbol import Function, Number, Symbol, parse_term
@@ -13,10 +14,10 @@ from coomsuite.utils import get_encoding
 
 from . import get_bound_iter, next_bound_converge
 
-ProgPart: TypeAlias = Tuple[str, Tuple[Symbol, ...]]
+ProgPart: TypeAlias = tuple[str, tuple[Symbol, ...]]
 
 
-def print_prog_parts(parts: List[ProgPart], name_filter: List[str] | None = None) -> None:  # nocoverage
+def print_prog_parts(parts: list[ProgPart], name_filter: list[str] | None = None) -> None:  # nocoverage
     """
     Print a list of program parts, optionally include a filter (useful for debugging).
 
@@ -66,13 +67,13 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
     def __init__(
         self,
-        serialized_facts: List[str],
+        serialized_facts: list[str],
         algorithm: str = "linear",
         initial_bound: int = 0,
-        step: Optional[int] = 1,
-        base: Optional[float] = 2.0,
+        step: int | None = 1,
+        base: float | None = 2.0,
         log_level: str = "",
-        options: Optional[Dict[str, Any]] = None,
+        options: dict[str, Any] | None = None,
         istest: bool = False,
     ):  # pylint: disable=too-many-arguments,too-many-positional-arguments
         super().__init__(log_level, options, istest)
@@ -80,7 +81,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         if self._options["solver"] == "flingo":
             raise ValueError("multishot solving is currently not supported for the flingo solver")
 
-        self._serialized_facts: List[str] = serialized_facts
+        self._serialized_facts: list[str] = serialized_facts
         """The instance to solve given as serialized facts"""
 
         self._bound_iter: Iterator[int] = get_bound_iter(algorithm, initial_bound, step, base)
@@ -88,19 +89,19 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         self.current_max_bound: int = next(self._bound_iter)
         """The current max bound"""
 
-        self._prev_bound: Optional[int] = None
+        self._prev_bound: int | None = None
         """The previous max bound"""
 
-        self._new_processed_facts: Set[str] = set()
+        self._new_processed_facts: set[str] = set()
         """Processed facts added by current preprocessing step"""
-        self._processed_facts: Set[str] = set()
+        self._processed_facts: set[str] = set()
         """Processed facts from all previous preprocessing steps"""
 
-        self._incremental_parts: Set[ProgPart] = set()
+        self._incremental_parts: set[ProgPart] = set()
         """The set of all incremental program parts"""
-        self._incremental_expressions: Set[str] = set()
+        self._incremental_expressions: set[str] = set()
         """The set of all incremental expressions (represented by their name)"""
-        self._is_initialized: Set[str] = set()
+        self._is_initialized: set[str] = set()
         """Keeps track of all incremental expressions that are already initialized"""
 
     def _update_bound(self) -> None:
@@ -139,7 +140,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         # filter out facts that were previously processed
         self._new_processed_facts = non_incremental_facts - self._processed_facts
 
-    def _remove_new_incremental_expressions(self) -> List[ProgPart]:
+    def _remove_new_incremental_expressions(self) -> list[ProgPart]:
         """
         Remove all facts from new_processed_facts that are incremental expressions
 
@@ -177,7 +178,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
         return inc_expressions
 
-    def _get_incremental_prog_part(self, exp_type: str, args: Tuple[Symbol, ...], bound: int) -> ProgPart:
+    def _get_incremental_prog_part(self, exp_type: str, args: tuple[Symbol, ...], bound: int) -> ProgPart:
         """
         Get the incremental program part for an expression
 
@@ -272,7 +273,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
         return program_part
 
-    def _update_incremental_data(self, incremental_facts: Set[str]) -> None:
+    def _update_incremental_data(self, incremental_facts: set[str]) -> None:
         """
         Update internal data structures keeping track of the incremental sets and their expressions
 
@@ -355,7 +356,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             else:
                 unsat_bound = current_bound
 
-    def _compute_prog_parts(self, bound: int) -> List[ProgPart]:
+    def _compute_prog_parts(self, bound: int) -> list[ProgPart]:
         """
         Compute all program parts for the current new processed facts
 
@@ -389,13 +390,13 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
     def main(self, control: Control, files: Sequence[str]) -> None:
         """
-        Main function of the multishot application class
+        Main function of the multishot application class.
 
         After returning the attribute max_bound is the minimal bound for which the instance is satisfiable.
 
         Args:
             control (Control): the clingo control object
-        """
+        """  # noqa: D401
         control.load(get_encoding("encoding-base-clingo-multi.lp"))
         control.load(get_encoding("show-clingo.lp"))
 

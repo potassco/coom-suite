@@ -2,8 +2,6 @@
 Contains a module for solving problems with open bounds/cardinalities.
 """
 
-from typing import List, Optional
-
 from clingo.application import clingo_main
 
 from coomsuite import solve
@@ -22,16 +20,16 @@ class BoundSolver:
     """
 
     # pylint: disable=too-many-arguments
-    facts: List[str]
+    facts: list[str]
     solver: str
-    clingo_args: List[str]
+    clingo_args: list[str]
     output_format: str
 
     def __init__(
         self,
-        facts: List[str],
+        facts: list[str],
         solver: str,
-        clingo_args: List[str],
+        clingo_args: list[str],
         output_format: str,
     ):
         self.facts = facts
@@ -42,7 +40,7 @@ class BoundSolver:
     def _solve(self, max_bound: int) -> int:  # nocoverage
         return solve(self.facts, self.solver, max_bound, self.clingo_args, self.output_format)
 
-    def _converge(self, unsat_bound: int, sat_bound: int) -> Optional[int]:
+    def _converge(self, unsat_bound: int, sat_bound: int) -> int | None:
         """
         Converge to the minimal bound given lower bound (unsat_bound) and upper bound (sat_bound)
         """
@@ -72,10 +70,10 @@ class BoundSolver:
         self,
         algorithm: str = "linear",
         initial_bound: int = 0,
-        step: Optional[int] = 1,
-        base: Optional[float] = 2.0,
+        step: int | None = 1,
+        base: float | None = 2.0,
         use_multishot: bool = False,
-    ) -> Optional[int]:
+    ) -> int | None:
         """
         Compute the minimal bound for the problem.
         """

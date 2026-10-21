@@ -5,7 +5,7 @@ Test cases for multishot application class.
 # pylint: disable=protected-access
 
 from contextlib import redirect_stdout
-from typing import Any, List, Set, Tuple
+from typing import Any
 from unittest import TestCase
 from unittest.mock import ANY, call, create_autospec, patch
 
@@ -204,7 +204,7 @@ class TestMultiApplication(TestCase):
         app = COOMMultiSolverApp([])
 
         # initial incremental data
-        inc_parts: Set[Tuple[str, Tuple[Symbol, ...]]] = set()
+        inc_parts: set[tuple[str, tuple[Symbol, ...]]] = set()
         inc_parts = {
             (
                 "function",
@@ -260,7 +260,7 @@ class TestMultiApplication(TestCase):
         # test value of _incremental_expressions set
         self.assertEqual(app._incremental_expressions, inc_expressions)
 
-    def _get_mock_control(self, solve_is_sat: List[bool]) -> Control:
+    def _get_mock_control(self, solve_is_sat: list[bool]) -> Control:
         """
         Helper function to create a mock control object with a list of return values of solve.
 

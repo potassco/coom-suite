@@ -16,7 +16,7 @@ class TestPreprocess(TestCase):
 
     def run_test(self, test_name: str, **kwargs: Any) -> None:
         """
-        Runs a clintest test with the preprocessing encoding (using clingo).
+        Run a clintest test with the preprocessing encoding (using clingo).
         """
         test, program, files = unpack_test(test_name, TESTS_PREPROCESS)
         run_test(test, files=files, program=program, ctl_args=["0"], solver="preprocess", **kwargs)
@@ -87,15 +87,14 @@ class TestPreprocess(TestCase):
 
     def test_defaults(self) -> None:
         """
-        Test defaults in COOM
+        Test defaults in COOM.
         """
         self.run_test("simple_default")
 
     def test_optimization(self) -> None:
         """
-        Test optimization in COOM
+        Test optimization in COOM.
         """
-
         self.run_test("minimize")
         self.run_test("maximize")
         self.run_test("minimize_non_root_path")

@@ -19,7 +19,8 @@ from .coom_grammar.user.UserInputParser import UserInputParser
 
 
 def get_encoding(file_name: str) -> str:  # nocoverage
-    """Gets the path to a given ASP encoding in the encodings folder
+    """
+    Gets the path to a given ASP encoding in the encodings folder
 
     Args:
         file_name (str): The name of the ASP encoding with the extension
@@ -31,8 +32,9 @@ def get_encoding(file_name: str) -> str:  # nocoverage
         return str(file)
 
 
-def run_antlr4_visitor(coom_input_stream: InputStream, grammar: str) -> List[str]:
-    """Runs the ANTLR4 Visitor.
+def run_antlr4_visitor(coom_input_stream: InputStream, grammar: str) -> list[str]:
+    """
+    Runs the ANTLR4 Visitor.
 
     Args:
         coom_input_stream (antlr4.InputStream): The input COOM encoding as a file stream
