@@ -43,6 +43,9 @@ def aggregate(f,c,p):
     joined = join(c,p).string
     return String(f"{f.string}({joined})")
 
+def scoped(scope,formula):
+    return String(f"comprehension({scope},{formula.string})")
+
 def implication(a,b):
     return String(f'{unary(a,String("!")).string}||{b.string}')
 

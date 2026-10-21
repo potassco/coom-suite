@@ -606,21 +606,6 @@ class TestCOOMModelParser(TestCase):
         )
 
         self.assertEqual(
-            parse_coom("behavior{require a = sum(b,c)}"),
-            [
-                "behavior(0).",
-                'context(0,"product").',
-                'require(0,"a=sum(b,c)").',
-                'binary("a=sum(b,c)","a","=","sum(b,c)").',
-                'path("a",0,"a").',
-                'function("product","sum(b,c)","sum","b").',
-                'function("product","sum(b,c)","sum","c").',
-                'path("b",0,"b").',
-                'path("c",0,"c").',
-            ],
-        )
-
-        self.assertEqual(
             parse_coom("behavior{require a = count(b)}"),
             [
                 "behavior(0).",
@@ -633,20 +618,6 @@ class TestCOOMModelParser(TestCase):
             ],
         )
 
-        self.assertEqual(
-            parse_coom("behavior{require a = count(b,c)}"),
-            [
-                "behavior(0).",
-                'context(0,"product").',
-                'require(0,"a=count(b,c)").',
-                'binary("a=count(b,c)","a","=","count(b,c)").',
-                'path("a",0,"a").',
-                'function("product","count(b,c)","count","b").',
-                'function("product","count(b,c)","count","c").',
-                'path("b",0,"b").',
-                'path("c",0,"c").',
-            ],
-        )
         self.assertEqual(
             parse_coom("behavior{require a = min(b)}"),
             [
@@ -661,21 +632,6 @@ class TestCOOMModelParser(TestCase):
         )
 
         self.assertEqual(
-            parse_coom("behavior{require a = min(b,c)}"),
-            [
-                "behavior(0).",
-                'context(0,"product").',
-                'require(0,"a=min(b,c)").',
-                'binary("a=min(b,c)","a","=","min(b,c)").',
-                'path("a",0,"a").',
-                'function("product","min(b,c)","min","b").',
-                'function("product","min(b,c)","min","c").',
-                'path("b",0,"b").',
-                'path("c",0,"c").',
-            ],
-        )
-
-        self.assertEqual(
             parse_coom("behavior{require a = max(b)}"),
             [
                 "behavior(0).",
@@ -685,21 +641,6 @@ class TestCOOMModelParser(TestCase):
                 'path("a",0,"a").',
                 'function("product","max(b)","max","b").',
                 'path("b",0,"b").',
-            ],
-        )
-
-        self.assertEqual(
-            parse_coom("behavior{require a = max(b,c)}"),
-            [
-                "behavior(0).",
-                'context(0,"product").',
-                'require(0,"a=max(b,c)").',
-                'binary("a=max(b,c)","a","=","max(b,c)").',
-                'path("a",0,"a").',
-                'function("product","max(b,c)","max","b").',
-                'function("product","max(b,c)","max","c").',
-                'path("b",0,"b").',
-                'path("c",0,"c").',
             ],
         )
 

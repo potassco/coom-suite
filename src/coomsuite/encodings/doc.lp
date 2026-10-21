@@ -128,6 +128,31 @@ Args:
     - X: The variable (either a part or an attribute) which is a member of the set
 *%
 
+%*! aggregate_member(X,M,A)
+
+Defines a comprehension proxy whose projection is A and whose source member is M.
+The proxy contributes only while M is included and its optional filter holds.
+Distinct source members retain distinct proxies even when their projections agree.
+
+Args:
+    - X:
+    - M:
+    - A:
+*%
+
+%*! aggregate_filtered(X)
+
+Marks a comprehension proxy as having a filter.
+
+Args:
+    - X:
+*%
+
+%*! aggregate_condition(X,C)
+
+Defines the instantiated Boolean filter C for comprehension proxy X.
+*%
+
 %*! constant(C)
 
 Auxiliary predicate which defines a constant (string)

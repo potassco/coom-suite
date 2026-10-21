@@ -6,6 +6,7 @@
 
 #include "base/clingo/boolean.lp".
 #include "base/clingo/numerics.lp".
+#include "base/comprehensions.lp".
 #include "base/clingo/table.lp".
 #include "base/constraints.lp".
 #include "base/clingo/defaults.lp".

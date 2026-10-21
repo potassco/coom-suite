@@ -20,6 +20,8 @@
 #defined coom_number/2.
 
 #defined coom_function/4.
+#defined coom_function_binding/3.
+#defined coom_function_condition/2.
 #defined coom_imply/3.
 
 #defined coom_default/2.

@@ -1,5 +1,15 @@
 # Changes
 
+## Unreleased
+
+- Support aggregate comprehensions with optional filters in the COOM parser,
+  preprocessing, and both single-shot solvers.
+- Adapt function parsing to the grammar's single formula argument;
+  comma-separated arguments are no longer supported.
+- Reject nested aggregate calls (but allow scalar nesting) in the parser and
+  simplify comprehension preprocessing to reuse ordinary path and formula
+  instantiation.
+
 ## v1.1.2
 
 - fixed a bug with repeating bounds

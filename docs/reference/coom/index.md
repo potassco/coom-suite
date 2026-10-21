@@ -88,6 +88,53 @@ This extension corresponds to the N-LIN profile.
       - flingo only supports linear calculations (no multiplication of two
         variables)
 
+### Function comprehensions
+
+Aggregate functions accept a single formula, optionally followed by a
+Python-style comprehension:
+
+```coom
+sum(b.weight for b in bags if b.weight > 10)
+count(b for b in bags if b.color = Red)
+min(b.weight for b in bags)
+max(b.weight for b in bags)
+```
+
+The syntax is `function(formula for variable in path if condition)`, where
+`if condition` is optional. The variable refers to each included instance
+selected by `path`. Other paths are resolved relative to the surrounding
+behavior context; paths starting with `root` are absolute.
+Arithmetic projections and logical filter expressions are supported subject
+to the solver's existing arithmetic restrictions.
+
+Comprehensions are evaluated by both single-shot solvers (`clingo` and
+`flingo`). Multi-shot solving currently rejects comprehensions explicitly.
+Comprehensions on non-aggregate functions (such as `sqrt`) are also rejected.
+Plain calls such as `sum(bags.weight)` and `sqrt(weight)` retain their
+existing syntax. Comma-separated function arguments are no longer part of
+the grammar.
+
+The parser rejects aggregates (`sum`, `count`, `min`, `max`, or `avg`) inside
+other aggregates, including in comprehension filters or through intervening
+scalar calls. For example, `sum(sqrt(count(bags)))` and
+`sum(b.weight for b in bags if count(b.items) > 0)` are not supported.
+Scalar function nesting is allowed: `sqrt(sqrt(weight))`,
+`sqrt(sum(bags.weight))`, and `sum(sqrt(b.weight) for b in bags)` can be
+parsed. Evaluation remains subject to the solver's supported scalar functions.
+Separate calls such as `sum(bags.weight) + count(bags)` are also allowed.
+The grammar itself remains unchanged.
+
+The parser preserves `function(Context, Expression, Function, Formula)` facts
+and adds `function_binding(Expression, Variable, Path)` and, when present,
+`function_condition(Expression, Condition)`. Filter expressions are decomposed
+into the same binary, unary, path, and number facts as other conditions.
+Preprocessing binds the variable for each member, reuses the ordinary path
+and formula instantiation rules, and emits
+`aggregate_member(Proxy, Member, Projection)`,
+`aggregate_filtered(Proxy)`, and `aggregate_condition(Proxy, Condition)`.
+These proxies preserve member identity (including duplicate projected values)
+and select aggregate contributions at solve time.
+
 ## Unbounded Cardinalities
 
 The fragments **COOM\[P\]** and **COOM\[X\]**, respectively,

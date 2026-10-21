@@ -70,6 +70,7 @@ class ASPModelVisitor(ModelVisitor):
         self.condition_idx: int = 0
         self.row_idx: int = 0
         self.print_path: bool = True
+        self.function_variable: Optional[str] = None
         self.output_asp: List[str] = []
 
     def visitProduct(self, ctx: ModelParser.ProductContext):
@@ -155,7 +156,7 @@ class ASPModelVisitor(ModelVisitor):
                 if c.floating() is not None:
                     option_value = c.floating().getText()
                 elif c.name() is not None:
-                    option_value = f'"{c.name().getText().replace("\"","")}"'
+                    option_value = f'"{c.name().getText().replace('"', "")}"'
                 self.output_asp.append(
                     f'attribute_value("{parent_name}","{option_name}","{attr_name}",{option_value}).'
                 )
@@ -333,21 +334,51 @@ class ASPModelVisitor(ModelVisitor):
         elif ctx.formula() is not None:
             in_brackets = ctx.formula().getText()
             self.output_asp.append(f'unary("{complete}","()","{in_brackets}").')
-        elif ctx.formula_func() is not None:
-            func = ctx.formula_func().FUNCTION()
-            for f in ctx.formula_func().formula():
-                if str(func) in ["sum", "count", "min", "max", "avg"]:
-                    self.output_asp.append(f'function("{self.context}","{complete}","{func}","{f.getText()}").')
-                else:
-                    self.output_asp.append(f'unary("{complete}","{func}","{f.getText()}").')
         super().visitFormula_sign(ctx)
+
+    def visitFormula_func(self, ctx: ModelParser.Formula_funcContext):
+        complete = ctx.getText()
+        func = ctx.FUNCTION().getText()
+        formula = ctx.formula().getText()
+        aggregate_functions = {"sum", "count", "min", "max", "avg"}
+        if func in aggregate_functions:
+            parent = ctx.parentCtx
+            while parent is not None:
+                if (
+                    isinstance(parent, ModelParser.Formula_funcContext)
+                    and parent.FUNCTION().getText() in aggregate_functions
+                ):
+                    raise ValueError("Nested aggregate function calls are not supported")
+                parent = parent.parentCtx
+            self.output_asp.append(f'function("{self.context}","{complete}","{func}","{formula}").')
+            if ctx.name() is not None:
+                self.output_asp.append(
+                    f'function_binding("{complete}","{ctx.name().getText()}","{ctx.path().getText()}").'
+                )
+                if ctx.condition() is not None:
+                    self.output_asp.append(f'function_condition("{complete}","{ctx.condition().getText()}").')
+        else:
+            if ctx.name() is not None:
+                raise ValueError(f"Comprehensions are only supported for aggregate functions, not {func}")
+            self.output_asp.append(f'unary("{complete}","{func}","{formula}").')
+        if ctx.name() is None:
+            super().visitFormula_func(ctx)
+        else:
+            self.function_variable = ctx.name().getText()
+            try:
+                self.visit(ctx.formula())
+                if ctx.condition() is not None:
+                    self.visit(ctx.condition())
+            finally:
+                self.function_variable = None
+            self.visit(ctx.path())
 
     def visitPath(self, ctx: ModelParser.PathContext):
         # Only do this for actual paths? Not formulas
         if self.print_path:
             full_path = f"{ctx.getText()}"
 
-            if full_path[0].isupper():
+            if full_path[0].isupper() and ctx.path_item(0).name().getText() != self.function_variable:
                 self.output_asp.append(f'constant("{full_path}").')
             else:
                 for i, p in enumerate(ctx.path_item()):

@@ -30,7 +30,7 @@ help_path_to(X,P,X'') :- coom_path(P,I,N), help_path_to(X,P,X'),
 
 % map help_path_to/4 atoms to path_step/2 by using output formatting
 % - needs to be filtered by help_aux to remove sets belonging to the helper objects
-path_step(@join(X,P),@dotpath(X')) :- help_path_to(X,P,X'), not help_aux(X,_).
+path_step(@join(X,P),@dotpath(X')) :- help_path_to(X,P,X'), type_aux(X,_), not help_aux(X,_).
 
 % compute sets used in the column of a table
 

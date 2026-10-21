@@ -35,19 +35,27 @@ formula_context(R,Ctx) :- coom_unary(R,_,_), coom_binary(F,_,_,R), formula_conte
 formula_context(F',Ctx) :- coom_binary(F',_,_,_), coom_unary(F,_,F'), formula_context(F,Ctx).
 formula_context(F',Ctx) :- coom_unary(F',_,_),    coom_unary(F,_,F'), formula_context(F,Ctx).
 
+% Expression instances may belong to a real object or a comprehension member.
+formula_instance(X,F) :- formula_context(F,Ctx), type_aux(X,Ctx).
+formula_instance(X,L) :- formula_instance(X,F), coom_binary(F,L,_,_).
+formula_instance(X,R) :- formula_instance(X,F), coom_binary(F,_,_,R).
+formula_instance(X,A) :- formula_instance(X,F), coom_unary(F,_,A).
+
+path_origin(X,X) :- type_aux(X,_).
+
 % Instantiate paths
-path_start(X,P)  :- coom_binary(F,P,_,_),     coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
-path_start(X,P)  :- coom_binary(F,_,_,P),     coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
-path_start(X,P)  :- coom_unary(F,_,P),        coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
+path_start(X,P)  :- formula_instance(X,P), coom_path(P,0,_).
 path_start(X,P)  :- coom_combinations(C,_,P), coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
-path_start(X,P)  :- coom_function(Ctx,_,_,P), coom_path(P,0,_), type_aux(X,Ctx).
+path_start(X,P)  :- coom_function(Ctx,F,_,P), coom_path(P,0,_), type_aux(X,Ctx), not coom_function_binding(F,_,_).
 path_start(X,P)  :- coom_imply(C,P,_),        coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
 path_start(X,P)  :- coom_minimize(C,_,P),     coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
 path_start(X,P)  :- coom_maximize(C,_,P),     coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
 
 % Determine all ground paths
 path_to(X,P,0,X')  :- coom_path(P,0,N),
-                      path_start(X,P),     type_aux(X',_),  X' =(N,(X,_)).
+                      path_start(X,P), path_origin(X,O), not path_binding(X,N,_),
+                      type_aux(X',_), X' =(N,(O,_)).
+path_to(X,P,0,X')  :- coom_path(P,0,N), path_start(X,P), path_binding(X,N,X').
 path_to(X,P,1,X')  :- coom_path(P,0,"root"), coom_path(P,1,N),
                       path_start(X,P),     type_aux(X',_),  X' =(N,((),_)).
 
@@ -57,19 +65,18 @@ path_to(X,P,I,X'') :- coom_path(P,I,N),
 path_to(X,P,@dotpath(X')) :- not coom_path(P,I+1,_), path_to(X,P,I,X').
 
 % Constants and numbers
-path_to(X,P,P) :- coom_binary(F,_,_,P), coom_constant(P), formula_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_binary(F,P,_,_), coom_constant(P), formula_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_binary(F,_,_,P), coom_number(P,_), formula_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_binary(F,P,_,_), coom_number(P,_), formula_context(F,T), type_aux(X,T).
+path_to(X,P,P) :- formula_instance(X,F), coom_binary(F,_,_,P), coom_constant(P), not path_binding(X,P,_).
+path_to(X,P,P) :- formula_instance(X,F), coom_binary(F,P,_,_), coom_constant(P), not path_binding(X,P,_).
+path_to(X,P,P) :- formula_instance(X,F), coom_binary(F,_,_,P), coom_number(P,_).
+path_to(X,P,P) :- formula_instance(X,F), coom_binary(F,P,_,_), coom_number(P,_).
 
 % Instantiate binaries and unaries
 binary(X,F,@binary(XL,Op,XR),XL,Op,XR) :- coom_binary(F,L,Op,R),
-                                          formula_context(F,C),
-                                          type_aux(X,C), path_to(X,L,XL), path_to(X,R,XR).
+                                          formula_instance(X,F),
+                                          path_to(X,L,XL), path_to(X,R,XR).
 
 unary(X,F,@unary(X',Op),Op,X') :- coom_unary(F,Op,F'),
-                                  formula_context(F,C),
-                                  type_aux(X,C), path_to(X,F',X').
+                                  formula_instance(X,F), path_to(X,F',X').
 
 ground_formula(X,F,G)  :- binary(X,F,G,_,_,_).
 ground_formula(X,F,G)  :- unary(X,F,G,_,_).
@@ -77,16 +84,14 @@ ground_formula(X,F,G)  :- unary(X,F,G,_,_).
 % Default binaries for arithmetics if one side is undefined
 % TODO: Does this always give desired behavior?
 ground_formula(X,F,XL) :- coom_binary(F,L,"+",R),
-                          formula_context(F,C),
-                          type_aux(X,C), path_to(X,L,XL), not path_to(X,R,_).
+                          formula_instance(X,F), path_to(X,L,XL), not path_to(X,R,_).
 
 ground_formula(X,F,XR) :- coom_binary(F,L,"+",R),
-                          formula_context(F,C),
-                          type_aux(X,C), not path_to(X,L,_), path_to(X,R,XR).
+                          formula_instance(X,F), not path_to(X,L,_), path_to(X,R,XR).
 
 
 % Instantiate functions
-function(X,F,T,P) :- coom_function(C,F,T,P), type_aux(X,C).
+function(X,F,T,P) :- coom_function(C,F,T,P), type_aux(X,C), not coom_function_binding(F,_,_).
 
 % Auxiliary paths for formulas and functions
 path_to(X,F,G) :- ground_formula(X,F,G).

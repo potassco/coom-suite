@@ -31,6 +31,8 @@ def preprocess(files: List[str], max_bound: int = 0, discrete: bool = False, mul
         ctl.add("base", [], "discrete.")  # nocoverage
 
     ctl.ground()
+    if multishot and any(ctl.symbolic_atoms.by_signature("coom_function_binding", 3)):
+        raise ValueError("Function comprehensions are not supported by multi-shot solving; use single-shot solving")
     with ctl.solve(yield_=True) as handle:
         facts = [str(s) + "." for s in handle.model().symbols(shown=True)]
 

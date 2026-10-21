@@ -157,7 +157,10 @@ formula_sign: ('-' neg = formula_sign)
 	| ('(' formula ')')
 	| formula_func
 	| formula_atom;
-formula_func: fun = FUNCTION '(' formula (',' formula)* ')';
+formula_func:
+	fun = FUNCTION '(' formula (
+		'for' name 'in' path ( 'if' condition)?
+	)? ')';
 formula_atom:
 	atom_true = 'true'
 	| atom_false = 'false'

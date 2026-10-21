@@ -22,6 +22,9 @@
 #defined number/2.
 
 #defined function/3.
+#defined aggregate_member/3.
+#defined aggregate_condition/2.
+#defined aggregate_filtered/1.
 #defined set/2.
 
 #defined default/2.

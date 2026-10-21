@@ -1,4 +1,6 @@
 % Evaluate functions in flingo (aggregates)
+&sus{ A } =: X :- aggregate_member(X,_,A), include(X), set(P,X), function(_,T,P), T != "count".
+
 &sum{ 1,X : set(P,X), include(X) } = F :- function(F,"count",P).
 &sum{   X : set(P,X), include(X) } = F :- function(F,"sum",  P).
 &min{   X : set(P,X), include(X) } = F :- function(F,"min",  P).
