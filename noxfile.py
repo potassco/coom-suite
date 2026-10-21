@@ -51,15 +51,6 @@ def dev(session):
     session.install("-e", ".[dev]")
 
 
-# @nox.session
-# def lint_pylint(session):
-#     """
-#     Run pylint.
-#     """
-#     session.install("-e", ".[lint_pylint,test]")
-#     session.run("pylint", "coomsuite", "tests")
-
-
 @nox.session
 def lint(session):
     """
@@ -71,15 +62,6 @@ def lint(session):
     session.run("ruff", "format", "--check")
 
 
-# @nox.session
-# def typecheck(session):
-#     """
-#     Typecheck the code using mypy.
-#     """
-#     session.install("-e", ".[typecheck,test]")
-#     session.run("mypy", "--strict", "-p", "coomsuite", "-p", "tests", "--ignore-missing-imports")
-
-
 @nox.session
 def typecheck(session):
     """
@@ -88,26 +70,6 @@ def typecheck(session):
     if not session.virtualenv._reused:
         session.install(".[typecheck,test]")
     session.run("ty", "check")
-
-
-# @nox.session(python=PYTHON_VERSIONS)
-# def test(session):
-#     """
-#     Run the tests.
-
-#     Accepts an additional arguments which are passed to the unittest module.
-#     This can for example be used to selectively run test cases.
-#     """
-
-#     args = [".[test]"]
-#     if EDITABLE_TESTS:
-#         args.insert(0, "-e")
-#     session.install(*args)
-#     if session.posargs:
-#         session.run("coverage", "run", "-m", "unittest", session.posargs[0], "-v")
-#     else:
-#         session.run("coverage", "run", "-m", "unittest", "discover", "-v")
-#         session.run("coverage", "report", "-m", "--fail-under=100")
 
 
 @nox.session(python=PYTHON_VERSIONS)
