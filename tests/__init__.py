@@ -6,7 +6,7 @@ import tempfile
 from collections.abc import Callable, Sequence
 from copy import deepcopy
 from os.path import join
-from typing import Any
+from typing import Any, cast
 
 from antlr4 import InputStream
 from clingo import Application, Control, Symbol
@@ -66,7 +66,7 @@ def run_test(
     files: list[str] | None = None,
     program: str | None = None,
     ctl_args: list[str] | None = None,
-    **kwargs: Any,
+    **kwargs: Any,  # noqa: ANN401
 ) -> None:
     """
     Create a solver and runs a clintest test.
@@ -76,6 +76,7 @@ def run_test(
         files (Optional[List[str]], optional): Test input filename saved in examples/tests
         program (Optional[str], optional): A clingo program. Defaults to ""
         ctl_args (Optional[List[str]], optional): List of arguments for clingo.Control. Defaults to [].
+        **kwargs: Additional solver options.
     """
     solver = kwargs.get("solver", "clingo")
     is_preprocess = solver == "preprocess"
@@ -108,7 +109,7 @@ def run_test(
     test_copy.assert_()
 
 
-def compose(on_app: Callable, on_test: Callable) -> Callable:
+def compose(on_app: Callable[..., Any] | None, on_test: Callable[..., Any]) -> Callable[..., None]:
     """
     Composes two functions.
 
@@ -117,7 +118,7 @@ def compose(on_app: Callable, on_test: Callable) -> Callable:
         on_test (Callable): Function for the test
     """
 
-    def f(*args):
+    def f(*args: Any) -> None:  # noqa: ANN401
         """Composed function."""
         if on_app is not None:
             on_app(*args)
@@ -140,7 +141,7 @@ class MockControl:
         self._test = test
         self._ctl = Control(arguments=arguments)
 
-    def __getattr__(self, attr):  # noqa: ANN204, D105
+    def __getattr__(self, attr: str) -> Any:  # noqa: ANN401, D105
         try:
             return self._ctl.__getattribute__(attr)
         except AttributeError:
@@ -148,11 +149,11 @@ class MockControl:
 
     def solve(  # pylint: disable=too-many-arguments, too-many-positional-arguments
         self,
-        on_model=None,
-        on_unsat=None,
-        on_core=None,
-        on_statistics=None,
-        on_finish=None,
+        on_model: Callable[..., Any] | None = None,
+        on_unsat: Callable[..., Any] | None = None,
+        on_core: Callable[..., Any] | None = None,
+        on_statistics: Callable[..., Any] | None = None,
+        on_finish: Callable[..., Any] | None = None,
     ) -> None:
         """
         Replace the solve of the control by calling first internal callbacks and then the ones from the test.
@@ -185,4 +186,4 @@ class AppSolver(Solver):
     def solve(self, test: Test) -> None:
         """Solves with clintest."""
         ctl = MockControl(test, self.__arguments)
-        self.__application.main(control=ctl, files=self.__files)  # type: ignore
+        self.__application.main(control=cast(Control, ctl), files=self.__files)

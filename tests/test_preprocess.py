@@ -14,7 +14,7 @@ class TestPreprocess(TestCase):
     Test cases for the preprocessing encoding.
     """
 
-    def run_test(self, test_name: str, **kwargs: Any) -> None:
+    def run_test(self, test_name: str, **kwargs: Any) -> None:  # noqa: ANN401
         """
         Run a clintest test with the preprocessing encoding (using clingo).
         """

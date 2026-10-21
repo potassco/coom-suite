@@ -3,8 +3,8 @@ Contains custom clintest Tests.
 """
 
 from clingo import Symbol
-from clingo.solving import Model
 from clintest.assertion import Equals, False_, Implies, Optimal, SubsetOf, SupersetOf, True_
+from clintest.protocol import Model
 from clintest.quantifier import All, Exact, Last
 from clintest.test import And, Assert, Test
 
@@ -61,7 +61,7 @@ class EqualsFlingo(Equals):
         super().__init__(symbols)
         self.__symbols = self._Equals__symbols  # type: ignore # pylint: disable=no-member
 
-    def holds_for(self, model: Model) -> bool:  # type: ignore
+    def holds_for(self, model: Model) -> bool:
         """
         Return whether this assertions holds for `model`.
         """

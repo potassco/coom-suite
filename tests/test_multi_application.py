@@ -5,9 +5,9 @@ Test cases for multishot application class.
 # pylint: disable=protected-access
 
 from contextlib import redirect_stdout
-from typing import Any
+from typing import Any, cast
 from unittest import TestCase
-from unittest.mock import ANY, call, create_autospec, patch
+from unittest.mock import ANY, Mock, call, create_autospec, patch
 
 from clingo import Control, SolveResult
 from clingo.symbol import Function, Number, String, Symbol, parse_term
@@ -262,7 +262,7 @@ class TestMultiApplication(TestCase):
 
     def _get_mock_control(self, solve_is_sat: list[bool]) -> Control:
         """
-        Helper function to create a mock control object with a list of return values of solve.
+        Create a mock control object with a list of return values of solve.
 
         Args:
             solve_is_sat (List[bool]): list of returns values for solve calls (True/False for SAT/UNSAT)
@@ -287,10 +287,10 @@ class TestMultiApplication(TestCase):
 
         # expected function calls to the control object
         # - helper functions to define sequence of calls
-        def assign(name: str, bound: int, value: bool) -> Any:
+        def assign(name: str, bound: int, value: bool) -> Any:  # noqa: ANN401
             return call.assign_external(Function(name, [Number(bound)], True), value)
 
-        def release(name: str, bound: int) -> Any:
+        def release(name: str, bound: int) -> Any:  # noqa: ANN401
             return call.release_external(Function(name, [Number(bound)], True))
 
         # - initial calls
@@ -378,7 +378,7 @@ class TestMultiApplication(TestCase):
             self.assertEqual(app.current_max_bound, max_return, fail_msg)
 
             # check what calls were made to the control object
-            self.assertEqual(control.mock_calls, calls, fail_msg)  # type: ignore[attr-defined]
+            self.assertEqual(cast(Mock, control).mock_calls, calls, fail_msg)
 
     def test_preprocess_new_bound(self) -> None:
         """
@@ -477,7 +477,7 @@ class TestMultiApplication(TestCase):
             patch.object(app, "_get_prog_part", autospec=True) as mock_get_part,
         ):
             # mock value of _incremental_parts
-            app._incremental_parts = {("unary", tuple())}
+            app._incremental_parts = {("unary", ())}
             # mocked return value of _remove_new_incremental_expressions
             mock_remove.side_effect = [[]]
 
@@ -550,10 +550,10 @@ class TestMultiApplication(TestCase):
             ]
 
             self.assertEqual(
-                len(control.mock_calls),  # type: ignore[attr-defined]
+                len(cast(Mock, control).mock_calls),
                 len(expected_calls),
                 "number of calls to mock control does not match expected number of calls",
             )
 
-            for i, (real, expected) in enumerate(zip(control.mock_calls, expected_calls)):  # type: ignore[attr-defined]
+            for i, (real, expected) in enumerate(zip(cast(Mock, control).mock_calls, expected_calls, strict=True)):
                 self.assertEqual(real, expected, f"the {i}th call to mock control does not match the expected call")

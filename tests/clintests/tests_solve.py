@@ -1,6 +1,5 @@
 """
-Contains a dictionary with all clintest tests for solving
-and the corresponding file (usually corresponds to "testname.lp") or programs they should be run with.
+Contains the clintest solving cases and their corresponding input files or programs.
 
 The key of the dictionary corresponds to the name of the test.
 

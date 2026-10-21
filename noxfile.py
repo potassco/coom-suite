@@ -5,7 +5,7 @@ Nox sessions for linting, type checking and testing.
 import os
 import sys
 
-import nox  # pylint: disable=import-error  # ty: ignore[unresolved-import]
+import nox  # pylint: disable=import-error
 
 nox.options.sessions = "lint", "typecheck", "test"
 nox.options.default_venv_backend = "uv|virtualenv"
@@ -86,7 +86,7 @@ def typecheck(session):
     Typecheck the code using ty.
     """
     if not session.virtualenv._reused:
-        session.install(".[typecheck]")
+        session.install(".[typecheck,test]")
     session.run("ty", "check")
 
 

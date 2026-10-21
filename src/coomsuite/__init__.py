@@ -3,7 +3,6 @@ The coomsuite project.
 """
 
 from tempfile import NamedTemporaryFile
-from typing import List, Optional, Tuple
 
 from antlr4 import FileStream
 from clingo.application import clingo_main
@@ -20,7 +19,7 @@ SOLVERS = ["clingo", "flingo"]
 
 def write_facts(facts: str, outfile: str) -> None:  # nocoverage
     """
-    Auxiilary function to write ASP facts to a file
+    Write ASP facts to a file.
 
     Args:
         facts (str): ASP facts
@@ -34,7 +33,8 @@ def write_facts(facts: str, outfile: str) -> None:  # nocoverage
 
 def convert_coom(coom_model: str, coom_user: str | None = None) -> tuple[str, bool, bool]:  # nocoverage
     """
-    Converts a COOM instance into ASP
+    Convert a COOM instance into ASP.
+
     Args:
         coom_model (str): COOM model file .coom
         coom_user (str, optional): COOM user input file .coom

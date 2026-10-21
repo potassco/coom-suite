@@ -144,4 +144,4 @@ exclude_lines = [
 ]
 
 [tool.ty.src]
-exclude = ['coom_grammar'] # , '/coomsuite/__main__.py']
+exclude = ["noxfile.py", "**/coom_grammar/**"]

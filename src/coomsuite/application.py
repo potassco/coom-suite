@@ -1,5 +1,5 @@
 """
-Clingo application class extended to solve COOM configuration problems
+Clingo application class extended to solve COOM configuration problems.
 """
 
 import textwrap
@@ -38,7 +38,7 @@ def _get_valuation(model: Model) -> list[Symbol]:
 
 def _sym_to_prg(symbols: Sequence[Symbol], output: str | None = "asp") -> str:  # nocoverage
     """
-    Turns symbols into a program.
+    Convert symbols into a program.
     """
     sorted_symbols = sorted(symbols)
     if output == "asp":
@@ -68,7 +68,7 @@ class COOMSolverApp(Application):
         log_level: str = "",
         options: dict[str, Any] | None = None,
         istest: bool = False,
-    ):
+    ) -> None:
         """
         Create application.
         """
@@ -109,7 +109,7 @@ class COOMSolverApp(Application):
 
     def on_model(self, model: Model) -> None:  # nocoverage
         """
-        Function called after finding each model.
+        Handle each model after it is found.
 
         Args:
             model (Model): clingo Model
@@ -124,7 +124,7 @@ class COOMSolverApp(Application):
         # log.debug("------- Full model -----") # disabled because makes solving much slower
         # log.debug("\n".join([str(s) for s in model.symbols(atoms=True, shown=True, theory=True)]))
 
-    def print_model(self, model: Model, printer: Callable[[], None]) -> None:  # nocoverage
+    def print_model(self, model: Model, printer: Callable[[], None]) -> None:  # noqa: ARG002  # nocoverage
         """
         Print a model on the console.
         """
@@ -141,7 +141,7 @@ class COOMSolverApp(Application):
 
     def main(self, control: Control, files: Sequence[str]) -> None:
         """
-        Main function ran on call.
+        Run the main function.
         """
         encoding = get_encoding(f"encoding-base-{self._options['solver']}.lp")
         show = get_encoding(f"show-{self._options['solver']}.lp")

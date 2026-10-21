@@ -3,7 +3,6 @@ Utilities.
 """
 
 from importlib.resources import as_file, files
-from typing import List
 
 from antlr4 import CommonTokenStream, InputStream
 from clingo import Symbol
@@ -20,7 +19,7 @@ from .coom_grammar.user.UserInputParser import UserInputParser
 
 def get_encoding(file_name: str) -> str:  # nocoverage
     """
-    Gets the path to a given ASP encoding in the encodings folder
+    Get the path to a given ASP encoding in the encodings folder.
 
     Args:
         file_name (str): The name of the ASP encoding with the extension
@@ -34,10 +33,11 @@ def get_encoding(file_name: str) -> str:  # nocoverage
 
 def run_antlr4_visitor(coom_input_stream: InputStream, grammar: str) -> list[str]:
     """
-    Runs the ANTLR4 Visitor.
+    Run the ANTLR4 Visitor.
 
     Args:
         coom_input_stream (antlr4.InputStream): The input COOM encoding as a file stream
+        grammar (str): The grammar to parse, either "model" or "user"
 
     Returns:
         List[str]: The converted ASP instance
@@ -62,7 +62,7 @@ def run_antlr4_visitor(coom_input_stream: InputStream, grammar: str) -> list[str
 
 def asp2coom(s: Symbol) -> str:
     """
-    Formats ASP output symbols to a more readable COOM format.
+    Format ASP output symbols to a more readable COOM format.
     """
     if s.name == "include":
         return s.arguments[0].string.removeprefix("root.")
@@ -75,7 +75,7 @@ def asp2coom(s: Symbol) -> str:
 
 def coom2asp(c: str) -> str:
     """
-    Converts COOM facts to ASP facts.
+    Convert COOM facts to ASP facts.
     """
     if "=" in c:
         path, value = c.split("=")

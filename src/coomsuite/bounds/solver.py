@@ -31,7 +31,8 @@ class BoundSolver:
         solver: str,
         clingo_args: list[str],
         output_format: str,
-    ):
+    ) -> None:
+        """Initialize the bound solver."""
         self.facts = facts
         self.solver = solver
         self.clingo_args = clingo_args
@@ -42,7 +43,7 @@ class BoundSolver:
 
     def _converge(self, unsat_bound: int, sat_bound: int) -> int | None:
         """
-        Converge to the minimal bound given lower bound (unsat_bound) and upper bound (sat_bound)
+        Converge to the minimal bound given lower bound (unsat_bound) and upper bound (sat_bound).
         """
         while True:
             current_bound = next_bound_converge(unsat_bound, sat_bound)
@@ -114,7 +115,8 @@ class BoundSolver:
                     pass
                 else:
                     print(
-                        f"\n Some error occured during solving with max_bound = {current_max_bound}\n Exit code: {ret}\n"
+                        f"\n Some error occured during solving with max_bound = {current_max_bound}\n "
+                        f"Exit code: {ret}\n"
                     )
                     return None
             except KeyError as exc:
