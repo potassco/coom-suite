@@ -156,14 +156,13 @@ Args:
     - X: The header variable of the column
 *%
 
-%*! allow(Idx,(Col,Row),V)
+%*! allow(Idx,Pos,V)
 
 Defines an entry of a table constraint (for allowed combinations).
 
 Args:
     - Idx: The index of the table constraint (part of the constraint identifier)
-    - Col: The column number
-    - Row: The row number
+    - Pos: The position of the entry as a tuple (Col,Row)
     - V: The value of the table entry
 *%
 
@@ -297,15 +296,14 @@ Args:
     - ID: The identifier of the cross product of the column header variables
 *%
 
-%*! hit(C,ID,(Col,Row))
+%*! hit(C,ID,Pos)
 
 Whether an entry of a table constraint is satisfied (only for flingo encoding).
 
 Args:
     - C: The table constraint identifier
     - ID: The identifier of the cross product of the column header variables
-    - Col: The column number
-    - Row: The row number
+    - Pos: The position of the table entry as a tuple (Col,Row)
 *%
 
 %*! not_hit(C,ID,Row)
