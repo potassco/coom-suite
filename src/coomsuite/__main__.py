@@ -37,7 +37,10 @@ def main() -> None:
         if args.output is None:
             print(serialized_facts)
         else:
-            write_facts(serialized_facts, join(args.output, splitext(basename(args.input))[0] + "-coom.lp"))
+            write_facts(
+                serialized_facts,
+                join(args.output, splitext(basename(args.input))[0] + "-coom.lp"),
+            )
 
     elif args.command == "solve":
         log.info("Solving COOM file %s", args.input)
@@ -50,11 +53,21 @@ def main() -> None:
             if args.show_facts:
                 print(
                     "\n".join(
-                        preprocess([temp_file], max_bound=args.initial_bound, discrete=True, multishot=args.multishot)
+                        preprocess(
+                            [temp_file],
+                            max_bound=args.initial_bound,
+                            discrete=False,
+                            multishot=args.multishot,
+                        )
                     )
                 )  # nocoverage
             elif unbounded:
-                bound_solver = BoundSolver([temp_file], args.solver, solver_args + ["--opt-mode=ignore"], args.output)
+                bound_solver = BoundSolver(
+                    [temp_file],
+                    args.solver,
+                    solver_args + ["--opt-mode=ignore"],
+                    args.output,
+                )
                 bound = bound_solver.get_bounds(
                     algorithm=args.bounds,
                     initial_bound=args.initial_bound,
