@@ -2,6 +2,8 @@
 Contains a module for solving problems with open bounds/cardinalities.
 """
 
+from functools import partial
+
 from clingo.application import clingo_main
 
 from coomsuite import solve
@@ -81,34 +83,24 @@ class BoundSolver:
         """
         # multi shot solving
         if use_multishot:  # nocoverage
-            multishot_solver: COOMMultiSolverApp
-            if grounding == "stepwise":
-                multishot_solver = COOMMultiSolverApp(
-                    serialized_facts=self.facts,
-                    algorithm=algorithm,
-                    initial_bound=initial_bound,
-                    step=step,
-                    base=base,
-                    fix_externals=fix_externals,
-                    options={
-                        "solver": self.solver,
-                        "output_format": self.output_format,
-                    },
-                )
-            else:
-                multishot_solver = COOMMultiSolverAppJump(
-                    serialized_facts=self.facts,
-                    algorithm=algorithm,
-                    initial_bound=initial_bound,
-                    step=step,
-                    base=base,
-                    function_mode="extend" if grounding == "jump-extend" else "full",
-                    fix_externals=fix_externals,
-                    options={
-                        "solver": self.solver,
-                        "output_format": self.output_format,
-                    },
-                )
+            # the grounding strategy determines the application class ("jump-extend"/"jump-full" set the function mode)
+            app_class = (
+                COOMMultiSolverApp
+                if grounding == "stepwise"
+                else partial(COOMMultiSolverAppJump, function_mode=grounding.removeprefix("jump-"))
+            )
+            multishot_solver = app_class(
+                serialized_facts=self.facts,
+                algorithm=algorithm,
+                initial_bound=initial_bound,
+                step=step,
+                base=base,
+                fix_externals=fix_externals,
+                options={
+                    "solver": self.solver,
+                    "output_format": self.output_format,
+                },
+            )
 
             clingo_main(
                 multishot_solver,
