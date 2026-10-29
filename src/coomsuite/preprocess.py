@@ -16,7 +16,6 @@ def preprocess(files: list[str], max_bound: int = 0, discrete: bool = False, mul
     """
     Preprocesses COOM ASP facts into a "grounded" configuration fact format.
     """
-    # ruff: disable=not-context-manager
     input_files = files
     ctl = Control(["-c", f"max_bound={max_bound}"], message_limit=0)
     for f in input_files:

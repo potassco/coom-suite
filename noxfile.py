@@ -5,7 +5,7 @@ Nox sessions for linting, type checking and testing.
 import os
 import sys
 
-import nox  # pylint: disable=import-error
+import nox
 
 nox.options.sessions = "lint", "typecheck", "test"
 nox.options.default_venv_backend = "uv|virtualenv"

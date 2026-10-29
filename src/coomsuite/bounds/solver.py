@@ -9,7 +9,6 @@ from coomsuite import solve
 from . import get_bound_iter, next_bound_converge
 from .multi_application import COOMMultiSolverApp
 
-# pylint: disable=line-too-long
 # Reference for exit code: https://github.com/potassco/clasp/issues/42#issuecomment-459981038
 ret_dict = {0: "UNKNOWN", 1: "INTERRUPT", 10: "SAT", 20: "UNSAT", 30: "OPT", 33: "MEMORY", 65: "ERROR", 128: "NO_RUN"}
 
@@ -19,7 +18,6 @@ class BoundSolver:
     Module for solving problems with open bounds/cardinalities.
     """
 
-    # pylint: disable=too-many-arguments
     facts: list[str]
     solver: str
     clingo_args: list[str]
@@ -78,8 +76,6 @@ class BoundSolver:
         """
         Compute the minimal bound for the problem.
         """
-        # pylint: disable=too-many-positional-arguments
-
         # multi shot solving
         if use_multishot:  # nocoverage
             multishot_solver = COOMMultiSolverApp(

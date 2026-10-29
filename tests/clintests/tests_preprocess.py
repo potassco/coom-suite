@@ -5,7 +5,7 @@ The key of the dictionary corresponds to the name of the test.
 All tests run with clingo.
 """
 
-# ruff: noqa: E501, too-many-lines
+# ruff: noqa: E501
 from typing import Any
 
 from .. import get_model_from_file

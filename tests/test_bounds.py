@@ -85,7 +85,7 @@ class TestBound(TestCase):
                     patch.object(solver, "_solve", autospec=True, side_effect=solve_returns),
                     redirect_stdout(None),
                 ):
-                    ret = solver._converge(init_unsat, init_sat)  # pylint: disable=protected-access
+                    ret = solver._converge(init_unsat, init_sat)
                     self.assertEqual(
                         ret,
                         max_bound,
@@ -100,7 +100,7 @@ class TestBound(TestCase):
             patch.object(solver, "_solve", autospec=True, side_effect=[99]),
             redirect_stdout(None),
         ):
-            ret = solver._converge(4, 8)  # pylint: disable=protected-access
+            ret = solver._converge(4, 8)
 
     def test_get_bounds_singleshot(self) -> None:
         """

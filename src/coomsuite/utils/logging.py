@@ -37,7 +37,6 @@ class SingleLevelFilter(logging.Filter):
         """
         Initialize the filter.
         """
-        # pylint: disable=super-init-not-called
         self.passlevel = passlevel
         self.reject = reject
 

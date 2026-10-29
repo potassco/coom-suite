@@ -12,14 +12,14 @@ TEST_EMPTY = Assert(All(), SubsetOf(set()))
 TEST_UNSAT = Assert(Exact(0), False_())
 
 
-def NumModels(n: int) -> Test:  # pylint: disable=invalid-name
+def NumModels(n: int) -> Test:
     """
     clintest.Test for checking that a program has a certain number of models.
     """
     return Assert(Exact(n), True_())
 
 
-def StableModels(*args: set[Symbol | str]) -> Test:  # pylint: disable=invalid-name
+def StableModels(*args: set[Symbol | str]) -> Test:
     """
     clintest.Test for checking that a program has a certain set of stable models that works with clingo and flingo.
 
@@ -29,7 +29,7 @@ def StableModels(*args: set[Symbol | str]) -> Test:  # pylint: disable=invalid-n
     return And(NumModels(len(args)), *(Assert(Exact(1), EqualsFlingo(a)) for a in args))
 
 
-def OptimalModel(model: set[Symbol | str], flingo: bool = False) -> Test:  # pylint: disable=invalid-name
+def OptimalModel(model: set[Symbol | str], flingo: bool = False) -> Test:
     """
     clintest.Test for checking that a program has a certain optimal stable model.
 
@@ -42,7 +42,7 @@ def OptimalModel(model: set[Symbol | str], flingo: bool = False) -> Test:  # pyl
     return Assert(All(), Implies(Optimal(), Equals(model)))
 
 
-def Supersets(*args: set[Symbol | str]) -> Test:  # pylint: disable=invalid-name
+def Supersets(*args: set[Symbol | str]) -> Test:
     """
     clintest.Test for checking models of a program against a set of models using superset relation.
     """
@@ -59,7 +59,7 @@ class EqualsFlingo(Equals):
 
     def __init__(self, symbols: set[Symbol | str]) -> None:  # noqa: D107
         super().__init__(symbols)
-        self.__symbols = self._Equals__symbols  # type: ignore # pylint: disable=no-member
+        self.__symbols = self._Equals__symbols  # type: ignore
 
     def holds_for(self, model: Model) -> bool:
         """

@@ -7,7 +7,6 @@ Some tests contain a "ftest" entry which is a test modified especially to work w
 All other tests work with both clingo and flingo.
 """
 
-# pylint: disable=line-too-long, too-many-lines
 from typing import Any
 
 from . import TEST_EMPTY, TEST_UNSAT, OptimalModel, StableModels

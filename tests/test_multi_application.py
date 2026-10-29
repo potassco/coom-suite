@@ -2,8 +2,6 @@
 Test cases for multishot application class.
 """
 
-# pylint: disable=protected-access
-
 from contextlib import redirect_stdout
 from typing import Any, cast
 from unittest import TestCase

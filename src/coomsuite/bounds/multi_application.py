@@ -60,7 +60,7 @@ def _get_fact_name_and_args(fact: str) -> ProgPart:
     return (x.name, tuple(x.arguments))
 
 
-class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-attributes
+class COOMMultiSolverApp(COOMSolverApp):
     """
     Application class for multi-shot solving extending the standard COOM application class.
     """
@@ -75,7 +75,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         log_level: str = "",
         options: dict[str, Any] | None = None,
         istest: bool = False,
-    ) -> None:  # pylint: disable=too-many-arguments,too-many-positional-arguments
+    ) -> None:
         """Initialize the multi-shot application."""
         super().__init__(log_level, options, istest)
 

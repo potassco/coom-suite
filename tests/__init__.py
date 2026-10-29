@@ -147,7 +147,7 @@ class MockControl:
         except AttributeError:
             return self.__get_global_handler(attr)
 
-    def solve(  # pylint: disable=too-many-arguments, too-many-positional-arguments
+    def solve(
         self,
         on_model: Callable[..., Any] | None = None,
         on_unsat: Callable[..., Any] | None = None,
