@@ -1,6 +1,5 @@
 """
-Contains a dictionary with all clintest tests for solving
-and the corresponding file (usually corresponds to "testname.lp") or programs they should be run with.
+Contains the clintest solving cases and their corresponding input files or programs.
 
 The key of the dictionary corresponds to the name of the test.
 
@@ -8,7 +7,6 @@ Some tests contain a "ftest" entry which is a test modified especially to work w
 All other tests work with both clingo and flingo.
 """
 
-# pylint: disable=line-too-long, too-many-lines
 from typing import Any
 
 from . import TEST_EMPTY, TEST_UNSAT, OptimalModel, StableModels

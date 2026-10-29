@@ -1,8 +1,6 @@
 """
-Contains functions for preprocessing COOM ASP facts and checking user input
+Contains functions for preprocessing COOM ASP facts and checking user input.
 """
-
-from typing import List
 
 from clingo import Control
 from clingo.script import enable_python
@@ -15,19 +13,18 @@ log = get_logger("main")
 
 
 def preprocess(
-    files: List[str],
+    files: list[str],
     max_bound: int = 0,
     discrete: bool = False,
     multishot: bool = False,
     object_bounds: bool = False,
-) -> List[str]:  # pylint: disable=too-many-arguments,too-many-positional-arguments
+) -> list[str]:
     """
-    Preprocesses COOM ASP facts into a "grounded" configuration fact format
+    Preprocesses COOM ASP facts into a "grounded" configuration fact format.
 
     With object_bounds the bound at which every object becomes available is computed as well
     (only needed for multishot solving with jump grounding).
     """
-    # pylint: disable=not-context-manager
     input_files = files
     ctl = Control(["-c", f"max_bound={max_bound}"], message_limit=0)
     for f in input_files:
@@ -52,9 +49,9 @@ def preprocess(
     return facts
 
 
-def check_user_input(facts: List[str]) -> None:
+def check_user_input(facts: list[str]) -> None:
     """
-    Checks if the user input is valid and returns a clingo.SolveResult
+    Check if the user input is valid and returns a clingo.SolveResult.
     """
     ctl = Control(message_limit=0)
     ctl.load(get_encoding("user-check.lp"))
@@ -72,7 +69,7 @@ def check_user_input(facts: List[str]) -> None:
 
 def _parse_user_input_warnings(warning: Symbol) -> str:
     """
-    Parses the warning/2 predicates of the user input check
+    Parse the warning/2 predicates of the user input check.
     """
     warning_type = warning.arguments[0].string
     info = warning.arguments[1]

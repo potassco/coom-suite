@@ -54,5 +54,5 @@ head to the [Encodings][encodings] section.
     and with the same parent variable in sets (represented by dashed circles in the diagram).
 
     ```prolog title="model-refined.lp"
-    --8<-- docs/assets/encodings/travel-bike-simplified.lp"
+    --8<-- "docs/assets/encodings/travel-bike-simplified.lp"
     ```

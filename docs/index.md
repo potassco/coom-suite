@@ -129,12 +129,27 @@ with four scalable benchmark sets is provided.
 !!! info
     The *COOM suite* is part of the [Potassco] suite (which is the home of *clingo* and other ASP tools)
 
-If you want to cite the COOM Suite, please use the following reference.
-Check out our paper [here](https://arxiv.org/pdf/2504.00013).
+## Cite
 
-> J. Baumeister, S. Hahn, K. Herud, M. Ostrowski, J. Reutelshöfer, N. Rühling, T. Schaub, P. Wanko.
-> Towards Industrial-scale Product Configuration. _CoRR_, abs/2504.00013, 2025.
-> doi: 10.48550/arXiv.2504.00013. URL https://arxiv.org/abs/2504.00013.
+If you want to cite the COOM Suite, please use the following reference.
+
+!!! quote "Citation"
+
+    **Towards Industrial-scale Product Configuration**
+    J. Baumeister, S. Hahn, K. Herud, M. Ostrowski, J. Reutelshöfer, N. Rühling, T. Schaub, P. Wanko.
+    [arXiv:2504.00013](https://arxiv.org/abs/2504.00013)
+
+    ```bibtex
+    @article{bahaheosreruscwa26a,
+      title={Towards Industrial-Scale Product Configuration},
+      author = {J. Baumeister and K. Herud and M. Ostrowski and J. Reutelshöfer and N. Rühling and T. Schaub and P. Wanko},
+      doi={10.1017/s1471068426100404},
+      journal={Theory and Practice of Logic Programming},
+      publisher={Cambridge University Press},
+      year={2026},
+      pages={1–31}
+    }
+    ```
 
 [coom]: https://www.coom-lang.org/
 [antlr]: https://www.antlr.org

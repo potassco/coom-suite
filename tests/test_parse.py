@@ -2,8 +2,6 @@
 Test cases for the parser from COOM to ASP.
 """
 
-# pylint: disable=too-many-lines
-
 from unittest import TestCase
 
 from . import parse_coom
@@ -16,8 +14,7 @@ class TestCOOMUserParser(TestCase):
 
     def test_set(self) -> None:
         """
-        Test parsing the 'set' keyword
-        used for setting values.
+        Test parsing the 'set' keyword used for setting values.
         """
         self.assertEqual(parse_coom("set color[0] = Red", grammar="user"), ['user_value("root.color[0]","Red").'])
         self.assertEqual(
@@ -27,8 +24,7 @@ class TestCOOMUserParser(TestCase):
 
     def test_add(self) -> None:
         """
-        Test parsing the 'add' keyword
-        used for adding instances of objects.
+        Test parsing the 'add' keyword used for adding instances of objects.
         """
         self.assertEqual(parse_coom("add basket[0]", grammar="user"), ['user_include("root.basket[0]").'])
         self.assertEqual(
@@ -137,15 +133,13 @@ class TestCOOMModelParser(TestCase):
             ],
         )
         self.assertEqual(
-            parse_coom(
-                """\
+            parse_coom("""\
                 enumeration Capacity {
                         attribute num/l volume
                         attribute num/gr weight
                         B10  = ( 10,  100)
                         B20  = ( 20,  250)
-                    }"""
-            ),
+                    }"""),
             [
                 'enumeration("Capacity").',
                 'attribute("Capacity","volume","num").',
@@ -160,14 +154,12 @@ class TestCOOMModelParser(TestCase):
         )
 
         self.assertEqual(
-            parse_coom(
-                """\
+            parse_coom("""\
                 enumeration Size {
                         attribute color
                         Small  = ( Red )
                         Big    = ( Blue )
-                    }"""
-            ),
+                    }"""),
             [
                 'enumeration("Size").',
                 'attribute("Size","color","str").',
@@ -248,12 +240,10 @@ class TestCOOMModelParser(TestCase):
         )
 
         self.assertEqual(
-            parse_coom(
-                """behavior {
+            parse_coom("""behavior {
                             combinations  (wheelSupport	 rearWheel)
                             allow         (True          (W14, W16))
-                            allow         (False         (W18, W20))}"""
-            ),
+                            allow         (False         (W18, W20))}"""),
             [
                 "behavior(0).",
                 'context(0,"product").',
@@ -271,12 +261,10 @@ class TestCOOMModelParser(TestCase):
         )
 
         self.assertEqual(
-            parse_coom(
-                """behavior {
+            parse_coom("""behavior {
                             combinations  (color	 size)
                             allow         (Red       -*-)
-                            allow         (Yellow    S)}"""
-            ),
+                            allow         (Yellow    S)}"""),
             [
                 "behavior(0).",
                 'context(0,"product").',
@@ -291,12 +279,10 @@ class TestCOOMModelParser(TestCase):
         )
 
         self.assertEqual(
-            parse_coom(
-                """behavior Bike {
+            parse_coom("""behavior Bike {
                             combinations  (wheelSupport	 rearWheel)
                             allow         (True          (W14, W16))
-                            allow         (False         (W18, W20))}"""
-            ),
+                            allow         (False         (W18, W20))}"""),
             [
                 "behavior(0).",
                 'context(0,"Bike").',
@@ -591,7 +577,6 @@ class TestCOOMModelParser(TestCase):
         """
         Test parsing behavior with functions.
         """
-
         self.assertEqual(
             parse_coom("behavior{require a = sum(b)}"),
             [
@@ -978,9 +963,8 @@ class TestCOOMModelParser(TestCase):
 
     def test_optimization(self) -> None:
         """
-        Test parsing behavior with optimization statements
+        Test parsing behavior with optimization statements.
         """
-
         self.assertEqual(
             parse_coom("behavior{minimize totalWeight}"),
             [

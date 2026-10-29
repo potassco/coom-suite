@@ -1,18 +1,18 @@
 """
-Clingo application class extended to solve COOM configuration problems
+Clingo application class extended to solve COOM configuration problems.
 """
 
 import textwrap
-from typing import Any, Callable, Dict, List, Optional, Sequence
+from collections.abc import Callable, Sequence
+from typing import Any
 
 from clingcon import ClingconTheory
 from clingo import Control, Model, Symbol
 from clingo.application import Application, ApplicationOptions, Flag
 from clingo.ast import Location, Position, ProgramBuilder, Rule, parse_files
 from clingo.symbol import Function, SymbolType
-from flingo.__main__ import CSP, DEF, MAX_INT, MIN_INT
+from flingo.__main__ import CSP, DEF, MAX_INT, MIN_INT, Statistic
 from flingo.__main__ import AppConfig as FlingoConfig
-from flingo.__main__ import Statistic
 from flingo.parsing import THEORY, HeadBodyTransformer
 from flingo.translator import AUX, Translator
 
@@ -23,7 +23,7 @@ from .utils.logging import get_logger
 log = get_logger("main")
 
 
-def _get_valuation(model: Model) -> List[Symbol]:
+def _get_valuation(model: Model) -> list[Symbol]:
     return [
         Function("value", assignment.arguments)
         for assignment in model.symbols(theory=True)
@@ -36,13 +36,13 @@ def _get_valuation(model: Model) -> List[Symbol]:
     ]
 
 
-def _sym_to_prg(symbols: Sequence[Symbol], output: Optional[str] = "asp") -> str:  # nocoverage
+def _sym_to_prg(symbols: Sequence[Symbol], output: str | None = "asp") -> str:  # nocoverage
     """
-    Turns symbols into a program.
+    Convert symbols into a program.
     """
     sorted_symbols = sorted(symbols)
     if output == "asp":
-        output_list = [f"{str(s)}" for s in sorted_symbols]
+        output_list = [f"{s!s}" for s in sorted_symbols]
     elif output == "coom":
         output_list = [f"{asp2coom(s)}" for s in sorted_symbols]
     else:
@@ -55,7 +55,7 @@ class COOMSolverApp(Application):
     Application class extending clingo.
     """
 
-    _options: Dict[str, Any]
+    _options: dict[str, Any]
     _istest: bool
     _log_level: str
     config: FlingoConfig
@@ -66,9 +66,9 @@ class COOMSolverApp(Application):
     def __init__(
         self,
         log_level: str = "",
-        options: Optional[Dict[str, Any]] = None,
+        options: dict[str, Any] | None = None,
         istest: bool = False,
-    ):
+    ) -> None:
         """
         Create application.
         """
@@ -96,12 +96,10 @@ class COOMSolverApp(Application):
         options.add(
             group,
             "log",
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
                 Provide logging level.
                                             <level> ={debug|info|error|warning}
-                                            (default: warning)"""
-            ),
+                                            (default: warning)"""),
             self.parse_log_level,
             argument="<level>",
         )
@@ -111,7 +109,8 @@ class COOMSolverApp(Application):
 
     def on_model(self, model: Model) -> None:  # nocoverage
         """
-        Function called after finding each model.
+        Handle each model after it is found.
+
         Args:
             model (Model): clingo Model
         """
@@ -125,11 +124,10 @@ class COOMSolverApp(Application):
         # log.debug("------- Full model -----") # disabled because makes solving much slower
         # log.debug("\n".join([str(s) for s in model.symbols(atoms=True, shown=True, theory=True)]))
 
-    def print_model(self, model: Model, printer: Callable[[], None]) -> None:  # nocoverage
+    def print_model(self, model: Model, printer: Callable[[], None]) -> None:  # noqa: ARG002  # nocoverage
         """
         Print a model on the console.
         """
-
         if self._options["solver"] == "clingo":
             output_symbols = model.symbols(shown=True)
         elif self._options["solver"] == "flingo":
@@ -143,7 +141,7 @@ class COOMSolverApp(Application):
 
     def main(self, control: Control, files: Sequence[str]) -> None:
         """
-        Main function ran on call.
+        Run the main function.
         """
         encoding = get_encoding(f"encoding-base-{self._options['solver']}.lp")
         show = get_encoding(f"show-{self._options['solver']}.lp")

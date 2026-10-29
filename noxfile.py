@@ -1,9 +1,14 @@
+"""
+Nox sessions for linting, type checking and testing.
+"""
+
 import os
 import sys
 
 import nox
 
-nox.options.sessions = "lint_pylint", "typecheck", "test"
+nox.options.sessions = "lint", "typecheck", "test"
+nox.options.default_venv_backend = "uv|virtualenv"
 
 EDITABLE_TESTS = True
 PYTHON_VERSIONS = ["3.13"]
@@ -21,7 +26,6 @@ def doc(session):
     - serve: open documentation after build
     - further arguments are passed to mkbuild
     """
-
     options = session.posargs[:]
     open_doc = "serve" in options
     if open_doc:
@@ -48,21 +52,24 @@ def dev(session):
 
 
 @nox.session
-def lint_pylint(session):
+def lint(session):
     """
-    Run pylint.
+    Run ruff.
     """
-    session.install("-e", ".[lint_pylint,test]")
-    session.run("pylint", "coomsuite", "tests")
+    if not session.virtualenv._reused:
+        session.install(".[lint]")
+    session.run("ruff", "check")
+    session.run("ruff", "format", "--check")
 
 
 @nox.session
 def typecheck(session):
     """
-    Typecheck the code using mypy.
+    Typecheck the code using ty.
     """
-    session.install("-e", ".[typecheck,test]")
-    session.run("mypy", "--strict", "-p", "coomsuite", "-p", "tests", "--ignore-missing-imports")
+    if not session.virtualenv._reused:
+        session.install(".[typecheck,test]")
+    session.run("ty", "check")
 
 
 @nox.session(python=PYTHON_VERSIONS)
@@ -70,16 +77,12 @@ def test(session):
     """
     Run the tests.
 
-    Accepts an additional arguments which are passed to the unittest module.
-    This can for example be used to selectively run test cases.
+    Accepts additional arguments which are passed to the pytest module. This
+    can for example be used to selectively run test cases via option `-k`.
     """
-
-    args = [".[test]"]
-    if EDITABLE_TESTS:
-        args.insert(0, "-e")
-    session.install(*args)
+    if not session.virtualenv._reused:
+        session.install(".[test]")
     if session.posargs:
-        session.run("coverage", "run", "-m", "unittest", session.posargs[0], "-v")
+        session.run("pytest", "-v", *session.posargs)
     else:
-        session.run("coverage", "run", "-m", "unittest", "discover", "-v")
-        session.run("coverage", "report", "-m", "--fail-under=100")
+        session.run("pytest", "--cov", "-v")

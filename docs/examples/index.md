@@ -18,7 +18,7 @@ we have various examples of bike configurations in increasing complexity:
 - [Travel Bike][travel]
 - [Cargo Bike][cargo]
 
-We obtain the corresponding ASP facts to these examples, see the *Convert COOM to ASP* paragraph in [Usage][usage].
+We obtain the corresponding ASP facts to these examples, see the *Convert COOM to ASP* paragraph in the [Quick Start Guide][quickstart].
 More background information on how they are obtained can be found in the [Translation][translation] section.
 
 
@@ -35,7 +35,7 @@ Dive in and start exploring!
 [coom]: ../reference/coom/index.md
 [examples-coom]: https://github.com/potassco/coom-suite/tree/master/examples/coom/
 [examples-asp]: https://github.com/potassco/coom-suite/tree/master/examples/asp/
-[usage]: ../usage/index.md
+[quickstart]: ../usage/quickstart.md
 [translation]: ../reference/translation/index.md
 [kids]: kids-bike.md
 [city]: city-bike.md
