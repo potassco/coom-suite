@@ -1,6 +1,6 @@
-% incremental function for the jump grounding strategy that extends a previously grounded result
+% incremental function that extends a previously grounded result
 % the result for the previous bound (prev) is reused and only the objects added in (prev, cur] are aggregated
-% this generalizes the stepwise update_incremental_function from a single step to an arbitrary gap (prev, cur]
+% the stepwise strategy uses the gap (bound-1, bound], the jump strategy the gap between two targets
 #program incremental_function_extend(f,agg,p,prev,cur).
 function(f,agg,p).
 defined(f,cur) :- value(f,_,cur).

@@ -1,5 +1,6 @@
-% self-contained incremental function for the jump grounding strategy
+% self-contained incremental function
 % the full aggregate is (re)computed at the given bound, independent of any previously grounded bound
+% (used the first time a function is grounded, and at every bound in the "full" mode of the jump strategy)
 #program incremental_function_full(f,agg,p,cur).
 function(f,agg,p).
 defined(f,cur) :- value(f,_,cur).

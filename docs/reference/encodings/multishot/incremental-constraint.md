@@ -12,7 +12,12 @@
         encodings: true
 
 ## Encodings for incremental boolean constraints
-::: src/coomsuite/encodings/multi/inc-function.lp
+::: src/coomsuite/encodings/multi/inc-function-full.lp
+    handler: asp
+    options:
+        encodings: true
+
+::: src/coomsuite/encodings/multi/inc-function-extend.lp
     handler: asp
     options:
         encodings: true

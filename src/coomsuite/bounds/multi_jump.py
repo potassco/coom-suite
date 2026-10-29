@@ -28,7 +28,7 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):
     (except for table constraints, whose rows are checked for the whole range of the jump).
 
     For incremental functions there are two possible modes:
-    - extend: similar to the approach of grounding stepwise, the value for the new bound is obtained by extending the
+    - extend: as when grounding stepwise, the value for the new bound is obtained by extending the
       value of the previous bound and accounting for all objects between the previous and the new bound
     - full: does not reuse the old value and recomputes the full aggregates
     """
@@ -55,9 +55,6 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):
             raise ValueError(f"unknown function mode for jump grounding: {function_mode}")
         self._function_mode: str = function_mode
         """The encoding used for incremental functions ("extend" or "full")"""
-
-        self._function_grounded_bounds: dict[str, set[int]] = {}
-        """For each incremental function the set of bounds at which it has already been grounded"""
 
         self._object_bounds: dict[str, int] = {}
         """For every object its bound, i.e. the smallest max_bound at which the object exists"""
@@ -126,29 +123,11 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):
 
     def _get_function_prog_part(self, args: tuple[Symbol, ...], bound: int) -> ProgPart:
         """
-        Get the incremental program part for a function at the given bound.
-
-        If mode is full or the function has not been grounded yet, the full aggregate computation is used.
-        Otherwise the program part that extends from the previous bound is used.
-
-        Args:
-            args (Tuple[Symbol, ...]): the arguments of the function expression (name, agg, path)
-            bound (int): the bound to ground the function at
-
-        Returns:
-            ProgPart: the program part to ground the function at the given bound
+        Extend _get_function_prog_part by always computing the full aggregate if the function mode is full.
         """
-        name = args[0].string
-        lower_bounds = {b for b in self._function_grounded_bounds.get(name, set()) if b < bound}
-
-        if self._function_mode == "full" or not lower_bounds:
-            part: ProgPart = ("incremental_function_full", args + (Number(bound),))
-        else:
-            prev = max(lower_bounds)
-            part = ("incremental_function_extend", args + (Number(prev), Number(bound)))
-
-        self._function_grounded_bounds.setdefault(name, set()).add(bound)
-        return part
+        if self._function_mode == "full":
+            return ("incremental_function_full", args + (Number(bound),))
+        return super()._get_function_prog_part(args, bound)
 
     def _get_incremental_parts_at(self, start: int, target: int) -> list[ProgPart]:
         """
@@ -166,9 +145,7 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):
         """
         parts: list[ProgPart] = []
         for exp_type, exp_args in self._incremental_parts:
-            if exp_type == "function":
-                parts.append(self._get_function_prog_part(exp_args, target))
-            elif exp_type == "constraint" and exp_args[1].string == "table":
+            if exp_type == "constraint" and exp_args[1].string == "table":
                 parts.append(("incremental_constraint_extend", exp_args + (Number(start - 1), Number(target))))
             else:
                 parts.append(self._get_incremental_prog_part(exp_type, exp_args, target))
@@ -201,7 +178,7 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):
             control (Control): the clingo control object
             files (Sequence[str]): files to load into the control
         """  # noqa: D401
-        control.load(get_encoding("encoding-base-clingo-multi-jump.lp"))
+        control.load(get_encoding("encoding-base-clingo-multi.lp"))
         control.load(get_encoding("show-clingo.lp"))
 
         while True:

@@ -108,8 +108,8 @@ class COOMMultiSolverApp(COOMSolverApp):
         """The set of all incremental program parts"""
         self._incremental_expressions: set[str] = set()
         """The set of all incremental expressions (represented by their name)"""
-        self._is_initialized: set[str] = set()
-        """Keeps track of all incremental expressions that are already initialized"""
+        self._function_last_bound: dict[str, int] = {}
+        """For each incremental function the last bound at which it was grounded"""
 
     def _update_bound(self) -> None:
         """
@@ -205,6 +205,28 @@ class COOMMultiSolverApp(COOMSolverApp):
 
         return inc_expressions
 
+    def _get_function_prog_part(self, args: tuple[Symbol, ...], bound: int) -> ProgPart:
+        """
+        Get the incremental program part for a function at the given bound.
+
+        The first time a function is grounded the full aggregate is computed.
+        Afterwards the value of the last grounded bound is extended by the objects added since then.
+
+        Args:
+            args (Tuple[Symbol, ...]): the arguments of the function expression (name, agg, path)
+            bound (int): the bound to ground the function at
+
+        Returns:
+            ProgPart: the program part to ground the function at the given bound
+        """
+        name = args[0].string
+        prev = self._function_last_bound.get(name)
+        self._function_last_bound[name] = bound
+
+        if prev is None:
+            return ("incremental_function_full", args + (Number(bound),))
+        return ("incremental_function_extend", args + (Number(prev), Number(bound)))
+
     def _get_incremental_prog_part(self, exp_type: str, args: tuple[Symbol, ...], bound: int) -> ProgPart:
         """
         Get the incremental program part for an expression.
@@ -217,6 +239,9 @@ class COOMMultiSolverApp(COOMSolverApp):
         Returns:
             ProgPart: the program part containing the rules to update the incremental expression
         """
+        if exp_type == "function":
+            return self._get_function_prog_part(args, bound)
+
         # determine the name and arguments of the program part
         part_name = ""
         # to the arguments we just need to add the current max_bound
@@ -229,14 +254,6 @@ class COOMMultiSolverApp(COOMSolverApp):
                 args = args[:-1] + (Number(bound - 1), Number(bound))
             case "unary" | "constraint" | "minimize" | "maximize":
                 part_name = "incremental_" + exp_type
-            case "function":
-                # determine the name of the function
-                name = args[0].string
-                # to determine the part name we need to check if the function is initialized
-                prefix = "update_" if name in self._is_initialized else "new_"
-                part_name = prefix + "incremental_function"
-                # mark the function as initialized
-                self._is_initialized.add(name)
             case "binary":
                 # for binaries we need to check which of the subexpressions are incremental themselves
                 part_name = "incremental_binary"

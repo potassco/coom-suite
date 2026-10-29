@@ -124,16 +124,25 @@ class TestMultiApplication(TestCase):
             ("constraint", boolean, ("incremental_constraint", boolean + (bound_term,))),
             # table constraints check the rows of the gap (bound-1, bound]
             ("constraint", table, ("incremental_constraint_extend", table + (Number(2), bound_term))),
-            # first the function prog parts has prefix new
-            ("function", (name,), ("new_incremental_function", (name, bound_term))),
-            # then it has prefix update
-            ("function", (name,), ("update_incremental_function", (name, bound_term))),
         ]:
             self.assertEqual(
                 app._get_incremental_prog_part(exp_type, args, bound),
                 part,
                 f"failed with exp_type={exp_type}, args={args}, part={part}",
             )
+
+        # functions compute the full aggregate the first time, afterwards they extend the last grounded bound
+        for function_bound, part in [
+            (0, ("incremental_function_full", (name, Number(0)))),
+            (1, ("incremental_function_extend", (name, Number(0), Number(1)))),
+            (2, ("incremental_function_extend", (name, Number(1), Number(2)))),
+        ]:
+            self.assertEqual(
+                app._get_incremental_prog_part("function", (name,), function_bound),
+                part,
+                f"failed with function_bound={function_bound}, part={part}",
+            )
+        self.assertEqual(app._function_last_bound, {"name": 2})
 
         # test three cases for binary expression
         lhs_name = parse_term('"lhs"')
@@ -773,11 +782,10 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
         # invalid function mode raises a ValueError
         self.assertRaises(ValueError, COOMMultiSolverAppJump, [], function_mode="invalid")
 
-        # valid function mode initializes the additional data structures
+        # valid function mode is stored
         for mode in ("extend", "full"):
             app = COOMMultiSolverAppJump([], function_mode=mode)
             self.assertEqual(app._function_mode, mode)
-            self.assertEqual(app._function_grounded_bounds, {})
 
     def test_jump_get_function_prog_part(self) -> None:
         """
@@ -787,40 +795,27 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
 
         # full mode always uses the self-contained full part, regardless of grounded bounds
         app = COOMMultiSolverAppJump([], function_mode="full")
-        self.assertEqual(
-            app._get_function_prog_part(args, 3),
-            ("incremental_function_full", args + (Number(3),)),
-        )
-        self.assertEqual(app._function_grounded_bounds, {"f": {3}})
-        # even with a lower grounded bound present, full mode stays full
-        self.assertEqual(
-            app._get_function_prog_part(args, 5),
-            ("incremental_function_full", args + (Number(5),)),
-        )
-        self.assertEqual(app._function_grounded_bounds, {"f": {3, 5}})
+        for bound in [3, 5]:
+            self.assertEqual(
+                app._get_function_prog_part(args, bound),
+                ("incremental_function_full", args + (Number(bound),)),
+            )
 
-        # extend mode uses the full part the first time (no lower grounded bound)
+        # extend mode uses the full part the first time, afterwards it extends from the last grounded bound
         app = COOMMultiSolverAppJump([], function_mode="extend")
         self.assertEqual(
             app._get_function_prog_part(args, 3),
             ("incremental_function_full", args + (Number(3),)),
         )
-        # afterwards it extends from the closest lower grounded bound
         self.assertEqual(
             app._get_function_prog_part(args, 5),
             ("incremental_function_extend", args + (Number(3), Number(5))),
         )
-        # a bound below an already grounded one extends from the closest lower bound (3, not 5)
         self.assertEqual(
-            app._get_function_prog_part(args, 4),
-            ("incremental_function_extend", args + (Number(3), Number(4))),
+            app._get_function_prog_part(args, 8),
+            ("incremental_function_extend", args + (Number(5), Number(8))),
         )
-        # the closest lower grounded bound is selected (5, given grounded bounds {3,4,5})
-        self.assertEqual(
-            app._get_function_prog_part(args, 7),
-            ("incremental_function_extend", args + (Number(5), Number(7))),
-        )
-        self.assertEqual(app._function_grounded_bounds, {"f": {3, 4, 5, 7}})
+        self.assertEqual(app._function_last_bound, {"f": 8})
 
     def test_jump_get_incremental_parts_at(self) -> None:
         """
