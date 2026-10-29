@@ -67,6 +67,9 @@ class TestPreprocess(TestCase):
         self.run_test("combination_with_structure")
         self.run_test("combination_at_part_with_wildcard")
         self.run_test("combination_at_part_multiple_instances")
+        self.run_test("combination_multi_valued_path")
+        self.run_test("combination_optional_column")
+        self.run_test("combination_shared_path_contexts")
 
     def test_numerics(self) -> None:
         """

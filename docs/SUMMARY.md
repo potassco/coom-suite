@@ -18,6 +18,7 @@
     * Encodings
         * [Encodings](reference/encodings/index.md)
         * [Base Clingo Encoding](reference/encodings/base.md)
+        * [Preprocessing](reference/encodings/preprocessing.md)
         * Multi-shot Encodings
             * [Multi-shot Encodings](reference/encodings/multishot/index.md)
             * [Multi-shot Preprocessing](reference/encodings/multishot/preprocessing.md)
