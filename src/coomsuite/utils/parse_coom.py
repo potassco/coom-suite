@@ -6,7 +6,6 @@ in a visitor style fashion and outputs ASP facts.
 """
 
 # flake8: noqa
-# pylint: skip-file
 # mypy: ignore-errors
 import sys
 from typing import List, Optional

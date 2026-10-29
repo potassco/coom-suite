@@ -2,8 +2,6 @@
 Contains a module for solving problems with open bounds/cardinalities.
 """
 
-from typing import List, Optional
-
 from clingo.application import clingo_main
 
 from coomsuite import solve
@@ -11,7 +9,6 @@ from coomsuite import solve
 from . import get_bound_iter, next_bound_converge
 from .multi_application import COOMMultiSolverApp
 
-# pylint: disable=line-too-long
 # Reference for exit code: https://github.com/potassco/clasp/issues/42#issuecomment-459981038
 ret_dict = {0: "UNKNOWN", 1: "INTERRUPT", 10: "SAT", 20: "UNSAT", 30: "OPT", 33: "MEMORY", 65: "ERROR", 128: "NO_RUN"}
 
@@ -21,19 +18,19 @@ class BoundSolver:
     Module for solving problems with open bounds/cardinalities.
     """
 
-    # pylint: disable=too-many-arguments
-    facts: List[str]
+    facts: list[str]
     solver: str
-    clingo_args: List[str]
+    clingo_args: list[str]
     output_format: str
 
     def __init__(
         self,
-        facts: List[str],
+        facts: list[str],
         solver: str,
-        clingo_args: List[str],
+        clingo_args: list[str],
         output_format: str,
-    ):
+    ) -> None:
+        """Initialize the bound solver."""
         self.facts = facts
         self.solver = solver
         self.clingo_args = clingo_args
@@ -42,9 +39,9 @@ class BoundSolver:
     def _solve(self, max_bound: int) -> int:  # nocoverage
         return solve(self.facts, self.solver, max_bound, self.clingo_args, self.output_format)
 
-    def _converge(self, unsat_bound: int, sat_bound: int) -> Optional[int]:
+    def _converge(self, unsat_bound: int, sat_bound: int) -> int | None:
         """
-        Converge to the minimal bound given lower bound (unsat_bound) and upper bound (sat_bound)
+        Converge to the minimal bound given lower bound (unsat_bound) and upper bound (sat_bound).
         """
         while True:
             current_bound = next_bound_converge(unsat_bound, sat_bound)
@@ -72,15 +69,13 @@ class BoundSolver:
         self,
         algorithm: str = "linear",
         initial_bound: int = 0,
-        step: Optional[int] = 1,
-        base: Optional[float] = 2.0,
+        step: int | None = 1,
+        base: float | None = 2.0,
         use_multishot: bool = False,
-    ) -> Optional[int]:
+    ) -> int | None:
         """
         Compute the minimal bound for the problem.
         """
-        # pylint: disable=too-many-positional-arguments
-
         # multi shot solving
         if use_multishot:  # nocoverage
             multishot_solver = COOMMultiSolverApp(
@@ -116,7 +111,8 @@ class BoundSolver:
                     pass
                 else:
                     print(
-                        f"\n Some error occured during solving with max_bound = {current_max_bound}\n Exit code: {ret}\n"
+                        f"\n Some error occured during solving with max_bound = {current_max_bound}\n "
+                        f"Exit code: {ret}\n"
                     )
                     return None
             except KeyError as exc:

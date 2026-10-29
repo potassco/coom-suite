@@ -11,15 +11,15 @@ from clinguin.utils.annotations import overwrites
 from coomsuite.utils import asp2coom, coom2asp
 
 
-class CoomBackend(ExplanationBackend):  # type: ignore
+class CoomBackend(ExplanationBackend):
     """
     Extends ExplanationBackend with functionality for the COOM UI.
     """
 
-    @overwrites(ExplanationBackend)  # type: ignore
-    def download(self, show_prg=None, file_name="current_solution.coom") -> None:  # type: ignore
+    @overwrites(ExplanationBackend)
+    def download(self, show_prg: str | None = None, file_name: str = "current_solution.coom") -> None:
         """
-        Downloads the current model in COOM format. It must be selected first via :func:`~select` .
+        Download the current model in COOM format. It must be selected first via :func:`~select`.
 
         Arguments:
             show_prg (_type_, optional): Program to filter output using show statements. Defaults to None.
@@ -54,10 +54,12 @@ class CoomBackend(ExplanationBackend):  # type: ignore
             )
         )
 
-    @overwrites(ExplanationBackend)  # type: ignore
+    @overwrites(ExplanationBackend)
     def upload_file(self) -> None:
         """
-        Upload file using the context. The context should have the name of the file under `filename` and the
+        Upload file using the context.
+
+        The context should have the name of the file under `filename` and the
         file content in base64 under `filecontent`.
         """
         coom_solution = next((c.value for c in self._context if c.key == "filecontent"), None)

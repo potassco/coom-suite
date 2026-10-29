@@ -3,9 +3,10 @@ Basic functions to run tests.
 """
 
 import tempfile
+from collections.abc import Callable, Sequence
 from copy import deepcopy
 from os.path import join
-from typing import Any, Callable, List, Optional, Sequence, Tuple
+from typing import Any, cast
 
 from antlr4 import InputStream
 from clingo import Application, Control, Symbol
@@ -17,36 +18,35 @@ from coomsuite.preprocess import preprocess
 from coomsuite.utils import run_antlr4_visitor
 
 
-def parse_coom(coom_input: str, grammar: str = "model") -> List[str]:
+def parse_coom(coom_input: str, grammar: str = "model") -> list[str]:
     """
-    Helper function for testing the COOM to ASP parser.
+    Help test the COOM to ASP parser.
     """
     input_stream = InputStream(coom_input)
     asp_facts = run_antlr4_visitor(input_stream, grammar=grammar)
     return [a for a in asp_facts if a != ""]
 
 
-def unpack_test(test_name: str, tests: dict[str, Any], flingo: bool = False) -> Tuple[Any, Any, Any]:
+def unpack_test(test_name: str, tests: dict[str, Any], flingo: bool = False) -> tuple[Any, Any, Any]:
     """
     Unpacks a clintest.Test with parameters in a dictionary.
 
     Args:
-        test_name (str): The dictionary key of the test.
+        test_name (str): The dictionary key of the test
+        tests (dict): A dictionary containing all tests
+        flingo (bool): Whether to use flingo for the test
     """
     test_dict = tests[test_name]
     program = test_dict.get("program", None)
     files = test_dict.get("files", [f"{test_name}.lp"]) if program is None else None
-    if flingo:
-        test = test_dict.get("ftest", test_dict["test"])
-    else:
-        test = test_dict["test"]
-    test_with_name = Record(Context(test, str_=lambda test: f"{test_name} \n\n {str(test)}"))
+    test = test_dict.get("ftest", test_dict["test"]) if flingo else test_dict["test"]
+    test_with_name = Record(Context(test, str_=lambda test: f"{test_name} \n\n {test!s}"))
     return test_with_name, program, files
 
 
 def get_model_from_file(model_file: str) -> set[Symbol | str]:
     """
-    Helper function to get the model for a clintest from a file.
+    Get the model for a clintest from a file.
 
     Args:
         model_file (str): The file containing the model in the directory tests/clintests/results
@@ -63,18 +63,20 @@ def get_model_from_file(model_file: str) -> set[Symbol | str]:
 
 def run_test(
     test: Test,
-    files: Optional[List[str]] = None,
-    program: Optional[str] = None,
-    ctl_args: Optional[List[str]] = None,
-    **kwargs: Any,
+    files: list[str] | None = None,
+    program: str | None = None,
+    ctl_args: list[str] | None = None,
+    **kwargs: Any,  # noqa: ANN401
 ) -> None:
-    """Creates a solver and runs a clintest test.
+    """
+    Create a solver and runs a clintest test.
 
     Args:
         test (clintest.test.Test): The clintest test
         files (Optional[List[str]], optional): Test input filename saved in examples/tests
         program (Optional[str], optional): A clingo program. Defaults to ""
         ctl_args (Optional[List[str]], optional): List of arguments for clingo.Control. Defaults to [].
+        **kwargs: Additional solver options.
     """
     solver = kwargs.get("solver", "clingo")
     is_preprocess = solver == "preprocess"
@@ -107,16 +109,17 @@ def run_test(
     test_copy.assert_()
 
 
-def compose(on_app: Callable, on_test: Callable) -> Callable:  # type: ignore
+def compose(on_app: Callable[..., Any] | None, on_test: Callable[..., Any]) -> Callable[..., None]:
     """
-    Composes two functions
+    Composes two functions.
+
     Args:
         on_app (Callable): Function from the application class
         on_test (Callable): Function for the test
     """
 
-    def f(*args):  # type: ignore
-        """Composed function"""
+    def f(*args: Any) -> None:  # noqa: ANN401
+        """Composed function."""
         if on_app is not None:
             on_app(*args)
         on_test(*args)
@@ -126,35 +129,34 @@ def compose(on_app: Callable, on_test: Callable) -> Callable:  # type: ignore
 
 class MockControl:
     """
-    Mocks a clingo control object to call the Application class
+    Mocks a clingo control object to call the Application class.
     """
 
-    def __init__(
+    def __init__(  # noqa: D107
         self,
         test: Test,
-        arguments: Optional[Sequence[str]] = None,
+        arguments: Sequence[str] | None = None,
     ) -> None:
         arguments = [] if arguments is None else arguments
         self._test = test
         self._ctl = Control(arguments=arguments)
 
-    def __getattr__(self, attr):  # type: ignore
+    def __getattr__(self, attr: str) -> Any:  # noqa: ANN401, D105
         try:
             return self._ctl.__getattribute__(attr)
         except AttributeError:
             return self.__get_global_handler(attr)
 
-    def solve(  # type: ignore # pylint: disable=too-many-arguments, too-many-positional-arguments
+    def solve(
         self,
-        on_model=None,
-        on_unsat=None,
-        on_core=None,
-        on_statistics=None,
-        on_finish=None,
+        on_model: Callable[..., Any] | None = None,
+        on_unsat: Callable[..., Any] | None = None,
+        on_core: Callable[..., Any] | None = None,
+        on_statistics: Callable[..., Any] | None = None,
+        on_finish: Callable[..., Any] | None = None,
     ) -> None:
         """
-        Replaced the solve of the control by calling first internal callbacks and then
-        the ones from the test
+        Replace the solve of the control by calling first internal callbacks and then the ones from the test.
         """
         if not self._test.outcome().is_certain():
             self._ctl.solve(
@@ -168,14 +170,14 @@ class MockControl:
 
 class AppSolver(Solver):
     """
-    A clintest solver wrapping an application class
+    A clintest solver wrapping an application class.
     """
 
-    def __init__(
+    def __init__(  # noqa: D107
         self,
         application: Application,
-        files: List[str],
-        arguments: Optional[List[str]] = None,
+        files: list[str],
+        arguments: list[str] | None = None,
     ) -> None:
         self.__application = application
         self.__arguments = [] if arguments is None else arguments
@@ -184,4 +186,4 @@ class AppSolver(Solver):
     def solve(self, test: Test) -> None:
         """Solves with clintest."""
         ctl = MockControl(test, self.__arguments)
-        self.__application.main(control=ctl, files=self.__files)  # type: ignore
+        self.__application.main(control=cast(Control, ctl), files=self.__files)

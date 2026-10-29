@@ -2,8 +2,6 @@
 Test cases for the parser from COOM to ASP.
 """
 
-# pylint: disable=too-many-lines
-
 from unittest import TestCase
 
 from . import parse_coom
@@ -16,8 +14,7 @@ class TestCOOMUserParser(TestCase):
 
     def test_set(self) -> None:
         """
-        Test parsing the 'set' keyword
-        used for setting values.
+        Test parsing the 'set' keyword used for setting values.
         """
         self.assertEqual(parse_coom("set color[0] = Red", grammar="user"), ['user_value("root.color[0]","Red").'])
         self.assertEqual(
@@ -27,8 +24,7 @@ class TestCOOMUserParser(TestCase):
 
     def test_add(self) -> None:
         """
-        Test parsing the 'add' keyword
-        used for adding instances of objects.
+        Test parsing the 'add' keyword used for adding instances of objects.
         """
         self.assertEqual(parse_coom("add basket[0]", grammar="user"), ['user_include("root.basket[0]").'])
         self.assertEqual(
@@ -581,7 +577,6 @@ class TestCOOMModelParser(TestCase):
         """
         Test parsing behavior with functions.
         """
-
         self.assertEqual(
             parse_coom("behavior{require a = sum(b)}"),
             [
@@ -968,9 +963,8 @@ class TestCOOMModelParser(TestCase):
 
     def test_optimization(self) -> None:
         """
-        Test parsing behavior with optimization statements
+        Test parsing behavior with optimization statements.
         """
-
         self.assertEqual(
             parse_coom("behavior{minimize totalWeight}"),
             [

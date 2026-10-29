@@ -54,15 +54,15 @@ class UserInputParser ( Parser ):
 
     sharedContextCache = PredictionContextCache()
 
-    literalNames = [ "<INVALID>", "'blockinput'", "'{'", "'}'", "'set'", 
-                     "'='", "'add'", "'-'", "'\\u221E'", "'.'", "'['", "'..'", 
+    literalNames = [ "<INVALID>", "'blockinput'", "'{'", "'}'", "'set'",
+                     "'='", "'add'", "'-'", "'\\u221E'", "'.'", "'['", "'..'",
                      "']'", "'last'", "';'", "'true'", "'false'" ]
 
-    symbolicNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "NAME", "INTEGER", "FLOATING", "NEWLINE", 
+    symbolicNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "NAME", "INTEGER", "FLOATING", "NEWLINE",
                       "WHITESPACE", "COMMENT", "MULTILINE_COMMENT" ]
 
     RULE_user_input = 0
@@ -78,8 +78,8 @@ class UserInputParser ( Parser ):
     RULE_stmt_end = 10
     RULE_formula_atom = 11
 
-    ruleNames =  [ "user_input", "input_block", "input_operation", "set_value", 
-                   "add_instance", "floating", "path", "path_item", "path_index", 
+    ruleNames =  [ "user_input", "input_block", "input_operation", "set_value",
+                   "add_instance", "floating", "path", "path_item", "path_index",
                    "name", "stmt_end", "formula_atom" ]
 
     EOF = Token.EOF

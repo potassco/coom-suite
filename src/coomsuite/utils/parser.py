@@ -2,21 +2,16 @@
 The command line parser for the project.
 """
 
-import sys
 from argparse import ArgumentParser
+from importlib import metadata
 from textwrap import dedent
-from typing import Any, Optional, cast
+from typing import Any, cast
 
 from coomsuite import SOLVERS
 
 from . import logging
 
 __all__ = ["get_parser"]
-
-if sys.version_info[1] < 8:
-    import importlib_metadata as metadata  # nocoverage
-else:
-    from importlib import metadata  # nocoverage
 
 VERSION = metadata.version("coomsuite")
 
@@ -39,7 +34,7 @@ def get_parser() -> ArgumentParser:
         ("debug", logging.DEBUG),
     ]
 
-    def get(levels: list[tuple[str, int]], name: str) -> Optional[int]:
+    def get(levels: list[tuple[str, int]], name: str) -> int | None:
         for key, val in levels:
             if key == name:
                 return val
@@ -49,7 +44,7 @@ def get_parser() -> ArgumentParser:
         "--log",
         default="warning",
         choices=[val for _, val in levels],
-        metavar=f'{{{",".join(key for key, _ in levels)}}}',
+        metavar=f"{{{','.join(key for key, _ in levels)}}}",
         help="set log level [%(default)s]",
         type=cast(Any, lambda name: get(levels, name)),
     )
@@ -84,7 +79,9 @@ def get_parser() -> ArgumentParser:
     parser_solve = subparsers.add_parser(
         "solve",
         help="Converts and solves the COOM instance.",
-        epilog="In addition to the above commands, all usual clingo commands can be used, e.g., -n0 to print all models.",  # pylint: disable=line-too-long
+        epilog=(
+            "In addition to the above commands, all usual clingo commands can be used, e.g., -n0 to print all models."
+        ),
     )
     parser_solve.add_argument(
         "input",

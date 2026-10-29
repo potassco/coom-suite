@@ -9,21 +9,15 @@ for modelling product configuration problems. While currently geared towards
 ASP, the *COOM Suite* is intended to serve as a **general workbench** for
 experimentation with **industrial-scale product configuration problems**. It
 includes a (customizable) [ANTLR v4](https://www.antlr.org/) parser to convert
-COOM specifications into facts, and currently contains two ASP encodings for
-solving: one for [clingo](https://potassco.org/clingo) and one for hybrid
-solver [flingo](https://github.com/potassco/flingo).
+COOM specifications into facts, and currently contains ASP encodings for
+[clingo](https://potassco.org/clingo) and for hybrid solver
+[flingo](https://github.com/potassco/flingo), as well as a multi-shot encoding
+for incremental solving of problems with unbounded cardinalities.
 
 In addition, a prototypical UI, a range of examples and a benchmark collection
-with four scalable benchmark sets is provided.
-
-If you want to cite the COOM Suite, please use the following reference
-
-> J. Baumeister, S. Hahn, K. Herud, M. Ostrowski, J. Reutelshöfer, N. Rühling,
-> T. Schaub, P. Wanko. Towards Industrial-scale Product Configuration. _CoRR_,
-> abs/2504.00013, 2025. doi: 10.48550/arXiv.2504.00013. URL
-> https://arxiv.org/abs/2504.00013.
+is provided.
 
 ## Documentation
 
-Full documentation is available at
-**[docs.potassco.org/coom-suite](https://docs.potassco.org/coom-suite/)**.
+For installation instructions and detailed usage, visit our
+[official documentation](https://docs.potassco.org/coom-suite/).

@@ -2,9 +2,9 @@
 General helper functions for solving unbounded cardinalities.
 """
 
+from collections.abc import Iterator
 from itertools import chain, count, dropwhile
 from math import ceil
-from typing import Iterator, Optional
 
 
 def _exponential_iter(base: float) -> Iterator[int]:
@@ -14,9 +14,7 @@ def _exponential_iter(base: float) -> Iterator[int]:
         n += 1
 
 
-def get_bound_iter(
-    algorithm: str, start: int, step: Optional[int] = None, base: Optional[float] = None
-) -> Iterator[int]:
+def get_bound_iter(algorithm: str, start: int, step: int | None = None, base: float | None = None) -> Iterator[int]:
     """
     Get an iterator over the bounds for a selected algorithm.
 
@@ -26,6 +24,7 @@ def get_bound_iter(
         algorithm (str): either "linear" or "exponential"
         start (int): value after which the iterator starts
         step (int): step size for linear/exponential base for iteration
+        base (float | None): base used for exponential iteration
     """
     iterator: Iterator[int]
     match algorithm:
@@ -42,9 +41,9 @@ def get_bound_iter(
     return iterator
 
 
-def next_bound_converge(unsat_bound: int, sat_bound: int) -> Optional[int]:
+def next_bound_converge(unsat_bound: int, sat_bound: int) -> int | None:
     """
-    Determine the next bound (between unsat_bound and sat_bound) for converging to the minimal bound
+    Determine the next bound (between unsat_bound and sat_bound) for converging to the minimal bound.
 
     Returns:
         Optional[int]: The next bound to check, or None if sat_bound is already the minimal bound
