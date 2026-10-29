@@ -2,7 +2,8 @@
 Clingo application class for solving COOM configuration problems with multi-shot solving.
 """
 
-from typing import Any, Dict, Iterator, List, Optional, Sequence, Set, Tuple, TypeAlias
+from collections.abc import Iterator, Sequence
+from typing import Any
 
 from clingo import Control
 from clingo.symbol import Function, Number, Symbol, parse_term
@@ -13,10 +14,10 @@ from coomsuite.utils import get_encoding
 
 from . import get_bound_iter, next_bound_converge
 
-ProgPart: TypeAlias = Tuple[str, Tuple[Symbol, ...]]
+type ProgPart = tuple[str, tuple[Symbol, ...]]
 
 
-def print_prog_parts(parts: List[ProgPart], name_filter: List[str] | None = None) -> None:  # nocoverage
+def print_prog_parts(parts: list[ProgPart], name_filter: list[str] | None = None) -> None:  # nocoverage
     """
     Print a list of program parts, optionally include a filter (useful for debugging).
 
@@ -47,7 +48,7 @@ def print_prog_parts(parts: List[ProgPart], name_filter: List[str] | None = None
 
 def _get_fact_name_and_args(fact: str) -> ProgPart:
     """
-    Convert a fact given as a string to its name and arguments
+    Convert a fact given as a string to its name and arguments.
 
     Args:
         fact (str): The fact in string representation (with trailing '.')
@@ -59,28 +60,29 @@ def _get_fact_name_and_args(fact: str) -> ProgPart:
     return (x.name, tuple(x.arguments))
 
 
-class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-attributes
+class COOMMultiSolverApp(COOMSolverApp):
     """
-    Application class for multi-shot solving extending the standard COOM application class
+    Application class for multi-shot solving extending the standard COOM application class.
     """
 
     def __init__(
         self,
-        serialized_facts: List[str],
+        serialized_facts: list[str],
         algorithm: str = "linear",
         initial_bound: int = 0,
-        step: Optional[int] = 1,
-        base: Optional[float] = 2.0,
+        step: int | None = 1,
+        base: float | None = 2.0,
         log_level: str = "",
-        options: Optional[Dict[str, Any]] = None,
+        options: dict[str, Any] | None = None,
         istest: bool = False,
-    ):  # pylint: disable=too-many-arguments,too-many-positional-arguments
+    ) -> None:
+        """Initialize the multi-shot application."""
         super().__init__(log_level, options, istest)
 
         if self._options["solver"] == "flingo":
             raise ValueError("multishot solving is currently not supported for the flingo solver")
 
-        self._serialized_facts: List[str] = serialized_facts
+        self._serialized_facts: list[str] = serialized_facts
         """The instance to solve given as serialized facts"""
 
         self._bound_iter: Iterator[int] = get_bound_iter(algorithm, initial_bound, step, base)
@@ -88,24 +90,24 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         self.current_max_bound: int = next(self._bound_iter)
         """The current max bound"""
 
-        self._prev_bound: Optional[int] = None
+        self._prev_bound: int | None = None
         """The previous max bound"""
 
-        self._new_processed_facts: Set[str] = set()
+        self._new_processed_facts: set[str] = set()
         """Processed facts added by current preprocessing step"""
-        self._processed_facts: Set[str] = set()
+        self._processed_facts: set[str] = set()
         """Processed facts from all previous preprocessing steps"""
 
-        self._incremental_parts: Set[ProgPart] = set()
+        self._incremental_parts: set[ProgPart] = set()
         """The set of all incremental program parts"""
-        self._incremental_expressions: Set[str] = set()
+        self._incremental_expressions: set[str] = set()
         """The set of all incremental expressions (represented by their name)"""
-        self._is_initialized: Set[str] = set()
+        self._is_initialized: set[str] = set()
         """Keeps track of all incremental expressions that are already initialized"""
 
     def _update_bound(self) -> None:
         """
-        Update the current maximum bound
+        Update the current maximum bound.
         """
         self._prev_bound = self.current_max_bound
         while self.current_max_bound == self._prev_bound:
@@ -113,7 +115,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
     def _preprocess_new_bound(self, bound: int) -> None:
         """
-        Preprocess the serialized facts for the given bound and update the fact data structures
+        Preprocess the serialized facts for the given bound and update the fact data structures.
 
         Args:
             bound (int): the value of max_bound to preprocess
@@ -139,9 +141,9 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
         # filter out facts that were previously processed
         self._new_processed_facts = non_incremental_facts - self._processed_facts
 
-    def _remove_new_incremental_expressions(self) -> List[ProgPart]:
+    def _remove_new_incremental_expressions(self) -> list[ProgPart]:
         """
-        Remove all facts from new_processed_facts that are incremental expressions
+        Remove all facts from new_processed_facts that are incremental expressions.
 
         Program parts for incremental expressions are added by iterating over self._incremental_parts.
         This is done because the facts for incremental expressions are only added once,
@@ -177,14 +179,14 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
         return inc_expressions
 
-    def _get_incremental_prog_part(self, exp_type: str, args: Tuple[Symbol, ...], bound: int) -> ProgPart:
+    def _get_incremental_prog_part(self, exp_type: str, args: tuple[Symbol, ...], bound: int) -> ProgPart:
         """
-        Get the incremental program part for an expression
+        Get the incremental program part for an expression.
 
         Args:
             exp_type (str): string representing the type of the expression
             args (Tuple[Symbol, ...]): the arguments of the expression
-            bounds (int): the current bound to use as parameter of the program part
+            bound (int): the current bound to use as parameter of the program part
 
         Returns:
             ProgPart: the program part containing the rules to update the incremental expression
@@ -228,7 +230,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
     def _get_prog_part(self, fact: str, bound: int) -> ProgPart:
         """
-        Get the program part belonging to a fact
+        Get the program part belonging to a fact.
 
         Args:
             fact (str): The fact representet as a string (with trailing '.')
@@ -272,9 +274,9 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
         return program_part
 
-    def _update_incremental_data(self, incremental_facts: Set[str]) -> None:
+    def _update_incremental_data(self, incremental_facts: set[str]) -> None:
         """
-        Update internal data structures keeping track of the incremental sets and their expressions
+        Update internal data structures keeping track of the incremental sets and their expressions.
 
         Args:
             incremental_facts (Set[str]): a set of incremental facts to add to the internal incremental data structures
@@ -301,7 +303,7 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
     def _find_minimal_bound(self, control: Control) -> None:
         """
-        Find the minimal bound for an instance once a satisfiable bound was found
+        Find the minimal bound for an instance once a satisfiable bound was found.
 
         This assumes that for _prev_bound the instance was UNSAT, and for max_bound the instance is SAT.
         The minimal bound is found when _prev_bound + 1 is equal to max_bound.
@@ -355,9 +357,9 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
             else:
                 unsat_bound = current_bound
 
-    def _compute_prog_parts(self, bound: int) -> List[ProgPart]:
+    def _compute_prog_parts(self, bound: int) -> list[ProgPart]:
         """
-        Compute all program parts for the current new processed facts
+        Compute all program parts for the current new processed facts.
 
         Args:
             bound (int): the current bound to compute program parts for
@@ -387,15 +389,16 @@ class COOMMultiSolverApp(COOMSolverApp):  # pylint: disable=too-many-instance-at
 
         return parts
 
-    def main(self, control: Control, files: Sequence[str]) -> None:
+    def main(self, control: Control, files: Sequence[str]) -> None:  # noqa: ARG002
         """
-        Main function of the multishot application class
+        Main function of the multishot application class.
 
         After returning the attribute max_bound is the minimal bound for which the instance is satisfiable.
 
         Args:
             control (Control): the clingo control object
-        """
+            files (Sequence[str]): files to load into the control
+        """  # noqa: D401
         control.load(get_encoding("encoding-base-clingo-multi.lp"))
         control.load(get_encoding("show-clingo.lp"))
 

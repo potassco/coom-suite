@@ -253,40 +253,40 @@ class ModelParser ( Parser ):
 
     sharedContextCache = PredictionContextCache()
 
-    literalNames = [ "<INVALID>", "'product'", "'{'", "'}'", "'structure'", 
-                     "'enumeration'", "'static'", "'reference'", "'/'", 
-                     "'..'", "'*'", "'attribute'", "'='", "'('", "','", 
-                     "')'", "'num'", "'-'", "'string'", "'/n'", "'.'", "'^'", 
-                     "'define'", "'exists'", "'in'", "'explanation'", "'combinations'", 
-                     "'allow'", "'forbid'", "'-*-'", "'minimize'", "'maximize'", 
-                     "'readwrite'", "'readonly'", "'hide'", "'message'", 
-                     "'debug'", "'info'", "'warn'", "'error'", "'explain'", 
-                     "'prefer'", "'||'", "'&&'", "'!'", "'+'", "'true'", 
-                     "'false'", "'\\u221E'", "'['", "']'", "'last'", "';'", 
-                     "'<'", "'<='", "'\\u2264'", "'>'", "'>='", "'\\u2265'", 
-                     "'=='", "'!='", "'\\u2260'", "'\\u2287'", "'contains'", 
-                     "<INVALID>", "<INVALID>", "'behavior'", "'condition'", 
+    literalNames = [ "<INVALID>", "'product'", "'{'", "'}'", "'structure'",
+                     "'enumeration'", "'static'", "'reference'", "'/'",
+                     "'..'", "'*'", "'attribute'", "'='", "'('", "','",
+                     "')'", "'num'", "'-'", "'string'", "'/n'", "'.'", "'^'",
+                     "'define'", "'exists'", "'in'", "'explanation'", "'combinations'",
+                     "'allow'", "'forbid'", "'-*-'", "'minimize'", "'maximize'",
+                     "'readwrite'", "'readonly'", "'hide'", "'message'",
+                     "'debug'", "'info'", "'warn'", "'error'", "'explain'",
+                     "'prefer'", "'||'", "'&&'", "'!'", "'+'", "'true'",
+                     "'false'", "'\\u221E'", "'['", "']'", "'last'", "';'",
+                     "'<'", "'<='", "'\\u2264'", "'>'", "'>='", "'\\u2265'",
+                     "'=='", "'!='", "'\\u2260'", "'\\u2287'", "'contains'",
+                     "<INVALID>", "<INVALID>", "'behavior'", "'condition'",
                      "'imply'", "'require'", "'default'" ]
 
-    symbolicNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "FUNCTION", "TRIGONOMETRIC", "BEHAVIOR", "CONDITION", 
-                      "IMPLY", "REQUIRE", "DEFAULT", "KEYWORD", "NAME", 
-                      "INTEGER", "FLOATING", "TIMES", "HASHES", "NEWLINE", 
+    symbolicNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "FUNCTION", "TRIGONOMETRIC", "BEHAVIOR", "CONDITION",
+                      "IMPLY", "REQUIRE", "DEFAULT", "KEYWORD", "NAME",
+                      "INTEGER", "FLOATING", "TIMES", "HASHES", "NEWLINE",
                       "WHITESPACE", "COMMENT", "MULTILINE_COMMENT" ]
 
     RULE_root = 0
@@ -345,18 +345,18 @@ class ModelParser ( Parser ):
     RULE_stmt_end = 53
     RULE_compare = 54
 
-    ruleNames =  [ "root", "product", "structure", "enumeration", "feature", 
-                   "cardinality", "attribute", "option", "field", "number_def", 
-                   "string_def", "unit", "fraction", "behavior", "behavior_block", 
-                   "define", "conditioned", "exists", "explanation", "precondition", 
-                   "date", "combinations", "combination_row", "combination_item", 
-                   "combination_atom", "assign_default", "assign_imply", 
-                   "optimize", "interaction", "message", "require", "prefer", 
-                   "condition", "condition_or", "condition_and", "condition_not", 
-                   "condition_compare", "condition_part", "formula", "formula_add", 
-                   "formula_sub", "formula_mul", "formula_div", "formula_pow", 
-                   "formula_sign", "formula_func", "formula_atom", "constant", 
-                   "floating", "path", "path_item", "path_index", "name", 
+    ruleNames =  [ "root", "product", "structure", "enumeration", "feature",
+                   "cardinality", "attribute", "option", "field", "number_def",
+                   "string_def", "unit", "fraction", "behavior", "behavior_block",
+                   "define", "conditioned", "exists", "explanation", "precondition",
+                   "date", "combinations", "combination_row", "combination_item",
+                   "combination_atom", "assign_default", "assign_imply",
+                   "optimize", "interaction", "message", "require", "prefer",
+                   "condition", "condition_or", "condition_and", "condition_not",
+                   "condition_compare", "condition_part", "formula", "formula_add",
+                   "formula_sub", "formula_mul", "formula_div", "formula_pow",
+                   "formula_sign", "formula_func", "formula_atom", "constant",
+                   "floating", "path", "path_item", "path_index", "name",
                    "stmt_end", "compare" ]
 
     EOF = Token.EOF
@@ -2360,7 +2360,7 @@ class ModelParser ( Parser ):
                         self.state = 375
                         self.stmt_end()
                         self.state = 376
-                        self.combination_row() 
+                        self.combination_row()
                     self.state = 382
                     self._errHandler.sync(self)
                     _alt = self._interp.adaptivePredict(self._input,40,self._ctx)
@@ -3581,7 +3581,7 @@ class ModelParser ( Parser ):
                     self.state = 511
                     localctx.operator = self.match(ModelParser.T__44)
                     self.state = 512
-                    self.formula_sub() 
+                    self.formula_sub()
                 self.state = 517
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,58,self._ctx)
@@ -3646,7 +3646,7 @@ class ModelParser ( Parser ):
                     self.state = 519
                     localctx.operator = self.match(ModelParser.T__16)
                     self.state = 520
-                    self.formula_mul() 
+                    self.formula_mul()
                 self.state = 525
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,59,self._ctx)

@@ -2,7 +2,6 @@
 Test cases for solving.
 """
 
-from typing import List, Optional
 from unittest import TestCase
 
 from . import run_test, unpack_test
@@ -14,9 +13,9 @@ class TestClingo(TestCase):
     Test cases for the clingo encoding.
     """
 
-    def run_test(self, test_name: str, extra_ctl_args: Optional[List[str]] = None) -> None:
+    def run_test(self, test_name: str, extra_ctl_args: list[str] | None = None) -> None:
         """
-        Runs a clintest test with the clingo encoding.
+        Run a clintest test with the clingo encoding.
         """
         ctl_args = ["0"]
         if extra_ctl_args:
@@ -125,7 +124,7 @@ class TestClingo(TestCase):
 
     def test_defaults(self) -> None:
         """
-        Test solving defaults (clingo)
+        Test solving defaults (clingo).
         """
         self.run_test("simple_default")
         self.run_test("simple_default_user")
@@ -133,7 +132,7 @@ class TestClingo(TestCase):
 
     def test_optimization(self) -> None:
         """
-        Test solving optimization statements (clingo)
+        Test solving optimization statements (clingo).
         """
         self.run_test("minimize", extra_ctl_args=["--opt-mode=optN"])
         self.run_test("maximize", extra_ctl_args=["--opt-mode=optN"])
@@ -144,7 +143,7 @@ class TestClingo(TestCase):
 
     def test_user_input(self) -> None:
         """
-        Test solving user input (clingo)
+        Test solving user input (clingo).
         """
         self.run_test("add_part")
         self.run_test("add_attribute")
@@ -163,9 +162,9 @@ class TestFlingo(TestCase):
     Test cases for the flingo encoding.
     """
 
-    def run_test(self, test_name: str, extra_ctl_args: Optional[List[str]] = None) -> None:
+    def run_test(self, test_name: str, extra_ctl_args: list[str] | None = None) -> None:
         """
-        Runs a clintest test with the flingo encoding.
+        Run a clintest test with the flingo encoding.
         """
         ctl_args = ["0"]
         if extra_ctl_args:
@@ -275,7 +274,7 @@ class TestFlingo(TestCase):
 
     def test_defaults(self) -> None:
         """
-        Test solving defaults (flingo)
+        Test solving defaults (flingo).
         """
         self.run_test("simple_default")
         self.run_test("simple_default_user")
@@ -283,7 +282,7 @@ class TestFlingo(TestCase):
 
     def test_optimization(self) -> None:
         """
-        Test solving optimization statements (flingo)
+        Test solving optimization statements (flingo).
         """
         self.run_test("minimize")
         self.run_test("maximize")
@@ -294,7 +293,7 @@ class TestFlingo(TestCase):
 
     def test_user_input(self) -> None:
         """
-        Test solving user input (flingo)
+        Test solving user input (flingo).
         """
         self.run_test("add_part")
         self.run_test("add_attribute")

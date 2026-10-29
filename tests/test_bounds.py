@@ -85,7 +85,7 @@ class TestBound(TestCase):
                     patch.object(solver, "_solve", autospec=True, side_effect=solve_returns),
                     redirect_stdout(None),
                 ):
-                    ret = solver._converge(init_unsat, init_sat)  # pylint: disable=protected-access
+                    ret = solver._converge(init_unsat, init_sat)
                     self.assertEqual(
                         ret,
                         max_bound,
@@ -95,9 +95,12 @@ class TestBound(TestCase):
                         ),
                     )
         # Test exception for invalid error code
-        with self.assertRaises(KeyError, msg="failed with exit code=99"):
-            with patch.object(solver, "_solve", autospec=True, side_effect=[99]), redirect_stdout(None):
-                ret = solver._converge(4, 8)  # pylint: disable=protected-access
+        with (
+            self.assertRaises(KeyError, msg="failed with exit code=99"),
+            patch.object(solver, "_solve", autospec=True, side_effect=[99]),
+            redirect_stdout(None),
+        ):
+            ret = solver._converge(4, 8)
 
     def test_get_bounds_singleshot(self) -> None:
         """
@@ -133,13 +136,12 @@ class TestBound(TestCase):
 
         # Test exception for invalid exit code
         for algorithm in ["linear", "exponential"]:
-            with self.assertRaises(KeyError, msg=f"failed with algorithm={algorithm} and exit code=99"):
+            with (
+                self.assertRaises(KeyError, msg=f"failed with algorithm={algorithm} and exit code=99"),
+                patch.object(solver, "_solve", autospec=True) as mock_solve,
+                patch.object(solver, "_converge", autospec=True) as mock_converge,
+            ):
+                mock_solve.side_effect = [99]
 
-                with (
-                    patch.object(solver, "_solve", autospec=True) as mock_solve,
-                    patch.object(solver, "_converge", autospec=True) as mock_converge,
-                ):
-                    mock_solve.side_effect = [99]
-
-                    with redirect_stdout(None):
-                        solver.get_bounds(algorithm, 0, use_multishot=False)
+                with redirect_stdout(None):
+                    solver.get_bounds(algorithm, 0, use_multishot=False)

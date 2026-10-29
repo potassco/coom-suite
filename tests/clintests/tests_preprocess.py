@@ -1,13 +1,11 @@
 """
-Contains a dictionary with all clintest tests for preprocessing
-and the corresponding files (usually corresponds to "testname.lp")or programs they should be run with.
+Contains a dictionary with all clintest tests for preprocessing and the corresponding files (usually corresponds to "testname.lp")or programs they should be run with.
 
 The key of the dictionary corresponds to the name of the test.
-
 All tests run with clingo.
 """
 
-# pylint: disable=line-too-long, too-many-lines
+# ruff: noqa: E501
 from typing import Any
 
 from .. import get_model_from_file

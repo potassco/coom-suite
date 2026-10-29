@@ -46,7 +46,7 @@ class TestMain(TestCase):
 
     def test_coom2asp(self) -> None:
         """
-        Test the COOM to ASP conversion
+        Test the COOM to ASP conversion.
         """
         self.assertEqual(coom2asp("carrier[0]"), 'include("root.carrier[0]")')
         self.assertEqual(coom2asp('color[0] = "Blue"'), 'value("root.color[0]","Blue")')
