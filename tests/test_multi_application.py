@@ -121,9 +121,9 @@ class TestMultiApplication(TestCase):
         # test unary, constraint and function
         for exp_type, args, part in [
             ("unary", (name,), ("incremental_unary", (name, bound_term))),
-            ("constraint", boolean, ("incremental_constraint", boolean + (bound_term,))),
+            ("constraint", boolean, ("incremental_boolean_constraint", boolean + (bound_term,))),
             # table constraints check the rows of the gap (bound-1, bound]
-            ("constraint", table, ("incremental_constraint_extend", table + (Number(2), bound_term))),
+            ("constraint", table, ("incremental_table_constraint", table + (Number(2), bound_term))),
         ]:
             self.assertEqual(
                 app._get_incremental_prog_part(exp_type, args, bound),
@@ -835,8 +835,8 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
             [
                 ("incremental_function_full", function[1] + (Number(3),)),
                 ("incremental_unary", unary[1] + (Number(3),)),
-                ("incremental_constraint", boolean[1] + (Number(3),)),
-                ("incremental_constraint_extend", table[1] + (Number(1), Number(3))),
+                ("incremental_boolean_constraint", boolean[1] + (Number(3),)),
+                ("incremental_table_constraint", table[1] + (Number(1), Number(3))),
             ],
         )
 

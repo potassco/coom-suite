@@ -146,7 +146,7 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):
         parts: list[ProgPart] = []
         for exp_type, exp_args in self._incremental_parts:
             if exp_type == "constraint" and exp_args[1].string == "table":
-                parts.append(("incremental_constraint_extend", exp_args + (Number(start - 1), Number(target))))
+                parts.append(("incremental_table_constraint", exp_args + (Number(start - 1), Number(target))))
             else:
                 parts.append(self._get_incremental_prog_part(exp_type, exp_args, target))
 

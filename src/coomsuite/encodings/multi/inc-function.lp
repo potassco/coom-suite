@@ -1,4 +1,20 @@
-% incremental function that extends a previously grounded result
+% program part for computing an incremental function from scratch
+% the full aggregate is (re)computed at the given bound, independent of any previously grounded bound
+% (used the first time a function is grounded, and at every bound in the "full" mode of the jump strategy)
+#program incremental_function_full(f,agg,p,cur).
+function(f,agg,p).
+defined(f,cur) :- value(f,_,cur).
+
+value(f,V,cur) :- function(f,agg,p), agg = "count",
+                  V = #count{ X    : set(p,X), include(X)  }.
+value(f,V,cur) :- function(f,agg,p), agg = "sum",
+                  V = #sum  { V',X : set(p,X), value(X,V') }.
+value(f,V,cur) :- function(f,agg,p), agg = "min",
+                  V = #min  { V',X : set(p,X), value(X,V') }.
+value(f,V,cur) :- function(f,agg,p), agg = "max",
+                  V = #max  { V',X : set(p,X), value(X,V') }.
+
+% program part for extending a previously grounded incremental function
 % the result for the previous bound (prev) is reused and only the objects added in (prev, cur] are aggregated
 % the stepwise strategy uses the gap (bound-1, bound], the jump strategy the gap between two targets
 #program incremental_function_extend(f,agg,p,prev,cur).
