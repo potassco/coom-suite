@@ -1,34 +1,18 @@
 repos:
-  - repo: https://github.com/myint/autoflake
-    rev: v2.4.0
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.8
     hooks:
-      - id: autoflake
-        args:
-          [
-            "--in-place",
-            "--imports=coomsuite",
-            "--ignore-init-module-imports",
-            "--remove-unused-variables",
-          ]
-        exclude: ^(.github/|src/coomsuite/utils/coom_grammar/)
+      - id: ruff-check
+        args: [--fix]
+        exclude: ^src/coomsuite/utils/coom_grammar/
+      - id: ruff-format
+        exclude: ^src/coomsuite/utils/coom_grammar/
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
-        exclude: ^(.github/|src/coomsuite/utils/coom_grammar/)
-
-  - repo: https://github.com/pycqa/isort
-    rev: 10.0.0b1
-    hooks:
-      - id: isort
-        exclude: ^(.github/|src/coomsuite/utils/coom_grammar/)
-
-  - repo: https://github.com/psf/black
-    rev: 26.10.1
-    hooks:
-      - id: black
         exclude: ^(.github/|src/coomsuite/utils/coom_grammar/)
 
   - repo: https://github.com/executablebooks/mdformat
@@ -39,3 +23,11 @@ repos:
         exclude: ^docs/
         additional_dependencies:
           - mdformat-gfm
+
+  - repo: https://github.com/allganize/ty-pre-commit
+    rev: v0.0.46
+    hooks:
+      - id: ty-check
+        args: ["--ignore", "unresolved-import"]
+        exclude: "^(noxfile\\.py$|src/coomsuite/utils/coom_grammar/)"
+        additional_dependencies: ["pytest"]
