@@ -101,7 +101,7 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):
         Returns:
             int: the bound at which the fact becomes available
         """
-        return max((self._object_bounds.get(path, 0) for path in OBJECT_PATH.findall(fact)), default=0)
+        return max((self._object_bounds[path] for path in OBJECT_PATH.findall(fact)), default=0)
 
     def _preprocess_up_to(self, target: int, start: int) -> dict[int, set[str]]:
         """
