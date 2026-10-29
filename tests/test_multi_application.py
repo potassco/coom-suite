@@ -3,6 +3,7 @@ Test cases for multishot application class.
 """
 
 from contextlib import redirect_stdout
+from os.path import join
 from typing import Any, cast
 from unittest import TestCase
 from unittest.mock import ANY, Mock, call, create_autospec, patch
@@ -713,8 +714,8 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
         self.assertEqual(app._bound_of_fact('parent("root.bags[1].pockets[2]","root.bags[1]").'), 3)
         # a set path is covered by the object it starts at
         self.assertEqual(app._bound_of_fact('constraint(("root.bags[1].pockets",0),"lowerbound").'), 2)
-        # an unknown object path does not contribute
-        self.assertEqual(app._bound_of_fact('type("root.frame[9]","Frame").'), 0)
+        # an unknown object path raises an error (every object has a bound)
+        self.assertRaises(KeyError, app._bound_of_fact, 'type("root.frame[9]","Frame").')
 
     def test_jump_preprocess_up_to(self) -> None:
         """
@@ -824,17 +825,45 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
         app = COOMMultiSolverAppJump([], function_mode="full")
         function = ("function", (String("f"), String("count"), String("p")))
         unary = ("unary", (String("u"),))
-        app._incremental_parts = {function, unary}
+        boolean = ("constraint", (parse_term('(0,"f>=6")'), String("boolean")))
+        table = ("constraint", (parse_term('(1,"root")'), String("table")))
+        app._incremental_parts = {function, unary, boolean, table}
 
-        # the function/non-function parts are returned without grounding
-        parts = app._get_incremental_parts_at(3)
+        # the parts are returned without grounding, only table constraints cover the whole jump range
+        parts = app._get_incremental_parts_at(2, 3)
         self.assertCountEqual(
             parts,
             [
                 ("incremental_function_full", function[1] + (Number(3),)),
                 ("incremental_unary", unary[1] + (Number(3),)),
+                ("incremental_constraint", boolean[1] + (Number(3),)),
+                ("incremental_constraint_extend", table[1] + (Number(1), Number(3))),
             ],
         )
+
+    def test_jump_table_rows_between_targets(self) -> None:
+        """
+        Test that the table rows of all bounds of a jump are checked, not only those of the target bound.
+
+        Only Green bags (w=1) are allowed and their sum has to be at least 6, so the minimal bound is 6.
+        The jump targets are 0,1,2,4,8 (exponential) and 0,3,6 (linear with step 3), so rows are added at bounds
+        strictly between two targets. If these rows are unchecked Red bags (w=2) lead to a too small bound.
+        """
+        files: list[str] = [join("examples", "tests", "preprocess", "unbounded_table.lp")]
+        for algorithm, step in [("exponential", 1), ("linear", 3)]:
+            for function_mode in ["extend", "full"]:
+                for fix_externals in [False, True]:
+                    app = COOMMultiSolverAppJump(
+                        files, algorithm=algorithm, step=step, function_mode=function_mode, fix_externals=fix_externals
+                    )
+                    with redirect_stdout(None):
+                        app.main(Control(), [])
+
+                    fail_msg = (
+                        f"failed with algorithm={algorithm}, step={step}, function_mode={function_mode}, "
+                        f"fix_externals={fix_externals}"
+                    )
+                    self.assertEqual(app.current_max_bound, 6, fail_msg)
 
     def test_jump_find_minimal_bound(self) -> None:
         """

@@ -3,6 +3,7 @@
 % stepwise strategy (multishot.lp); only the incremental function parts differ: instead of the
 % stepwise new-/update-function parts, two alternative function encodings are provided
 % (self-contained "full" and "extend"), selected at grounding time by the application class.
+% additionally, table constraints are checked for all rows of a jump with the "extend" constraint part.
 #include "multi/new-object.lp".
 #include "multi/new-constraint.lp".
 #include "multi/new-column.lp".
@@ -20,6 +21,7 @@
 #include "multi/inc-unary.lp".
 #include "multi/inc-binary.lp".
 #include "multi/inc-constraint.lp".
+#include "multi/inc-constraint-extend.lp".
 #include "multi/inc-optimize.lp".
 
 #include "multi/fix-external.lp".

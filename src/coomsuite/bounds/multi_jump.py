@@ -24,7 +24,8 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):
 
     Non-incremental program parts are still collected in steps of 1 but only grounded in one batch
     corresponding to the bound increase.
-    Incremental programs parts are only added for the actual next bound.
+    Incremental programs parts are only added for the actual next bound
+    (except for table constraints, whose rows are checked for the whole range of the jump).
 
     For incremental functions there are two possible modes:
     - extend: similar to the approach of grounding stepwise, the value for the new bound is obtained by extending the
@@ -149,22 +150,28 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):
         self._function_grounded_bounds.setdefault(name, set()).add(bound)
         return part
 
-    def _get_incremental_parts_at(self, bound: int) -> list[ProgPart]:
+    def _get_incremental_parts_at(self, start: int, target: int) -> list[ProgPart]:
         """
-        Get all incremental program parts at the given bound (without grounding them).
+        Get all incremental program parts for the jump range [start, target] (without grounding them).
+
+        Most incremental parts are only needed at the target bound. Table constraints are the exception:
+        the rows added at any bound of the range have to be checked, as they are associated with their bound.
 
         Args:
-            bound (int): the bound to get the incremental parts at
+            start (int): the first bound of the jump range
+            target (int): the target bound of the jump range
 
         Returns:
-            List[ProgPart]: the incremental program parts to ground at the given bound
+            List[ProgPart]: the incremental program parts to ground for the jump range
         """
         parts: list[ProgPart] = []
         for exp_type, exp_args in self._incremental_parts:
             if exp_type == "function":
-                parts.append(self._get_function_prog_part(exp_args, bound))
+                parts.append(self._get_function_prog_part(exp_args, target))
+            elif exp_type == "constraint" and exp_args[1].string == "table":
+                parts.append(("incremental_constraint_extend", exp_args + (Number(start - 1), Number(target))))
             else:
-                parts.append(self._get_incremental_prog_part(exp_type, exp_args, bound))
+                parts.append(self._get_incremental_prog_part(exp_type, exp_args, target))
 
         return parts
 
@@ -224,8 +231,8 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):
                     for fact in self._new_processed_facts:
                         non_incremental_parts.append(self._get_prog_part(fact, bound))
 
-            # get the incremental program parts at the target bound only
-            incremental_parts = self._get_incremental_parts_at(target)
+            # get the incremental program parts for the jump range
+            incremental_parts = self._get_incremental_parts_at(start, target)
 
             print(f"Grounding with bound = {self.current_max_bound}")
             # ground all collected non-incremental and incremental (for target bound) parts together
