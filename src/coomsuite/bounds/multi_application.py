@@ -223,6 +223,10 @@ class COOMMultiSolverApp(COOMSolverApp):
         args += (Number(bound),)
         # the name of the program part depends on the type of the expression
         match exp_type:
+            case "constraint" if args[1].string == "table":
+                # table constraints check the rows added in the gap (bound-1, bound]
+                part_name = "incremental_constraint_extend"
+                args = args[:-1] + (Number(bound - 1), Number(bound))
             case "unary" | "constraint" | "minimize" | "maximize":
                 part_name = "incremental_" + exp_type
             case "function":

@@ -5,6 +5,12 @@
     options:
         encodings: true
 
+## Encodings for incremental table constraints
+::: src/coomsuite/encodings/multi/inc-constraint-extend.lp
+    handler: asp
+    options:
+        encodings: true
+
 ## Encodings for incremental boolean constraints
 ::: src/coomsuite/encodings/multi/inc-function.lp
     handler: asp

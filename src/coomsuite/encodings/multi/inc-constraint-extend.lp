@@ -1,7 +1,7 @@
-% incremental table constraint for the jump grounding strategy
+% incremental table constraints
 % all rows added in the gap (prev, cur] (identified by their table_bound/3 fact) are checked
-% this generalizes the table constraint part of the stepwise incremental_constraint from a single bound
-% to an arbitrary gap (boolean constraints are only checked at the max_bound and still use incremental_constraint)
+% the stepwise strategy uses the gap (bound-1, bound], the jump strategy the whole range of a jump
+% (rows of bound 0 are part of the base program and checked there)
 #program incremental_constraint_extend(cons,type,prev,cur).
 constraint(cons,type).
 

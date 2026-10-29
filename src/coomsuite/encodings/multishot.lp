@@ -14,6 +14,7 @@
 #include "multi/inc-unary.lp".
 #include "multi/inc-binary.lp".
 #include "multi/inc-constraint.lp".
+#include "multi/inc-constraint-extend.lp".
 #include "multi/inc-optimize.lp".
 
 #include "multi/fix-external.lp".

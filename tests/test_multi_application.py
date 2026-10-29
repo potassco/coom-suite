@@ -115,11 +115,15 @@ class TestMultiApplication(TestCase):
         name = parse_term('"name"')
         bound = 3
         bound_term = Number(3)
+        boolean = (parse_term('(0,"name")'), String("boolean"))
+        table = (parse_term('(1,"root")'), String("table"))
 
         # test unary, constraint and function
         for exp_type, args, part in [
             ("unary", (name,), ("incremental_unary", (name, bound_term))),
-            ("constraint", (name,), ("incremental_constraint", (name, bound_term))),
+            ("constraint", boolean, ("incremental_constraint", boolean + (bound_term,))),
+            # table constraints check the rows of the gap (bound-1, bound]
+            ("constraint", table, ("incremental_constraint_extend", table + (Number(2), bound_term))),
             # first the function prog parts has prefix new
             ("function", (name,), ("new_incremental_function", (name, bound_term))),
             # then it has prefix update
@@ -851,16 +855,20 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
         """
         files: list[str] = [join("examples", "tests", "preprocess", "unbounded_table.lp")]
         for algorithm, step in [("exponential", 1), ("linear", 3)]:
-            for function_mode in ["extend", "full"]:
-                for fix_externals in [False, True]:
-                    app = COOMMultiSolverAppJump(
+            for fix_externals in [False, True]:
+                # the stepwise application (as reference) and the jump application with both function modes
+                apps = [COOMMultiSolverApp(files, algorithm=algorithm, step=step, fix_externals=fix_externals)] + [
+                    COOMMultiSolverAppJump(
                         files, algorithm=algorithm, step=step, function_mode=function_mode, fix_externals=fix_externals
                     )
+                    for function_mode in ["extend", "full"]
+                ]
+                for app in apps:
                     with redirect_stdout(None):
                         app.main(Control(), [])
 
                     fail_msg = (
-                        f"failed with algorithm={algorithm}, step={step}, function_mode={function_mode}, "
+                        f"failed with {type(app).__name__}, algorithm={algorithm}, step={step}, "
                         f"fix_externals={fix_externals}"
                     )
                     self.assertEqual(app.current_max_bound, 6, fail_msg)

@@ -101,7 +101,7 @@ However, note that each instance of the table constraints itself behaves like a 
 This is used in the evaluation of incremental constraints in the respective [encoding][incremental-table].
 
 [incremental-constraint]: incremental-constraint.md
-[incremental-table]: incremental-constraint.md#encodings
+[incremental-table]: incremental-constraint.md#encodings-for-incremental-table-constraints
 
 ## Multi-Shot Specific Preprocessing
 
