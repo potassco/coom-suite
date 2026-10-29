@@ -3,7 +3,7 @@ Test cases for multishot application class.
 """
 
 from contextlib import redirect_stdout
-from typing import Any, Dict, List, Set, cast
+from typing import Any, cast
 from unittest import TestCase
 from unittest.mock import ANY, Mock, call, create_autospec, patch
 
@@ -14,14 +14,14 @@ from coomsuite.bounds.multi_application import COOMMultiSolverApp, _get_fact_nam
 from coomsuite.bounds.multi_jump import COOMMultiSolverAppJump
 
 
-def empty_groups(target: int, start: int) -> Dict[int, Set[str]]:
+def empty_groups(target: int, start: int) -> dict[int, set[str]]:
     """
     Stub for _preprocess_up_to yielding an empty group for every bound of the range.
     """
     return {bound: set() for bound in range(start, target + 1)}
 
 
-def groups_with_fact(target: int, start: int) -> Dict[int, Set[str]]:
+def groups_with_fact(target: int, start: int) -> dict[int, set[str]]:
     """
     Stub for _preprocess_up_to yielding a (non-incremental) fact at the target bound of the range.
     """
@@ -33,7 +33,7 @@ class TestMultiApplication(TestCase):
     Test cases for multishot application class.
     """
 
-    def assert_control_calls(self, control: Control, expected_calls: List[Any]) -> None:
+    def assert_control_calls(self, control: Control, expected_calls: list[Any]) -> None:
         """
         Check that the calls to the mock control object match the expected calls.
         """
@@ -290,7 +290,7 @@ class TestMultiApplication(TestCase):
         Create a mock control object with a list of return values of solve.
 
         Args:
-            solve_is_sat (List[bool]): list of returns values for solve calls (True/False for SAT/UNSAT)
+            solve_is_sat (list[bool]): list of returns values for solve calls (True/False for SAT/UNSAT)
         """
         control = create_autospec(Control)
 
@@ -423,31 +423,31 @@ class TestMultiApplication(TestCase):
         Test fixing the active externals.
         """
 
-        def ground_fix(lower: int, upper: int) -> Any:
+        def ground_fix(lower: int, upper: int) -> Any:  # noqa: ANN401
             return call.ground([("fix_active", [Number(lower), Number(upper)])])
 
         # without the option nothing is fixed
         app = COOMMultiSolverApp([])
         control = self._get_mock_control([])
         app._fix_active(control, 6)
-        self.assertEqual(control.mock_calls, [])  # type: ignore[attr-defined]
+        self.assertEqual(cast(Mock, control).mock_calls, [])
         self.assertEqual(app._fixed_active_bound, -1)
 
         # with the option all bounds up to the given bound are fixed
         app = COOMMultiSolverApp([], fix_externals=True)
         control = self._get_mock_control([])
         app._fix_active(control, 6)
-        self.assertEqual(control.mock_calls, [ground_fix(0, 6)])  # type: ignore[attr-defined]
+        self.assertEqual(cast(Mock, control).mock_calls, [ground_fix(0, 6)])
         self.assertEqual(app._fixed_active_bound, 6)
 
         # bounds that are already fixed are not fixed again
         app._fix_active(control, 6)
-        self.assertEqual(control.mock_calls, [ground_fix(0, 6)])  # type: ignore[attr-defined]
+        self.assertEqual(cast(Mock, control).mock_calls, [ground_fix(0, 6)])
         self.assertEqual(app._fixed_active_bound, 6)
 
         # a higher bound only fixes the bounds that are not fixed yet
         app._fix_active(control, 8)
-        self.assertEqual(control.mock_calls, [ground_fix(0, 6), ground_fix(7, 8)])  # type: ignore[attr-defined]
+        self.assertEqual(cast(Mock, control).mock_calls, [ground_fix(0, 6), ground_fix(7, 8)])
         self.assertEqual(app._fixed_active_bound, 8)
 
     def test_release_active(self) -> None:
@@ -455,20 +455,20 @@ class TestMultiApplication(TestCase):
         Test releasing the active externals.
         """
 
-        def release(bound: int) -> Any:
+        def release(bound: int) -> Any:  # noqa: ANN401
             return call.release_external(Function("active", [Number(bound)], True))
 
         # without the option nothing is released
         app = COOMMultiSolverApp([])
         control = self._get_mock_control([])
         app._release_active(control, 6, 8)
-        self.assertEqual(control.mock_calls, [])  # type: ignore[attr-defined]
+        self.assertEqual(cast(Mock, control).mock_calls, [])
 
         # with the option all bounds in the range are released
         app = COOMMultiSolverApp([], fix_externals=True)
         control = self._get_mock_control([])
         app._release_active(control, 6, 8)
-        self.assertEqual(control.mock_calls, [release(6), release(7), release(8)])  # type: ignore[attr-defined]
+        self.assertEqual(cast(Mock, control).mock_calls, [release(6), release(7), release(8)])
 
     def test_find_minimal_bound_fix_externals(self) -> None:
         """
@@ -476,10 +476,10 @@ class TestMultiApplication(TestCase):
         """
         app = COOMMultiSolverApp([], fix_externals=True)
 
-        def assign(name: str, bound: int, value: bool) -> Any:
+        def assign(name: str, bound: int, value: bool) -> Any:  # noqa: ANN401
             return call.assign_external(Function(name, [Number(bound)], True), value)
 
-        def release(name: str, bound: int) -> Any:
+        def release(name: str, bound: int) -> Any:  # noqa: ANN401
             return call.release_external(Function(name, [Number(bound)], True))
 
         # solving with bound 6 (unsatisfiable) and then with bound 7 (satisfiable)
@@ -509,7 +509,7 @@ class TestMultiApplication(TestCase):
             app._find_minimal_bound(control)
 
         self.assertEqual(app.current_max_bound, 7)
-        self.assertEqual(control.mock_calls, expected_calls)  # type: ignore[attr-defined]
+        self.assertEqual(cast(Mock, control).mock_calls, expected_calls)
 
     def test_preprocess_bound(self) -> None:
         """
@@ -842,7 +842,7 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
         """
         app = COOMMultiSolverAppJump([], function_mode="full")
 
-        def assign(name: str, bound: int, value: bool) -> Any:
+        def assign(name: str, bound: int, value: bool) -> Any:  # noqa: ANN401
             return call.assign_external(Function(name, [Number(bound)], True), value)
 
         down_6 = [
@@ -878,7 +878,7 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
                 f"sat_values={sat_values}, max_return={max_return}"
             )
             self.assertEqual(app.current_max_bound, max_return, fail_msg)
-            self.assertEqual(control.mock_calls, calls, fail_msg)  # type: ignore[attr-defined]
+            self.assertEqual(cast(Mock, control).mock_calls, calls, fail_msg)
 
     def test_jump_fix_max_bound(self) -> None:
         """
@@ -886,10 +886,10 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
         """
         app = COOMMultiSolverAppJump([], function_mode="full", fix_externals=True)
 
-        def assign(name: str, bound: int, value: bool) -> Any:
+        def assign(name: str, bound: int, value: bool) -> Any:  # noqa: ANN401
             return call.assign_external(Function(name, [Number(bound)], True), value)
 
-        def release(name: str, bound: int) -> Any:
+        def release(name: str, bound: int) -> Any:  # noqa: ANN401
             return call.release_external(Function(name, [Number(bound)], True))
 
         # solving with bound 6 (unsatisfiable) and then with bound 7 (satisfiable)
@@ -917,7 +917,7 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
             app._find_minimal_bound(control)
 
         self.assertEqual(app.current_max_bound, 7)
-        self.assertEqual(control.mock_calls, expected_calls)  # type: ignore[attr-defined]
+        self.assertEqual(cast(Mock, control).mock_calls, expected_calls)
 
     def test_jump_main_control_calls(self) -> None:
         """
@@ -927,10 +927,10 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
 
         control = self._get_mock_control([False, True])
 
-        def assign(name: str, bound: int, value: bool) -> Any:
+        def assign(name: str, bound: int, value: bool) -> Any:  # noqa: ANN401
             return call.assign_external(Function(name, [Number(bound)], True), value)
 
-        def release(name: str, bound: int) -> Any:
+        def release(name: str, bound: int) -> Any:  # noqa: ANN401
             return call.release_external(Function(name, [Number(bound)], True))
 
         with (
@@ -993,5 +993,5 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
                 call.assign_external(Function("max_bound", [Number(0)], True), True),
                 call.solve(),
             ]
-            self.assertEqual(control.mock_calls, expected_calls)  # type: ignore[attr-defined]
+            self.assertEqual(cast(Mock, control).mock_calls, expected_calls)
             mock_find.assert_called_once()

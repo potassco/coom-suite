@@ -3,7 +3,8 @@ Clingo application class for solving COOM configuration problems with multi-shot
 """
 
 import re
-from typing import Any, Dict, List, Optional, Sequence, Set, Tuple
+from collections.abc import Sequence
+from typing import Any
 
 from clingo import Control
 from clingo.symbol import Function, Number, Symbol
@@ -17,7 +18,7 @@ OBJECT_PATH = re.compile(r"root(?:\.[A-Za-z_]\w*\[-?\d+\])*")
 """Matches the object paths (as constructed by the dotpath function of the preprocessing) inside a fact"""
 
 
-class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-instance-attributes
+class COOMMultiSolverAppJump(COOMMultiSolverApp):
     """
     Multishot application that grounds incremental program parts only at the bounds that are actually solved.
 
@@ -33,17 +34,18 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
 
     def __init__(
         self,
-        serialized_facts: List[str],
+        serialized_facts: list[str],
         algorithm: str = "linear",
         initial_bound: int = 0,
-        step: Optional[int] = 1,
-        base: Optional[float] = 2.0,
+        step: int | None = 1,
+        base: float | None = 2.0,
         function_mode: str = "extend",
         fix_externals: bool = False,
         log_level: str = "",
-        options: Optional[Dict[str, Any]] = None,
+        options: dict[str, Any] | None = None,
         istest: bool = False,
-    ):  # pylint: disable=too-many-arguments,too-many-positional-arguments
+    ) -> None:
+        """Initialize the jump multishot application."""
         super().__init__(
             serialized_facts, algorithm, initial_bound, step, base, fix_externals, log_level, options, istest
         )
@@ -53,15 +55,15 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
         self._function_mode: str = function_mode
         """The encoding used for incremental functions ("extend" or "full")"""
 
-        self._function_grounded_bounds: Dict[str, Set[int]] = {}
+        self._function_grounded_bounds: dict[str, set[int]] = {}
         """For each incremental function the set of bounds at which it has already been grounded"""
 
-        self._object_bounds: Dict[str, int] = {}
+        self._object_bounds: dict[str, int] = {}
         """For every object its bound, i.e. the smallest max_bound at which the object exists"""
 
-    def _run_preprocess(self, bound: int) -> Set[str]:
+    def _run_preprocess(self, bound: int) -> set[str]:
         """
-        Extend the preprocessing to also compute the bound of every object
+        Extend the preprocessing to also compute the bound of every object.
 
         The bounds of the objects are needed to group the preprocessed facts by bound
         (see _preprocess_up_to) and are stored in _object_bounds. As they do not correspond
@@ -71,7 +73,7 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
             bound (int): the value of max_bound to preprocess
 
         Returns:
-            Set[str]: the facts resulting from preprocessing (without the bounds of the objects)
+            set[str]: the facts resulting from preprocessing (without the bounds of the objects)
         """
         facts = preprocess(self._serialized_facts, max_bound=bound, discrete=True, multishot=True, object_bounds=True)
 
@@ -101,7 +103,7 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
         """
         return max((self._object_bounds.get(path, 0) for path in OBJECT_PATH.findall(fact)), default=0)
 
-    def _preprocess_up_to(self, target: int, start: int) -> Dict[int, Set[str]]:
+    def _preprocess_up_to(self, target: int, start: int) -> dict[int, set[str]]:
         """
         Preprocess the serialized facts once for the given target bound and group the new facts by bound.
 
@@ -110,18 +112,18 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
             start (int): the first bound that has not been processed yet
 
         Returns:
-            Dict[int, Set[str]]: for every bound in [start, target] the new facts belonging to it
+            dict[int, set[str]]: for every bound in [start, target] the new facts belonging to it
         """
         new_facts = self._preprocess_bound(target)
 
         # group the new facts by the bound they become available at
-        groups: Dict[int, Set[str]] = {bound: set() for bound in range(start, target + 1)}
+        groups: dict[int, set[str]] = {bound: set() for bound in range(start, target + 1)}
         for fact in new_facts:
             groups[min(max(self._bound_of_fact(fact), start), target)].add(fact)
 
         return groups
 
-    def _get_function_prog_part(self, args: Tuple[Symbol, ...], bound: int) -> ProgPart:
+    def _get_function_prog_part(self, args: tuple[Symbol, ...], bound: int) -> ProgPart:
         """
         Get the incremental program part for a function at the given bound.
 
@@ -147,7 +149,7 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
         self._function_grounded_bounds.setdefault(name, set()).add(bound)
         return part
 
-    def _get_incremental_parts_at(self, bound: int) -> List[ProgPart]:
+    def _get_incremental_parts_at(self, bound: int) -> list[ProgPart]:
         """
         Get all incremental program parts at the given bound (without grounding them).
 
@@ -157,7 +159,7 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
         Returns:
             List[ProgPart]: the incremental program parts to ground at the given bound
         """
-        parts: List[ProgPart] = []
+        parts: list[ProgPart] = []
         for exp_type, exp_args in self._incremental_parts:
             if exp_type == "function":
                 parts.append(self._get_function_prog_part(exp_args, bound))
@@ -181,7 +183,7 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
         # we can just keep using the ones for the starting max bound.
         pass
 
-    def main(self, control: Control, files: Sequence[str]) -> None:
+    def main(self, control: Control, files: Sequence[str]) -> None:  # noqa: ARG002
         """
         Main function of the jump multishot application class.
 
@@ -190,7 +192,8 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
 
         Args:
             control (Control): the clingo control object
-        """
+            files (Sequence[str]): files to load into the control
+        """  # noqa: D401
         control.load(get_encoding("encoding-base-clingo-multi-jump.lp"))
         control.load(get_encoding("show-clingo.lp"))
 
@@ -203,7 +206,7 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):  # pylint: disable=too-many-in
             # collect the non-incremental program parts across the whole jump range
             # the parts are still collected per bound (to assign each object its bound),
             # but the grounding of the collected parts is deferred until after the range is processed
-            non_incremental_parts: List[ProgPart] = []
+            non_incremental_parts: list[ProgPart] = []
             # preprocessing is done once for the whole jump range, the resulting facts are grouped by the
             # bound they belong to (the groups are the same as preprocessing every bound separately)
             groups = self._preprocess_up_to(target, start)

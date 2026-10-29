@@ -119,21 +119,21 @@ class COOMMultiSolverApp(COOMSolverApp):
         while self.current_max_bound == self._prev_bound:
             self.current_max_bound = next(self._bound_iter)
 
-    def _run_preprocess(self, bound: int) -> Set[str]:
+    def _run_preprocess(self, bound: int) -> set[str]:
         """
-        Run the preprocessing of the serialized facts for the given bound
+        Run the preprocessing of the serialized facts for the given bound.
 
         Args:
             bound (int): the value of max_bound to preprocess
 
         Returns:
-            Set[str]: the facts resulting from preprocessing
+            set[str]: the facts resulting from preprocessing
         """
         return set(preprocess(self._serialized_facts, max_bound=bound, discrete=True, multishot=True))
 
-    def _preprocess_bound(self, bound: int) -> Set[str]:
+    def _preprocess_bound(self, bound: int) -> set[str]:
         """
-        Preprocess the serialized facts for the given bound and update the fact data structures
+        Preprocess the serialized facts for the given bound and update the fact data structures.
 
         The facts about incremental expressions are not returned but directly added to the internal
         data structures (see _update_incremental_data).
@@ -142,7 +142,7 @@ class COOMMultiSolverApp(COOMSolverApp):
             bound (int): the value of max_bound to preprocess
 
         Returns:
-            Set[str]: the facts that were not processed before
+            set[str]: the facts that were not processed before
         """
         facts = self._run_preprocess(bound)
 
@@ -305,7 +305,7 @@ class COOMMultiSolverApp(COOMSolverApp):
         Update internal data structures keeping track of the incremental sets and their expressions.
 
         Args:
-            incremental_facts (Set[str]): a set of incremental facts to add to the internal incremental data structures
+            incremental_facts (set[str]): a set of incremental facts to add to the internal incremental data structures
         """
         # incremental_facts contains the predicate:
         # incremental(T,N,Args) indicating an expression of type T with name N is incremental
