@@ -1,11 +1,21 @@
-% include(a;b;c).
-var(a;b;c;s).
-set(a;b).
+var(a;b;c).
 
-&sum{1} = a.
-&sum{3} = b.
-&sum{6} = c.
+{include(a;b;c)}.
 
-&sum{ X : set(X)} = s.
+% set(a;b).
 
-include(X) :- &sum{X} = 4, var(X).
+&sum{1} = a :- include(a).
+&sum{3} = b :- include(b).
+&sum{6} = c :- include(c).
+&sum{0} = X :- var(X), not include(X).
+
+&sum{ count(X) } = 1 :- var(X), include(X).
+&sum{ count(X) } = 0 :- var(X), not include(X).
+
+&sum{ count(X) : var(X) } = s.
+
+% include(X) :- &sum{X} = 4, var(X).
+
+#show include/1.
+% &show{ X : var(X) }.
+&show{ s }.

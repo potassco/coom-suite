@@ -153,7 +153,8 @@ class COOMSolverApp(Application):
             control.load(show)
             control.ground()
             control.solve()
-
+        elif self._options["solver"] == "clingcon":
+            pass
         elif self._options["solver"] == "flingo":
             self._propagator.register(control)
             self._propagator.configure("max-int", str(self.config.max_int))

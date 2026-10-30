@@ -6,5 +6,7 @@
 
 &dom{Min..Max} = X :- include(X), type(X,T), integer(T), range(T,Min,Max).
 
+&sum{0} = X :- not include(X), type(X,T), integer(T).
+
 % Auxiliary values for numbers.
 &sum{N} = Path :- number(Path,N).

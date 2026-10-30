@@ -14,7 +14,7 @@ from .utils.logging import get_logger
 
 log = get_logger("main")
 
-SOLVERS = ["clingo", "flingo"]
+SOLVERS = ["clingo", "flingo", "clingcon", "clingo-lpx"]
 
 
 def write_facts(facts: str, outfile: str) -> None:  # nocoverage

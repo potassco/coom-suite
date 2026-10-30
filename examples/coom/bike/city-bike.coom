@@ -3,11 +3,11 @@
 // see Baumeister et al.: Towards Industrial-scale Product Configuration (2025).
 
 product {
-	        Color   color
-	0..1    Basket  basket
-            Saddle  saddle
-	        Wheel   frontWheel
-	        Wheel   rearWheel
+	//         Color   color
+	// 0..1    Basket  basket
+    //         Saddle  saddle
+	//         Wheel   frontWheel
+	//         Wheel   rearWheel
             Carrier carrier
 }
 
@@ -22,7 +22,7 @@ structure Carrier {
 
 structure Bag {
 	Capacity capacity
-	Material material
+	// Material material
 }
 
 enumeration Color {

@@ -1,15 +1,16 @@
-% Evaluate functions in flingo (aggregates)
-% &sum{X} = aggregate_sum(P,X) :- set(P,X), include(X).
+% Evaluate functions in clingcon (aggregates)
+&sum{ count(X) } = 1 :- type(X,T),     include(X).
+&sum{ count(X) } = 0 :- type(X,T), not include(X).
 
-% &sum{ 1,X : set(P,X), include(X) } = F :- function(F,"count",P).
-&sum{   X : set(P,X), include(X) } = F :- function(F,"sum",  P).
+&sum{ count(X) : set(P,X) } = F :- function(F,"count",P).
+&sum{       X  : set(P,X) } = F :- function(F,"sum",  P).
 
 % &sum{ 1,X : set(P,X), include(X) } = F :- function(F,"count",P).
 % &sum{   X : set(P,X), include(X) } = F :- function(F,"sum",  P).
 % &min{   X : set(P,X), include(X) } = F :- function(F,"min",  P).
 % &max{   X : set(P,X), include(X) } = F :- function(F,"max",  P).
 
-% Arithmetics in flingo
+% Arithmetics in clingcon
 &sum{ XL;  XR } = F :- binary(F,XL,"+",XR).
 &sum{ XL; -XR } = F :- binary(F,XL,"-",XR).
 

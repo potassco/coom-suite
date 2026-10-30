@@ -1,11 +1,11 @@
 % Definedness of formulas
-defined(X) :- value(X,_).
+% defined(X) :- value(X,_).
 defined(F) :- number(F,_).
 defined(F) :- constant(F).
 defined(X) :- include(X).
 defined(F) :- binary(F,XL,_,XR), defined(XL), defined(XR).
 defined(F) :- unary(F,_,F'), defined(F').
-#show defined/1.
+
 % Satisfaction of binary comparison relations
 satisfied(F) :- binary(F,XL,"=", XR), VL =  VR, value(XL,VL), value(XR,VR).
 satisfied(F) :- binary(F,XL,"!=",XR), VL != VR, value(XL,VL), value(XR,VR).

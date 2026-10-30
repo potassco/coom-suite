@@ -43,7 +43,7 @@ type("root.frontWheel[0]","Wheel").
 type("root.rearWheel[0]","Wheel").
 type("root.carrier[0]","Carrier").
 type("root.frame[0]","Frame").
-type("root.color[0]","Color").
+% type("root.color[0]","Color").
 type("root.frame[0].bag[0]","Bag").
 type("root.frame[0].bag[1]","Bag").
 type("root.carrier[0].bag[0]","Bag").
@@ -157,7 +157,7 @@ constraint(("root.frontWheel",1),"lowerbound").
 constraint(("root.rearWheel",1),"lowerbound").
 constraint(("root.carrier",1),"lowerbound").
 constraint(("root.frame",1),"lowerbound").
-constraint(("root.color",1),"lowerbound").
+% constraint(("root.color",1),"lowerbound").
 constraint(("root.carrier[0].bag",0),"lowerbound").
 constraint(("root.frame[0].bag",0),"lowerbound").
 constraint(("root.frame[0].bag[0].capacity",1),"lowerbound").
@@ -191,17 +191,17 @@ constraint(("Capacity","root.frame[0].bag[1].capacity[0]"),"table").
 constraint(("Capacity","root.frame[0].bag[0].capacity[0]"),"table").
 constraint(("Wheel","root.frontWheel[0]"),"table").
 constraint(("Wheel","root.rearWheel[0]"),"table").
-constraint((5,"!root.color[0]=Red||root.frontWheel[0].size[0]=20"),"boolean").
-constraint((6,"!root.frame[0].bag[0].material[0]=Leather||root.frame[0].bag[0].capacity[0]=B10"),"boolean").
-constraint((6,"!root.frame[0].bag[1].material[0]=Leather||root.frame[0].bag[1].capacity[0]=B10"),"boolean").
-constraint((6,"!root.carrier[0].bag[0].material[0]=Leather||root.carrier[0].bag[0].capacity[0]=B10"),"boolean").
-constraint((6,"!root.carrier[0].bag[1].material[0]=Leather||root.carrier[0].bag[1].capacity[0]=B10"),"boolean").
-constraint((6,"!root.carrier[0].bag[2].material[0]=Leather||root.carrier[0].bag[2].capacity[0]=B10"),"boolean").
-constraint((0,"count(root.carrier.bag)+count(root.frame.bag)<=4"),"boolean").
+% constraint((5,"!root.color[0]=Red||root.frontWheel[0].size[0]=20"),"boolean").
+% constraint((6,"!root.frame[0].bag[0].material[0]=Leather||root.frame[0].bag[0].capacity[0]=B10"),"boolean").
+% constraint((6,"!root.frame[0].bag[1].material[0]=Leather||root.frame[0].bag[1].capacity[0]=B10"),"boolean").
+% constraint((6,"!root.carrier[0].bag[0].material[0]=Leather||root.carrier[0].bag[0].capacity[0]=B10"),"boolean").
+% constraint((6,"!root.carrier[0].bag[1].material[0]=Leather||root.carrier[0].bag[1].capacity[0]=B10"),"boolean").
+% constraint((6,"!root.carrier[0].bag[2].material[0]=Leather||root.carrier[0].bag[2].capacity[0]=B10"),"boolean").
+% constraint((0,"count(root.carrier.bag)+count(root.frame.bag)<=4"),"boolean").
 constraint((1,"root.totalWeight[0]=root.frontWheel[0].weight[0]+root.rearWheel[0].weight[0]+sum(root.carrier.bag.capacity.weight)+sum(root.frame.bag.capacity.weight)"),"boolean").
-constraint((2,"root.totalWeight[0]<=root.maxWeight[0]*1000"),"boolean").
-constraint((3,"root.totalVolume[0]=sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)"),"boolean").
-constraint((4,"root.totalVolume[0]>=root.requestedVolume[0]"),"boolean").
+% constraint((2,"root.totalWeight[0]<=root.maxWeight[0]*1000"),"boolean").
+% constraint((3,"root.totalVolume[0]=sum(root.carrier.bag.capacity.volume)+sum(root.frame.bag.capacity.volume)"),"boolean").
+% constraint((4,"root.totalVolume[0]>=root.requestedVolume[0]"),"boolean").
 function("count(root.carrier.bag)","count","root.carrier.bag").
 function("count(root.frame.bag)","count","root.frame.bag").
 function("sum(root.carrier.bag.capacity.weight)","sum","root.carrier.bag.capacity.weight").
