@@ -282,7 +282,7 @@ class COOMMultiSolverApp(COOMSolverApp):
         Get the program part belonging to a fact.
 
         Args:
-            fact (str): The fact representet as a string (with trailing '.')
+            fact (str): The fact represented as a string (with trailing '.')
             bound (int): the current bound to use as parameter of the program part
 
         Returns:
@@ -526,7 +526,7 @@ class COOMMultiSolverApp(COOMSolverApp):
         """
         Main function of the multishot application class.
 
-        After returning the attribute max_bound is the minimal bound for which the instance is satisfiable.
+        After returning the attribute current_max_bound is the minimal bound for which the instance is satisfiable.
 
         Args:
             control (Control): the clingo control object

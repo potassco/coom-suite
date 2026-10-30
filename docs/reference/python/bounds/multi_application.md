@@ -11,7 +11,7 @@ Control structure for the [multi-shot encoding] to solve instances with unbounde
         members:
         - __init__
         - main
-        - max_bound
+        - current_max_bound
 
 ## Jump grounding
 
@@ -54,7 +54,7 @@ In the multi-shot application there are then several functions that need to be u
 For [jump grounding](#jump-grounding) the subclass `COOMMultiSolverAppJump` may need to be updated as well (see below).
 
 First, `_update_incremental_data` updates internal data structures to store information from the [multi-shot specific preprocessing][multi-preprocessing].
-However, as long as any new facts produced by the preprocessing follow the current argument structure of `incremental/4` no changes to `_update_incremental_data` should be necessary.
+However, as long as any new facts produced by the preprocessing follow the current argument structure of `incremental/3` no changes to `_update_incremental_data` should be necessary.
 
 [multi-preprocessing]: ../../encodings/multishot/preprocessing.md
 

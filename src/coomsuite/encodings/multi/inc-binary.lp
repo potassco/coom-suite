@@ -1,5 +1,5 @@
 % for incremental binary expressions we have to distinguish whether both sub-expressions or only one are incremental as well
-% (note that at least one of the sub-expressions needs to incremental)
+% (note that at least one of the sub-expressions needs to be incremental)
 
 % case 1: both sub-expressions are incremental
 #program incremental_binary(f,xl,op,xr,bound).
@@ -27,7 +27,7 @@ satisfied(f,bound) :- binary(f,xl,op,xr), VL <= VR, value(xl,VL,bound), value(xr
 satisfied(f,bound) :- binary(f,xl,op,xr), 1 <= { satisfied(xl,bound); satisfied(xr,bound) }, op = "||", max_bound(bound).
 satisfied(f,bound) :- binary(f,xl,op,xr), satisfied(xl,bound), satisfied(xr,bound), op = "&&", max_bound(bound).
 
-% case 2: for the case that only on sub-expression is incremental we have to distinguish whether this is the left or right one
+% case 2: for the case that only one sub-expression is incremental we have to distinguish whether this is the left or right one
 
 % 2.a: only the left sub-expression is incremental
 #program incremental_binary_l(f,xl,op,xr,bound).

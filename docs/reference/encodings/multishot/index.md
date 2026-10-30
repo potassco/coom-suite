@@ -5,8 +5,7 @@ These encodings mostly just reorganize the main [COOM encoding][coom-encoding] i
 
 For example usage information see the [Cargo bike example][cargo-bike].
 
-[coom-encoding]: ../index.md
-[cargo-bike]: ../../examples/cargo-bike.md
+[coom-encoding]: ../base.md
 
 We start by explaining some general concepts using a simplified version of the [Cargo bike][cargo-bike] example.
 
@@ -35,7 +34,7 @@ behavior Bag {
 
 ## Preprocessing
 
-The preprocessing removes the cardinality on `Bags` by instatiating a number of bags based on the `max_bound` parameter of the preprocessing encoding.
+The preprocessing removes the cardinality on `Bag` by instantiating a number of bags based on the `max_bound` parameter of the preprocessing encoding.
 Using one of the `bounds` strategies we step-wise increase this parameter until a solution is found.
 
 To avoid regrounding and resolving the same part of a problem over and over, we employ multi-shot solving here:
