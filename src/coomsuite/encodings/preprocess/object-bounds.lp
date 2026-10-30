@@ -20,3 +20,5 @@ obj_level(X,M) :- type_aux(X,_), X=(_,(P,_)), obj_level(P,L), obj_inc(X,M), M > 
 obj_bound(@fmt_dotpath(X),L) :- type_aux(X,_), obj_level(X,L).
 
 #show obj_bound/2.
+
+#include "doc-object-bounds.lp".

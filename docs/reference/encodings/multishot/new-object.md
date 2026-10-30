@@ -10,3 +10,19 @@ The inclusion of an object introduced at bound `n` is then only possible if `act
     handler: asp
     options:
         encodings: true
+
+## Constants and numbers
+
+The program parts for `constant` and `number` facts only add the respective fact.
+Usually these facts are already produced at bound 0, but they can also be new at later bounds,
+e.g. `number("1",1)` is produced for the first local constraint of an object, which may be added at a later bound.
+
+::: src/coomsuite/encodings/multi/new-constant.lp
+    handler: asp
+    options:
+        encodings: true
+
+::: src/coomsuite/encodings/multi/new-number.lp
+    handler: asp
+    options:
+        encodings: true

@@ -25,3 +25,9 @@ In Python this encoding is enabled with `preprocess(..., object_bounds=True)`.
     handler: asp
     options:
         encodings: true
+        predicate_table: true
+        predicate_info:
+            include_undocumented: false
+        glossary:
+            include_references: false
+        start_level: 2

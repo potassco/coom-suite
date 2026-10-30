@@ -41,3 +41,13 @@ for [jump grounding][jump-grounding] it covers the whole jump.
     handler: asp
     options:
         encodings: true
+
+## Encodings for incremental optimization statements
+
+Optimization statements over incremental expressions only take the value at the current bound into account
+(using the `max_bound/1` external).
+
+::: src/coomsuite/encodings/multi/inc-optimize.lp
+    handler: asp
+    options:
+        encodings: true

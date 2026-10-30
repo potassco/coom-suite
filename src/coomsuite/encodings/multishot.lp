@@ -18,3 +18,5 @@
 #include "multi/inc-optimize.lp".
 
 #include "multi/fix-external.lp".
+
+#include "multi/doc.lp".
