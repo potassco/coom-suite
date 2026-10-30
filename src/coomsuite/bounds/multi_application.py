@@ -307,6 +307,7 @@ class COOMMultiSolverApp(COOMSolverApp):
             "constant",
             "minimize",
             "maximize",
+            "default",
         ]:
             raise ValueError(f"unknown new fact (no corresponding program part exists): {fact}")  # nocoverage
 

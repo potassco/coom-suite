@@ -26,3 +26,13 @@ e.g. `number("1",1)` is produced for the first local constraint of an object, wh
     handler: asp
     options:
         encodings: true
+
+## Defaults
+
+The program part for `default` facts adds the default value of an object (unless the user set a value for it).
+Defaults of objects added at later bounds are produced at the bound of the object.
+
+::: src/coomsuite/encodings/multi/new-default.lp
+    handler: asp
+    options:
+        encodings: true
