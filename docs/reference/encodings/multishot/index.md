@@ -109,6 +109,72 @@ The classification of which constraints and expressions are incremental is handl
 
 [multi-preprocessing]: preprocessing.md
 
+## Grounding Strategies
+
+When the `max_bound` is increased by more than one (e.g. with `exponential` search or a linear `--step` larger than 1),
+there are different ways to ground the bounds that were skipped.
+The strategy is selected with the `--grounding` option (only used together with `--multishot`).
+
+### Stepwise grounding
+
+The default strategy `stepwise` preprocesses and grounds every bound between the previous and the new `max_bound` individually.
+All program parts (including the incremental ones) are grounded for each of these bounds,
+even though solving only takes place at the new `max_bound`.
+
+### Jump grounding
+
+The strategies `jump-extend` and `jump-full` only ground incremental program parts at the bounds that are actually solved.
+
+The preprocessing is done once for the new `max_bound`.
+Its facts are then grouped by the bound they belong to, i.e. the bound at which all objects a fact refers to exist.
+For this, the [multi-shot specific preprocessing][multi-preprocessing] is extended by an
+[encoding computing the bound of each object][object-bounds] (`obj_bound/2`).
+This grouping yields the same facts per bound as preprocessing every bound separately.
+Note that the bound of an object is the maximum of the bounds of all objects on its path to the root,
+e.g. for nested unbounded cardinalities an object may only appear at a larger bound than its own index suggests.
+
+The non-incremental program parts are still added with their own bound
+(so that the `active/1` externals work as for stepwise grounding),
+but are grounded together in one batch.
+
+The incremental program parts are only grounded for the new `max_bound`.
+The exception are [incremental table constraints][incremental-table]:
+the table rows added at any bound in the range of the jump are checked.
+
+For incremental functions (aggregates) there are two variants:
+
+- `jump-extend` reuses the value of the function at the previously solved bound
+  and only aggregates over the objects added since then (as is done in stepwise grounding for a gap of one).
+- `jump-full` does not reuse previous values and recomputes the full aggregate at each solved bound.
+
+The first time a function is grounded, the full aggregate is computed in both cases.
+
+During the search for the minimal bound (once a satisfiable bound was found) the `max_bound` external stays fixed at the
+satisfiable bound, i.e. no additional rules for smaller bounds are grounded.
+As objects of inactive bounds can not be included, the incremental expressions evaluated for the larger `max_bound`
+give the same results as they would for the smaller bound.
+
+[object-bounds]: preprocessing.md#object-bounds
+
+### Fixing externals
+
+With the option `--fix-externals` the externals whose value can not change anymore are fixed permanently,
+i.e. they lose their status as externals:
+
+- Once solving with a bound `b` is unsatisfiable, no later solve call uses a smaller bound.
+  All `active(n)` externals with `n <= b` are thus added as facts.
+- Once solving with a bound `b` is satisfiable, no later solve call uses a larger bound.
+  All `active(n)` externals with `n > b` are released (and thus permanently false).
+- For jump grounding the `max_bound` external is fixed when the search for the minimal bound starts
+  (as it stays fixed from then on, see above).
+
+Independent of this option, the `max_bound` external of the previous solve call is always released (instead of being set to false).
+
+::: src/coomsuite/encodings/multi/fix-external.lp
+    handler: asp
+    options:
+        encodings: true
+
 ## Extending the Input Language
 
 This section gives a general workflow for updating the multishot encoding for extensions of the input language.
@@ -123,6 +189,11 @@ This is the case if the new predicate produces incremental constraints or may be
 The preprocessing then needs to be extended to detect those cases.
 (Here it is important to keep the edge case of a cardinality `0..*` with `max_bound=0` in mind.)
 It is then also necessary to add new incremental program parts analogous to the [new incremental constraint][incremental-constraint] and [new incremental table][incremental-table] encodings.
+To support [jump grounding](#jump-grounding), incremental program parts that depend on objects added at earlier bounds
+should take the range of bounds `(prev, cur]` as arguments instead of a single bound
+(as is the case for `incremental_function_extend` and `incremental_table_constraint`).
+If the extension introduces new ways for objects to depend on `max_bound`,
+the [computation of object bounds][object-bounds] also needs to be updated.
 
 [multishot-preprocessing]: #multi-shot-specific-preprocessing
 

@@ -38,7 +38,20 @@ coomsuite solve examples/coom/bike/cargo-bike.coom -u examples/coom/bike/user-in
     the COOM suite also includes a [multi-shot encoding][multi-shot].
     It can be used by adding the option `--multishot`.
 
+    The option `--grounding` selects how bounds are grounded when the `max_bound` is increased by more than one:
+    `stepwise` (default) grounds every bound in between, while `jump-extend` and `jump-full`
+    only ground the incremental parts of the problem at the bounds that are actually solved
+    (see [grounding strategies][grounding]).
+    With the option `--fix-externals` externals whose value can not change anymore are fixed permanently
+    (see [fixing externals][fix-externals]).
+
+    ```console
+    coomsuite solve examples/coom/bike/cargo-bike.coom -u examples/coom/bike/user-input-cargo.coom --bounds exponential --multishot --grounding jump-full --fix-externals
+    ```
+
 [multi-shot]: ../reference/encodings/multishot/index.md
+[grounding]: ../reference/encodings/multishot/index.md#grounding-strategies
+[fix-externals]: ../reference/encodings/multishot/index.md#fixing-externals
 
 ## COOM model
 
