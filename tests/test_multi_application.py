@@ -492,7 +492,6 @@ class TestMultiApplication(TestCase):
         """
         Test computing the minimal bound with fixing of externals.
         """
-        app = COOMMultiSolverApp([], fix_externals=True)
 
         def assign(name: str, bound: int, value: bool) -> Any:  # noqa: ANN401
             return call.assign_external(Function(name, [Number(bound)], True), value)
@@ -500,34 +499,60 @@ class TestMultiApplication(TestCase):
         def release(name: str, bound: int) -> Any:  # noqa: ANN401
             return call.release_external(Function(name, [Number(bound)], True))
 
+        # externals are only fixed before another solve call (changing the program after the last one resets its result)
         # solving with bound 6 (unsatisfiable) and then with bound 7 (satisfiable)
-        expected_calls = [
+        unsat_sat = [
             # solve with bound 6
             assign("active", 7, False),
             assign("active", 8, False),
             release("max_bound", 8),
             assign("max_bound", 6, True),
             call.solve(),
-            # unsatisfiable: all bounds up to 6 stay active
-            call.ground([("fix_active", [Number(0), Number(6)])]),
+            # unsatisfiable: all bounds up to 6 stay active (bounds up to 4 are already fixed)
+            call.ground([("fix_active", [Number(5), Number(6)])]),
             # solve with bound 7
             assign("active", 7, True),
             release("max_bound", 6),
             assign("max_bound", 7, True),
             call.solve(),
-            # satisfiable: bound 8 is never active again
+            # satisfiable: bound 8 is not released as there is no further solve call
+        ]
+        # solving with bound 6 (satisfiable) and then with bound 5 (unsatisfiable)
+        sat_unsat = [
+            # solve with bound 6
+            assign("active", 7, False),
+            assign("active", 8, False),
+            release("max_bound", 8),
+            assign("max_bound", 6, True),
+            call.solve(),
+            # satisfiable: bounds 7 and 8 are never active again
+            release("active", 7),
             release("active", 8),
+            # solve with bound 5
+            assign("active", 6, False),
+            release("max_bound", 6),
+            assign("max_bound", 5, True),
+            call.solve(),
+            # unsatisfiable: bound 5 is not fixed as there is no further solve call
         ]
 
-        app._prev_bound = 4
-        app.current_max_bound = 8
-        control = self._get_mock_control([False, True])
+        for sat_values, expected_calls, max_return in [
+            ([False, True], unsat_sat, 7),
+            ([True, False], sat_unsat, 6),
+        ]:
+            app = COOMMultiSolverApp([], fix_externals=True)
+            app._prev_bound = 4
+            app.current_max_bound = 8
+            # the active externals up to the unsatisfiable bound 4 were fixed before converging
+            app._fixed_active_bound = 4
+            control = self._get_mock_control(sat_values)
 
-        with redirect_stdout(None):
-            app._find_minimal_bound(control)
+            with redirect_stdout(None):
+                app._find_minimal_bound(control)
 
-        self.assertEqual(app.current_max_bound, 7)
-        self.assertEqual(cast(Mock, control).mock_calls, expected_calls)
+            fail_msg = f"failed with sat_values={sat_values}"
+            self.assertEqual(app.current_max_bound, max_return, fail_msg)
+            self.assertEqual(cast(Mock, control).mock_calls, expected_calls, fail_msg)
 
     def test_preprocess_bound(self) -> None:
         """
@@ -989,7 +1014,6 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
         """
         Test fixing the max bound external during converge of the jump multishot application class.
         """
-        app = COOMMultiSolverAppJump([], function_mode="full", fix_externals=True)
 
         def assign(name: str, bound: int, value: bool) -> Any:  # noqa: ANN401
             return call.assign_external(Function(name, [Number(bound)], True), value)
@@ -997,32 +1021,40 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
         def release(name: str, bound: int) -> Any:  # noqa: ANN401
             return call.release_external(Function(name, [Number(bound)], True))
 
-        # solving with bound 6 (unsatisfiable) and then with bound 7 (satisfiable)
-        expected_calls = [
-            # the max bound is fixed once, before the first solve of converge
-            call.ground([("fix_max_bound", [Number(8)])]),
+        # solving with bound 6 (satisfiable) and then with bound 5 (unsatisfiable)
+        sat_unsat = [
             # solve with bound 6 (max_bound stays at 8 for the jump strategy)
             assign("active", 7, False),
             assign("active", 8, False),
+            # the max bound is fixed once, before the first solve of converge
+            call.ground([("fix_max_bound", [Number(8)])]),
             call.solve(),
-            # unsatisfiable: all bounds up to 6 stay active
-            call.ground([("fix_active", [Number(0), Number(6)])]),
-            # solve with bound 7 (the max bound is not fixed again)
-            assign("active", 7, True),
-            call.solve(),
-            # satisfiable: bound 8 is never active again
+            # satisfiable: bounds 7 and 8 are never active again
+            release("active", 7),
             release("active", 8),
+            # solve with bound 5 (the max bound is not fixed again)
+            assign("active", 6, False),
+            call.solve(),
         ]
 
-        app._prev_bound = 4
-        app.current_max_bound = 8
-        control = self._get_mock_control([False, True])
+        for prev_init, max_init, sat_values, expected_calls, max_return in [
+            # the minimal bound is already found: no solve call follows, so the max bound is not fixed
+            (0, 1, [], [], 1),
+            (4, 8, [True, False], sat_unsat, 6),
+        ]:
+            app = COOMMultiSolverAppJump([], function_mode="full", fix_externals=True)
+            app._prev_bound = prev_init
+            app.current_max_bound = max_init
+            # the active externals up to the unsatisfiable bound were fixed before converging
+            app._fixed_active_bound = prev_init
+            control = self._get_mock_control(sat_values)
 
-        with redirect_stdout(None):
-            app._find_minimal_bound(control)
+            with redirect_stdout(None):
+                app._find_minimal_bound(control)
 
-        self.assertEqual(app.current_max_bound, 7)
-        self.assertEqual(cast(Mock, control).mock_calls, expected_calls)
+            fail_msg = f"failed with prev_init={prev_init}, max_init={max_init}, sat_values={sat_values}"
+            self.assertEqual(app.current_max_bound, max_return, fail_msg)
+            self.assertEqual(cast(Mock, control).mock_calls, expected_calls, fail_msg)
 
     def test_jump_main_control_calls(self) -> None:
         """

@@ -82,7 +82,7 @@ class BoundSolver:
         Compute the minimal bound for the problem.
         """
         # multi shot solving
-        if use_multishot:  # nocoverage
+        if use_multishot:
             # the grounding strategy determines the application class ("jump-extend"/"jump-full" set the function mode)
             app_class = (
                 COOMMultiSolverApp
@@ -102,10 +102,13 @@ class BoundSolver:
                 },
             )
 
-            clingo_main(
+            ret = clingo_main(
                 multishot_solver,
                 self.clingo_args,
             )
+            if ret_dict.get(ret) not in ["SAT", "OPT", "UNSAT"]:
+                print(f"\n Some error occured during multishot solving\n Exit code: {ret}\n")
+                return None
 
             return multishot_solver.current_max_bound
 

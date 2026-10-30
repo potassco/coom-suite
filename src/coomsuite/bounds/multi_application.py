@@ -434,6 +434,13 @@ class COOMMultiSolverApp(COOMSolverApp):
             print("\nOptimal bound not yet found")
             print(f"Solving with bound = {current_bound}\n")
 
+            # fix the externals whose value can not change anymore:
+            # all bounds up to the unsat bound stay active, all bounds above the sat bound are never active again
+            # (only done before another solve call, as changing the program after the last solve call resets its result)
+            self._fix_active(control, unsat_bound)
+            self._release_active(control, sat_bound + 1, released_bound)
+            released_bound = sat_bound
+
             # set active externals
             if current_bound < last_bound:
                 # if the bound we want to solve at is smaller than the last bound,
@@ -454,13 +461,8 @@ class COOMMultiSolverApp(COOMSolverApp):
             # update sat/unsat bound depending on result of solve
             if ret.satisfiable:
                 sat_bound = current_bound
-                # all bounds above the new sat bound are never active again
-                self._release_active(control, sat_bound + 1, released_bound)
-                released_bound = sat_bound
             else:
                 unsat_bound = current_bound
-                # all bounds up to the new unsat bound stay active
-                self._fix_active(control, unsat_bound)
 
     def _compute_prog_parts(self, bound: int) -> list[ProgPart]:
         """

@@ -156,20 +156,14 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):
 
         return parts
 
-    def _find_minimal_bound(self, control: Control) -> None:
-        """
-        Extend find_minimal_bound by permanently fixing the max_bound (if using fix_externals option).
-        """
-        if self._fix_externals:
-            control.ground([("fix_max_bound", [Number(self.current_max_bound)])])
-
-        super()._find_minimal_bound(control)
-
-    def _converge_update_max_bound(self, control: Control, last_bound: int, current_bound: int) -> None:
+    def _converge_update_max_bound(self, control: Control, last_bound: int, current_bound: int) -> None:  # noqa: ARG002
         # In the jump approach the max_bound stays fixed at the value when starting converge.
         # Even though we do not have specific rules for the smaller max bounds,
         # we can just keep using the ones for the starting max bound.
-        pass
+        # With fix_externals it is fixed permanently before the first solve call of converge
+        # (only then last_bound is the starting max bound, all later bounds are smaller).
+        if self._fix_externals and last_bound == self.current_max_bound:
+            control.ground([("fix_max_bound", [Number(last_bound)])])
 
     def main(self, control: Control, files: Sequence[str]) -> None:  # noqa: ARG002
         """
