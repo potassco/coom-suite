@@ -208,7 +208,7 @@ satisfiable bound, i.e. no additional rules for smaller bounds are grounded.
 As objects of inactive bounds can not be included, the incremental expressions evaluated for the larger `max_bound`
 give the same results as they would for the smaller bound.
 
-[object-bounds]: preprocessing.md#object-bounds
+[object-bounds]: object-bounds.md
 
 ### Fixing externals
 

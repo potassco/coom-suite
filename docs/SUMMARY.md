@@ -22,6 +22,7 @@
         * Multi-shot Encodings
             * [Multi-shot Encodings](reference/encodings/multishot/index.md)
             * [Multi-shot Preprocessing](reference/encodings/multishot/preprocessing.md)
+            * [Object Bounds](reference/encodings/multishot/object-bounds.md)
             * [New Object Encodings](reference/encodings/multishot/new-object.md)
             * [New Simple Constraint Encodings](reference/encodings/multishot/simple-constraint.md)
             * [New Incremental Constraint Encodings](reference/encodings/multishot/incremental-constraint.md)
