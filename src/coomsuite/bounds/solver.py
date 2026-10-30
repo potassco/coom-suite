@@ -2,12 +2,15 @@
 Contains a module for solving problems with open bounds/cardinalities.
 """
 
+from functools import partial
+
 from clingo.application import clingo_main
 
 from coomsuite import solve
 
 from . import get_bound_iter, next_bound_converge
 from .multi_application import COOMMultiSolverApp
+from .multi_jump import COOMMultiSolverAppJump
 
 # Reference for exit code: https://github.com/potassco/clasp/issues/42#issuecomment-459981038
 ret_dict = {0: "UNKNOWN", 1: "INTERRUPT", 10: "SAT", 20: "UNSAT", 30: "OPT", 33: "MEMORY", 65: "ERROR", 128: "NO_RUN"}
@@ -72,28 +75,40 @@ class BoundSolver:
         step: int | None = 1,
         base: float | None = 2.0,
         use_multishot: bool = False,
+        grounding: str = "stepwise",
+        fix_externals: bool = False,
     ) -> int | None:
         """
         Compute the minimal bound for the problem.
         """
         # multi shot solving
-        if use_multishot:  # nocoverage
-            multishot_solver = COOMMultiSolverApp(
+        if use_multishot:
+            # the grounding strategy determines the application class ("jump-extend"/"jump-full" set the function mode)
+            app_class = (
+                COOMMultiSolverApp
+                if grounding == "stepwise"
+                else partial(COOMMultiSolverAppJump, function_mode=grounding.removeprefix("jump-"))
+            )
+            multishot_solver = app_class(
                 serialized_facts=self.facts,
                 algorithm=algorithm,
                 initial_bound=initial_bound,
                 step=step,
                 base=base,
+                fix_externals=fix_externals,
                 options={
                     "solver": self.solver,
                     "output_format": self.output_format,
                 },
             )
 
-            clingo_main(
+            ret = clingo_main(
                 multishot_solver,
                 self.clingo_args,
             )
+            if ret_dict.get(ret) not in ["SAT", "OPT", "UNSAT"]:
+                print(f"\n Some error occured during multishot solving\n Exit code: {ret}\n")
+                return None
 
             return multishot_solver.current_max_bound
 

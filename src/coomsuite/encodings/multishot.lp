@@ -8,10 +8,16 @@
 #include "multi/new-constant.lp".
 #include "multi/new-number.lp".
 #include "multi/new-optimize.lp".
+#include "multi/new-default.lp".
 
 #defined value/3.
 #include "multi/inc-function.lp".
 #include "multi/inc-unary.lp".
 #include "multi/inc-binary.lp".
-#include "multi/inc-constraint.lp".
+#include "multi/inc-boolean-constraint.lp".
+#include "multi/inc-table-constraint.lp".
 #include "multi/inc-optimize.lp".
+
+#include "multi/fix-external.lp".
+
+#include "multi/doc.lp".

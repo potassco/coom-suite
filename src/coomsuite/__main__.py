@@ -61,8 +61,12 @@ def main() -> None:
                     step=args.step,
                     base=args.base,
                     use_multishot=args.multishot,
+                    grounding=args.grounding,
+                    fix_externals=args.fix_externals,
                 )
-                if optimize and bound is not None:
+                if bound is None:
+                    sys.exit(1)
+                if optimize:
                     print(f"\n Optimizing with minimal upper bound {bound}.")
                     solve([temp_file], args.solver, bound, solver_args, args.output)
                     print(f"\n The minimal upper bound is {bound}.")

@@ -72,6 +72,7 @@ class COOMMultiSolverApp(COOMSolverApp):
         initial_bound: int = 0,
         step: int | None = 1,
         base: float | None = 2.0,
+        fix_externals: bool = False,
         log_level: str = "",
         options: dict[str, Any] | None = None,
         istest: bool = False,
@@ -93,6 +94,11 @@ class COOMMultiSolverApp(COOMSolverApp):
         self._prev_bound: int | None = None
         """The previous max bound"""
 
+        self._fix_externals: bool = fix_externals
+        """Whether externals whose value cannot change anymore are fixed (and lose their external status)"""
+        self._fixed_active_bound: int = -1
+        """The highest bound for which the active external was fixed to true"""
+
         self._new_processed_facts: set[str] = set()
         """Processed facts added by current preprocessing step"""
         self._processed_facts: set[str] = set()
@@ -102,8 +108,8 @@ class COOMMultiSolverApp(COOMSolverApp):
         """The set of all incremental program parts"""
         self._incremental_expressions: set[str] = set()
         """The set of all incremental expressions (represented by their name)"""
-        self._is_initialized: set[str] = set()
-        """Keeps track of all incremental expressions that are already initialized"""
+        self._function_last_bound: dict[str, int] = {}
+        """For each incremental function the last bound at which it was grounded"""
 
     def _update_bound(self) -> None:
         """
@@ -113,20 +119,34 @@ class COOMMultiSolverApp(COOMSolverApp):
         while self.current_max_bound == self._prev_bound:
             self.current_max_bound = next(self._bound_iter)
 
-    def _preprocess_new_bound(self, bound: int) -> None:
+    def _run_preprocess(self, bound: int) -> set[str]:
         """
-        Preprocess the serialized facts for the given bound and update the fact data structures.
+        Run the preprocessing of the serialized facts for the given bound.
 
         Args:
             bound (int): the value of max_bound to preprocess
+
+        Returns:
+            set[str]: the facts resulting from preprocessing
         """
-        # update facts that were already processed
-        self._processed_facts.update(self._new_processed_facts)
+        return set(preprocess(self._serialized_facts, max_bound=bound, discrete=True, multishot=True))
 
-        # preprocess with bound
-        facts = set(preprocess(self._serialized_facts, max_bound=bound, discrete=True, multishot=True))
+    def _preprocess_bound(self, bound: int) -> set[str]:
+        """
+        Preprocess the serialized facts for the given bound and update the fact data structures.
 
-        # split facts into incremental and non-incremental facts
+        The facts about incremental expressions are not returned but directly added to the internal
+        data structures (see _update_incremental_data).
+
+        Args:
+            bound (int): the value of max_bound to preprocess
+
+        Returns:
+            set[str]: the facts that were not processed before
+        """
+        facts = self._run_preprocess(bound)
+
+        # split facts into incremental facts and non-incremental facts
         incremental_facts = set()
         non_incremental_facts = set()
         for x in facts:
@@ -139,7 +159,10 @@ class COOMMultiSolverApp(COOMSolverApp):
         self._update_incremental_data(incremental_facts)
 
         # filter out facts that were previously processed
-        self._new_processed_facts = non_incremental_facts - self._processed_facts
+        new_facts = non_incremental_facts - self._processed_facts
+        self._processed_facts.update(new_facts)
+
+        return new_facts
 
     def _remove_new_incremental_expressions(self) -> list[ProgPart]:
         """
@@ -154,6 +177,7 @@ class COOMMultiSolverApp(COOMSolverApp):
             List[ProgPart]: list of incremental expressions represented as tuples (name, args)
         """
         inc_expressions = []
+        remaining_facts = set()
         for fact in self._new_processed_facts:
             name, args = _get_fact_name_and_args(fact)
 
@@ -173,11 +197,35 @@ class COOMMultiSolverApp(COOMSolverApp):
                 inc_expressions.append((name, args))
                 # add the fact to the processed_facts
                 self._processed_facts.add(fact)
+            else:
+                remaining_facts.add(fact)
 
         # filter new_processed_facts to remove the incremental expressions
-        self._new_processed_facts = self._new_processed_facts - self._processed_facts
+        self._new_processed_facts = remaining_facts
 
         return inc_expressions
+
+    def _get_function_prog_part(self, args: tuple[Symbol, ...], bound: int) -> ProgPart:
+        """
+        Get the incremental program part for a function at the given bound.
+
+        The first time a function is grounded the full aggregate is computed.
+        Afterwards the value of the last grounded bound is extended by the objects added since then.
+
+        Args:
+            args (Tuple[Symbol, ...]): the arguments of the function expression (name, agg, path)
+            bound (int): the bound to ground the function at
+
+        Returns:
+            ProgPart: the program part to ground the function at the given bound
+        """
+        name = args[0].string
+        prev = self._function_last_bound.get(name)
+        self._function_last_bound[name] = bound
+
+        if prev is None:
+            return ("incremental_function_full", args + (Number(bound),))
+        return ("incremental_function_extend", args + (Number(prev), Number(bound)))
 
     def _get_incremental_prog_part(self, exp_type: str, args: tuple[Symbol, ...], bound: int) -> ProgPart:
         """
@@ -191,22 +239,23 @@ class COOMMultiSolverApp(COOMSolverApp):
         Returns:
             ProgPart: the program part containing the rules to update the incremental expression
         """
+        if exp_type == "function":
+            return self._get_function_prog_part(args, bound)
+
         # determine the name and arguments of the program part
         part_name = ""
         # to the arguments we just need to add the current max_bound
         args += (Number(bound),)
         # the name of the program part depends on the type of the expression
         match exp_type:
-            case "unary" | "constraint" | "minimize" | "maximize":
+            case "constraint":
+                # the program part depends on the type of the constraint (boolean or table)
+                part_name = f"incremental_{args[1].string}_constraint"
+                if args[1].string == "table":
+                    # table constraints check the rows added in the gap (bound-1, bound]
+                    args = args[:-1] + (Number(bound - 1), Number(bound))
+            case "unary" | "minimize" | "maximize":
                 part_name = "incremental_" + exp_type
-            case "function":
-                # determine the name of the function
-                name = args[0].string
-                # to determine the part name we need to check if the function is initialized
-                prefix = "update_" if name in self._is_initialized else "new_"
-                part_name = prefix + "incremental_function"
-                # mark the function as initialized
-                self._is_initialized.add(name)
             case "binary":
                 # for binaries we need to check which of the subexpressions are incremental themselves
                 part_name = "incremental_binary"
@@ -233,7 +282,7 @@ class COOMMultiSolverApp(COOMSolverApp):
         Get the program part belonging to a fact.
 
         Args:
-            fact (str): The fact representet as a string (with trailing '.')
+            fact (str): The fact represented as a string (with trailing '.')
             bound (int): the current bound to use as parameter of the program part
 
         Returns:
@@ -258,6 +307,7 @@ class COOMMultiSolverApp(COOMSolverApp):
             "constant",
             "minimize",
             "maximize",
+            "default",
         ]:
             raise ValueError(f"unknown new fact (no corresponding program part exists): {fact}")  # nocoverage
 
@@ -279,7 +329,7 @@ class COOMMultiSolverApp(COOMSolverApp):
         Update internal data structures keeping track of the incremental sets and their expressions.
 
         Args:
-            incremental_facts (Set[str]): a set of incremental facts to add to the internal incremental data structures
+            incremental_facts (set[str]): a set of incremental facts to add to the internal incremental data structures
         """
         # incremental_facts contains the predicate:
         # incremental(T,N,Args) indicating an expression of type T with name N is incremental
@@ -301,6 +351,54 @@ class COOMMultiSolverApp(COOMSolverApp):
             # second, add its name to the set of all incremental expressions
             self._incremental_expressions.add(exp_name)
 
+    def _fix_active(self, control: Control, bound: int) -> None:
+        """
+        Fix the active externals up to bound to true (removing their external status).
+
+        Once solving with some bound b was unsatisfiable, no later solve call will use a smaller bound.
+        Therefore, all bounds <= b can be permanently set to true by adding them as facts
+        (and thus removing their external status).
+
+        Args:
+            control (Control): the clingo control object
+            bound (int): the highest bound to fix to true
+        """
+        if not self._fix_externals or bound <= self._fixed_active_bound:
+            return
+
+        control.ground([("fix_active", [Number(self._fixed_active_bound + 1), Number(bound)])])
+        self._fixed_active_bound = bound
+
+    def _release_active(self, control: Control, lower: int, upper: int) -> None:
+        """
+        Release the active externals from lower to upper.
+
+        Once solving with some bound b was satisfiable, no later solve call will use a larger bound,
+        so that all bounds above b can be released.
+
+        Args:
+            control (Control): the clingo control object
+            lower (int): the lowest bound to release
+            upper (int): the highest bound to release
+        """
+        if not self._fix_externals:
+            return
+
+        for bound in range(lower, upper + 1):
+            control.release_external(Function("active", [Number(bound)]))
+
+    def _converge_update_max_bound(self, control: Control, last_bound: int, current_bound: int) -> None:
+        """
+        Update the max_bound external when moving from last_bound to current_bound during converge.
+
+        Args:
+            control (Control): the clingo control object
+            last_bound (int): the bound of the previous solve call
+            current_bound (int): the bound of the next solve call
+        """
+        control.release_external(Function("max_bound", [Number(last_bound)]))
+        control.assign_external(Function("max_bound", [Number(current_bound)]), True)
+
     def _find_minimal_bound(self, control: Control) -> None:
         """
         Find the minimal bound for an instance once a satisfiable bound was found.
@@ -318,6 +416,9 @@ class COOMMultiSolverApp(COOMSolverApp):
         sat_bound = self.current_max_bound
         # last_bound stores the bound from the last solve call
         last_bound = self.current_max_bound
+        # released_bound stores the lowest bound above which all active externals are released
+        # (initially nothing is released as no bound above sat_bound was ever grounded)
+        released_bound = sat_bound
 
         while True:
             # compute next bound to check
@@ -333,6 +434,13 @@ class COOMMultiSolverApp(COOMSolverApp):
             print("\nOptimal bound not yet found")
             print(f"Solving with bound = {current_bound}\n")
 
+            # fix the externals whose value can not change anymore:
+            # all bounds up to the unsat bound stay active, all bounds above the sat bound are never active again
+            # (only done before another solve call, as changing the program after the last solve call resets its result)
+            self._fix_active(control, unsat_bound)
+            self._release_active(control, sat_bound + 1, released_bound)
+            released_bound = sat_bound
+
             # set active externals
             if current_bound < last_bound:
                 # if the bound we want to solve at is smaller than the last bound,
@@ -345,8 +453,7 @@ class COOMMultiSolverApp(COOMSolverApp):
                     control.assign_external(Function("active", [Number(i)]), True)
 
             # set max_bound externals
-            control.release_external(Function("max_bound", [Number(last_bound)]))
-            control.assign_external(Function("max_bound", [Number(current_bound)]), True)
+            self._converge_update_max_bound(control, last_bound, current_bound)
 
             ret = control.solve()
             # update bound of last solve call
@@ -389,11 +496,40 @@ class COOMMultiSolverApp(COOMSolverApp):
 
         return parts
 
+    def _assign_max_bound_and_solve(self, control: Control) -> bool:
+        """
+        Assign the max_bound external, solve, and converge to the minimal bound if SAT.
+
+        Args:
+            control (Control): the clingo control object
+
+        Returns:
+            bool: True when the minimal bound has been found (the caller should stop looping),
+                False after updating to the next bound to try.
+        """
+        # update max bound external
+        if self._prev_bound is not None:
+            control.release_external(Function("max_bound", [Number(self._prev_bound)]))
+        control.assign_external(Function("max_bound", [Number(self.current_max_bound)]), True)
+
+        # solve
+        print(f"\nSolving with bound = {self.current_max_bound}\n")
+        ret = control.solve()
+        if ret.satisfiable:
+            self._find_minimal_bound(control)
+            return True
+
+        # all bounds up to the current (unsatisfiable) bound stay active
+        self._fix_active(control, self.current_max_bound)
+
+        self._update_bound()
+        return False
+
     def main(self, control: Control, files: Sequence[str]) -> None:  # noqa: ARG002
         """
         Main function of the multishot application class.
 
-        After returning the attribute max_bound is the minimal bound for which the instance is satisfiable.
+        After returning the attribute current_max_bound is the minimal bound for which the instance is satisfiable.
 
         Args:
             control (Control): the clingo control object
@@ -411,7 +547,7 @@ class COOMMultiSolverApp(COOMSolverApp):
                 print(f"Grounding with bound = {bound}")
 
                 # preprocessing
-                self._preprocess_new_bound(bound)
+                self._new_processed_facts = self._preprocess_bound(bound)
 
                 # collect program parts
                 parts = self._compute_prog_parts(bound)
@@ -428,16 +564,5 @@ class COOMMultiSolverApp(COOMSolverApp):
                 # update active external
                 control.assign_external(Function("active", [Number(bound)]), True)
 
-            # update max bound external
-            if self._prev_bound is not None:
-                control.assign_external(Function("max_bound", [Number(self._prev_bound)]), False)
-            control.assign_external(Function("max_bound", [Number(self.current_max_bound)]), True)
-
-            # solve
-            print(f"\nSolving with bound = {self.current_max_bound}\n")
-            ret = control.solve()
-            if ret.satisfiable:
-                self._find_minimal_bound(control)
+            if self._assign_max_bound_and_solve(control):
                 break
-
-            self._update_bound()
