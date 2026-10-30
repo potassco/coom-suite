@@ -92,6 +92,8 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):
         A fact is available as soon as all objects it refers to exist, i.e. at the maximum of
         the bounds of these objects (see the obj_bound predicate of the preprocessing).
         Facts not referring to any object are available from bound 0 on.
+        User input facts are produced independent of the bound and are always available from bound 0 on
+        (they may refer to objects that do not exist yet).
 
         Args:
             fact (str): The fact represented as a string (with trailing '.')
@@ -99,6 +101,8 @@ class COOMMultiSolverAppJump(COOMMultiSolverApp):
         Returns:
             int: the bound at which the fact becomes available
         """
+        if fact.startswith(("user_include", "user_value")):
+            return 0
         return max((self._object_bounds[path] for path in OBJECT_PATH.findall(fact)), default=0)
 
     def _preprocess_up_to(self, target: int, start: int) -> dict[int, set[str]]:

@@ -15,6 +15,15 @@ Args:
     - M: The smallest bound at which the object can exist
 *%
 
+%*! user_obj(X)
+
+States that the object `X` is on the path of a user include containing a feature with unbounded cardinality.
+Such objects are instantiated for every `max_bound` (see `user_path_unbounded`) and thus exist from bound 0 on.
+
+Args:
+    - X: The internal object identifier
+*%
+
 %*! obj_level(X,L)
 
 States that the object `X` exists from bound `L` on.

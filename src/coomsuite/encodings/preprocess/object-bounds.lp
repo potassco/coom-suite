@@ -3,8 +3,12 @@
 % obj_inc(O,M) : object O exists for some max_bound >= M
 % - an object O instantiated by an unbounded feature with index I only exists for max_bound >= I-Min+1
 % - the actual max_bound may be higher as some parent object of O may only exist for max_bound > M (see below)
+% - objects on the path of a user include exist for every max_bound (see user.lp)
 obj_inc((F,(X,I)),M) :- type_aux((F,(X,I)),_), type_aux(X,Ctx),
-                        coom_feature(Ctx,F,_,Min,#sup), M = I-Min+1, M > 0.
+                        coom_feature(Ctx,F,_,Min,#sup), M = I-Min+1, M > 0, not user_obj((F,(X,I))).
+
+% user_obj(O) : object O is on the path of a user include with an unbounded feature
+user_obj(X) :- user_path_unbounded(P), user_path_aux(P,X).
 
 % obj_level(O,B) : object O exists at bound B
 % - the bound of an object is the maximum over the bounds of the objects on its path to the root
