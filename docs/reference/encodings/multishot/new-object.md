@@ -6,6 +6,12 @@ i.e. `parent`, `index`, `type`, and `set`.
 The only important change is the addition of the `active/1` external to control whether a bound is currently considered to be active.
 The inclusion of an object introduced at bound `n` is then only possible if `active(n)` holds.
 
+As the rules of the base program are not grounded again for objects of later bounds, the program part for `type`
+additionally contains the rules for user values of the object (`base/clingo/user.lp`).
+Objects of a user include are instantiated at bound 0 even for unbounded features,
+so their predecessors (in the order of the indices) may only be added at a later bound.
+Therefore, the ordering constraint between objects of a set is also stated for the case where the new object is the predecessor.
+
 ::: src/coomsuite/encodings/multi/new-object.lp
     handler: asp
     options:

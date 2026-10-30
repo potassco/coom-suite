@@ -966,6 +966,56 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
                     fail_msg = f"failed with {type(app).__name__}, algorithm={algorithm}, initial_bound={initial_bound}"
                     self.assertEqual(app.current_max_bound, 1, fail_msg)
 
+    def test_jump_user_value_at_later_bound(self) -> None:
+        """
+        Test that user values of objects added at a later bound are applied.
+
+        The user sets the weight of bags[2] (only exists from bound 3 on) to 5,
+        the sum of the weights has to be at least 26, so the minimal bound is 4 (10+10+5+10).
+        Without the user value 3 bags with weight 10 lead to a too small bound.
+        """
+        files: list[str] = [join("examples", "tests", "multishot", "unbounded_user_value.lp")]
+        for algorithm in ["linear", "exponential"]:
+            # the stepwise application and the jump application with both function modes
+            apps = [COOMMultiSolverApp(files, algorithm=algorithm)] + [
+                COOMMultiSolverAppJump(files, algorithm=algorithm, function_mode=function_mode)
+                for function_mode in ["extend", "full"]
+            ]
+            for app in apps:
+                with redirect_stdout(None):
+                    app.main(Control(), [])
+
+                fail_msg = f"failed with {type(app).__name__}, algorithm={algorithm}"
+                self.assertEqual(app.current_max_bound, 4, fail_msg)
+
+    def test_jump_user_include_order(self) -> None:
+        """
+        Test the order of objects for a user include of an object of an unbounded feature.
+
+        The user includes bags[2] (instantiated at bound 0) and at least two boxes are required (minimal bound 2).
+        When bags[1] is added at bound 2 it has to be included as well (as is bags[0]),
+        i.e. there is only a single model at bound 2. The minimal bound is not affected,
+        so the models of the final state (bound 2, the linear search does not need to converge) are checked.
+        """
+        files: list[str] = [join("examples", "tests", "multishot", "unbounded_user_include_order.lp")]
+        # the stepwise application and the jump application with both function modes
+        apps = [COOMMultiSolverApp(files)] + [
+            COOMMultiSolverAppJump(files, function_mode=function_mode) for function_mode in ["extend", "full"]
+        ]
+        for app in apps:
+            control = Control(["--models=0"])
+            with redirect_stdout(None):
+                app.main(control, [])
+
+            models: list[list[str]] = []
+            control.solve(on_model=lambda m: models.append(sorted(str(s) for s in m.symbols(shown=True))))
+
+            fail_msg = f"failed with {type(app).__name__}"
+            self.assertEqual(app.current_max_bound, 2, fail_msg)
+            self.assertEqual(len(models), 1, fail_msg)
+            for bag in range(3):
+                self.assertIn(f'include("root.bags[{bag}]")', models[0], fail_msg)
+
     def test_jump_find_minimal_bound(self) -> None:
         """
         Test the convergence function of the jump multishot application class.
