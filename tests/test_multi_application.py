@@ -81,6 +81,10 @@ class TestMultiApplication(TestCase):
         for fact, part in [
             ('allow(7,(1,0),"S").', ("new_allow", (parse_term("7"), parse_term("(1,0)"), parse_term('"S"')))),
             ('number("5",5).', ("new_number", (parse_term('"5"'), parse_term("5")))),
+            (
+                'default("root.bags[1].color[0]","Red").',
+                ("new_default", (parse_term('"root.bags[1].color[0]"'), parse_term('"Red"'))),
+            ),
             # program parts that get the bound added to arguments
             (
                 'type("root.bags[1]","Bags").',
@@ -848,7 +852,7 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
         The jump targets are 0,1,2,4,8 (exponential) and 0,3,6 (linear with step 3), so rows are added at bounds
         strictly between two targets. If these rows are unchecked Red bags (w=2) lead to a too small bound.
         """
-        files: list[str] = [join("examples", "tests", "preprocess", "unbounded_table.lp")]
+        files: list[str] = [join("examples", "tests", "multishot", "unbounded_table.lp")]
         for algorithm, step in [("exponential", 1), ("linear", 3)]:
             for fix_externals in [False, True]:
                 # the stepwise application (as reference) and the jump application with both function modes
@@ -876,7 +880,7 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
         The number 1 of the local constraints (count(bags[i])=1) is only added at bound 1.
         Without its value the local constraints are never enforced, leading to a too small bound.
         """
-        files: list[str] = [join("examples", "tests", "preprocess", "unbounded_local_number.lp")]
+        files: list[str] = [join("examples", "tests", "multishot", "unbounded_local_number.lp")]
         for algorithm in ["linear", "exponential"]:
             # the stepwise application and the jump application with both function modes
             apps = [COOMMultiSolverApp(files, algorithm=algorithm)] + [
@@ -889,6 +893,53 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
 
                 fail_msg = f"failed with {type(app).__name__}, algorithm={algorithm}"
                 self.assertEqual(app.current_max_bound, 3, fail_msg)
+
+    def test_jump_default_at_later_bound(self) -> None:
+        """
+        Test that defaults of objects added at a later bound are applied.
+
+        Every bag is Green (w=1) by default and their sum has to be at least 6, so the minimal bound is 6.
+        The defaults of the bags are only added at later bounds, without them Red bags (w=2) lead to a too small bound.
+        """
+        files: list[str] = [join("examples", "tests", "multishot", "unbounded_default.lp")]
+        for algorithm in ["linear", "exponential"]:
+            # the stepwise application and the jump application with both function modes
+            apps = [COOMMultiSolverApp(files, algorithm=algorithm)] + [
+                COOMMultiSolverAppJump(files, algorithm=algorithm, function_mode=function_mode)
+                for function_mode in ["extend", "full"]
+            ]
+            for app in apps:
+                with redirect_stdout(None):
+                    app.main(Control(), [])
+
+                fail_msg = f"failed with {type(app).__name__}, algorithm={algorithm}"
+                self.assertEqual(app.current_max_bound, 6, fail_msg)
+
+    def test_jump_user_input(self) -> None:
+        """
+        Test user input for objects of an unbounded feature.
+
+        The user includes bags[1] and sets the weight of bags[3] (which does not exist for small bounds).
+        The sum of the weights has to be at least 12, so the minimal bound is 1 (bags[0] and bags[1]).
+        The user input (and bags[1]) belong to bound 0 independent of the bounds of the objects,
+        with an initial bound of 2 they are part of the first jump.
+        """
+        files: list[str] = [join("examples", "tests", "multishot", "unbounded_user_input.lp")]
+        for algorithm in ["linear", "exponential"]:
+            for initial_bound in [0, 2]:
+                # the stepwise application and the jump application with both function modes
+                apps = [COOMMultiSolverApp(files, algorithm=algorithm, initial_bound=initial_bound)] + [
+                    COOMMultiSolverAppJump(
+                        files, algorithm=algorithm, initial_bound=initial_bound, function_mode=function_mode
+                    )
+                    for function_mode in ["extend", "full"]
+                ]
+                for app in apps:
+                    with redirect_stdout(None):
+                        app.main(Control(), [])
+
+                    fail_msg = f"failed with {type(app).__name__}, algorithm={algorithm}, initial_bound={initial_bound}"
+                    self.assertEqual(app.current_max_bound, 1, fail_msg)
 
     def test_jump_find_minimal_bound(self) -> None:
         """
