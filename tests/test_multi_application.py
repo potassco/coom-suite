@@ -868,6 +868,28 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
                     )
                     self.assertEqual(app.current_max_bound, 6, fail_msg)
 
+    def test_jump_number_at_later_bound(self) -> None:
+        """
+        Test that numbers added at a later bound get a value.
+
+        Every bag has weight 3 (a local constraint) and their sum has to be at least 9, so the minimal bound is 3.
+        The number 1 of the local constraints (count(bags[i])=1) is only added at bound 1.
+        Without its value the local constraints are never enforced, leading to a too small bound.
+        """
+        files: list[str] = [join("examples", "tests", "preprocess", "unbounded_local_number.lp")]
+        for algorithm in ["linear", "exponential"]:
+            # the stepwise application and the jump application with both function modes
+            apps = [COOMMultiSolverApp(files, algorithm=algorithm)] + [
+                COOMMultiSolverAppJump(files, algorithm=algorithm, function_mode=function_mode)
+                for function_mode in ["extend", "full"]
+            ]
+            for app in apps:
+                with redirect_stdout(None):
+                    app.main(Control(), [])
+
+                fail_msg = f"failed with {type(app).__name__}, algorithm={algorithm}"
+                self.assertEqual(app.current_max_bound, 3, fail_msg)
+
     def test_jump_find_minimal_bound(self) -> None:
         """
         Test the convergence function of the jump multishot application class.
