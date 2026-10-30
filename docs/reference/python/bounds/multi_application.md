@@ -4,6 +4,45 @@ Control structure for the [multi-shot encoding] to solve instances with unbounde
 
 [multi-shot encoding]: ../../encodings/multishot/index.md
 
+## Solving loop
+
+The application solves an instance as follows:
+
+1. The encoding `encoding-base-clingo-multi.lp` is loaded,
+   i.e. the single-shot encoding `encoding-base-clingo.lp` together with the multi-shot program parts in `multishot.lp`.
+2. Bound 0: the serialized facts are preprocessed with `max_bound=0` (`preprocess-multishot.lp`).
+   The facts over `inc_set/1` and `incremental/3` are stored in internal data structures (`_update_incremental_data`)
+   and the facts of incremental expressions are removed (`_remove_new_incremental_expressions`).
+   The remaining facts are added as the `base` program and grounded together with the single-shot encoding.
+   Then the incremental program parts of all incremental expressions are grounded for bound 0.
+3. Every further bound `n` up to the current `max_bound`: the serialized facts are preprocessed with `max_bound=n`
+   and only the facts that were not produced before are kept.
+   Each of these facts is mapped to its `new_*` program part (`_get_prog_part`),
+   and every incremental expression to its incremental program part for bound `n` (`_get_incremental_prog_part`).
+   These program parts are grounded and the external `active(n)` is set to true.
+4. The `max_bound` external of the previous solve call is released, the one of the current `max_bound` is set to true,
+   and the program is solved (`_assign_max_bound_and_solve`).
+   If it is unsatisfiable, the next `max_bound` is taken from the [bound iterator][bounds] and the loop continues with step 3.
+5. If it is satisfiable, the minimal bound is searched for (`_find_minimal_bound`) by bisection between the last
+   unsatisfiable and the satisfiable bound (`next_bound_converge`).
+   No further grounding takes place: only the `active` externals are (de)activated and the `max_bound` external is moved
+   to the bound of the next solve call.
+   Afterwards, `current_max_bound` holds the minimal bound.
+
+For an explanation of the externals see [externals and bound-indexed predicates][externals].
+
+The [jump grounding](#jump-grounding) subclass differs in steps 3 to 5:
+the preprocessing is done once for the new `max_bound` (`preprocess-multishot-jump.lp`)
+and its facts are grouped by the bound they belong to (`_bound_of_fact`).
+The program parts for all bounds of the jump are grounded together in one call,
+where incremental program parts are only grounded for the new `max_bound` (`_get_incremental_parts_at`).
+During the search for the minimal bound the `max_bound` external stays fixed.
+
+[bounds]: index.md
+[externals]: ../../encodings/multishot/index.md#externals-and-bound-indexed-predicates
+
+## API
+
 ::: coomsuite.bounds.multi_application.COOMMultiSolverApp
     handler: python
     options:
