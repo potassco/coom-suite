@@ -1,14 +1,18 @@
 # Changes
 
 ## unreleased changes
+
 - updated preprocessing encoding
 - updated tools for documentation and tests
 - added new options for multishot mode:
   - `--grounding {stepwise,jump-extend,jump-full}`
     - `stepwise` (the default) is the old behaviour: every bound is grounded.
     - `jump-*` grounds only the bounds that are actually solved
-    - `jump-extend` reuses the incremental function values from the previous solved bound; `jump-full recomputes the aggregates.
-  - `--fix-externals`: once a bound is UNSAT, the active externals up to it are fixed as facts. Once a bound is SAT, the externals above it are released.
+    - `jump-extend` reuses the incremental function values from the previous
+      solved bound; `jump-full` recomputes the aggregates.
+  - `--fix-externals`: once a bound is UNSAT, the active externals up to it are
+    fixed as facts. Once a bound is SAT, the externals above it are released.
+
 ## v1.1.2
 
 - fixed a bug with repeating bounds
