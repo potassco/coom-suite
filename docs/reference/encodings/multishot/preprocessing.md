@@ -1,5 +1,9 @@
 # Multi-shot specific preprocessing
 
+For jump grounding the preprocessing additionally computes the [bounds of all objects][object-bounds].
+
+[object-bounds]: object-bounds.md
+
 ::: src/coomsuite/encodings/preprocess/incremental.lp
     handler: asp
     options:
