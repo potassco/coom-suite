@@ -11,4 +11,4 @@ satisfied(F) :- binary(F,X1,">=",X2), numeric(X1), numeric(X2), &sum{X1} >= X2.
 satisfied(F) :- binary(F,X1,"<", X2), numeric(X1), numeric(X2), &sum{X1} <  X2.
 satisfied(F) :- binary(F,X1,"<=",X2), numeric(X1), numeric(X2), &sum{X1} <= X2.
 
-#show numeric/1.
+% #show numeric/1.
