@@ -1,6 +1,6 @@
 # Changes
 
-## unreleased changes
+## v1.2.0
 
 - updated preprocessing encoding
 - updated tools for documentation and tests
