@@ -8,24 +8,29 @@ from . import run_test, unpack_test
 from .clintests.tests_solve import TESTS_SOLVE
 
 
-class TestClingo(TestCase):
+class TestSolver(TestCase):
     """
     Test cases for the clingo encoding.
     """
 
-    def run_test(self, test_name: str, extra_ctl_args: list[str] | None = None) -> None:
+    def run_test(
+        self, test_name: str, solver: list[str] | None = None, extra_ctl_args: list[str] | None = None
+    ) -> None:
         """
         Run a clintest test with the clingo encoding.
         """
+        if solver is None:
+            solver = ["clingo", "flingo", "clingcon"]
         ctl_args = ["0"]
         if extra_ctl_args:
             ctl_args += extra_ctl_args
         test, program, files = unpack_test(test_name, TESTS_SOLVE)
-        run_test(test, files=files, program=program, ctl_args=ctl_args, solver="clingo")
+        for s in solver:
+            run_test(test, files=files, program=program, ctl_args=ctl_args, solver=s)
 
     def test_structure(self) -> None:
         """
-        Test structure generation (clingo).
+        Test structure generation.
         """
         self.run_test("empty")
         self.run_test("optional_part")
@@ -35,7 +40,7 @@ class TestClingo(TestCase):
 
     def test_attributes(self) -> None:
         """
-        Test attribute generation (clingo).
+        Test attribute generation.
         """
         self.run_test("simple_discrete")
         self.run_test("optional_discrete")
@@ -44,10 +49,13 @@ class TestClingo(TestCase):
         self.run_test("simple_integer")
         self.run_test("optional_integer")
         self.run_test("multiple_integer")
+        self.run_test("unbounded_integer", solver=["flingo", "clingcon"])
+        self.run_test("unbounded_integer_below", solver=["flingo", "clingcon"])
+        self.run_test("unbounded_integer_above", solver=["flingo", "clingcon"])
 
     def test_boolean_constraints(self) -> None:
         """
-        Test Boolean constraints (clingo).
+        Test Boolean constraints.
         """
         self.run_test("eq_sat")
         self.run_test("neq_sat")
@@ -78,7 +86,7 @@ class TestClingo(TestCase):
 
     def test_table_constraints(self) -> None:
         """
-        Test table constraints (clingo).
+        Test table constraints.
         """
         self.run_test("table_discrete")
         self.run_test("table_wildcard")
@@ -90,7 +98,7 @@ class TestClingo(TestCase):
 
     def test_arithmetics(self) -> None:
         """
-        Test arithmetic formulas (clingo).
+        Test arithmetic formulas.
         """
         self.run_test("plus_sat")
         self.run_test("minus_sat")
@@ -115,185 +123,35 @@ class TestClingo(TestCase):
 
     def test_aggregates(self) -> None:
         """
-        Test aggregation functions (clingo).
+        Test aggregation functions.
         """
         self.run_test("count")
         self.run_test("sum")
-        self.run_test("min")
-        self.run_test("max")
+        self.run_test("min", solver=["clingo", "flingo"])
+        self.run_test("max", solver=["clingo", "flingo"])
 
     def test_defaults(self) -> None:
         """
-        Test solving defaults (clingo).
+        Test solving defaults.
         """
-        self.run_test("simple_default")
-        self.run_test("simple_default_user")
-        self.run_test("simple_default_include")
+        self.run_test("simple_default", solver=["clingo", "flingo"])
+        self.run_test("simple_default_user", solver=["clingo", "flingo"])
+        self.run_test("simple_default_include", solver=["clingo", "flingo"])
 
     def test_optimization(self) -> None:
         """
-        Test solving optimization statements (clingo).
+        Test solving optimization statements.
         """
-        self.run_test("minimize", extra_ctl_args=["--opt-mode=optN"])
-        self.run_test("maximize", extra_ctl_args=["--opt-mode=optN"])
-        self.run_test("minimize_priority", extra_ctl_args=["--opt-mode=optN"])
-        self.run_test("maximize_priority", extra_ctl_args=["--opt-mode=optN"])
-        self.run_test("minimize_maximize_function", extra_ctl_args=["--opt-mode=optN"])
-        self.run_test("maximize_minimize_function", extra_ctl_args=["--opt-mode=optN"])
+        self.run_test("minimize", extra_ctl_args=["--opt-mode=optN"], solver=["clingo", "flingo"])
+        self.run_test("maximize", extra_ctl_args=["--opt-mode=optN"], solver=["clingo", "flingo"])
+        self.run_test("minimize_priority", solver=["clingo"], extra_ctl_args=["--opt-mode=optN"])
+        self.run_test("maximize_priority", solver=["clingo"], extra_ctl_args=["--opt-mode=optN"])
+        self.run_test("minimize_maximize_function", solver=["clingo"], extra_ctl_args=["--opt-mode=optN"])
+        self.run_test("maximize_minimize_function", solver=["clingo"], extra_ctl_args=["--opt-mode=optN"])
 
     def test_user_input(self) -> None:
         """
-        Test solving user input (clingo).
-        """
-        self.run_test("add_part")
-        self.run_test("add_attribute")
-        self.run_test("set_value_discrete")
-        self.run_test("set_value_integer")
-
-        self.run_test("set_invalid_variable")
-        self.run_test("add_invalid_variable")
-        self.run_test("set_invalid_type")
-        self.run_test("set_invalid_value_discrete")
-        self.run_test("set_invalid_value_num")
-
-
-class TestFlingo(TestCase):
-    """
-    Test cases for the flingo encoding.
-    """
-
-    def run_test(self, test_name: str, extra_ctl_args: list[str] | None = None) -> None:
-        """
-        Run a clintest test with the flingo encoding.
-        """
-        ctl_args = ["0"]
-        if extra_ctl_args:
-            ctl_args += extra_ctl_args  # nocoverage
-        test, program, files = unpack_test(test_name, TESTS_SOLVE, flingo=True)
-        run_test(test, files=files, program=program, ctl_args=ctl_args, solver="flingo", preprocess="False")
-
-    def test_structure(self) -> None:
-        """
-        Test structure generation (flingo).
-        """
-        self.run_test("empty")
-        self.run_test("optional_part")
-        self.run_test("mandatory_part")
-        self.run_test("part_with_cardinality")
-        self.run_test("optional_part_with_subpart")
-
-    def test_attributes(self) -> None:
-        """
-        Test attribute generation (flingo).
-        """
-        self.run_test("simple_discrete")
-        self.run_test("optional_discrete")
-        self.run_test("multiple_discrete")
-
-        self.run_test("simple_integer")
-        self.run_test("optional_integer")
-        self.run_test("multiple_integer")
-        self.run_test("unbounded_integer")
-        self.run_test("unbounded_integer_below")
-        self.run_test("unbounded_integer_above")
-
-    def test_boolean_constraints(self) -> None:
-        """
-        Test Boolean constraints (flingo).
-        """
-        self.run_test("eq_sat")
-        self.run_test("neq_sat")
-        self.run_test("le_sat")
-        self.run_test("leq_sat")
-        self.run_test("ge_sat")
-        self.run_test("geq_sat")
-
-        self.run_test("eq_unsat")
-        self.run_test("neq_unsat")
-        self.run_test("le_unsat")
-        self.run_test("leq_unsat")
-        self.run_test("ge_unsat")
-        self.run_test("geq_unsat")
-
-        self.run_test("par_sat")
-        self.run_test("neg_sat")
-        self.run_test("or_sat")
-        self.run_test("and_sat")
-
-        self.run_test("par_unsat")
-        self.run_test("neg_unsat")
-        self.run_test("or_unsat")
-        self.run_test("and_unsat")
-
-        self.run_test("binary_undef")
-        self.run_test("unary_undef")
-
-    def test_table_constraints(self) -> None:
-        """
-        Test table constraints (flingo).
-        """
-        self.run_test("table_discrete")
-        self.run_test("table_wildcard")
-        self.run_test("table_integer")
-        self.run_test("table_mixed")
-        self.run_test("table_undef")
-        self.run_test("table_undef2")
-        self.run_test("empty_table")
-
-    def test_arithmetics(self) -> None:
-        """
-        Test arithmetic formulas (flingo).
-        """
-        self.run_test("plus_sat")
-        self.run_test("minus_sat")
-        self.run_test("unary_plus_sat")
-        self.run_test("unary_minus_sat")
-
-        self.run_test("plus_unsat")
-        self.run_test("minus_unsat")
-        self.run_test("unary_minus_unsat")
-
-        self.run_test("plus_undef_sat")
-        self.run_test("minus_undef_sat")
-        self.run_test("plus_undef_unsat")
-        self.run_test("minus_undef_unsat")
-
-        self.run_test("precedence_sat")
-        self.run_test("precedence_par_sat")
-        self.run_test("precedence_unsat")
-        self.run_test("precedence_par_unsat")
-
-    def test_aggregates(self) -> None:
-        """
-        Test aggregation functions (flingo).
-        """
-        self.run_test("count")
-        self.run_test("sum")
-        self.run_test("min")
-        self.run_test("max")
-
-    def test_defaults(self) -> None:
-        """
-        Test solving defaults (flingo).
-        """
-        self.run_test("simple_default")
-        self.run_test("simple_default_user")
-        self.run_test("simple_default_include")
-
-    def test_optimization(self) -> None:
-        """
-        Test solving optimization statements (flingo).
-        """
-        self.run_test("minimize")
-        self.run_test("maximize")
-        # self.run_test("minimize_priority")
-        # self.run_test("maximize_priority")
-        # self.run_test("minimize_maximize_function")
-        # self.run_test("maximize_minimize_function")
-
-    def test_user_input(self) -> None:
-        """
-        Test solving user input (flingo).
+        Test solving user input.
         """
         self.run_test("add_part")
         self.run_test("add_attribute")
