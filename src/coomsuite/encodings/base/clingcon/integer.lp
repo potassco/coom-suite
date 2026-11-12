@@ -5,6 +5,8 @@
 % &sum{X} = X    :- include(X), type(X,T), integer(T), not range(T,_,_).
 
 &dom{Min..Max} = X :- include(X), type(X,T), integer(T), range(T,Min,Max).
+&sum{Min} <= X :- include(X), type(X,T), integer(T),     range(T,Min,_), Min != #inf.
+&sum{Max} >= X :- include(X), type(X,T), integer(T),     range(T,_,Max), Max != #sup.
 
 &sum{0} = X :- not include(X), type(X,T), integer(T).
 

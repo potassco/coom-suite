@@ -14,6 +14,6 @@
 
 % #include "base/clingcon/optimization.lp".
 
-% #include "base/clingcon/user.lp".
+#include "base/clingcon/user.lp".
 
 % #include "doc.lp".

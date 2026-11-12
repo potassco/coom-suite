@@ -40,7 +40,7 @@ def _get_valuation(model: Model, solver: str) -> list[Symbol]:
         for assignment in model.symbols(theory=True)
         if assignment.name == CSP
         and len(assignment.arguments) == 2
-        and model.contains(Function("defined", [String(assignment.arguments[0].string)]))
+        and model.contains(Function("include", [String(assignment.arguments[0].string)]))
     ]
 
 
