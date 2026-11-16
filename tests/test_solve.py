@@ -24,8 +24,8 @@ class TestSolver(TestCase):
         ctl_args = ["0"]
         if extra_ctl_args:
             ctl_args += extra_ctl_args
-        test, program, files = unpack_test(test_name, TESTS_SOLVE)
         for s in solver:
+            test, program, files = unpack_test(test_name, TESTS_SOLVE, solver=s)
             run_test(test, files=files, program=program, ctl_args=ctl_args, solver=s)
 
     def test_structure(self) -> None:
@@ -134,16 +134,16 @@ class TestSolver(TestCase):
         """
         Test solving defaults.
         """
-        self.run_test("simple_default", solver=["clingo", "flingo"])
-        self.run_test("simple_default_user", solver=["clingo", "flingo"])
-        self.run_test("simple_default_include", solver=["clingo", "flingo"])
+        self.run_test("simple_default")
+        self.run_test("simple_default_user")
+        self.run_test("simple_default_include")
 
     def test_optimization(self) -> None:
         """
         Test solving optimization statements.
         """
-        self.run_test("minimize", extra_ctl_args=["--opt-mode=optN"], solver=["clingo", "flingo"])
-        self.run_test("maximize", extra_ctl_args=["--opt-mode=optN"], solver=["clingo", "flingo"])
+        self.run_test("minimize", extra_ctl_args=["--opt-mode=optN"])
+        self.run_test("maximize", extra_ctl_args=["--opt-mode=optN"])
         self.run_test("minimize_priority", solver=["clingo"], extra_ctl_args=["--opt-mode=optN"])
         self.run_test("maximize_priority", solver=["clingo"], extra_ctl_args=["--opt-mode=optN"])
         self.run_test("minimize_maximize_function", solver=["clingo"], extra_ctl_args=["--opt-mode=optN"])

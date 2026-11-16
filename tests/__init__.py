@@ -27,20 +27,20 @@ def parse_coom(coom_input: str, grammar: str = "model") -> list[str]:
     return [a for a in asp_facts if a != ""]
 
 
-def unpack_test(test_name: str, tests: dict[str, Any], flingo: bool = False) -> tuple[Any, Any, Any]:
+def unpack_test(test_name: str, tests: dict[str, Any], solver: str = "clingo") -> tuple[Any, Any, Any]:
     """
     Unpacks a clintest.Test with parameters in a dictionary.
 
     Args:
         test_name (str): The dictionary key of the test
         tests (dict): A dictionary containing all tests
-        flingo (bool): Whether to use flingo for the test
+        solver (str): Solver used for the test
     """
     test_dict = tests[test_name]
     program = test_dict.get("program", None)
     files = test_dict.get("files", [f"{test_name}.lp"]) if program is None else None
-    test = test_dict.get("ftest", test_dict["test"]) if flingo else test_dict["test"]
-    test_with_name = Record(Context(test, str_=lambda test: f"{test_name} \n\n {test!s}"))
+    test = test_dict.get("ftest", test_dict["test"]) if solver == "flingo" else test_dict["test"]
+    test_with_name = Record(Context(test, str_=lambda test: f"{test_name} \n solver: {solver} \n\n {test!s}"))
     return test_with_name, program, files
 
 

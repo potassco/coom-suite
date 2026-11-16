@@ -9,11 +9,11 @@
 #include "base/clingcon/numerics.lp".
 #include "base/clingcon/table.lp".
 #include "base/constraints.lp".
-% #include "base/clingo/defaults.lp".
-% #include "base/clingcon/defaults.lp".
+#include "base/clingo/defaults.lp".
+#include "base/clingcon/defaults.lp".
 
-% #include "base/clingcon/optimization.lp".
+#include "base/clingcon/optimization.lp".
 
 #include "base/clingcon/user.lp".
 
-% #include "doc.lp".
+#include "doc.lp".
