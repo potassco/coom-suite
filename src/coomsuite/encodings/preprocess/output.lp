@@ -85,9 +85,9 @@ column((T,P),0,Col,X) :- attribute_constraint((T,P)), parent(X,P), type(X,@fmt_j
 allow(T,(0,I),O)     :- attribute_constraint((T,_)), coom_option(T,O), I = #count{ O' : coom_option(T,O'), O' < O}.
 allow(T,(Col,Row),V) :- attribute_constraint((T,_)), allow(T,(0,Row),O), coom_attribute_value(T,O,A,V), attribute_constraint_column(T,Col,A).
 
-% Imply statements
-constraint((C,@fmt_binary(X',"=",G)),"boolean") :- imply(C,X',G).
-binary(@fmt_binary(X',"=",G),X',"=",G)          :- imply(C,X',G).
+% Imply statements (if imply has a condition the constraint is generated via conditional requirement rules)
+constraint((C,@fmt_binary(X',"=",G)),"boolean") :- imply(C,_,X',G), not coom_condition(C,_,_).
+binary(@fmt_binary(X',"=",G),X',"=",G)          :- imply(_,_,X',G).
 
 % Functions
 function(@fmt_aggregate(T,X,P),T,@fmt_join(X,P)) :- function(X,_,T,P).
