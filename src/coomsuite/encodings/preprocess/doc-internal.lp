@@ -41,8 +41,8 @@ Args:
 %*! path_start(X,P)
 
 Identifies objects relative to which a path expression can be evaluated.
-Derived from all possible occurrences of a path: formulas, combinations table columns,
-imply and optimization statements.
+Derived from all possible occurrences of a path: terms of formulas (see `term_context`), combinations table columns,
+the left-hand sides of imply statements, and optimization statements.
 
 Args:
     - X: The internal object identifier
@@ -83,11 +83,31 @@ Args:
     - F: The formula identifier
 *%
 
+%*! top_formula(C,F)
+
+Declares a formula at the top level of a behavior.
+Derived from `coom_require`, `coom_condition` and the right-hand sides of `coom_imply`.
+A top-level formula can be any term: a binary, unary, function, path, number or constant.
+
+Args:
+    - C: The constraint identifier
+    - F: The formula identifier
+*%
+
+%*! term_context(F,Ctx)
+
+Defines the context type of a term (a formula, path, number or constant).
+Derived from the top-level formulas (`top_formula`) and propagated to the operands of binaries and unaries.
+
+Args:
+    - F: The term identifier
+    - Ctx: The context type (i.e. the type of object this term is evaluated against)
+*%
+
 %*! formula_context(F,Ctx)
 
 Defines the context type of a formula.
-Derived from the top level constraint options (`coom_require`, `coom_condition`, `coom_imply`)
-and propagated through the formula tree.
+Restriction of `term_context` to formula nodes (binaries and unaries).
 
 Args:
     - F: The formula identifier

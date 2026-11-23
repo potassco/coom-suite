@@ -3,14 +3,20 @@
 formula_node(F) :- coom_binary(F,_,_,_).
 formula_node(F) :- coom_unary(F,_,_).
 
-% Base case: formulas at the top level
-formula_context(F,Ctx) :- formula_node(F), coom_require(C,F),     coom_context(C,Ctx).
-formula_context(F,Ctx) :- formula_node(F), coom_condition(C,_,F), coom_context(C,Ctx).
-formula_context(F,Ctx) :- formula_node(F), coom_imply(C,_,F),     coom_context(C,Ctx).
-% Extend recursively to subformula of a formula
-formula_context(L,Ctx)  :- coom_binary(F,L,_,_), formula_context(F,Ctx), formula_node(L).
-formula_context(R,Ctx)  :- coom_binary(F,_,_,R), formula_context(F,Ctx), formula_node(R).
-formula_context(F',Ctx) :- coom_unary(F,_,F'),   formula_context(F,Ctx), formula_node(F').
+% Formulas at the top level of a behavior
+% (these can be any term: a binary, unary, function, path, number or constant)
+top_formula(C,F) :- coom_require(C,F).
+top_formula(C,F) :- coom_condition(C,_,F).
+top_formula(C,F) :- coom_imply(C,_,F).
+
+% Base case: terms at the top level
+term_context(F,Ctx)  :- top_formula(C,F), coom_context(C,Ctx).
+% Extend recursively to the subterms of a formula
+term_context(L,Ctx)  :- coom_binary(F,L,_,_), term_context(F,Ctx).
+term_context(R,Ctx)  :- coom_binary(F,_,_,R), term_context(F,Ctx).
+term_context(F',Ctx) :- coom_unary(F,_,F'),   term_context(F,Ctx).
+
+formula_context(F,Ctx) :- formula_node(F), term_context(F,Ctx).
 
 
 %%% Instantiate formulas (binaries, unaries and functions)

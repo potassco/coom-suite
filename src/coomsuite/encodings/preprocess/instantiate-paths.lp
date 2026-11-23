@@ -1,8 +1,6 @@
 %%% Determie object against which paths are evaluated
 
-path_start(X,P)  :- coom_binary(F,P,_,_),     coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
-path_start(X,P)  :- coom_binary(F,_,_,P),     coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
-path_start(X,P)  :- coom_unary(F,_,P),        coom_path(P,0,_), type_aux(X,Ctx), formula_context(F,Ctx).
+path_start(X,P)  :- term_context(P,Ctx),      coom_path(P,0,_), type_aux(X,Ctx).
 path_start(X,P)  :- coom_combinations(C,_,P), coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
 path_start(X,P)  :- coom_function(Ctx,_,_,P), coom_path(P,0,_), type_aux(X,Ctx).
 path_start(X,P)  :- coom_imply(C,P,_),        coom_path(P,0,_), type_aux(X,Ctx), coom_context(C,Ctx).
@@ -39,10 +37,8 @@ path_to(X,P,PX) :-
     obj_path(X',PX).
 
 % Auxiliary paths for constants and numbers
-path_to(X,P,P) :- coom_binary(F,_,_,P), coom_constant(P), formula_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_binary(F,P,_,_), coom_constant(P), formula_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_binary(F,_,_,P), coom_number(P,_), formula_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_binary(F,P,_,_), coom_number(P,_), formula_context(F,T), type_aux(X,T).
+path_to(X,P,P) :- term_context(P,T), coom_constant(P), type_aux(X,T).
+path_to(X,P,P) :- term_context(P,T), coom_number(P,_), type_aux(X,T).
 
 % Auxiliary paths for formulas and functions
 path_to(X,F,G)                     :- ground_formula(X,F,G).

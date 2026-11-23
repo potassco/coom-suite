@@ -1242,6 +1242,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint(("root.b",1),"lowerbound")',
                 'index("root.b[0]",0)',
                 'number("2",2)',
+                'unary("-2","-","2")',
                 'parent("root.b[0]","root")',
                 'set("root.b","root.b[0]")',
                 'type("root","product")',
