@@ -350,7 +350,7 @@ Args:
     - C: The constraint identifier
     - X: The internal object identifier
     - X': The resolved target of the implied variable (dotpath string)
-    - G: The ground formula or aggregate identifier for the implied value
+    - G: The ground term of the implied value
 *%
 
 %*! attribute_constraint(C)

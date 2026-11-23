@@ -1716,6 +1716,40 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
         ),
         "files": ["unbounded_two_lb.lp"],
     },
+    "imply_terms": {
+        "test": StableModels(
+            {
+                'binary("root.x[0]=5","root.x[0]","=","5")',
+                'binary("root.y[0]=root.z[0]","root.y[0]","=","root.z[0]")',
+                'constraint(("root.x",1),"lowerbound")',
+                'constraint(("root.y",1),"lowerbound")',
+                'constraint(("root.z",1),"lowerbound")',
+                'constraint((0,"root.x[0]=5"),"boolean")',
+                'constraint((1,"root.y[0]=root.z[0]"),"boolean")',
+                'index("root.x[0]",0)',
+                'index("root.y[0]",0)',
+                'index("root.z[0]",0)',
+                'integer("product.x")',
+                'integer("product.y")',
+                'integer("product.z")',
+                'number("5",5)',
+                'parent("root.x[0]","root")',
+                'parent("root.y[0]","root")',
+                'parent("root.z[0]","root")',
+                'part("product")',
+                'range("product.x",0,9)',
+                'range("product.y",0,2)',
+                'range("product.z",0,2)',
+                'set("root.x","root.x[0]")',
+                'set("root.y","root.y[0]")',
+                'set("root.z","root.z[0]")',
+                'type("root","product")',
+                'type("root.x[0]","product.x")',
+                'type("root.y[0]","product.y")',
+                'type("root.z[0]","product.z")',
+            }
+        ),
+    },
     "condition_path": {
         "test": StableModels(
             {

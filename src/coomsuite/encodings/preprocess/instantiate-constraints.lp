@@ -18,9 +18,8 @@ conditional_requirement_aux(C,X,G,F') :- conditions(C,X,G), coom_require(C,F').
 conditional_requirement(C,G,G') :- conditional_requirement_aux(C,X,G,F'), path_to(X,F',G').
 
 %%% Instantiate imply statements
-imply_aux(C,X,P,F)                   :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx).
-imply(C,X,X',G)                      :- imply_aux(C,X,P,F), path_to(X,P,X'), ground_formula(X,F,G).
-imply(C,X,X',@fmt_aggregate(T,X,P')) :- imply_aux(C,X,P,F), path_to(X,P,X'), function(X,F,T,P').
+imply_aux(C,X,P,F) :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx).
+imply(C,X,X',G)    :- imply_aux(C,X,P,F), path_to(X,P,X'), path_to(X,F,G).
 
 % convert conditions of imply to conditional requirements
 conditional_requirement(C,Con,@fmt_binary(X',"=",G)) :- imply(C,X,X',G), conditions(C,X,Con).

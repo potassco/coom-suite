@@ -66,6 +66,7 @@ class TestPreprocess(TestCase):
         """
         self.run_test("imply")
         self.run_test("conditional_imply")
+        self.run_test("imply_terms")
 
     def test_combinations_table(self) -> None:
         """
