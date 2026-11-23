@@ -42,7 +42,7 @@ Args:
 
 Identifies objects relative to which a path expression can be evaluated.
 Derived from all possible occurrences of a path: terms of formulas (see `term_context`), combinations table columns,
-the left-hand sides of imply statements, and optimization statements.
+the left-hand sides of imply and default statements, and optimization statements.
 
 Args:
     - X: The internal object identifier
