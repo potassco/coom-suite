@@ -1,7 +1,7 @@
 %%% Instantiate conditions
 % Collect all "ground" conditions
-conditions_aux(C,X,0,(G,()))  :- coom_context(C,Ctx), type_aux(X,Ctx), coom_condition(C,0,F), ground_formula(X,F,G).
-conditions_aux(C,X,I+1,(G,T)) :- conditions_aux(C,X,I,T), coom_condition(C,I+1,F), ground_formula(X,F,G).
+conditions_aux(C,X,0,(G,()))  :- coom_context(C,Ctx), type_aux(X,Ctx), coom_condition(C,0,F), path_to(X,F,G).
+conditions_aux(C,X,I+1,(G,T)) :- conditions_aux(C,X,I,T), coom_condition(C,I+1,F), path_to(X,F,G).
 
 conditions_aux(C,X,T)         :- conditions_aux(C,X,I,T), not coom_condition(C,I+1,_).
 
@@ -15,7 +15,7 @@ conditions(C,X,G)                  :- conditions_aux(C,X,(G,())).
 conditions(C,X,@fmt_unary(G,"()")) :- conditions_binary(C,X,G,_,_,()).
 
 conditional_requirement_aux(C,X,G,F') :- conditions(C,X,G), coom_require(C,F').
-conditional_requirement(C,G,G') :- conditional_requirement_aux(C,X,G,F'), ground_formula(X,F',G').
+conditional_requirement(C,G,G') :- conditional_requirement_aux(C,X,G,F'), path_to(X,F',G').
 
 %%% Instantiate imply statements
 imply_aux(C,X,P,F)                   :- coom_imply(C,P,F), coom_context(C,Ctx), type_aux(X,Ctx).

@@ -15,6 +15,9 @@ bound(name,bound).
 
 defined(name) :- value(name,_).
 
+% satisfaction of Boolean variables
+satisfied(name) :- type(name,type), value(name,"True"), type = "Bool".
+
 % an object can only be included if the bound is active
 { include(name) } :- active(bound).
 

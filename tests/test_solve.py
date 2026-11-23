@@ -76,6 +76,8 @@ class TestClingo(TestCase):
         self.run_test("binary_undef")
         self.run_test("unary_undef")
 
+        self.run_test("condition_path")
+
     def test_table_constraints(self) -> None:
         """
         Test table constraints (clingo).
@@ -227,6 +229,8 @@ class TestFlingo(TestCase):
 
         self.run_test("binary_undef")
         self.run_test("unary_undef")
+
+        self.run_test("condition_path")
 
     def test_table_constraints(self) -> None:
         """

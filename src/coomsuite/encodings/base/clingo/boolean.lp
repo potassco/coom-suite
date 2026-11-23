@@ -11,6 +11,9 @@ satisfied(F) :- binary(F,XL,">=",XR), VL >= VR, value(XL,VL), value(XR,VR).
 satisfied(F) :- binary(F,XL,"<", XR), VL <  VR, value(XL,VL), value(XR,VR).
 satisfied(F) :- binary(F,XL,"<=",XR), VL <= VR, value(XL,VL), value(XR,VR).
 
+% Satisfaction of Boolean variables
+satisfied(X) :- type(X,"Bool"), value(X,"True").
+
 % Satisfaction of unary/binary logical relations
 satisfied(F) :- unary(F,"!",F'), not satisfied(F').
 satisfied(F) :- unary(F,"()",F'),    satisfied(F').

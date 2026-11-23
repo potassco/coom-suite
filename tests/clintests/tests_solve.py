@@ -540,4 +540,12 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
     "set_invalid_value_num": {
         "test": StableModels({'value("root.size[0]",1)'}, {'value("root.size[0]",2)'}, {'value("root.size[0]",3)'}),
     },
+    "condition_path": {
+        "test": StableModels(
+            {'value("root.b[0]","True")', 'value("root.c[0]","True")', 'value("root.x[0]",2)'},
+            {'value("root.b[0]","False")', 'value("root.c[0]","True")', 'value("root.x[0]",0)'},
+            {'value("root.b[0]","False")', 'value("root.c[0]","True")', 'value("root.x[0]",1)'},
+            {'value("root.b[0]","False")', 'value("root.c[0]","True")', 'value("root.x[0]",2)'},
+        ),
+    },
 }

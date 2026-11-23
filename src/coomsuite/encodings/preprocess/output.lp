@@ -42,11 +42,11 @@ parent(PX,PP)           :- obj_path(X,PX), type_aux(X,_), X=(_,(P,_)), obj_path(
 %%% Constraints
 % Formulas
 % Constraints at root and without conditions can be instantiated "as is"
-constraint((C,G),"boolean") :- coom_require(C,F), ground_formula((),F,G), not coom_condition(C,_,_).
+constraint((C,G),"boolean") :- coom_require(C,F), path_to((),F,G), not coom_condition(C,_,_).
 
 % Local constraints without conditions get converted into conditional requirement
 % to add an "definedness" condition on their context variable
-local_constraint(C,PX,G) :- coom_require(C,F), ground_formula(X,F,G), not coom_condition(C,_,_), X != (), obj_path(X,PX).
+local_constraint(C,PX,G) :- coom_require(C,F), path_to(X,F,G), not coom_condition(C,_,_), X != (), obj_path(X,PX).
 function(@fmt_unary(X,"count"),"count",X)    :- local_constraint(C,X,G).
 set(X,X)                                     :- local_constraint(_,X,_).
 binary(@fmt_binary(Fun,"=","1"),Fun,"=","1") :- local_constraint(_,X,_), function(Fun,"count",X).
