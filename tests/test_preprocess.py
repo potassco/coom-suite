@@ -59,6 +59,13 @@ class TestPreprocess(TestCase):
         self.run_test("require_with_partonomy2")
         self.run_test("require_with_partonomy_multiple_instances")
 
+    def test_imply(self) -> None:
+        """
+        Test preprocessing COOM imply statements.
+        """
+        self.run_test("imply")
+        self.run_test("conditional_imply")
+
     def test_combinations_table(self) -> None:
         """
         Test preprocessing COOM combinations tables.
