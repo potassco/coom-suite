@@ -940,6 +940,28 @@ class TestMultiJumpApplication(TestMultiApplication, TestCase):
                 fail_msg = f"failed with {type(app).__name__}, algorithm={algorithm}"
                 self.assertEqual(app.current_max_bound, 6, fail_msg)
 
+    def test_default_term_and_bool_path(self) -> None:
+        """
+        Test defaults given by a term and conditions on a plain Bool path for objects added at later bounds.
+
+        Every bag has to be big, big bags have v=0 and the default of w is v+1 (so w=1).
+        The sum of w has to be at least 6, so the minimal bound is 6
+        (without the condition the bound is 3, without the default it is 1).
+        """
+        files: list[str] = [join("examples", "tests", "multishot", "unbounded_default_term.lp")]
+        for algorithm in ["linear", "exponential"]:
+            # the stepwise application and the jump application with both function modes
+            apps = [COOMMultiSolverApp(files, algorithm=algorithm)] + [
+                COOMMultiSolverAppJump(files, algorithm=algorithm, function_mode=function_mode)
+                for function_mode in ["extend", "full"]
+            ]
+            for app in apps:
+                with redirect_stdout(None):
+                    app.main(Control(), [])
+
+                fail_msg = f"failed with {type(app).__name__}, algorithm={algorithm}"
+                self.assertEqual(app.current_max_bound, 6, fail_msg)
+
     def test_jump_user_input(self) -> None:
         """
         Test user input for objects of an unbounded feature.

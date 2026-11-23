@@ -8,6 +8,7 @@ formula_node(F) :- coom_unary(F,_,_).
 top_formula(C,F) :- coom_require(C,F).
 top_formula(C,F) :- coom_condition(C,_,F).
 top_formula(C,F) :- coom_imply(C,_,F).
+top_formula(C,F) :- coom_default(C,_,F).
 
 % Base case: terms at the top level
 term_context(F,Ctx)  :- top_formula(C,F), coom_context(C,Ctx).

@@ -548,4 +548,37 @@ TESTS_SOLVE: dict[str, dict[str, Any]] = {
             {'value("root.b[0]","False")', 'value("root.c[0]","True")', 'value("root.x[0]",2)'},
         ),
     },
+    "default_terms": {
+        "test": StableModels(
+            {
+                'include("root.bike[0]")',
+                'value("root.a[0]",-3)',
+                'value("root.bike[0].w[0]",4)',
+                'value("root.c[0]",0)',
+                'value("root.d[0]",1)',
+            },
+            {
+                'include("root.bike[0]")',
+                'value("root.a[0]",-3)',
+                'value("root.bike[0].w[0]",4)',
+                'value("root.c[0]",1)',
+                'value("root.d[0]",2)',
+            },
+            {
+                'include("root.bike[0]")',
+                'value("root.a[0]",-3)',
+                'value("root.bike[0].w[0]",4)',
+                'value("root.c[0]",2)',
+                'value("root.d[0]",3)',
+            },
+        ),
+    },
+    "default_undefined": {
+        "test": StableModels(
+            {'value("root.x[0]",0)'},
+            {'value("root.x[0]",1)'},
+            {'include("root.bag[0]")', 'value("root.bag[0].w[0]",0)', 'value("root.x[0]",0)'},
+            {'include("root.bag[0]")', 'value("root.bag[0].w[0]",1)', 'value("root.x[0]",1)'},
+        ),
+    },
 }

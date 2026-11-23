@@ -1,1 +1,2 @@
-value(X,V) :- default(X,V), include(X), #false : user_value(X,_), consistent(X,_). % TODO: Check this
+% default value is given by a term
+value(X,V) :- default(X,G), value(G,V), include(X), #false : user_value(X,_), consistent(X,_). % TODO: Check this

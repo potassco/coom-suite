@@ -1,4 +1,5 @@
 #program new_default(x,v).
 default(x,v).
 
-value(x,v) :- default(x,v), include(x), #false : user_value(x,_), consistent(x,_).
+% the default value is given by the term v
+value(x,V) :- default(x,v), value(v,V), include(x), #false : user_value(x,_), consistent(x,_).

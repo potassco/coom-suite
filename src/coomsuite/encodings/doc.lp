@@ -169,10 +169,11 @@ Args:
 %*! default(X,V)
 
 Defines a default value.
+The value is given by a term that is evaluated by the solver.
 
 Args:
     - X: The variable that gets assigned a default value
-    - V: The default value
+    - V: The term of the default value
 *%
 
 %*! explanation(C,E)

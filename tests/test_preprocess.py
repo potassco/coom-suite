@@ -102,6 +102,7 @@ class TestPreprocess(TestCase):
         Test defaults in COOM.
         """
         self.run_test("simple_default")
+        self.run_test("default_terms")
 
     def test_optimization(self) -> None:
         """

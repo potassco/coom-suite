@@ -215,7 +215,7 @@ Declares a default value.
 Args:
     - ID: The constraint identifier
     - P: The variable that gets assigned a default
-    - V: The default value
+    - V: The formula of the default value
 *%
 
 %*! coom_explanation(C,E)

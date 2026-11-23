@@ -111,9 +111,9 @@ number(C,N) :- coom_number(C,N).
 #show constant/1.
 #show number/2.
 
-% Defaults
-default_aux(X,P,V) :- coom_default(ID,P,V), coom_context(ID,T), type_aux(X,T).
-default(X',V)      :- default_aux(X,P,V), path_to(X,P,X').
+% Defaults (the default value can be any term, e.g., a number, constant, path or arithmetic formula)
+default_aux(X,P,F) :- coom_default(ID,P,F), coom_context(ID,T), type_aux(X,T).
+default(X',G)      :- default_aux(X,P,F), path_to(X,P,X'), path_to(X,F,G).
 
 #show default/2.
 

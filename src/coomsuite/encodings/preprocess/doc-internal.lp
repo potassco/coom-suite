@@ -86,7 +86,7 @@ Args:
 %*! top_formula(C,F)
 
 Declares a formula at the top level of a behavior.
-Derived from `coom_require`, `coom_condition` and the right-hand sides of `coom_imply`.
+Derived from `coom_require`, `coom_condition` and the right-hand sides of `coom_imply` and `coom_default`.
 A top-level formula can be any term: a binary, unary, function, path, number or constant.
 
 Args:
@@ -424,14 +424,14 @@ Args:
     - G: The ground formula of the requirement
 *%
 
-%*! default_aux(X,P,V)
+%*! default_aux(X,P,F)
 
 Auxiliary predicate instantiating a default statement relative to every object `X` of its context type.
 
 Args:
     - X: The internal object identifier
     - P: The path of the variable that gets assigned a default
-    - V: The default value
+    - F: The formula of the default value
 *%
 
 %*! minimize_aux(X,P,V)
