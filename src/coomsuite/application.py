@@ -11,10 +11,7 @@ from clingo import Control, Model, Symbol
 from clingo.application import Application, ApplicationOptions, Flag
 from clingo.ast import Location, Position, ProgramBuilder, Rule, parse_files
 from clingo.symbol import Function, String, SymbolType
-from flingo.__main__ import CSP, DEF, MAX_INT, MIN_INT, Statistic
-from flingo.__main__ import AppConfig as FlingoConfig
-from flingo.parsing import THEORY, HeadBodyTransformer
-from flingo.translator import AUX, Translator
+from clingolpx import ClingoLPXTheory
 
 from .utils import asp2coom, get_encoding
 from .utils.logging import get_logger
@@ -25,6 +22,9 @@ log = get_logger("main")
 
 def _get_valuation(model: Model, solver: str) -> list[Symbol]:
     if solver == "flingo":
+        from flingo.__main__ import CSP, DEF
+        from flingo.translator import AUX
+
         return [
             Function("value", assignment.arguments)
             for assignment in model.symbols(theory=True)
@@ -35,13 +35,23 @@ def _get_valuation(model: Model, solver: str) -> list[Symbol]:
             )  # Temporary fix until flingo fixes String behavior
             and not (assignment.arguments[0].type is SymbolType.Function and assignment.arguments[0].name == AUX)
         ]
-    return [
-        Function("value", assignment.arguments)
-        for assignment in model.symbols(theory=True)
-        if assignment.name == CSP
-        and len(assignment.arguments) == 2
-        and model.contains(Function("include", [String(assignment.arguments[0].string)]))
-    ]
+    elif solver == "clingcon":
+        return [
+            Function("value", assignment.arguments)
+            for assignment in model.symbols(theory=True)
+            if assignment.name == "__csp"
+            and len(assignment.arguments) == 2
+            and model.contains(Function("include", [String(assignment.arguments[0].string)]))
+        ]
+    elif solver == "clingolpx":
+        return [
+            Function("value", assignment.arguments)
+            for assignment in model.symbols(theory=True)
+            if assignment.name == "__lpx"
+            and len(assignment.arguments) == 2
+            and model.contains(Function("include", [String(assignment.arguments[0].string)]))
+        ]
+    raise ValueError(f"Solver {solver} is not known.")
 
 
 def _sym_to_prg(symbols: Sequence[Symbol], output: str | None = "asp") -> str:  # nocoverage
@@ -66,10 +76,10 @@ class COOMSolverApp(Application):
     _options: dict[str, Any]
     _istest: bool
     _log_level: str
-    config: FlingoConfig
-    _propagator: ClingconTheory
+    config: Any
+    _propagator: ClingconTheory | ClingoLPXTheory
     program_name: str = "COOM Suite"
-    version: str = "1.1.0"
+    version: str = "1.2.0"
 
     def __init__(
         self,
@@ -83,8 +93,20 @@ class COOMSolverApp(Application):
         self._options = {"solver": "clingo", "output_format": "asp"} if options is None else options
         self._istest = istest
         self._log_level = "WARNING" if log_level == "" else log_level
-        self.config = FlingoConfig(MIN_INT, MAX_INT, Flag(False), Flag(False), DEF)
-        self._propagator = ClingconTheory()
+        if self._options["solver"] == "flingo":
+            try:
+                from flingo.__main__ import DEF, MAX_INT, MIN_INT
+                from flingo.__main__ import AppConfig as FlingoConfig
+            except ModuleNotFoundError as exc:
+                if exc.name != "flingo":
+                    raise
+                raise ValueError("The flingo solver requires the optional 'flingo' dependency.") from exc
+
+            self.config = FlingoConfig(MIN_INT, MAX_INT, Flag(False), Flag(False), DEF)
+        if self._options["solver"] == "clingolpx":
+            self._propagator = ClingoLPXTheory()
+        else:
+            self._propagator = ClingconTheory()
 
     def parse_log_level(self, log_level: str) -> bool:  # nocoverage
         """
@@ -122,7 +144,7 @@ class COOMSolverApp(Application):
         Args:
             model (Model): clingo Model
         """
-        if self._options["solver"] in ["flingo", "clingcon"]:
+        if self._options["solver"] in ["flingo", "clingcon", "clingolpx"]:
             self._propagator.on_model(model)
 
             if self._istest:
@@ -148,6 +170,11 @@ class COOMSolverApp(Application):
         elif self._options["solver"] == "clingcon":
             output_symbols = list(model.symbols(shown=True))
             output_symbols.extend(_get_valuation(model, solver="clingcon"))
+        elif self._options["solver"] == "clingolpx":
+            output_symbols = list(model.symbols(shown=True))
+            output_symbols.extend(_get_valuation(model, solver="clingolpx"))
+            # print(model.symbols(theory=True))
+
         print(_sym_to_prg(output_symbols, self._options["output_format"]))
 
     def main(self, control: Control, files: Sequence[str]) -> None:
@@ -164,18 +191,25 @@ class COOMSolverApp(Application):
             control.load(show)
             control.ground()
             control.solve()
-        elif self._options["solver"] == "clingcon":
+        elif self._options["solver"] in ["clingcon", "clingolpx"]:
             self._propagator.register(control)
-            self._propagator.configure("max-int", str(self.config.max_int))
-            self._propagator.configure("min-int", str(self.config.min_int))
+
+            if self._options["solver"] == "clingcon":
+                self._propagator.configure("max-int", str(self.config.max_int))
+                self._propagator.configure("min-int", str(self.config.min_int))
 
             with ProgramBuilder(control) as bld:
                 parse_files([encoding, show], lambda stm: self._propagator.rewrite_ast(stm, bld.add))
 
             control.ground([("base", [])])
             self._propagator.prepare(control)
-            control.solve(on_model=self.on_model)
+
+            control.solve(on_model=self.on_model, on_statistics=self._propagator.on_statistics)
         elif self._options["solver"] == "flingo":
+            from flingo.__main__ import Statistic
+            from flingo.parsing import THEORY, HeadBodyTransformer
+            from flingo.translator import Translator
+
             self._propagator.register(control)
             self._propagator.configure("max-int", str(self.config.max_int))
             self._propagator.configure("min-int", str(self.config.min_int))

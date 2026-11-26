@@ -9,9 +9,10 @@ description = "Python package to parse and solve COOM configuration instances us
 requires-python = ">=3.12"
 dependencies = [
     "antlr4-python3-runtime==4.13.2",
-    "clingo==5.7.*",
-    "flingo==1.0.0",
-    "clinguin>=2.6.1",
+    "clingo==5.8.*",
+    "clingcon",
+    "clingo-lpx",
+    "clinguin>=2.6.1"
 ]
 license-files = ["LICENSE"]
 dynamic = ["version"]
@@ -38,6 +39,7 @@ doc = [
     "pygments_clingo",
 ]
 grammar = ["antlr4-tools"]
+flingo = ["clingo==5.7.*", "flingo==1.0.0"]
 dev = ["coomsuite[test,typecheck,lint,grammar]"]
 
 [project.scripts]
