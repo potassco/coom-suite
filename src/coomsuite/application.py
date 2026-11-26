@@ -49,6 +49,7 @@ def _get_valuation(model: Model, solver: str) -> list[Symbol]:
             for assignment in model.symbols(theory=True)
             if assignment.name == "__lpx"
             and len(assignment.arguments) == 2
+            and assignment.arguments[0].type is SymbolType.String
             and model.contains(Function("include", [String(assignment.arguments[0].string)]))
         ]
     raise ValueError(f"Solver {solver} is not known.")
@@ -192,11 +193,13 @@ class COOMSolverApp(Application):
             control.ground()
             control.solve()
         elif self._options["solver"] in ["clingcon", "clingolpx"]:
+            if self._options["solver"] == "clingolpx":
+                self._propagator.configure("strict", "1")
             self._propagator.register(control)
 
-            if self._options["solver"] == "clingcon":
-                self._propagator.configure("max-int", str(self.config.max_int))
-                self._propagator.configure("min-int", str(self.config.min_int))
+            # if self._options["solver"] == "clingcon":
+            #     self._propagator.configure("max-int", str(self.config.max_int))
+            #     self._propagator.configure("min-int", str(self.config.min_int))
 
             with ProgramBuilder(control) as bld:
                 parse_files([encoding, show], lambda stm: self._propagator.rewrite_ast(stm, bld.add))

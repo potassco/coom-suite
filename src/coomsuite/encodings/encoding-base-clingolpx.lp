@@ -14,6 +14,6 @@
 
 % #include "base/clingolpx/optimization.lp".
 
-% #include "base/clingolpx/user.lp".
+#include "base/clingolpx/user.lp".
 
 % #include "doc.lp".
