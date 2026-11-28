@@ -10,4 +10,4 @@ coom_behavior(0).
 coom_context(0,"product").
 coom_default(0,"color","White").
 coom_path("color",0,"color").
-coom_constant("White").
+coom_constant("White","str").

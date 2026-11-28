@@ -377,9 +377,9 @@ class ASPModelVisitor(ModelVisitor):
     def visitFormula_atom(self, ctx: ModelParser.Formula_atomContext):
         if not self.is_table:
             if ctx.atom_true:
-                self.output_asp.append('constant("True","bool").')
+                self.output_asp.append('constant("True","str").')
             elif ctx.atom_false:
-                self.output_asp.append('constant("False","bool").')
+                self.output_asp.append('constant("False","str").')
             elif ctx.atom_num:
                 num_ctx: ModelParser.FloatingContext = ctx.atom_num
                 if num_ctx.FLOATING() is not None:

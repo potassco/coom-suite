@@ -102,7 +102,6 @@ def run_test(
             program="".join(
                 preprocess(
                     file_paths,
-                    discrete=False,
                     max_bound=max_bound,
                     multishot=multishot,
                     object_bounds=object_bounds,

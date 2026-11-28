@@ -8,11 +8,11 @@ discrete(@fmt_join(T,A),DT) :- coom_attribute(T,A,DT).
 domain(@fmt_join(T,A),V)     :- coom_attribute_value(T,_,A,V), coom_attribute(T,A,_).
 
 % Numeric features
-numeric(@join(Ctx,N),int)   :- coom_feature(Ctx,N,"num",_,_), not coom_precision(Ctx,N,_). % Integers
-numeric(@join(Ctx,N),float) :- coom_feature(Ctx,N,"num",_,_),     coom_precision(Ctx,N,_). % Floats
+numeric(@fmt_join(Ctx,N),"int")   :- coom_feature(Ctx,N,"num",_,_), not coom_precision(Ctx,N,_). % Integers
+numeric(@fmt_join(Ctx,N),"float") :- coom_feature(Ctx,N,"num",_,_),     coom_precision(Ctx,N,_). % Floats
 
-range(@join(Ctx,N),Min,Max) :- coom_feature(Ctx,N,"num",_,_), coom_range(Ctx,N,Min,Max).
-precision(@join(Ctx,N),P)   :- coom_feature(Ctx,N,"num",_,_), coom_precision(Ctx,N,P). % For floats
+range(@fmt_join(Ctx,N),Min,Max) :- coom_feature(Ctx,N,"num",_,_), coom_range(Ctx,N,Min,Max).
+precision(@fmt_join(Ctx,N),P)   :- coom_feature(Ctx,N,"num",_,_), coom_precision(Ctx,N,P). % For floats
 
 #show discrete/2.
 #show domain/2.
