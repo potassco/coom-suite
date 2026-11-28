@@ -301,6 +301,8 @@ Args:
 %*! conditional_requirement(C,G,G')
 
 Represents an instantiated conditional constraint.
+Derived from conditional `require` statements, conditional `imply` statements
+(with requirement `X'=G`, see `imply/4`) and local constraints over optional objects.
 
 Args:
     - C: The constraint identifier
@@ -319,13 +321,15 @@ Args:
     - F: The formula whose value is assigned
 *%
 
-%*! imply(C,X',G)
+%*! imply(C,X,X',G)
 
-Represents an instantiated imply statement.
+Represents an imply statement instantiated relative to object `X`.
+If the statement has conditions, it is turned into a `conditional_requirement`.
 
 Args:
     - C: The constraint identifier
-    - X': The path expression of the implied variable
+    - X: The internal object identifier
+    - X': The resolved target of the implied variable (dotpath string)
     - G: The ground formula or aggregate identifier for the implied value
 *%
 

@@ -36,3 +36,9 @@ The `active/1` externals is used here to only check for constraint violations of
     handler: asp
     options:
         encodings: true
+
+## Encodings for optimization statements
+::: src/coomsuite/encodings/multi/new-optimize.lp
+    handler: asp
+    options:
+        encodings: true

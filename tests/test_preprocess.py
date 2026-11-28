@@ -59,6 +59,13 @@ class TestPreprocess(TestCase):
         self.run_test("require_with_partonomy2")
         self.run_test("require_with_partonomy_multiple_instances")
 
+    def test_imply(self) -> None:
+        """
+        Test preprocessing COOM imply statements.
+        """
+        self.run_test("imply")
+        self.run_test("conditional_imply")
+
     def test_combinations_table(self) -> None:
         """
         Test preprocessing COOM combinations tables.
@@ -135,8 +142,9 @@ class TestPreprocess(TestCase):
         self.run_test("unbounded_multishot_optimize_superset", max_bound=0, multishot=True)
 
         # test models of multishot preprocessing
-        self.run_test("unbounded_multishot_zero_lb_zero_max", max_bound=0, multishot=True)
-        self.run_test("unbounded_multishot_zero_lb_one_max", max_bound=1, multishot=True)
-        self.run_test("unbounded_multishot_two_lb_zero_max", max_bound=0, multishot=True)
-        self.run_test("unbounded_multishot_two_lb_one_max", max_bound=1, multishot=True)
-        self.run_test("unbounded_multishot_optimize", max_bound=0, multishot=True)
+        # (with the bounds of the objects, i.e. the preprocessing used for jump grounding)
+        self.run_test("unbounded_multishot_zero_lb_zero_max", max_bound=0, multishot=True, object_bounds=True)
+        self.run_test("unbounded_multishot_zero_lb_one_max", max_bound=1, multishot=True, object_bounds=True)
+        self.run_test("unbounded_multishot_two_lb_zero_max", max_bound=0, multishot=True, object_bounds=True)
+        self.run_test("unbounded_multishot_two_lb_one_max", max_bound=1, multishot=True, object_bounds=True)
+        self.run_test("unbounded_multishot_optimize", max_bound=0, multishot=True, object_bounds=True)

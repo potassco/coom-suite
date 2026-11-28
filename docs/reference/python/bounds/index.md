@@ -13,6 +13,11 @@ For multi-shot solving a specific [multi-shot application class][multi-applicati
 
 The `max_bound` can either be increased in a `linear` or `exponential` fashion.
 In both approaches it is possible to supply an initial value.
+The step size of the linear search is set with `--step` (default 1),
+the base of the exponential search with `--base` (default 2.0).
+For examples see [bound search][bound-search].
+
+[bound-search]: ../../../examples/cargo-bike.md#bound-search
 
 Once a satisfiable `max_bound` has been found, solving continues to compute what the minimal satisfiable value for `max_bound` is.
 

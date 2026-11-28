@@ -7,6 +7,8 @@ from unittest import TestCase
 from unittest.mock import call, patch
 
 from coomsuite.bounds import get_bound_iter, next_bound_converge
+from coomsuite.bounds.multi_application import COOMMultiSolverApp
+from coomsuite.bounds.multi_jump import COOMMultiSolverAppJump
 from coomsuite.bounds.solver import BoundSolver
 
 
@@ -145,3 +147,34 @@ class TestBound(TestCase):
 
                 with redirect_stdout(None):
                     solver.get_bounds(algorithm, 0, use_multishot=False)
+
+    def test_get_bounds_multishot(self) -> None:
+        """
+        Test get bounds function for multishot solving.
+        """
+        solver = BoundSolver([], solver="clingo", clingo_args=[], output_format="asp")
+
+        for grounding, app_class in [("stepwise", COOMMultiSolverApp), ("jump-full", COOMMultiSolverAppJump)]:
+            for exit_code, expected in [
+                (10, 2),
+                (20, 2),
+                (30, 2),
+                (0, None),
+                (1, None),
+                (33, None),
+                (65, None),
+                (85, None),
+                (128, None),
+            ]:
+                with (
+                    patch("coomsuite.bounds.solver.clingo_main", autospec=True, return_value=exit_code) as mock_main,
+                    redirect_stdout(None),
+                ):
+                    minimal_bound = solver.get_bounds(
+                        "linear", initial_bound=2, use_multishot=True, grounding=grounding
+                    )
+
+                fail_msg = f"failed with grounding={grounding}, exit_code={exit_code}"
+                # clingo_main is mocked, so the bound of the application stays at the initial bound
+                self.assertEqual(minimal_bound, expected, fail_msg)
+                self.assertIsInstance(mock_main.call_args.args[0], app_class, fail_msg)
