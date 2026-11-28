@@ -72,6 +72,13 @@ class TestCOOMModelParser(TestCase):
             ],
         )
         self.assertEqual(
+            parse_coom("product{Bool hasBell}"),
+            [
+                'structure("product").',
+                'feature("product","hasBell","Bool",1,1).',
+            ],
+        )
+        self.assertEqual(
             parse_coom("structure Carrier {0..3 Bag bag}"),
             ['structure("Carrier").', 'feature("Carrier","bag","Bag",0,3).'],
         )
@@ -115,6 +122,27 @@ class TestCOOMModelParser(TestCase):
                 'range("product","totalWeight",#inf,1000).',
             ],
         )
+        self.assertEqual(
+            parse_coom("product{num	.#/m 1-100 length}"),
+            [
+                'structure("product").',
+                'feature("product","length","num",1,1).',
+                'precision("product","length",1).',
+                'unit("product","length","m").',
+                'range("product","length",1,100).',
+            ],
+        )
+
+        self.assertEqual(
+            parse_coom("product{num	.##/kg 1-100 weight}"),
+            [
+                'structure("product").',
+                'feature("product","weight","num",1,1).',
+                'precision("product","weight",2).',
+                'unit("product","weight","kg").',
+                'range("product","weight",1,100).',
+            ],
+        )
 
         self.assertEqual(parse_coom("product{string id}"), ['structure("product").'])
 
@@ -142,14 +170,33 @@ class TestCOOMModelParser(TestCase):
                     }"""),
             [
                 'enumeration("Capacity").',
-                'attribute("Capacity","volume","num").',
-                'attribute("Capacity","weight","num").',
+                'attribute("Capacity","volume","int").',
+                'attribute("Capacity","weight","int").',
                 'option("Capacity", "B10").',
                 'attribute_value("Capacity","B10","volume",10).',
                 'attribute_value("Capacity","B10","weight",100).',
                 'option("Capacity", "B20").',
                 'attribute_value("Capacity","B20","volume",20).',
                 'attribute_value("Capacity","B20","weight",250).',
+            ],
+        )
+
+        self.assertEqual(
+            parse_coom(
+                """\
+                enumeration Material {
+                        attribute num.#/kg weight
+                        A  = ( 1.2 )
+                        B  = ( 2.5)
+                    }"""
+            ),
+            [
+                'enumeration("Material").',
+                'attribute("Material","weight","float").',
+                'option("Material", "A").',
+                'attribute_value("Material","A","weight","1.2").',
+                'option("Material", "B").',
+                'attribute_value("Material","B","weight","2.5").',
             ],
         )
 
@@ -206,7 +253,7 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"color=Red").',
                 'binary("color=Red","color","=","Red").',
                 'path("color",0,"color").',
-                'constant("Red").',
+                'constant("Red","str").',
             ],
         )
 
@@ -311,7 +358,21 @@ class TestCOOMModelParser(TestCase):
                 'require(0,"c>5").',
                 'binary("c>5","c",">","5").',
                 'path("c",0,"c").',
-                'number("5",5).',
+                'constant("5","int").',
+            ],
+        )
+        self.assertEqual(
+            parse_coom("behavior {condition a = b default c = 2.2}"),
+            [
+                "behavior(0).",
+                'context(0,"product").',
+                'condition(0,0,"a=b").',
+                'binary("a=b","a","=","b").',
+                'path("a",0,"a").',
+                'path("b",0,"b").',
+                'default(0,"c","2.2").',
+                'path("c",0,"c").',
+                'float("2.2").',
             ],
         )
 
@@ -323,15 +384,15 @@ class TestCOOMModelParser(TestCase):
                 'condition(0,0,"a=2").',
                 'binary("a=2","a","=","2").',
                 'path("a",0,"a").',
-                'number("2",2).',
+                'constant("2","int").',
                 'condition(0,1,"b=1").',
                 'binary("b=1","b","=","1").',
                 'path("b",0,"b").',
-                'number("1",1).',
+                'constant("1","int").',
                 'require(0,"c>5").',
                 'binary("c>5","c",">","5").',
                 'path("c",0,"c").',
-                'number("5",5).',
+                'constant("5","int").',
             ],
         )
 
@@ -829,7 +890,7 @@ class TestCOOMModelParser(TestCase):
                 'binary("x=sin(5)","x","=","sin(5)").',
                 'path("x",0,"x").',
                 'unary("sin(5)","sin","5").',
-                'number("5",5).',
+                'constant("5","int").',
             ],
         )
 
@@ -842,7 +903,7 @@ class TestCOOMModelParser(TestCase):
                 'binary("x=asin(5)","x","=","asin(5)").',
                 'path("x",0,"x").',
                 'unary("asin(5)","asin","5").',
-                'number("5",5).',
+                'constant("5","int").',
             ],
         )
 
@@ -855,7 +916,7 @@ class TestCOOMModelParser(TestCase):
                 'binary("x=cos(5)","x","=","cos(5)").',
                 'path("x",0,"x").',
                 'unary("cos(5)","cos","5").',
-                'number("5",5).',
+                'constant("5","int").',
             ],
         )
 
@@ -868,7 +929,7 @@ class TestCOOMModelParser(TestCase):
                 'binary("x=acos(5)","x","=","acos(5)").',
                 'path("x",0,"x").',
                 'unary("acos(5)","acos","5").',
-                'number("5",5).',
+                'constant("5","int").',
             ],
         )
 
@@ -881,7 +942,7 @@ class TestCOOMModelParser(TestCase):
                 'binary("x=cosh(5)","x","=","cosh(5)").',
                 'path("x",0,"x").',
                 'unary("cosh(5)","cosh","5").',
-                'number("5",5).',
+                'constant("5","int").',
             ],
         )
 
@@ -894,7 +955,7 @@ class TestCOOMModelParser(TestCase):
                 'binary("x=tan(5)","x","=","tan(5)").',
                 'path("x",0,"x").',
                 'unary("tan(5)","tan","5").',
-                'number("5",5).',
+                'constant("5","int").',
             ],
         )
 
@@ -907,7 +968,7 @@ class TestCOOMModelParser(TestCase):
                 'binary("x=atan(5)","x","=","atan(5)").',
                 'path("x",0,"x").',
                 'unary("atan(5)","atan","5").',
-                'number("5",5).',
+                'constant("5","int").',
             ],
         )
 
@@ -920,7 +981,7 @@ class TestCOOMModelParser(TestCase):
                 'binary("x=tanh(5)","x","=","tanh(5)").',
                 'path("x",0,"x").',
                 'unary("tanh(5)","tanh","5").',
-                'number("5",5).',
+                'constant("5","int").',
             ],
         )
 

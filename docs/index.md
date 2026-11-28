@@ -91,7 +91,7 @@ with four scalable benchmark sets is provided.
     This gives the following output
 
     ```shell
-    COOM Suite version 0.1
+    COOM Suite version 1.3.0
     Reading from /tmp/tmpdz0jgc5o
     Solving...
     Answer: 1

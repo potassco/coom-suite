@@ -1,6 +1,7 @@
 #defined coom_structure/1.
 #defined coom_feature/5.
 #defined coom_range/4.
+#defined coom_precision/3.
 #defined coom_enumeration/1.
 #defined coom_option/2.
 #defined coom_attribute/3.
@@ -16,8 +17,7 @@
 #defined coom_binary/4.
 #defined coom_unary/3.
 #defined coom_path/3.
-#defined coom_constant/1.
-#defined coom_number/2.
+#defined coom_constant/2.
 
 #defined coom_function/4.
 #defined coom_imply/3.

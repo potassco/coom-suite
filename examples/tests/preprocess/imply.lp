@@ -10,4 +10,4 @@ coom_imply(0,"x","v+5").
 coom_path("x",0,"x").
 coom_binary("v+5","v","+","5").
 coom_path("v",0,"v").
-coom_number("5",5).
+coom_constant("5","int").

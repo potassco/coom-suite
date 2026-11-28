@@ -3,7 +3,7 @@ coom_feature("product","frontWheel","Wheel",1,1).
 coom_feature("product","rearWheel","Wheel",1,1).
 
 coom_enumeration("Wheel").
-coom_attribute("Wheel","size","num").
+coom_attribute("Wheel","size","int").
 coom_option("Wheel", "W27").
 coom_attribute_value("Wheel","W27","size",27).
 coom_option("Wheel", "W28").

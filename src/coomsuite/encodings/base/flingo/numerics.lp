@@ -9,11 +9,11 @@
 &sum{ XL; -XR } = F :- binary(F,XL,"-",XR).
 
 % Only linear constraints are supported
-&sum{ XL*N } = F :- binary(F,XL,"*",XR), number(XR,N).
-&sum{ XR*N } = F :- binary(F,XL,"*",XR), number(XL,N).
+&sum{ XL*XR } = F :- binary(F,XL,"*",XR), constant(XR,"int").
+&sum{ XR*XL } = F :- binary(F,XL,"*",XR), constant(XL,"int").
 % TODO: Add more arithmetics (division and power)
 
 % Unary formulas
 &sus{  X } =: F :- unary(F,"()",X). % Definedness check because there exist parenthesis around Boolean formulas as well
-&sum{  X } = F :- unary(F,"+", X).
-&sum{ -X } = F :- unary(F,"-", X).
+&sum{  X } = F  :- unary(F,"+", X).
+&sum{ -X } = F  :- unary(F,"-", X).

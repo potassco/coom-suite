@@ -15,7 +15,6 @@ log = get_logger("main")
 def preprocess(
     files: list[str],
     max_bound: int = 0,
-    discrete: bool = False,
     multishot: bool = False,
     object_bounds: bool = False,
 ) -> list[str]:
@@ -38,9 +37,6 @@ def preprocess(
     else:
         encoding = "preprocess.lp"
     ctl.load(get_encoding(encoding))
-
-    if discrete:
-        ctl.add("base", [], "discrete.")  # nocoverage
 
     ctl.ground()
     with ctl.solve(yield_=True) as handle:

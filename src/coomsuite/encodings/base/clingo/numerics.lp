@@ -13,7 +13,7 @@ value(F, V)    :- unary(F,"+", X),     value(X,V).
 value(F,-V)    :- unary(F,"-", X),     value(X,V).
 % TODO: Add more arithmetics (division and power)
 
-% Default arithmetics
+% Defaults arithmetics if one side is undefined
 value(F,VL)  :- binary(F,XL,"+",XR), value(XL,VL), not value(XR,_).
 value(F,VR)  :- binary(F,XL,"+",XR), value(XR,VR), not value(XL,_).
 value(F,VL)  :- binary(F,XL,"-",XR), value(XL,VL), not value(XR,_).

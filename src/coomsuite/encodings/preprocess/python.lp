@@ -69,4 +69,8 @@ def parse_dotpath(x):
         idx = Number(int(p[open_bracket+1:-1]))
         path = Tuple_([name,Tuple_([path,idx])])
     return path
+
+@lru_cache(maxsize=None)
+def convert_int(i):
+    return Number(int(i.string))
 #end.

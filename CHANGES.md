@@ -1,5 +1,10 @@
 # Changes
 
+## v1.3.0
+
+- Added [clingcon](https://potassco.org/clingcon/) encoding
+- Fixed a bug with conditional imply statements
+
 ## v1.2.0
 
 - updated preprocessing encoding

@@ -10,11 +10,11 @@ from clingcon import ClingconTheory
 from clingo import Control, Model, Symbol
 from clingo.application import Application, ApplicationOptions, Flag
 from clingo.ast import Location, Position, ProgramBuilder, Rule, parse_files
-from clingo.symbol import Function, SymbolType
+from clingo.symbol import Function, String, SymbolType
 from flingo.__main__ import CSP, DEF, MAX_INT, MIN_INT, Statistic
 from flingo.__main__ import AppConfig as FlingoConfig
 from flingo.parsing import THEORY, HeadBodyTransformer
-from flingo.translator import AUX, Translator
+from flingo.translator import Translator
 
 from .utils import asp2coom, get_encoding
 from .utils.logging import get_logger
@@ -23,17 +23,28 @@ from .utils.logging import get_logger
 log = get_logger("main")
 
 
-def _get_valuation(model: Model) -> list[Symbol]:
-    return [
-        Function("value", assignment.arguments)
-        for assignment in model.symbols(theory=True)
-        if assignment.name == CSP
-        and len(assignment.arguments) == 2
-        and model.contains(
-            Function(DEF, [Function(str(assignment.arguments[0]), [], True)])
-        )  # Temporary fix until flingo fixes String behavior
-        and not (assignment.arguments[0].type is SymbolType.Function and assignment.arguments[0].name == AUX)
-    ]
+def _get_valuation(model: Model, solver: str) -> list[Symbol]:
+    # if solver == "flingo":
+    #     return [
+    #         Function("value", assignment.arguments)
+    #         for assignment in model.symbols(theory=True)
+    #         if assignment.name == CSP
+    #         and len(assignment.arguments) == 2
+    #         and model.contains(
+    #             Function(DEF, [Function(str(assignment.arguments[0]), [], True)])
+    #         )  # Temporary fix until flingo fixes String behavior
+    #         and not (assignment.arguments[0].type is SymbolType.Function and assignment.arguments[0].name == AUX)
+    #     ]
+    if solver in ["flingo", "clingcon"]:
+        return [
+            Function("value", assignment.arguments)
+            for assignment in model.symbols(theory=True)
+            if assignment.name == CSP
+            and len(assignment.arguments) == 2
+            and assignment.arguments[0].type is SymbolType.String
+            and model.contains(Function("include", [String(assignment.arguments[0].string)]))
+        ]
+    raise ValueError(f"Unknown solver {solver}.")  # nocoverage
 
 
 def _sym_to_prg(symbols: Sequence[Symbol], output: str | None = "asp") -> str:  # nocoverage
@@ -61,7 +72,7 @@ class COOMSolverApp(Application):
     config: FlingoConfig
     _propagator: ClingconTheory
     program_name: str = "COOM Suite"
-    version: str = "1.1.0"
+    version: str = "1.3.0"
 
     def __init__(
         self,
@@ -114,13 +125,13 @@ class COOMSolverApp(Application):
         Args:
             model (Model): clingo Model
         """
-        if self._options["solver"] == "flingo":
+        if self._options["solver"] in ["flingo", "clingcon"]:
             self._propagator.on_model(model)
 
             if self._istest:
                 # this slows down solving considerably but makes tests for clingo and flingo uniform
                 # better way?
-                model.extend(_get_valuation(model))
+                model.extend(_get_valuation(model, self._options["solver"]))
         # log.debug("------- Full model -----") # disabled because makes solving much slower
         # log.debug("\n".join([str(s) for s in model.symbols(atoms=True, shown=True, theory=True)]))
 
@@ -128,15 +139,9 @@ class COOMSolverApp(Application):
         """
         Print a model on the console.
         """
-        if self._options["solver"] == "clingo":
-            output_symbols = model.symbols(shown=True)
-        elif self._options["solver"] == "flingo":
-            output_symbols = [
-                atom
-                for atom in model.symbols(shown=True)
-                if not (atom.name == self.config.defined and len(atom.arguments) == 1)
-            ]
-            output_symbols.extend(_get_valuation(model))
+        output_symbols = list(model.symbols(shown=True))
+        if self._options["solver"] in ["flingo", "clingcon"]:
+            output_symbols.extend(_get_valuation(model, self._options["solver"]))
         print(_sym_to_prg(output_symbols, self._options["output_format"]))
 
     def main(self, control: Control, files: Sequence[str]) -> None:
@@ -153,26 +158,31 @@ class COOMSolverApp(Application):
             control.load(show)
             control.ground()
             control.solve()
-
-        elif self._options["solver"] == "flingo":
+        elif self._options["solver"] in ["flingo", "clingcon"]:
             self._propagator.register(control)
             self._propagator.configure("max-int", str(self.config.max_int))
             self._propagator.configure("min-int", str(self.config.min_int))
 
-            control.add("base", [], THEORY)
+            if self._options["solver"] == "flingo":
+                control.add("base", [], THEORY)
 
-            with ProgramBuilder(control) as bld:
-                hbt = HeadBodyTransformer()
+                with ProgramBuilder(control) as bld:
+                    hbt = HeadBodyTransformer()
 
-                parse_files([encoding, show], lambda ast: bld.add(hbt.visit(ast)))
-                pos = Position("<string>", 1, 1)
-                loc = Location(pos, pos)
-                for rule in hbt.rules_to_add:
-                    bld.add(Rule(loc, rule[0], rule[1]))  # nocoverage # Not sure when this is needed
+                    parse_files([encoding, show], lambda ast: bld.add(hbt.visit(ast)))
+                    pos = Position("<string>", 1, 1)
+                    loc = Location(pos, pos)
+                    for rule in hbt.rules_to_add:
+                        bld.add(Rule(loc, rule[0], rule[1]))  # nocoverage # Not sure when this is needed
+            else:
+                with ProgramBuilder(control) as bld:
+                    parse_files([encoding, show], lambda stm: self._propagator.rewrite_ast(stm, bld.add))
 
             control.ground([("base", [])])
-            translator = Translator(control, self.config, Statistic())
-            translator.translate(control.theory_atoms)
+
+            if self._options["solver"] == "flingo":
+                translator = Translator(control, self.config, Statistic())
+                translator.translate(control.theory_atoms)
 
             self._propagator.prepare(control)
             control.solve(on_model=self.on_model, on_statistics=self._propagator.on_statistics)

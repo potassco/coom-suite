@@ -38,7 +38,8 @@ class TestPreprocess(TestCase):
         """
         self.run_test("enumeration")
         self.run_test("bool_enumeration")
-        self.run_test("attribute")
+        self.run_test("attribute_int")
+        self.run_test("attribute_float")
 
     def test_require(self) -> None:
         """

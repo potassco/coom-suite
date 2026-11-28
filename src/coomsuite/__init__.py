@@ -14,7 +14,7 @@ from .utils.logging import get_logger
 
 log = get_logger("main")
 
-SOLVERS = ["clingo", "flingo"]
+SOLVERS = ["clingo", "flingo", "clingcon"]
 
 
 def write_facts(facts: str, outfile: str) -> None:  # nocoverage
@@ -74,7 +74,6 @@ def solve(
     processed_facts = preprocess(
         serialized_facts,
         max_bound=max_bound,
-        discrete=solver == "clingo",
     )
     check_user_input(processed_facts)
 

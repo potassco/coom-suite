@@ -112,7 +112,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "enumeration": {
         "test": StableModels(
             {
-                'discrete("Color")',
+                'discrete("Color","str")',
                 'part("product")',
                 'constraint(("root.color",1),"lowerbound")',
                 'domain("Color","Red")',
@@ -136,7 +136,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "bool_enumeration": {
         "test": StableModels(
             {
-                'discrete("Bool")',
+                'discrete("Bool","str")',
                 'part("product")',
                 'constraint(("root.boolean",1),"lowerbound")',
                 'domain("Bool","True")',
@@ -152,11 +152,45 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_structure("product").
             coom_feature("product","boolean","Bool",1,1).""",
     },
-    "attribute": {
+    "attribute_int": {
         "test": StableModels(
             {
-                'discrete("Wheel")',
-                'integer("Wheel.size")',
+                'discrete("Wheel","str")',
+                'discrete("Wheel.size","int")',
+                'part("product")',
+                'constraint(("root.wheel",1),"lowerbound")',
+                'constraint(("root.wheel[0].size",1),"lowerbound")',
+                'constraint(("Wheel","root.wheel[0]"),"table")',
+                'domain("Wheel","W14")',
+                'domain("Wheel.size",14)',
+                'index("root.wheel[0]",0)',
+                'index("root.wheel[0].size[0]",0)',
+                'parent("root.wheel[0]","root")',
+                'parent("root.wheel[0].size[0]","root.wheel[0]")',
+                'set("root.wheel","root.wheel[0]")',
+                'set("root.wheel[0].size","root.wheel[0].size[0]")',
+                'type("root","product")',
+                'type("root.wheel[0]","Wheel")',
+                'type("root.wheel[0].size[0]","Wheel.size")',
+                'allow("Wheel",(0,0),"W14")',
+                'allow("Wheel",(1,0),14)',
+                'column(("Wheel","root.wheel[0]"),0,1,"root.wheel[0].size[0]")',
+                'column(("Wheel","root.wheel[0]"),0,0,"root.wheel[0]")',
+            }
+        ),
+        "program": """
+            coom_structure("product").
+            coom_feature("product","wheel","Wheel",1,1).
+            coom_enumeration("Wheel").
+            coom_attribute("Wheel","size","int").
+            coom_option("Wheel", "W14").
+            coom_attribute_value("Wheel","W14","size",14).""",
+    },
+    "attribute_float": {
+        "test": StableModels(
+            {
+                'discrete("Wheel","str")',
+                'discrete("Wheel.size","float")',
                 'part("product")',
                 'constraint(("root.wheel",1),"lowerbound")',
                 'constraint(("root.wheel[0].size",1),"lowerbound")',
@@ -173,7 +207,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'type("root.wheel[0].size[0]","Wheel.size")',
                 'allow("Wheel",(0,0),"W14")',
                 'allow("Wheel",(1,0),14)',
-                'range("Wheel.size",14,14)',
+                'domain("Wheel.size",14)',
                 'column(("Wheel","root.wheel[0]"),0,1,"root.wheel[0].size[0]")',
                 'column(("Wheel","root.wheel[0]"),0,0,"root.wheel[0]")',
             }
@@ -182,12 +216,12 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_structure("product").
             coom_feature("product","wheel","Wheel",1,1).
             coom_enumeration("Wheel").
-            coom_attribute("Wheel","size","num").
+            coom_attribute("Wheel","size","float").
             coom_option("Wheel", "W14").
             coom_attribute_value("Wheel","W14","size",14).""",
     },
     "require_undef": {
-        "test": StableModels({'constant("Silver")', 'part("product")', 'type("root","product")'}),
+        "test": StableModels({'constant("Silver","str")', 'part("product")', 'type("root","product")'}),
         "program": """
             coom_structure("product").
 
@@ -195,13 +229,13 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
             coom_require(("product",0),"color=Silver").
             coom_binary("color=Silver","color","=","Silver").
             coom_path("color",0,"color").
-            coom_constant("Silver").""",
+            coom_constant("Silver","str").""",
     },
     "require_with_number": {
         "test": StableModels(
             {
-                'discrete("Wheel")',
-                'integer("Wheel.size")',
+                'discrete("Wheel","str")',
+                'discrete("Wheel.size","int")',
                 'part("product")',
                 'constraint(("root.wheel",1),"lowerbound")',
                 'constraint(("root.wheel[0].size",1),"lowerbound")',
@@ -209,9 +243,12 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint((0,"root.wheel[0].size[0]=27"),"boolean")',
                 'domain("Wheel","W27")',
                 'domain("Wheel","W28")',
+                'domain("Wheel.size",27)',
+                'domain("Wheel.size",28)',
                 'index("root.wheel[0]",0)',
                 'index("root.wheel[0].size[0]",0)',
-                'number("27",27)',
+                'constant("27","int")',
+                'integer_constant("27",27)',
                 'parent("root.wheel[0]","root")',
                 'parent("root.wheel[0].size[0]","root.wheel[0]")',
                 'set("root.wheel","root.wheel[0]")',
@@ -223,7 +260,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'allow("Wheel",(0,1),"W28")',
                 'allow("Wheel",(1,1),28)',
                 'allow("Wheel",(1,0),27)',
-                'range("Wheel.size",27,28)',
                 'binary("root.wheel[0].size[0]=27","root.wheel[0].size[0]","=","27")',
                 'column(("Wheel","root.wheel[0]"),0,1,"root.wheel[0].size[0]")',
                 'column(("Wheel","root.wheel[0]"),0,0,"root.wheel[0]")',
@@ -233,8 +269,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "require_with_number_ge": {
         "test": StableModels(
             {
-                'discrete("Wheel")',
-                'integer("Wheel.size")',
+                'discrete("Wheel","str")',
+                'discrete("Wheel.size","int")',
                 'part("product")',
                 'constraint(("root.wheel",1),"lowerbound")',
                 'constraint(("root.wheel[0].size",1),"lowerbound")',
@@ -242,9 +278,12 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint((0,"root.wheel[0].size[0]>=28"),"boolean")',
                 'domain("Wheel","W27")',
                 'domain("Wheel","W28")',
+                'domain("Wheel.size",27)',
+                'domain("Wheel.size",28)',
                 'index("root.wheel[0]",0)',
                 'index("root.wheel[0].size[0]",0)',
-                'number("28",28)',
+                'constant("28","int")',
+                'integer_constant("28",28)',
                 'parent("root.wheel[0]","root")',
                 'parent("root.wheel[0].size[0]","root.wheel[0]")',
                 'set("root.wheel","root.wheel[0]")',
@@ -256,7 +295,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'allow("Wheel",(0,1),"W28")',
                 'allow("Wheel",(1,1),28)',
                 'allow("Wheel",(1,0),27)',
-                'range("Wheel.size",27,28)',
                 'binary("root.wheel[0].size[0]>=28","root.wheel[0].size[0]",">=","28")',
                 'column(("Wheel","root.wheel[0]"),0,1,"root.wheel[0].size[0]")',
                 'column(("Wheel","root.wheel[0]"),0,0,"root.wheel[0]")',
@@ -266,8 +304,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "require_with_constant": {
         "test": StableModels(
             {
-                'constant("W28")',
-                'discrete("Wheel")',
+                'constant("W28","str")',
+                'discrete("Wheel","str")',
                 'part("product")',
                 'constraint(("root.wheel",1),"lowerbound")',
                 'constraint((0,"root.wheel[0]=W28"),"boolean")',
@@ -285,8 +323,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "require_two_wheels": {
         "test": StableModels(
             {
-                'discrete("Wheel")',
-                'integer("Wheel.size")',
+                'discrete("Wheel","str")',
+                'discrete("Wheel.size","int")',
                 'part("product")',
                 'constraint(("root.frontWheel",1),"lowerbound")',
                 'constraint(("root.rearWheel",1),"lowerbound")',
@@ -297,6 +335,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint((0,"root.frontWheel[0].size[0]=root.rearWheel[0].size[0]"),"boolean")',
                 'domain("Wheel","W27")',
                 'domain("Wheel","W28")',
+                'domain("Wheel.size",27)',
+                'domain("Wheel.size",28)',
                 'index("root.frontWheel[0]",0)',
                 'index("root.rearWheel[0]",0)',
                 'index("root.rearWheel[0].size[0]",0)',
@@ -318,7 +358,6 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'allow("Wheel",(0,1),"W28")',
                 'allow("Wheel",(1,1),28)',
                 'allow("Wheel",(1,0),27)',
-                'range("Wheel.size",27,28)',
                 'binary("root.frontWheel[0].size[0]=root.rearWheel[0].size[0]","root.frontWheel[0].size[0]","=","root.rearWheel[0].size[0]")',
                 'column(("Wheel","root.frontWheel[0]"),0,1,"root.frontWheel[0].size[0]")',
                 'column(("Wheel","root.rearWheel[0]"),0,1,"root.rearWheel[0].size[0]")',
@@ -330,10 +369,10 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "conditional_require": {
         "test": StableModels(
             {
-                'constant("True")',
-                'constant("Small")',
-                'discrete("Wheel")',
-                'discrete("Bool")',
+                'constant("True","bool")',
+                'constant("Small","str")',
+                'discrete("Wheel","str")',
+                'discrete("Bool","str")',
                 'part("product")',
                 'constraint(("root.wheel",1),"lowerbound")',
                 'constraint(("root.wheelSupport",1),"lowerbound")',
@@ -361,9 +400,9 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "multiple_conditions": {
         "test": StableModels(
             {
-                'discrete("Color")',
-                'discrete("Size")',
-                'discrete("Material")',
+                'discrete("Color","str")',
+                'discrete("Size","str")',
+                'discrete("Material","str")',
                 'domain("Color","Red")',
                 'domain("Color","Green")',
                 'domain("Size","Small")',
@@ -395,17 +434,17 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'set("root.size","root.size[0]")',
                 'set("root.material","root.material[0]")',
                 'part("product")',
-                'constant("Small")',
-                'constant("Cotton")',
-                'constant("Red")',
+                'constant("Small","str")',
+                'constant("Cotton","str")',
+                'constant("Red","str")',
             }
         ),
     },
     "imply": {
         "test": StableModels(
             {
-                'integer("product.v")',
-                'integer("product.x")',
+                'numeric("product.v","int")',
+                'numeric("product.x","int")',
                 'range("product.v",0,10)',
                 'range("product.x",0,100)',
                 'type("root","product")',
@@ -422,7 +461,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'set("root.x","root.x[0]")',
                 'binary("root.x[0]=root.v[0]+5","root.x[0]","=","root.v[0]+5")',
                 'binary("root.v[0]+5","root.v[0]","+","5")',
-                'number("5",5)',
+                'constant("5","int")',
+                'integer_constant("5",5)',
                 'part("product")',
             }
         ),
@@ -430,11 +470,11 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "conditional_imply": {
         "test": StableModels(
             {
-                'discrete("Color")',
+                'discrete("Color","str")',
                 'domain("Color","Red")',
                 'domain("Color","Green")',
-                'integer("product.v")',
-                'integer("product.x")',
+                'numeric("product.v","int")',
+                'numeric("product.x","int")',
                 'range("product.v",0,10)',
                 'range("product.x",0,100)',
                 'type("root","product")',
@@ -463,20 +503,22 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("root.v[0]+38","root.v[0]","+","38")',
                 'binary("!root.color[0]=Red||root.x[0]=root.v[0]+0","!root.color[0]=Red","||","root.x[0]=root.v[0]+0")',
                 'binary("!root.color[0]=Green||root.x[0]=root.v[0]+38","!root.color[0]=Green","||","root.x[0]=root.v[0]+38")',
-                'number("0",0)',
-                'number("38",38)',
+                'constant("0","int")',
+                'integer_constant("0",0)',
+                'constant("38","int")',
+                'integer_constant("38",38)',
                 'unary("!root.color[0]=Red","!","root.color[0]=Red")',
                 'unary("!root.color[0]=Green","!","root.color[0]=Green")',
                 'part("product")',
-                'constant("Red")',
-                'constant("Green")',
+                'constant("Red","str")',
+                'constant("Green","str")',
             }
         ),
     },
     "require_with_optional_part": {
         "test": StableModels(
             {
-                'integer("A.b")',
+                'numeric("A.b","int")',
                 'range("A.b",1,2)',
                 'type("root","product")',
                 'type("root.a[0]","A")',
@@ -496,7 +538,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("sum(root.a[0].b)>1","sum(root.a[0].b)",">","1")',
                 'binary("count(root.a[0])=1","count(root.a[0])","=","1")',
                 'binary("!count(root.a[0])=1||sum(root.a[0].b)>1","!count(root.a[0])=1","||","sum(root.a[0].b)>1")',
-                'number("1",1)',
+                'constant("1","int")',
+                'integer_constant("1",1)',
                 'unary("!count(root.a[0])=1","!","count(root.a[0])=1")',
                 'part("product")',
                 'part("A")',
@@ -506,9 +549,9 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "conditional_require_undef": {
         "test": StableModels(
             {
-                'constant("Silver")',
-                'constant("Big")',
-                'discrete("Size")',
+                'constant("Silver","str")',
+                'constant("Big","str")',
+                'discrete("Size","str")',
                 'part("product")',
                 'constraint(("root.Size",1),"lowerbound")',
                 'domain("Size","Small")',
@@ -524,8 +567,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "require_multiple_instances": {
         "test": StableModels(
             {
-                'constant("W28")',
-                'discrete("Size")',
+                'constant("W28","str")',
+                'discrete("Size","str")',
                 'part("product")',
                 'part("Wheel")',
                 'constraint(("root.wheel",2),"lowerbound")',
@@ -560,8 +603,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "require_with_partonomy": {
         "test": StableModels(
             {
-                'constant("Red")',
-                'discrete("Color")',
+                'constant("Red","str")',
+                'discrete("Color","str")',
                 'part("product")',
                 'part("Basket")',
                 'constraint(("root.basket",1),"lowerbound")',
@@ -584,15 +627,16 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'binary("count(root.basket[0])=1","count(root.basket[0])","=","1")',
                 'function("count(root.basket[0])","count","root.basket[0]")',
                 'set("root.basket[0]","root.basket[0]")',
-                'number("1",1)',
+                'constant("1","int")',
+                'integer_constant("1",1)',
             }
         ),
     },
     "require_with_partonomy2": {
         "test": StableModels(
             {
-                'constant("Red")',
-                'discrete("Color")',
+                'constant("Red","str")',
+                'discrete("Color","str")',
                 'part("product")',
                 'part("Bag")',
                 'constraint(("root.bag",2),"lowerbound")',
@@ -606,7 +650,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'index("root.bag[1]",1)',
                 'index("root.bag[1].color[0]",0)',
                 'index("root.bag[0].color[0]",0)',
-                'number("1",1)',
+                'constant("1","int")',
+                'integer_constant("1",1)',
                 'parent("root.bag[0]","root")',
                 'parent("root.bag[1]","root")',
                 'parent("root.bag[1].color[0]","root.bag[1]")',
@@ -638,8 +683,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "require_with_partonomy_multiple_instances": {
         "test": StableModels(
             {
-                'constant("Red")',
-                'discrete("Color")',
+                'constant("Red","str")',
+                'discrete("Color","str")',
                 'part("product")',
                 'part("Compartment")',
                 'part("Bag")',
@@ -667,7 +712,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'index("root.compartment[0].bag[0].color[0]",0)',
                 'index("root.compartment[1].bag[1].color[0]",0)',
                 'index("root.compartment[1].bag[0].color[0]",0)',
-                'number("1",1)',
+                'constant("1","int")',
+                'integer_constant("1",1)',
                 'parent("root.compartment[0]","root")',
                 'parent("root.compartment[1]","root")',
                 'parent("root.compartment[1].bag[0]","root.compartment[1]")',
@@ -721,8 +767,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "combination": {
         "test": StableModels(
             {
-                'discrete("Wheel")',
-                'discrete("Bool")',
+                'discrete("Wheel","str")',
+                'discrete("Bool","str")',
                 'part("product")',
                 'constraint(("root.wheelSupport",1),"lowerbound")',
                 'constraint(("root.wheel",1),"lowerbound")',
@@ -756,8 +802,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "combination_with_structure": {
         "test": StableModels(
             {
-                'discrete("Size")',
-                'discrete("Bool")',
+                'discrete("Size","str")',
+                'discrete("Bool","str")',
                 'part("product")',
                 'part("Wheel")',
                 'constraint(("root.wheelSupport",1),"lowerbound")',
@@ -808,8 +854,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "combination_at_part_with_wildcard": {
         "test": StableModels(
             {
-                'discrete("Size")',
-                'discrete("Material")',
+                'discrete("Size","str")',
+                'discrete("Material","str")',
                 'part("product")',
                 'part("Wheel")',
                 'constraint(("root.wheel",2),"lowerbound")',
@@ -869,8 +915,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "combination_at_part_multiple_instances": {
         "test": StableModels(
             {
-                'discrete("Wheel")',
-                'discrete("Material")',
+                'discrete("Wheel","str")',
+                'discrete("Material","str")',
                 'part("product")',
                 'part("Bike")',
                 'constraint(("root.bike",2),"lowerbound")',
@@ -972,7 +1018,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint(("root.wheel[1].size",1),"lowerbound")',
                 'constraint((0,"root"),"table")',
                 'constraint((1,"root"),"table")',
-                'discrete("Size")',
+                'discrete("Size","str")',
                 'domain("Size","Large")',
                 'domain("Size","Small")',
                 'index("root.wheel[0]",0)',
@@ -1016,9 +1062,9 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint(("root.size",0),"lowerbound")',
                 'constraint((0,"root"),"table")',
                 'constraint((1,"root"),"table")',
-                'discrete("Color")',
-                'discrete("Material")',
-                'discrete("Size")',
+                'discrete("Color","str")',
+                'discrete("Material","str")',
+                'discrete("Size","str")',
                 'domain("Color","Blue")',
                 'domain("Color","Red")',
                 'domain("Material","Steel")',
@@ -1060,8 +1106,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint(("root.wheel[0].size",1),"lowerbound")',
                 'constraint((0,"root"),"table")',
                 'constraint((1,"root.wheel[0]"),"table")',
-                'discrete("Color")',
-                'discrete("Size")',
+                'discrete("Color","str")',
+                'discrete("Size","str")',
                 'domain("Color","Blue")',
                 'domain("Color","Red")',
                 'domain("Size","Large")',
@@ -1088,7 +1134,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "simple_numeric_feature": {
         "test": StableModels(
             {
-                'integer("product.size")',
+                'numeric("product.size","int")',
                 'part("product")',
                 'constraint(("root.size",1),"lowerbound")',
                 'index("root.size[0]",0)',
@@ -1107,15 +1153,16 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "simple_arithmetic_plus": {
         "test": StableModels(
             {
-                'integer("product.a")',
-                'integer("product.b")',
+                'numeric("product.a","int")',
+                'numeric("product.b","int")',
                 'part("product")',
                 'constraint(("root.a",1),"lowerbound")',
                 'constraint(("root.b",1),"lowerbound")',
                 'constraint((0,"root.a[0]+root.b[0]<6"),"boolean")',
                 'index("root.a[0]",0)',
                 'index("root.b[0]",0)',
-                'number("6",6)',
+                'constant("6","int")',
+                'integer_constant("6",6)',
                 'parent("root.a[0]","root")',
                 'parent("root.b[0]","root")',
                 'set("root.a","root.a[0]")',
@@ -1133,15 +1180,16 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "simple_arithmetic_minus": {
         "test": StableModels(
             {
-                'integer("product.a")',
-                'integer("product.b")',
+                'numeric("product.a","int")',
+                'numeric("product.b","int")',
                 'part("product")',
                 'constraint(("root.a",1),"lowerbound")',
                 'constraint(("root.b",1),"lowerbound")',
                 'constraint((0,"root.b[0]-root.a[0]>=3"),"boolean")',
                 'index("root.a[0]",0)',
                 'index("root.b[0]",0)',
-                'number("3",3)',
+                'constant("3","int")',
+                'integer_constant("3",3)',
                 'parent("root.a[0]","root")',
                 'parent("root.b[0]","root")',
                 'set("root.a","root.a[0]")',
@@ -1159,15 +1207,16 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "simple_arithmetic_multiplication": {
         "test": StableModels(
             {
-                'integer("product.a")',
-                'integer("product.b")',
+                'numeric("product.a","int")',
+                'numeric("product.b","int")',
                 'part("product")',
                 'constraint(("root.a",1),"lowerbound")',
                 'constraint(("root.b",1),"lowerbound")',
                 'constraint((0,"root.a[0]*root.b[0]>=10"),"boolean")',
                 'index("root.a[0]",0)',
                 'index("root.b[0]",0)',
-                'number("10",10)',
+                'constant("10","int")',
+                'integer_constant("10",10)',
                 'parent("root.a[0]","root")',
                 'parent("root.b[0]","root")',
                 'set("root.a","root.a[0]")',
@@ -1185,11 +1234,12 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "simple_arithmetic_plus_default_right": {
         "test": StableModels(
             {
-                'integer("product.a")',
+                'numeric("product.a","int")',
                 'part("product")',
                 'constraint(("root.a",1),"lowerbound")',
                 'index("root.a[0]",0)',
-                'number("2",2)',
+                'constant("2","int")',
+                'integer_constant("2",2)',
                 'parent("root.a[0]","root")',
                 'set("root.a","root.a[0]")',
                 'type("root","product")',
@@ -1203,11 +1253,12 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "simple_arithmetic_plus_default_left": {
         "test": StableModels(
             {
-                'integer("product.b")',
+                'numeric("product.b","int")',
                 'part("product")',
                 'constraint(("root.b",1),"lowerbound")',
                 'index("root.b[0]",0)',
-                'number("2",2)',
+                'constant("2","int")',
+                'integer_constant("2",2)',
                 'parent("root.b[0]","root")',
                 'set("root.b","root.b[0]")',
                 'type("root","product")',
@@ -1221,11 +1272,12 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "simple_arithmetic_minus_default_right": {
         "test": StableModels(
             {
-                'integer("product.a")',
+                'numeric("product.a","int")',
                 'part("product")',
                 'constraint(("root.a",1),"lowerbound")',
                 'index("root.a[0]",0)',
-                'number("2",2)',
+                'constant("2","int")',
+                'integer_constant("2",2)',
                 'parent("root.a[0]","root")',
                 'set("root.a","root.a[0]")',
                 'type("root","product")',
@@ -1237,11 +1289,12 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "simple_arithmetic_minus_default_left": {
         "test": StableModels(
             {
-                'integer("product.b")',
+                'numeric("product.b","int")',
                 'part("product")',
                 'constraint(("root.b",1),"lowerbound")',
                 'index("root.b[0]",0)',
-                'number("2",2)',
+                'constant("2","int")',
+                'integer_constant("2",2)',
                 'parent("root.b[0]","root")',
                 'set("root.b","root.b[0]")',
                 'type("root","product")',
@@ -1253,8 +1306,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "parentheses": {
         "test": StableModels(
             {
-                'integer("product.a")',
-                'integer("product.b")',
+                'numeric("product.a","int")',
+                'numeric("product.b","int")',
                 'part("product")',
                 'constraint(("root.a",1),"lowerbound")',
                 'constraint(("root.b",1),"lowerbound")',
@@ -1285,7 +1338,8 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'index("root.bag[0]",0)',
                 'index("root.bag[1]",1)',
                 'index("root.bag[2]",2)',
-                'number("2",2)',
+                'constant("2","int")',
+                'integer_constant("2",2)',
                 'parent("root.bag[0]","root")',
                 'parent("root.bag[1]","root")',
                 'parent("root.bag[2]","root")',
@@ -1304,14 +1358,15 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "sum": {
         "test": StableModels(
             {
-                'integer("product.x")',
+                'numeric("product.x","int")',
                 'part("product")',
                 'constraint(("root.x",0),"lowerbound")',
                 'constraint((0,"sum(root.x)<=10"),"boolean")',
                 'index("root.x[0]",0)',
                 'index("root.x[1]",1)',
                 'index("root.x[2]",2)',
-                'number("10",10)',
+                'constant("10","int")',
+                'integer_constant("10",10)',
                 'parent("root.x[0]","root")',
                 'parent("root.x[1]","root")',
                 'parent("root.x[2]","root")',
@@ -1331,7 +1386,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "simple_default": {
         "test": StableModels(
             {
-                'discrete("Color")',
+                'discrete("Color","str")',
                 'domain("Color","Red")',
                 'domain("Color","White")',
                 'domain("Color","Black")',
@@ -1342,7 +1397,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
                 'constraint(("root.color",1),"lowerbound")',
                 'set("root.color","root.color[0]")',
                 'part("product")',
-                'constant("White")',
+                'constant("White","str")',
                 'default("root.color[0]","White")',
             }
         ),
@@ -1350,7 +1405,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "minimize": {
         "test": StableModels(
             {
-                'integer("product.totalWeight")',
+                'numeric("product.totalWeight","int")',
                 'range("product.totalWeight",1,10)',
                 'type("root","product")',
                 'type("root.totalWeight[0]","product.totalWeight")',
@@ -1366,7 +1421,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "maximize": {
         "test": StableModels(
             {
-                'integer("product.totalOutput")',
+                'numeric("product.totalOutput","int")',
                 'range("product.totalOutput",1,10)',
                 'type("root","product")',
                 'type("root.totalOutput[0]","product.totalOutput")',
@@ -1382,7 +1437,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "minimize_non_root_path": {
         "test": StableModels(
             {
-                'integer("Bag.weight")',
+                'numeric("Bag.weight","int")',
                 'range("Bag.weight",0,10)',
                 'type("root","product")',
                 'type("root.bags[0]","Bag")',
@@ -1404,7 +1459,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "maximize_non_root_path": {
         "test": StableModels(
             {
-                'integer("Bag.volume")',
+                'numeric("Bag.volume","int")',
                 'range("Bag.volume",0,10)',
                 'type("root","product")',
                 'type("root.bags[0]","Bag")',
@@ -1426,7 +1481,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "minimize_function": {
         "test": StableModels(
             {
-                'integer("Bag.volume")',
+                'numeric("Bag.volume","int")',
                 'range("Bag.volume",0,10)',
                 'type("root","product")',
                 'type("root.bags[0]","Bag")',
@@ -1458,7 +1513,7 @@ TESTS_PREPROCESS: dict[str, dict[str, Any]] = {
     "maximize_function": {
         "test": StableModels(
             {
-                'integer("Bag.volume")',
+                'numeric("Bag.volume","int")',
                 'range("Bag.volume",0,10)',
                 'type("root","product")',
                 'type("root.bags[0]","Bag")',
