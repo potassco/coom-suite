@@ -39,10 +39,8 @@ path_to(X,P,PX) :-
     obj_path(X',PX).
 
 % Auxiliary paths for constants and numbers
-path_to(X,P,P) :- coom_binary(F,_,_,P), coom_constant(P), formula_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_binary(F,P,_,_), coom_constant(P), formula_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_binary(F,_,_,P), coom_number(P,_), formula_context(F,T), type_aux(X,T).
-path_to(X,P,P) :- coom_binary(F,P,_,_), coom_number(P,_), formula_context(F,T), type_aux(X,T).
+path_to(X,P,P) :- coom_binary(F,_,_,P), coom_constant(P,_), formula_context(F,T), type_aux(X,T).
+path_to(X,P,P) :- coom_binary(F,P,_,_), coom_constant(P,_), formula_context(F,T), type_aux(X,T).
 
 % Auxiliary paths for formulas and functions
 path_to(X,F,G)                     :- ground_formula(X,F,G).

@@ -1,30 +1,25 @@
 %%% Output atoms
 % Attributes of the model (enumerations and numeric features in COOM)
-discrete(T) :- coom_enumeration(T).
-domain(T,V) :- coom_option(T,V).
+discrete(T,"str") :- coom_enumeration(T).
+domain(T,V)     :- coom_option(T,V).
 
 % Enumeration attributes
-discrete(@fmt_join(T,A)) :- coom_attribute(T,A,"str").
-domain(@fmt_join(T,A),V) :- coom_attribute_value(T,_,A,V), coom_attribute(T,A,"str").
-
-integer(@fmt_join(T,A))       :- coom_attribute(T,A,"num"), not discrete.
-range(@fmt_join(T,A),Min,Max) :- coom_attribute(T,A,"num"), not discrete,
-                                 Min = #min { V: coom_attribute_value(T,_,A,V) },
-                                 Max = #max { V: coom_attribute_value(T,_,A,V) }.
-
-% Temporary fix: For clingo, huge ranges might make grounding to large, translate numeric attributes to discrete attributes
-discrete(@fmt_join(T,A)) :- coom_attribute(T,A,"num"), discrete.
-domain(@fmt_join(T,A),V) :- coom_attribute_value(T,_,A,V), coom_attribute(T,A,"num"), discrete.
+discrete(@fmt_join(T,A),DT) :- coom_attribute(T,A,DT).
+domain(@fmt_join(T,A),V)     :- coom_attribute_value(T,_,A,V), coom_attribute(T,A,_).
 
 % Numeric features
-integer(@fmt_join(Ctx,N))       :- coom_feature(Ctx,N,"num",_,_).
-range(@fmt_join(Ctx,N),Min,Max) :- coom_feature(Ctx,N,"num",_,_), coom_range(Ctx,N,Min,Max).
+numeric(@join(Ctx,N),int)   :- coom_feature(Ctx,N,"num",_,_), not coom_precision(Ctx,N,_). % Integers
+numeric(@join(Ctx,N),float) :- coom_feature(Ctx,N,"num",_,_),     coom_precision(Ctx,N,_). % Floats
 
-#show discrete/1.
+range(@join(Ctx,N),Min,Max) :- coom_feature(Ctx,N,"num",_,_), coom_range(Ctx,N,Min,Max).
+precision(@join(Ctx,N),P)   :- coom_feature(Ctx,N,"num",_,_), coom_precision(Ctx,N,P). % For floats
+
+#show discrete/2.
 #show domain/2.
 
-#show integer/1.
+#show numeric/2.
 #show range/3.
+#show precision/2.
 
 % Instances (of structures, enumerations and attributes in COOM)
 type("root","product") :- coom_structure("product").
@@ -50,7 +45,7 @@ local_constraint(C,PX,G) :- coom_require(C,F), ground_formula(X,F,G), not coom_c
 function(@fmt_unary(X,"count"),"count",X)    :- local_constraint(C,X,G).
 set(X,X)                                     :- local_constraint(_,X,_).
 binary(@fmt_binary(Fun,"=","1"),Fun,"=","1") :- local_constraint(_,X,_), function(Fun,"count",X).
-number("1",1)                                :- local_constraint(_,_,_).
+constant("1","int")                          :- local_constraint(_,_,_).
 conditional_requirement(C,Con,G)             :- local_constraint(C,X,G), function(Fun,"count",X), binary(Con,Fun,"=","1").
 
 
@@ -105,11 +100,11 @@ set(@fmt_join(X,N),X')                        :- cardinality_aux(X,N,_), path_to
 #show part/1.
 
 % Constants and numbers
-constant(C) :- coom_constant(C).
-number(C,N) :- coom_number(C,N).
+constant(C,DT) :- coom_constant(C,DT).
+integer_constant(C,@convert_int(C)) :- constant(C,"int").
 
-#show constant/1.
-#show number/2.
+#show constant/2.
+#show integer_constant/2.
 
 % Defaults
 default_aux(X,P,V) :- coom_default(ID,P,V), coom_context(ID,T), type_aux(X,T).

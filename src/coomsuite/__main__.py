@@ -56,7 +56,6 @@ def main() -> None:
                         preprocess(
                             [temp_file],
                             max_bound=args.initial_bound,
-                            discrete=False,
                             multishot=args.multishot,
                         )
                     )

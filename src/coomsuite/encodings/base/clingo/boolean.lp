@@ -1,8 +1,7 @@
 % Definedness of formulas
 % defined(X) :- value(X,_). % TODO: Why does this not work with include?
 defined(X) :- include(X).
-defined(F) :- number(F,_).
-defined(F) :- constant(F).
+defined(F) :- constant(F,_).
 defined(F) :- binary(F,XL,_,XR), defined(XL), defined(XR).
 defined(F) :- unary(F,_,F'), defined(F').
 defined(F) :- function(F,_,_).

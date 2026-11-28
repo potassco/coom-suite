@@ -1,7 +1,7 @@
 #include "base/defined.lp".
 
 #include "base/structure.lp".
-#include "base/discrete.lp".
+#include "base/string.lp".
 #include "base/clingcon/integer.lp".
 
 #include "base/clingo/boolean.lp".
